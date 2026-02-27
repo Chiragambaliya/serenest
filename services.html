@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Services — Serenest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--teal-light:#8BB8B9;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);transition:all 0.3s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
+nav ul a{text-decoration:none;font-size:0.85rem;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;transition:color 0.2s;}
+nav ul a:hover{color:var(--sage-dark);}nav ul a.active{color:var(--sage-dark);font-weight:500;}
+.nav-cta{background:var(--sage)!important;color:var(--white)!important;padding:10px 22px;border-radius:40px;font-weight:500!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+.hamburger span{width:24px;height:2px;background:var(--dark);border-radius:2px;display:block;}
+.section-tag{display:inline-block;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--sage);margin-bottom:16px;}
+.section-header{text-align:center;margin-bottom:64px;}
+.section-header h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:300;color:var(--dark);margin-bottom:12px;line-height:1.2;}
+.section-header p{font-size:0.95rem;color:var(--text-light);font-weight:300;max-width:540px;margin:0 auto;line-height:1.7;}
+.btn-primary{background:var(--sage);color:var(--white);border:none;padding:15px 32px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;text-decoration:none;transition:all 0.25s;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary:hover{background:var(--sage-dark);transform:translateY(-2px);box-shadow:0 12px 30px rgba(125,155,118,0.3);}
+
+/* HERO */
+.page-hero{padding:160px 60px 100px;background:var(--dark);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(125,155,118,0.1) 0%,transparent 60%);pointer-events:none;}
+.page-hero-inner{max-width:700px;position:relative;z-index:1;}
+.page-hero .section-tag{color:rgba(168,196,162,0.7);}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5vw,4.5rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:20px;}
+.page-hero h1 em{font-style:italic;color:var(--sage-light);}
+.page-hero p{font-size:1.05rem;line-height:1.8;color:rgba(247,245,240,0.6);font-weight:300;max-width:520px;}
+
+/* SERVICE CARDS */
+.section-services{padding:100px 60px;background:var(--white);}
+.service-card{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:28px;overflow:hidden;margin-bottom:40px;border:1.5px solid var(--cream-dark);transition:all 0.3s;}
+.service-card:hover{box-shadow:0 24px 60px rgba(125,155,118,0.1);border-color:var(--sage-light);}
+.service-card:nth-child(even){direction:rtl;}
+.service-card:nth-child(even)>*{direction:ltr;}
+.service-content{padding:52px 48px;display:flex;flex-direction:column;justify-content:center;}
+.service-icon-wrap{width:60px;height:60px;border-radius:16px;background:rgba(125,155,118,0.1);display:flex;align-items:center;justify-content:center;font-size:1.8rem;margin-bottom:24px;}
+.service-content h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--dark);margin-bottom:16px;line-height:1.2;}
+.service-content p{font-size:0.9rem;line-height:1.85;color:var(--text-light);font-weight:300;margin-bottom:24px;}
+.service-features{list-style:none;margin-bottom:32px;}
+.service-features li{display:flex;align-items:center;gap:10px;font-size:0.85rem;color:var(--text);margin-bottom:10px;font-weight:300;}
+.service-features li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--sage);flex-shrink:0;}
+.service-visual{background:linear-gradient(135deg,var(--sage),var(--teal));display:flex;align-items:center;justify-content:center;min-height:320px;font-size:6rem;position:relative;overflow:hidden;}
+.service-visual::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(125,155,118,0.3),rgba(91,138,139,0.3));}
+.visual-pattern{position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.08) 1px,transparent 1px);background-size:32px 32px;}
+.service-visual span{position:relative;z-index:1;}
+
+/* COMPARISON */
+.section-compare{padding:100px 60px;background:var(--cream);}
+.compare-table{max-width:900px;margin:0 auto;border-radius:24px;overflow:hidden;border:1.5px solid var(--cream-dark);}
+.compare-header{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;background:var(--dark);padding:24px 32px;}
+.compare-header span{font-size:0.78rem;font-weight:500;text-transform:uppercase;letter-spacing:0.06em;color:rgba(247,245,240,0.5);}
+.compare-header span:first-child{color:rgba(247,245,240,0.3);}
+.compare-row{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:18px 32px;align-items:center;border-bottom:1px solid var(--cream-dark);background:var(--white);transition:background 0.2s;}
+.compare-row:hover{background:rgba(125,155,118,0.03);}
+.compare-row:last-child{border-bottom:none;}
+.compare-feature{font-size:0.88rem;color:var(--text);font-weight:400;}
+.compare-check{font-size:1.1rem;text-align:center;}
+.compare-col-header{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:var(--cream);}
+.col-highlight{color:var(--sage-light)!important;}
+
+/* PROCESS */
+.section-process{padding:100px 60px;background:var(--dark);position:relative;overflow:hidden;}
+.section-process::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,rgba(125,155,118,0.06) 0%,transparent 60%);pointer-events:none;}
+.section-process .section-header h2{color:var(--cream);}
+.section-process .section-header p{color:rgba(247,245,240,0.5);}
+.tag-faded{color:rgba(168,196,162,0.7)!important;}
+.text-faded{color:rgba(247,245,240,0.5)!important;}
+.text-center-mt-20{text-align:center;margin-top:20px;}
+.process-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:900px;margin:0 auto;}
+.process-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:32px;transition:all 0.3s;}
+.process-card:hover{background:rgba(125,155,118,0.08);border-color:rgba(125,155,118,0.2);transform:translateY(-4px);}
+.process-num{font-family:'Cormorant Garamond',serif;font-size:3rem;font-weight:300;color:rgba(168,196,162,0.2);margin-bottom:16px;}
+.process-card h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:var(--cream);margin-bottom:10px;}
+.process-card p{font-size:0.84rem;line-height:1.75;color:rgba(247,245,240,0.5);font-weight:300;}
+
+/* CTA */
+.section-cta{padding:120px 60px;background:var(--sage);text-align:center;position:relative;overflow:hidden;}
+.section-cta::before{content:'';position:absolute;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 70%);border-radius:50%;}
+.section-cta h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,4.5vw,4rem);font-weight:300;color:var(--white);line-height:1.2;margin-bottom:20px;position:relative;z-index:1;}
+.section-cta p{font-size:1rem;color:rgba(255,255,255,0.75);max-width:520px;margin:0 auto 40px;font-weight:300;line-height:1.7;position:relative;z-index:1;}
+.btn-white{background:var(--white);color:var(--sage-dark);border:none;padding:16px 36px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.25s;position:relative;z-index:1;}
+.btn-white:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(28,36,32,0.2);}
+
+footer{background:var(--dark);padding:64px 60px 36px;}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px;}
+.footer-brand .logo{font-size:1.4rem;margin-bottom:14px;display:block;}
+.footer-brand p{font-size:0.84rem;line-height:1.7;color:rgba(247,245,240,0.45);font-weight:300;margin-bottom:20px;}
+.social-links{display:flex;gap:12px;}
+.social-link{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.2s;}
+.social-link:hover{background:var(--sage);}
+.footer-col h5{font-size:0.75rem;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:rgba(247,245,240,0.35);margin-bottom:18px;}
+.footer-col ul{list-style:none;}
+.footer-col ul li{margin-bottom:10px;}
+.footer-col ul a{font-size:0.84rem;color:rgba(247,245,240,0.55);text-decoration:none;font-weight:300;transition:color 0.2s;}
+.footer-col ul a:hover{color:var(--sage-light);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.07);padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
+.compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  nav{padding:16px 24px;}nav ul{display:none;}
+  .hamburger{display:flex;}
+  .page-hero{padding:120px 24px 72px;}
+  .section-services,.section-compare,.section-process,.section-cta{padding:72px 24px;}
+  .service-card{grid-template-columns:1fr;}
+  .service-card:nth-child(even){direction:ltr;}
+  .service-visual{min-height:200px;}
+  .compare-table{overflow-x:auto;}
+  .process-grid{grid-template-columns:1fr;}
+  footer{padding:48px 24px 28px;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html" class="active">Services</a></li>
+    <li><a href="specialists.html">Specialists</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag" style="animation:fadeUp 0.8s ease 0.2s both">Our Services</div>
+    <h1 style="animation:fadeUp 0.9s ease 0.4s both">Clinical-grade care<br>for every <em>mental health need.</em></h1>
+    <p style="animation:fadeUp 0.9s ease 0.6s both">From psychiatric assessment and medication management to therapy and deaddiction support — Serenest offers a complete range of mental health services, delivered online.</p>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section-services">
+  <!-- Psychiatry -->
+  <div class="service-card reveal">
+    <div class="service-content">
+      <div class="service-icon-wrap">🧬</div>
+      <h2>Psychiatry Consultation</h2>
+      <p>Our psychiatrists provide comprehensive psychiatric evaluation, diagnosis, and management. Whether you're seeking help for the first time or continuing ongoing care, you'll receive structured, evidence-based treatment.</p>
+      <ul class="service-features">
+        <li>Full psychiatric assessment and diagnosis</li>
+        <li>Personalised treatment plan development</li>
+        <li>Medication management and review</li>
+        <li>Digital prescriptions (where applicable)</li>
+        <li>Follow-up and progress monitoring</li>
+        <li>Crisis support and referral</li>
+      </ul>
+      <a href="book.html" class="btn-primary">Book Psychiatry Session →</a>
+    </div>
+    <div class="service-visual">
+      <div class="visual-pattern"></div>
+      <span>🧬</span>
+    </div>
+  </div>
+
+  <!-- Psychology / Therapy -->
+  <div class="service-card reveal">
+    <div class="service-content">
+      <div class="service-icon-wrap">💬</div>
+      <h2>Therapy & Counselling</h2>
+      <p>Our clinical psychologists and therapists provide evidence-based psychological interventions. From CBT to talk therapy, sessions are tailored to your individual needs and goals.</p>
+      <ul class="service-features">
+        <li>Cognitive Behavioural Therapy (CBT)</li>
+        <li>Mindfulness-based therapies</li>
+        <li>Trauma-focused therapy</li>
+        <li>Relationship and family counselling</li>
+        <li>Grief and loss support</li>
+        <li>Career and life stress counselling</li>
+      </ul>
+      <a href="book.html" class="btn-primary">Book Therapy Session →</a>
+    </div>
+    <div class="service-visual" style="background:linear-gradient(135deg,var(--teal),#3d6e6f)">
+      <div class="visual-pattern"></div>
+      <span>💬</span>
+    </div>
+  </div>
+
+  <!-- Deaddiction -->
+  <div class="service-card reveal">
+    <div class="service-content">
+      <div class="service-icon-wrap">🌿</div>
+      <h2>Deaddiction & Recovery</h2>
+      <p>Specialised support for those struggling with alcohol, substance use, or behavioural addictions. Our approach combines psychiatric care, motivational counselling, and relapse prevention planning.</p>
+      <ul class="service-features">
+        <li>Alcohol and substance use assessment</li>
+        <li>Structured detoxification support</li>
+        <li>Motivation enhancement therapy</li>
+        <li>Relapse prevention planning</li>
+        <li>Family psychoeducation</li>
+        <li>Long-term recovery monitoring</li>
+      </ul>
+      <a href="book.html" class="btn-primary">Book Deaddiction Consultation →</a>
+    </div>
+    <div class="service-visual" style="background:linear-gradient(135deg,#5a7a54,#7d9b76)">
+      <div class="visual-pattern"></div>
+      <span>🌿</span>
+    </div>
+  </div>
+
+  <!-- Child & Adolescent -->
+  <div class="service-card reveal">
+    <div class="service-content">
+      <div class="service-icon-wrap">🌱</div>
+      <h2>Child & Adolescent Mental Health</h2>
+      <p>Specialised mental health support for children and teenagers. Our specialists are trained to work with young people and their families through developmentally appropriate approaches.</p>
+      <ul class="service-features">
+        <li>ADHD assessment and management</li>
+        <li>Academic stress and performance anxiety</li>
+        <li>Behavioural concerns and conduct issues</li>
+        <li>Autism spectrum support</li>
+        <li>Adolescent depression and anxiety</li>
+        <li>Family and parent counselling</li>
+      </ul>
+      <a href="book.html" class="btn-primary">Book Child Psychiatry Session →</a>
+    </div>
+    <div class="service-visual" style="background:linear-gradient(135deg,#8bb8b9,#5b8a8b)">
+      <div class="visual-pattern"></div>
+      <span>🌱</span>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON -->
+<section class="section-compare">
+  <div class="section-header">
+    <div class="section-tag reveal">Service Comparison</div>
+    <h2 class="reveal">Which service is right for you?</h2>
+    <p class="reveal">Not sure which type of specialist to see? Here's a simple guide to help you decide.</p>
+  </div>
+  <div class="compare-table reveal">
+    <div class="compare-header">
+      <span>What you're looking for</span>
+      <span class="compare-col-header col-highlight">Psychiatrist</span>
+      <span class="compare-col-header">Psychologist</span>
+      <span class="compare-col-header">Counsellor</span>
+    </div>
+    <div class="compare-row">
+      <div class="compare-feature">Diagnosis of mental health conditions</div>
+      <div class="compare-check">✅</div>
+      <div class="compare-check">✅</div>
+      <div class="compare-check">❌</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-feature">Medication prescription</div>
+      <div class="compare-check">✅</div>
+      <div class="compare-check">❌</div>
+      <div class="compare-check">❌</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-feature">Talk therapy / CBT</div>
+      <div class="compare-check">⚡</div>
+      <div class="compare-check">✅</div>
+      <div class="compare-check">✅</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-feature">Psychological testing & assessment</div>
+      <div class="compare-check">✅</div>
+      <div class="compare-check">✅</div>
+      <div class="compare-check">❌</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-feature">Complex psychiatric conditions</div>
+      <div class="compare-check">✅</div>
+      <div class="compare-check">⚡</div>
+      <div class="compare-check">❌</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-feature">Life stressors, relationship issues</div>
+      <div class="compare-check">⚡</div>
+      <div class="compare-check">✅</div>
+      <div class="compare-check">✅</div>
+    </div>
+    <div class="compare-row">
+      <div class="compare-feature">Grief, burnout, career stress</div>
+      <div class="compare-check">⚡</div>
+      <div class="compare-check">✅</div>
+      <div class="compare-check">✅</div>
+    </div>
+  </div>
+  <p class="text-center-mt-20 reveal">✅ Primary scope &nbsp;·&nbsp; ⚡ Partial scope &nbsp;·&nbsp; ❌ Outside scope</p>
+</section>
+
+<!-- PROCESS -->
+<section class="section-process">
+  <div class="section-header reveal">
+    <div class="section-tag tag-faded">How It Works</div>
+    <h2>What happens in a session.</h2>
+    <p class="text-faded">Every session on Serenest follows a structured, clinical approach — not just an informal chat.</p>
+  </div>
+  <div class="process-grid">
+    <div class="process-card reveal">
+      <div class="process-num">01</div>
+      <h3>Pre-session intake</h3>
+      <p>Before your first session, you'll complete a brief intake form so your specialist can prepare and make the most of your time together.</p>
+    </div>
+    <div class="process-card reveal" style="transition-delay:0.1s">
+      <div class="process-num">02</div>
+      <h3>Structured assessment</h3>
+      <p>Your specialist conducts a thorough clinical assessment — understanding your history, current concerns, and goals before forming any conclusions.</p>
+    </div>
+    <div class="process-card reveal" style="transition-delay:0.2s">
+      <div class="process-num">03</div>
+      <h3>Treatment planning</h3>
+      <p>Together, you'll develop a personalised care plan — whether that involves medication, therapy, lifestyle changes, or a combination of approaches.</p>
+    </div>
+    <div class="process-card reveal" style="transition-delay:0.3s">
+      <div class="process-num">04</div>
+      <h3>Session notes & summary</h3>
+      <p>After each session, you receive a clear summary of what was discussed and agreed — so you always know where you stand and what comes next.</p>
+    </div>
+    <div class="process-card reveal" style="transition-delay:0.4s">
+      <div class="process-num">05</div>
+      <h3>Prescription (if applicable)</h3>
+      <p>Where clinically appropriate, your psychiatrist can issue a valid digital prescription in accordance with Indian Telemedicine Practice Guidelines.</p>
+    </div>
+    <div class="process-card reveal" style="transition-delay:0.5s">
+      <div class="process-num">06</div>
+      <h3>Ongoing follow-up</h3>
+      <p>Mental health care is a journey. Regular follow-up sessions ensure your treatment is working and adjusted as your needs evolve.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta">
+  <h2 class="reveal">Find the right care for you.</h2>
+  <p class="reveal">Not sure which service you need? Book an initial consultation and your specialist will guide you.</p>
+  <a href="book.html" class="btn-white reveal">Book a Consultation →</a>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">Sere<span>nest</span></a>
+      <p>India's clinical-grade telepsychiatry platform. Connecting patients with qualified mental health professionals — privately, securely, on your schedule.</p>
+      <div class="social-links"><a href="#" class="social-link" aria-label="Instagram">📷</a><a href="#" class="social-link" aria-label="LinkedIn">💼</a><a href="#" class="social-link" aria-label="X (Twitter)">𝕏</a></div>
+    </div>
+    <div class="footer-col"><h5>Platform</h5><ul><li><a href="patients.html">For Patients</a></li><li><a href="doctors.html">For Doctors</a></li><li><a href="specialists.html">Specialists</a></li><li><a href="services.html">Services</a></li><li><a href="book.html">Book Now</a></li></ul></div>
+    <div class="footer-col"><h5>Company</h5><ul><li><a href="about.html">About</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    <div class="footer-col"><h5>Legal</h5><ul><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Use</a></li><li><a href="telemedicine-policy.html">Telemedicine Policy</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Serenest. All rights reserved.</p>
+    <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
+  </div>
+</footer>
+
+<script>
+const observer=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+function updateNavScroll(){const nav=document.getElementById('navbar');const isMobile=window.innerWidth<=900;nav.style.padding=isMobile?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
+window.addEventListener('scroll',updateNavScroll);
+window.addEventListener('resize',updateNavScroll);
+updateNavScroll();
+const hamburgerBtn=document.getElementById('hamburger');
+hamburgerBtn.addEventListener('click',()=>{const menu=document.getElementById('nav-menu');const isOpen=menu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
+</script>
+</body>
+</html>

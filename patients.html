@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Patients — Serenest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--teal-light:#8BB8B9;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);transition:all 0.3s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
+nav ul a{text-decoration:none;font-size:0.85rem;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;transition:color 0.2s;}
+nav ul a:hover{color:var(--sage-dark);}nav ul a.active{color:var(--sage-dark);font-weight:500;}
+.nav-cta{background:var(--sage)!important;color:var(--white)!important;padding:10px 22px;border-radius:40px;font-weight:500!important;}
+.nav-cta:hover{background:var(--sage-dark)!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+.hamburger span{width:24px;height:2px;background:var(--dark);border-radius:2px;display:block;}
+
+/* PAGE HERO */
+.page-hero{padding:160px 60px 100px;background:var(--dark);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(125,155,118,0.1) 0%,transparent 60%),radial-gradient(circle at 80% 20%,rgba(91,138,139,0.07) 0%,transparent 50%);pointer-events:none;}
+.page-hero-inner{max-width:700px;position:relative;z-index:1;}
+.section-tag{display:inline-block;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--sage);margin-bottom:16px;}
+.page-hero .section-tag{color:var(--sage-light);opacity:0.8;}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5vw,4.5rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:20px;}
+.page-hero h1 em{font-style:italic;color:var(--sage-light);}
+.page-hero p{font-size:1.05rem;line-height:1.8;color:rgba(247,245,240,0.6);font-weight:300;max-width:520px;margin-bottom:36px;}
+.btn-primary{background:var(--sage);color:var(--white);border:none;padding:15px 32px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;text-decoration:none;transition:all 0.25s;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary:hover{background:var(--sage-dark);transform:translateY(-2px);box-shadow:0 12px 30px rgba(125,155,118,0.3);}
+.btn-secondary{background:transparent;color:var(--white);border:1.5px solid rgba(255,255,255,0.3);padding:15px 32px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.9rem;cursor:pointer;text-decoration:none;transition:all 0.25s;display:inline-block;}
+.btn-secondary:hover{border-color:white;background:rgba(255,255,255,0.08);}
+.hero-buttons{display:flex;gap:16px;flex-wrap:wrap;}
+
+/* TRUST STRIP */
+.trust-strip{background:var(--white);padding:28px 60px;border-bottom:1px solid var(--cream-dark);}
+.trust-inner{display:flex;justify-content:center;gap:64px;flex-wrap:wrap;}
+.trust-item{display:flex;align-items:center;gap:12px;}
+.trust-icon{width:44px;height:44px;border-radius:12px;background:rgba(125,155,118,0.1);display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.trust-text h4{font-size:0.85rem;font-weight:500;color:var(--dark);}
+.trust-text p{font-size:0.75rem;color:var(--text-light);}
+
+/* WHAT TO EXPECT */
+.section-expect{padding:100px 60px;background:var(--cream);}
+.section-header{text-align:center;margin-bottom:64px;}
+.section-header h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:300;color:var(--dark);margin-bottom:12px;line-height:1.2;}
+.section-header p{font-size:0.95rem;color:var(--text-light);font-weight:300;max-width:540px;margin:0 auto;line-height:1.7;}
+.expect-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;max-width:1000px;margin:0 auto;}
+.expect-card{background:var(--white);border-radius:24px;padding:36px 32px;border:1.5px solid var(--cream-dark);transition:all 0.3s;}
+.expect-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(125,155,118,0.1);border-color:var(--sage-light);}
+.expect-num{font-family:'Cormorant Garamond',serif;font-size:3.5rem;font-weight:300;color:var(--cream-dark);line-height:1;margin-bottom:16px;}
+.expect-card h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--dark);margin-bottom:12px;}
+.expect-card p{font-size:0.87rem;line-height:1.75;color:var(--text-light);font-weight:300;}
+
+/* CONDITIONS */
+.section-conditions{padding:100px 60px;background:var(--white);}
+.conditions-layout{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;max-width:1000px;margin:0 auto;}
+.conditions-text h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3vw,2.8rem);font-weight:300;color:var(--dark);margin-bottom:20px;line-height:1.2;}
+.conditions-text p{font-size:0.92rem;line-height:1.85;color:var(--text-light);font-weight:300;margin-bottom:28px;}
+.conditions-pills{display:flex;flex-wrap:wrap;gap:10px;}
+.pill{background:var(--cream);border:1.5px solid var(--cream-dark);color:var(--text);padding:9px 18px;border-radius:40px;font-size:0.82rem;transition:all 0.25s;cursor:default;}
+.pill:hover{border-color:var(--sage);color:var(--sage-dark);background:rgba(125,155,118,0.06);transform:translateY(-2px);}
+
+/* HOW BOOKING WORKS */
+.section-booking{padding:100px 60px;background:var(--dark);position:relative;overflow:hidden;}
+.section-booking::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 50%,rgba(125,155,118,0.07) 0%,transparent 50%);pointer-events:none;}
+.section-booking .section-header h2{color:var(--cream);}
+.section-booking .section-header p{color:rgba(247,245,240,0.5);}
+.section-booking .section-tag{color:var(--sage-light);opacity:0.8;}
+.booking-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;max-width:1000px;margin:0 auto;position:relative;}
+.booking-steps::before{content:'';position:absolute;top:36px;left:12.5%;right:12.5%;height:1px;background:linear-gradient(90deg,rgba(168,196,162,0.3),rgba(139,184,185,0.3));z-index:0;}
+.booking-step{text-align:center;position:relative;z-index:1;padding:0 16px;}
+.bstep-num{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.4rem;transition:all 0.3s;}
+.booking-step:hover .bstep-num{background:rgba(125,155,118,0.2);border-color:var(--sage);}
+.booking-step h3{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--cream);margin-bottom:10px;}
+.booking-step p{font-size:0.82rem;line-height:1.7;color:rgba(247,245,240,0.5);font-weight:300;}
+
+/* FAQ */
+.section-faq{padding:100px 60px;background:var(--cream);}
+.faq-inner{max-width:720px;margin:0 auto;}
+.faq-item{border-bottom:1px solid var(--cream-dark);overflow:hidden;}
+.faq-question{display:flex;justify-content:space-between;align-items:center;padding:24px 0;cursor:pointer;gap:16px;}
+.faq-question h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:400;color:var(--dark);}
+.faq-icon{width:28px;height:28px;border-radius:50%;background:var(--cream-dark);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem;transition:all 0.3s;color:var(--text-light);}
+.faq-item.open .faq-icon{background:var(--sage);color:white;transform:rotate(45deg);}
+.faq-answer{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+.faq-answer p{font-size:0.9rem;line-height:1.8;color:var(--text-light);font-weight:300;padding-bottom:24px;}
+.faq-item.open .faq-answer{max-height:200px;}
+
+/* CTA */
+.section-cta{padding:120px 60px;background:var(--sage);text-align:center;position:relative;overflow:hidden;}
+.section-cta::before{content:'';position:absolute;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 70%);border-radius:50%;}
+.section-cta h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,4.5vw,4rem);font-weight:300;color:var(--white);line-height:1.2;margin-bottom:20px;position:relative;z-index:1;}
+.section-cta p{font-size:1rem;color:rgba(255,255,255,0.75);max-width:520px;margin:0 auto 40px;font-weight:300;line-height:1.7;position:relative;z-index:1;}
+.btn-white{background:var(--white);color:var(--sage-dark);border:none;padding:16px 36px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.25s;position:relative;z-index:1;}
+.btn-white:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(28,36,32,0.2);}
+
+/* FOOTER */
+footer{background:var(--dark);padding:64px 60px 36px;}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px;}
+.footer-brand .logo{font-size:1.4rem;margin-bottom:14px;display:block;}
+.footer-brand p{font-size:0.84rem;line-height:1.7;color:rgba(247,245,240,0.45);font-weight:300;margin-bottom:20px;}
+.social-links{display:flex;gap:12px;}
+.social-link{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.2s;}
+.social-link:hover{background:var(--sage);border-color:var(--sage);}
+.footer-col h5{font-size:0.75rem;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:rgba(247,245,240,0.35);margin-bottom:18px;}
+.footer-col ul{list-style:none;}
+.footer-col ul li{margin-bottom:10px;}
+.footer-col ul a{font-size:0.84rem;color:rgba(247,245,240,0.55);text-decoration:none;font-weight:300;transition:color 0.2s;}
+.footer-col ul a:hover{color:var(--sage-light);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.07);padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
+.compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  nav{padding:16px 24px;}
+  nav ul{display:none;}
+  .hamburger{display:flex;}
+  .page-hero{padding:120px 24px 72px;}
+  .trust-strip{padding:24px;}
+  .trust-inner{gap:28px;}
+  .section-expect,.section-conditions,.section-booking,.section-faq,.section-cta{padding:72px 24px;}
+  .expect-grid{grid-template-columns:1fr;}
+  .conditions-layout{grid-template-columns:1fr;gap:40px;}
+  .booking-steps{grid-template-columns:1fr 1fr;gap:32px;}
+  .booking-steps::before{display:none;}
+  footer{padding:48px 24px 28px;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html" class="active">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="specialists.html">Specialists</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag" style="animation:fadeUp 0.8s ease 0.2s both">For Patients</div>
+    <h1 style="animation:fadeUp 0.9s ease 0.4s both">Getting help has <em>never</em> been this accessible.</h1>
+    <p style="animation:fadeUp 0.9s ease 0.6s both">Serenest puts qualified psychiatrists and therapists in your hands — wherever you are, whenever you need them. Private. Confidential. Clinical-grade care.</p>
+    <div class="hero-buttons" style="animation:fadeUp 0.9s ease 0.8s both">
+      <a href="book.html" class="btn-primary">Book Your First Session →</a>
+      <a href="#how" class="btn-secondary">How It Works</a>
+    </div>
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-inner">
+    <div class="trust-item reveal">
+      <div class="trust-icon">🔒</div>
+      <div class="trust-text"><h4>100% Confidential</h4><p>Your privacy, always protected</p></div>
+    </div>
+    <div class="trust-item reveal">
+      <div class="trust-icon">🏥</div>
+      <div class="trust-text"><h4>Verified Specialists</h4><p>Licensed & experienced</p></div>
+    </div>
+    <div class="trust-item reveal">
+      <div class="trust-icon">📋</div>
+      <div class="trust-text"><h4>Structured Care</h4><p>Real treatment plans</p></div>
+    </div>
+    <div class="trust-item reveal">
+      <div class="trust-icon">🇮🇳</div>
+      <div class="trust-text"><h4>Telemedicine Compliant</h4><p>Follows Indian guidelines</p></div>
+    </div>
+    <div class="trust-item reveal">
+      <div class="trust-icon">💊</div>
+      <div class="trust-text"><h4>Prescriptions Available</h4><p>Digital prescriptions issued</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- WHAT TO EXPECT -->
+<section class="section-expect" id="how">
+  <div class="section-header">
+    <div class="section-tag reveal">What to Expect</div>
+    <h2 class="reveal">Your journey to better mental health starts here.</h2>
+    <p class="reveal">We've designed every step to be simple, comfortable, and judgment-free.</p>
+  </div>
+  <div class="expect-grid">
+    <div class="expect-card reveal">
+      <div class="expect-num">01</div>
+      <h3>A safe, private space</h3>
+      <p>Your sessions are completely confidential. What you share stays between you and your specialist. We use encrypted video technology and never share your data.</p>
+    </div>
+    <div class="expect-card reveal" style="transition-delay:0.1s">
+      <div class="expect-num">02</div>
+      <h3>Real clinical care</h3>
+      <p>Not just a conversation — your specialist will conduct a proper psychiatric assessment, build a personalised treatment plan, and follow up on your progress.</p>
+    </div>
+    <div class="expect-card reveal" style="transition-delay:0.2s">
+      <div class="expect-num">03</div>
+      <h3>Flexible scheduling</h3>
+      <p>Book sessions around your life — evenings, weekends, or lunch breaks. No long waiting lists, no travel, no time off work required.</p>
+    </div>
+    <div class="expect-card reveal" style="transition-delay:0.3s">
+      <div class="expect-num">04</div>
+      <h3>Continuity of care</h3>
+      <p>Your specialist remembers your history. You'll build a real therapeutic relationship, not start from scratch every time.</p>
+    </div>
+    <div class="expect-card reveal" style="transition-delay:0.4s">
+      <div class="expect-num">05</div>
+      <h3>Digital prescriptions</h3>
+      <p>Where clinically appropriate, your psychiatrist can issue valid digital prescriptions compliant with Indian telemedicine regulations.</p>
+    </div>
+    <div class="expect-card reveal" style="transition-delay:0.5s">
+      <div class="expect-num">06</div>
+      <h3>Session records & notes</h3>
+      <p>You'll have access to session summaries and care notes so you can track your progress and stay engaged in your own healing journey.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CONDITIONS -->
+<section class="section-conditions">
+  <div class="conditions-layout">
+    <div class="conditions-text">
+      <div class="section-tag reveal">What We Treat</div>
+      <h2 class="reveal">Whatever you're going through, we're here for it.</h2>
+      <p class="reveal">Our specialists are trained to help with a wide range of mental health conditions — from common struggles like anxiety and stress to complex psychiatric conditions. If you're not sure what you're experiencing, that's completely okay. We'll help you understand.</p>
+      <a href="book.html" class="btn-primary reveal">Find Your Specialist →</a>
+    </div>
+    <div class="conditions-pills reveal">
+      <span class="pill">Depression</span>
+      <span class="pill">Anxiety Disorders</span>
+      <span class="pill">OCD</span>
+      <span class="pill">PTSD</span>
+      <span class="pill">Sleep Disorders</span>
+      <span class="pill">Relationship Issues</span>
+      <span class="pill">Work Stress & Burnout</span>
+      <span class="pill">Alcohol Use Disorder</span>
+      <span class="pill">Substance Dependence</span>
+      <span class="pill">Bipolar Disorder</span>
+      <span class="pill">ADHD</span>
+      <span class="pill">Grief & Loss</span>
+      <span class="pill">Anger Management</span>
+      <span class="pill">Panic Attacks</span>
+      <span class="pill">Eating Disorders</span>
+      <span class="pill">Social Anxiety</span>
+      <span class="pill">Phobias</span>
+      <span class="pill">Schizophrenia</span>
+      <span class="pill">Personality Disorders</span>
+      <span class="pill">Perinatal Mental Health</span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW BOOKING WORKS -->
+<section class="section-booking">
+  <div class="section-header reveal">
+    <div class="section-tag" style="color:rgba(168,196,162,0.7);opacity:1">Booking Process</div>
+    <h2>From sign-up to session in minutes.</h2>
+    <p style="color:rgba(247,245,240,0.5)">We've removed every unnecessary barrier so you can focus on what matters.</p>
+  </div>
+  <div class="booking-steps">
+    <div class="booking-step reveal">
+      <div class="bstep-num">📝</div>
+      <h3>Create Account</h3>
+      <p>Quick sign-up with just your name and email. No unnecessary forms.</p>
+    </div>
+    <div class="booking-step reveal" style="transition-delay:0.1s">
+      <div class="bstep-num">🔍</div>
+      <h3>Browse Specialists</h3>
+      <p>Filter by specialty, language, and availability. Read profiles and pick who feels right.</p>
+    </div>
+    <div class="booking-step reveal" style="transition-delay:0.2s">
+      <div class="bstep-num">📅</div>
+      <h3>Pick a Slot</h3>
+      <p>Choose a time that works for you — morning, evening, or weekends. Instant confirmation.</p>
+    </div>
+    <div class="booking-step reveal" style="transition-delay:0.3s">
+      <div class="bstep-num">🎥</div>
+      <h3>Join Session</h3>
+      <p>A secure link lands in your inbox. Click and connect — no app download needed.</p>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:56px;" class="reveal">
+    <a href="book.html" class="btn-primary">Book Now — It's Simple →</a>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section-faq">
+  <div class="section-header">
+    <div class="section-tag reveal">FAQ</div>
+    <h2 class="reveal">Questions we hear most often.</h2>
+    <p class="reveal">Can't find your answer? We're happy to help — reach out anytime.</p>
+  </div>
+  <div class="faq-inner">
+    <div class="faq-item reveal">
+      <div class="faq-question">
+        <h3>Is online psychiatry as effective as in-person treatment?</h3>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <p>Yes. Multiple studies confirm that telepsychiatry is equally effective for most mental health conditions. For certain conditions requiring in-person evaluation or emergency care, your specialist will guide you accordingly. Serenest is designed to deliver the same quality of clinical care remotely.</p>
+      </div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-question">
+        <h3>Is my information completely confidential?</h3>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <p>Absolutely. Your sessions, medical records, and personal information are encrypted and never shared without your explicit consent. We follow strict data privacy standards in line with Indian healthcare regulations. Your identity is always protected.</p>
+      </div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-question">
+        <h3>Can I get a prescription through Serenest?</h3>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <p>Yes. Our psychiatrists can issue valid digital prescriptions where clinically appropriate, fully compliant with Indian Telemedicine Practice Guidelines (2020). However, first prescriptions for certain medications may require additional assessment steps as per guidelines.</p>
+      </div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-question">
+        <h3>What if I'm not sure what kind of help I need?</h3>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <p>That's completely normal and more common than you think. Simply book an initial consultation and describe what you've been experiencing. Your specialist will help assess your needs, explain what's happening, and guide you to the right type of care — whether that's psychiatry, therapy, or both.</p>
+      </div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-question">
+        <h3>What technology do I need for a session?</h3>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <p>Just a smartphone, tablet, or computer with a camera and internet connection. You'll receive a secure link before your session — no app downloads or complex setup required. If you have connectivity issues, we also support audio-only sessions.</p>
+      </div>
+    </div>
+    <div class="faq-item reveal">
+      <div class="faq-question">
+        <h3>How much does a session cost?</h3>
+        <div class="faq-icon">+</div>
+      </div>
+      <div class="faq-answer">
+        <p>Session fees vary by specialist and session type. You'll see clear pricing on each specialist's profile before you book. We believe quality mental healthcare should be accessible — our fee structure is transparent with no hidden charges.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta">
+  <h2 class="reveal">Ready to take the first step?</h2>
+  <p class="reveal">Book a confidential consultation today. It takes less than 5 minutes to get started.</p>
+  <a href="book.html" class="btn-white reveal">Book My First Session →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">Sere<span>nest</span></a>
+      <p>India's clinical-grade telepsychiatry platform. Connecting patients with qualified mental health professionals — privately, securely, on your schedule.</p>
+      <div class="social-links">
+        <a href="#" class="social-link" aria-label="Instagram">📷</a><a href="#" class="social-link" aria-label="LinkedIn">💼</a><a href="#" class="social-link" aria-label="X (Twitter)">𝕏</a>
+      </div>
+    </div>
+    <div class="footer-col">
+      <h5>Platform</h5>
+      <ul>
+        <li><a href="patients.html">For Patients</a></li>
+        <li><a href="doctors.html">For Doctors</a></li>
+        <li><a href="specialists.html">Our Specialists</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="book.html">Book a Session</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="contact.html">Contact</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h5>Legal</h5>
+      <ul>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Use</a></li>
+        <li><a href="telemedicine-policy.html">Telemedicine Policy</a></li>
+        <li><a href="grievance.html">Grievance Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Serenest. All rights reserved.</p>
+    <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
+  </div>
+</footer>
+
+<script>
+const observer=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+function updateNavScroll(){
+  const nav=document.getElementById('navbar');
+  const isMobile=window.innerWidth<=900;
+  nav.style.padding=isMobile?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');
+  nav.style.boxShadow=window.scrollY>60?'0 4px 30px rgba(28,36,32,0.08)':'none';
+}
+window.addEventListener('scroll',updateNavScroll);
+window.addEventListener('resize',updateNavScroll);
+updateNavScroll();
+const hamburgerBtn=document.getElementById('hamburger');
+hamburgerBtn.addEventListener('click',()=>{
+  const menu=document.getElementById('nav-menu');
+  const isOpen=menu.classList.toggle('open');
+  hamburgerBtn.setAttribute('aria-expanded',isOpen);
+  hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');
+});
+document.querySelectorAll('.faq-item').forEach(item=>{
+  item.querySelector('.faq-question').addEventListener('click',()=>{
+    const isOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+    if(!isOpen)item.classList.add('open');
+  });
+});
+</script>
+</body>
+</html>

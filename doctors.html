@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Doctors — Serenest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--teal-light:#8BB8B9;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);transition:all 0.3s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
+nav ul a{text-decoration:none;font-size:0.85rem;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;transition:color 0.2s;}
+nav ul a:hover{color:var(--sage-dark);}nav ul a.active{color:var(--sage-dark);font-weight:500;}
+.nav-cta{background:var(--sage)!important;color:var(--white)!important;padding:10px 22px;border-radius:40px;font-weight:500!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+.hamburger span{width:24px;height:2px;background:var(--dark);border-radius:2px;display:block;}
+
+/* HERO */
+.page-hero{padding:160px 60px 100px;background:var(--dark-mid, #2E3D37);position:relative;overflow:hidden;}
+.page-hero{background:linear-gradient(135deg,#1a2d26 0%,#2e3d37 100%);}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 40%,rgba(125,155,118,0.12) 0%,transparent 60%);pointer-events:none;}
+.page-hero-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;position:relative;z-index:1;}
+.section-tag{display:inline-block;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--sage);margin-bottom:16px;}
+.page-hero .section-tag{color:var(--sage-light);opacity:0.8;}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5vw,4.2rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:20px;}
+.page-hero h1 em{font-style:italic;color:var(--sage-light);}
+.page-hero p{font-size:1rem;line-height:1.8;color:rgba(247,245,240,0.6);font-weight:300;margin-bottom:36px;}
+.hero-buttons{display:flex;gap:16px;flex-wrap:wrap;}
+.btn-primary{background:var(--sage);color:var(--white);border:none;padding:15px 32px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;text-decoration:none;transition:all 0.25s;display:inline-flex;align-items:center;gap:8px;}
+.btn-primary:hover{background:var(--sage-dark);transform:translateY(-2px);box-shadow:0 12px 30px rgba(125,155,118,0.3);}
+.btn-outline{background:transparent;color:var(--cream);border:1.5px solid rgba(255,255,255,0.25);padding:15px 32px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.9rem;cursor:pointer;text-decoration:none;transition:all 0.25s;display:inline-block;}
+.btn-outline:hover{border-color:rgba(255,255,255,0.5);background:rgba(255,255,255,0.06);}
+
+/* HERO STATS CARD */
+.hero-stats-card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:24px;padding:36px;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+.stat-item{padding:20px;background:rgba(255,255,255,0.04);border-radius:16px;border:1px solid rgba(255,255,255,0.07);}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;color:var(--sage-light);margin-bottom:4px;}
+.stat-label{font-size:0.78rem;color:rgba(247,245,240,0.45);font-weight:300;}
+.card-title{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:rgba(247,245,240,0.35);margin-bottom:20px;}
+
+/* BENEFITS */
+.section-header{text-align:center;margin-bottom:64px;}
+.section-header h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:300;color:var(--dark);margin-bottom:12px;line-height:1.2;}
+.section-header p{font-size:0.95rem;color:var(--text-light);font-weight:300;max-width:540px;margin:0 auto;line-height:1.7;}
+
+.section-benefits{padding:100px 60px;background:var(--white);}
+.benefits-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;max-width:1100px;margin:0 auto;}
+.benefit-card{padding:36px;border-radius:24px;border:1.5px solid var(--cream-dark);background:var(--cream);transition:all 0.3s;}
+.benefit-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(125,155,118,0.1);border-color:var(--sage-light);}
+.benefit-icon{width:52px;height:52px;border-radius:14px;background:rgba(125,155,118,0.12);display:flex;align-items:center;justify-content:center;font-size:1.4rem;margin-bottom:22px;}
+.benefit-card h3{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--dark);margin-bottom:12px;}
+.benefit-card p{font-size:0.87rem;line-height:1.75;color:var(--text-light);font-weight:300;}
+
+/* HOW IT WORKS FOR DOCS */
+.section-how{padding:100px 60px;background:var(--cream);}
+.how-steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;max-width:1000px;margin:0 auto;position:relative;}
+.how-steps::before{content:'';position:absolute;top:36px;left:12%;right:12%;height:1px;background:linear-gradient(90deg,var(--sage-light),var(--teal-light));z-index:0;}
+.how-step{text-align:center;z-index:1;padding:0 16px;}
+.step-circle{width:72px;height:72px;border-radius:50%;background:var(--white);border:2px solid var(--sage-light);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.4rem;transition:all 0.3s;}
+.how-step:hover .step-circle{background:var(--sage);border-color:var(--sage);}
+.how-step h3{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:var(--dark);margin-bottom:10px;}
+.how-step p{font-size:0.82rem;line-height:1.7;color:var(--text-light);font-weight:300;}
+
+/* WHO WE WELCOME */
+.section-who{padding:100px 60px;background:var(--dark);position:relative;overflow:hidden;}
+.section-who::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 80% 30%,rgba(125,155,118,0.07) 0%,transparent 50%);pointer-events:none;}
+.section-who .section-header h2{color:var(--cream);}
+.section-who .section-header p{color:rgba(247,245,240,0.5);}
+.who-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1000px;margin:0 auto;}
+.who-card{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:20px;padding:28px 24px;transition:all 0.3s;}
+.who-card:hover{background:rgba(125,155,118,0.08);border-color:rgba(125,155,118,0.2);transform:translateY(-4px);}
+.who-icon{font-size:2rem;margin-bottom:16px;}
+.who-card h3{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:600;color:var(--cream);margin-bottom:10px;}
+.who-card p{font-size:0.84rem;line-height:1.7;color:rgba(247,245,240,0.5);font-weight:300;}
+
+/* APPLICATION FORM */
+.section-apply{padding:100px 60px;background:var(--cream);}
+.apply-layout{display:grid;grid-template-columns:1fr 1.4fr;gap:80px;align-items:start;max-width:1000px;margin:0 auto;}
+.apply-text h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3vw,2.8rem);font-weight:300;color:var(--dark);margin-bottom:20px;line-height:1.2;}
+.apply-text p{font-size:0.9rem;line-height:1.85;color:var(--text-light);font-weight:300;margin-bottom:20px;}
+.apply-checklist{list-style:none;margin-top:28px;}
+.apply-checklist li{display:flex;align-items:flex-start;gap:12px;font-size:0.87rem;color:var(--text);margin-bottom:14px;font-weight:300;line-height:1.6;}
+.check{width:20px;height:20px;border-radius:50%;background:rgba(125,155,118,0.15);border:1.5px solid var(--sage);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;font-size:0.65rem;color:var(--sage);}
+
+/* FORM */
+.apply-form-card{background:var(--white);border-radius:28px;padding:44px;box-shadow:0 20px 60px rgba(28,36,32,0.08);}
+.apply-form-card h3{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;color:var(--dark);margin-bottom:8px;}
+.apply-form-card p{font-size:0.84rem;color:var(--text-light);margin-bottom:32px;font-weight:300;}
+.form-group{margin-bottom:20px;}
+.form-group label{display:block;font-size:0.78rem;font-weight:500;color:var(--text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:13px 16px;border:1.5px solid var(--cream-dark);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--text);background:var(--cream);outline:none;transition:border-color 0.2s;appearance:none;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--sage);}
+.form-group textarea{height:100px;resize:vertical;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-submit{width:100%;background:var(--sage);color:var(--white);border:none;padding:16px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.25s;margin-top:8px;}
+.form-submit:hover{background:var(--sage-dark);transform:translateY(-2px);box-shadow:0 12px 30px rgba(125,155,118,0.3);}
+.form-note{text-align:center;font-size:0.75rem;color:var(--text-light);margin-top:14px;font-style:italic;}
+
+/* CTA */
+.section-cta{padding:120px 60px;background:var(--sage);text-align:center;position:relative;overflow:hidden;}
+.section-cta::before{content:'';position:absolute;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 70%);border-radius:50%;}
+.section-cta h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,4.5vw,4rem);font-weight:300;color:var(--white);line-height:1.2;margin-bottom:20px;position:relative;z-index:1;}
+.section-cta p{font-size:1rem;color:rgba(255,255,255,0.75);max-width:520px;margin:0 auto 40px;font-weight:300;line-height:1.7;position:relative;z-index:1;}
+.btn-white{background:var(--white);color:var(--sage-dark);border:none;padding:16px 36px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.25s;position:relative;z-index:1;}
+.btn-white:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(28,36,32,0.2);}
+
+/* FOOTER */
+footer{background:var(--dark);padding:64px 60px 36px;}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px;}
+.footer-brand .logo{font-size:1.4rem;margin-bottom:14px;display:block;}
+.footer-brand p{font-size:0.84rem;line-height:1.7;color:rgba(247,245,240,0.45);font-weight:300;margin-bottom:20px;}
+.social-links{display:flex;gap:12px;}
+.social-link{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.2s;}
+.social-link:hover{background:var(--sage);border-color:var(--sage);}
+.footer-col h5{font-size:0.75rem;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:rgba(247,245,240,0.35);margin-bottom:18px;}
+.footer-col ul{list-style:none;}
+.footer-col ul li{margin-bottom:10px;}
+.footer-col ul a{font-size:0.84rem;color:rgba(247,245,240,0.55);text-decoration:none;font-weight:300;transition:color 0.2s;}
+.footer-col ul a:hover{color:var(--sage-light);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.07);padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
+.compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  nav{padding:16px 24px;}nav ul{display:none;}
+  .hamburger{display:flex;}
+  .page-hero{padding:120px 24px 72px;}
+  .page-hero-grid{grid-template-columns:1fr;}
+  .hero-stats-card{display:none;}
+  .section-benefits,.section-how,.section-who,.section-apply,.section-cta{padding:72px 24px;}
+  .benefits-grid{grid-template-columns:1fr;}
+  .how-steps{grid-template-columns:1fr 1fr;gap:32px;}
+  .how-steps::before{display:none;}
+  .who-grid{grid-template-columns:1fr;}
+  .apply-layout{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  footer{padding:48px 24px 28px;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+<script src="/config.js"></script>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html" class="active">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="specialists.html">Specialists</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="page-hero-grid">
+    <div>
+      <div class="section-tag" style="animation:fadeUp 0.8s ease 0.2s both">For Doctors</div>
+      <h1 style="animation:fadeUp 0.9s ease 0.4s both">Expand your practice.<br><em>Without limits.</em></h1>
+      <p style="animation:fadeUp 0.9s ease 0.6s both">Join Serenest and reach patients across India — on your schedule, from your space. We handle the infrastructure so you can focus entirely on clinical care.</p>
+      <div class="hero-buttons" style="animation:fadeUp 0.9s ease 0.8s both">
+        <a href="#apply" class="btn-primary">Apply to Join →</a>
+        <a href="#benefits" class="btn-outline">See the Benefits</a>
+      </div>
+    </div>
+    <div class="hero-stats-card" style="animation:fadeUp 1s ease 0.6s both">
+      <div class="card-title">Platform at a glance</div>
+      <div class="stat-grid">
+        <div class="stat-item">
+          <div class="stat-num">500+</div>
+          <div class="stat-label">Active patients on platform</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">4.9★</div>
+          <div class="stat-label">Average doctor rating</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">₹0</div>
+          <div class="stat-label">Setup or joining fee</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">100%</div>
+          <div class="stat-label">Digital — no paperwork</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="section-benefits" id="benefits">
+  <div class="section-header">
+    <div class="section-tag reveal">Why Serenest</div>
+    <h2 class="reveal">Built to support great clinicians.</h2>
+    <p class="reveal">We take care of the tech, admin, and patient acquisition — so you can focus on what you do best.</p>
+  </div>
+  <div class="benefits-grid">
+    <div class="benefit-card reveal">
+      <div class="benefit-icon">📅</div>
+      <h3>Your schedule, your rules</h3>
+      <p>Set your own availability, session length, and patient load. Practice on your terms — full-time, part-time, or as a complement to your existing clinic.</p>
+    </div>
+    <div class="benefit-card reveal" style="transition-delay:0.1s">
+      <div class="benefit-icon">💰</div>
+      <h3>Competitive earnings</h3>
+      <p>Transparent fee structure with prompt payments. You set your consultation fee. No hidden deductions, no surprises.</p>
+    </div>
+    <div class="benefit-card reveal" style="transition-delay:0.2s">
+      <div class="benefit-icon">🛠️</div>
+      <h3>Zero admin burden</h3>
+      <p>Serenest handles appointment scheduling, payment collection, reminders, and technical support. You show up and practise.</p>
+    </div>
+    <div class="benefit-card reveal" style="transition-delay:0.3s">
+      <div class="benefit-icon">📋</div>
+      <h3>Digital clinical tools</h3>
+      <p>Structured EMR-lite tools for session notes, treatment plans, and digital prescriptions — compliant with telemedicine guidelines.</p>
+    </div>
+    <div class="benefit-card reveal" style="transition-delay:0.4s">
+      <div class="benefit-icon">🌍</div>
+      <h3>Pan-India reach</h3>
+      <p>Connect with patients from cities, towns, and rural areas across India who need your expertise but couldn't access it locally.</p>
+    </div>
+    <div class="benefit-card reveal" style="transition-delay:0.5s">
+      <div class="benefit-icon">🔒</div>
+      <h3>Secure & compliant</h3>
+      <p>Our platform is built for clinical use — encrypted communications, secure records, and full compliance with Indian Telemedicine Practice Guidelines 2020.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section-how">
+  <div class="section-header">
+    <div class="section-tag reveal">Getting Started</div>
+    <h2 class="reveal">From application to first patient — in days.</h2>
+    <p class="reveal">Our onboarding is designed to be fast and frictionless.</p>
+  </div>
+  <div class="how-steps">
+    <div class="how-step reveal">
+      <div class="step-circle">📝</div>
+      <h3>Apply Online</h3>
+      <p>Fill out our short application form. Tell us about your qualifications and specialisation.</p>
+    </div>
+    <div class="how-step reveal" style="transition-delay:0.1s">
+      <div class="step-circle">✅</div>
+      <h3>Verification</h3>
+      <p>Our team verifies your credentials — medical registration, qualifications, and experience.</p>
+    </div>
+    <div class="how-step reveal" style="transition-delay:0.2s">
+      <div class="step-circle">🛠️</div>
+      <h3>Profile Setup</h3>
+      <p>Build your specialist profile, set your availability, fees, and areas of expertise.</p>
+    </div>
+    <div class="how-step reveal" style="transition-delay:0.3s">
+      <div class="step-circle">🎉</div>
+      <h3>Go Live</h3>
+      <p>Your profile goes live and patients can start booking sessions with you right away.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHO WE WELCOME -->
+<section class="section-who">
+  <div class="section-header reveal">
+    <div class="section-tag" style="color:rgba(168,196,162,0.7)">Specialists Welcome</div>
+    <h2>We welcome all mental health specialists.</h2>
+    <p style="color:rgba(247,245,240,0.5)">Whether you're a psychiatrist, psychologist, or counsellor — there's a place for you on Serenest.</p>
+  </div>
+  <div class="who-grid">
+    <div class="who-card reveal">
+      <div class="who-icon">🏥</div>
+      <h3>Psychiatrists</h3>
+      <p>MBBS with MD/DPM in Psychiatry. Prescribe medication, manage complex cases, provide comprehensive psychiatric care.</p>
+    </div>
+    <div class="who-card reveal" style="transition-delay:0.1s">
+      <div class="who-icon">🧠</div>
+      <h3>Clinical Psychologists</h3>
+      <p>RCI-registered clinical psychologists. Provide psychological assessments, therapy, and evidence-based interventions.</p>
+    </div>
+    <div class="who-card reveal" style="transition-delay:0.2s">
+      <div class="who-icon">💬</div>
+      <h3>Counsellors & Therapists</h3>
+      <p>Qualified counsellors with recognised certifications. Support patients through talk therapy, CBT, and other modalities.</p>
+    </div>
+  </div>
+</section>
+
+<!-- APPLICATION -->
+<section class="section-apply" id="apply">
+  <div class="apply-layout">
+    <div class="apply-text">
+      <div class="section-tag reveal">Join Serenest</div>
+      <h2 class="reveal">Apply to become a Serenest specialist.</h2>
+      <p class="reveal">We're building a platform of India's finest mental health professionals. If you share our commitment to accessible, quality care — we'd love to have you.</p>
+      <ul class="apply-checklist">
+        <li class="reveal"><div class="check">✓</div>Valid medical registration (MCI/State Medical Council)</li>
+        <li class="reveal"><div class="check">✓</div>Post-graduate qualification in your specialty</li>
+        <li class="reveal"><div class="check">✓</div>Minimum 1 year of clinical experience</li>
+        <li class="reveal"><div class="check">✓</div>Reliable internet connection and a private space</li>
+        <li class="reveal"><div class="check">✓</div>Commitment to patient-centred, ethical care</li>
+      </ul>
+    </div>
+    <div class="apply-form-card reveal">
+      <h3>Application Form</h3>
+      <p>We'll review your application and get back to you within 3-5 business days.</p>
+      <form onsubmit="handleApply(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" name="first_name" placeholder="Dr. First Name" required>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" name="last_name" placeholder="Last Name" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" name="phone" placeholder="+91 98765 43210" required>
+        </div>
+        <div class="form-group">
+          <label>Specialty</label>
+          <select name="specialty" required>
+            <option value="">Select your specialty</option>
+            <option value="Psychiatry">Psychiatry</option>
+            <option value="Clinical Psychology">Clinical Psychology</option>
+            <option value="Counselling / Therapy">Counselling / Therapy</option>
+            <option value="Child & Adolescent Psychiatry">Child & Adolescent Psychiatry</option>
+            <option value="Addiction Medicine">Addiction Medicine</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Years of Experience</label>
+          <select name="years_experience" required>
+            <option value="">Select</option>
+            <option value="1–3 years">1–3 years</option>
+            <option value="3–5 years">3–5 years</option>
+            <option value="5–10 years">5–10 years</option>
+            <option value="10+ years">10+ years</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Brief Introduction</label>
+          <textarea name="introduction" placeholder="Tell us about your clinical background and why you'd like to join Serenest..."></textarea>
+        </div>
+        <button type="submit" class="form-submit" id="applySubmitBtn">Submit Application →</button>
+        <p class="form-note">🔒 Your information is completely confidential and used only for verification purposes.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta">
+  <h2 class="reveal">Join India's growing telepsychiatry movement.</h2>
+  <p class="reveal">Practice on your terms. Reach patients who need you. Make a real difference.</p>
+  <a href="#apply" class="btn-white reveal">Apply to Join Serenest →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">Sere<span>nest</span></a>
+      <p>India's clinical-grade telepsychiatry platform. Connecting patients with qualified mental health professionals — privately, securely, on your schedule.</p>
+      <div class="social-links">
+        <a href="#" class="social-link" aria-label="Instagram">📷</a><a href="#" class="social-link" aria-label="LinkedIn">💼</a><a href="#" class="social-link" aria-label="X (Twitter)">𝕏</a>
+      </div>
+    </div>
+    <div class="footer-col"><h5>Platform</h5><ul><li><a href="patients.html">For Patients</a></li><li><a href="doctors.html">For Doctors</a></li><li><a href="specialists.html">Our Specialists</a></li><li><a href="services.html">Services</a></li><li><a href="book.html">Book a Session</a></li></ul></div>
+    <div class="footer-col"><h5>Company</h5><ul><li><a href="about.html">About Us</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    <div class="footer-col"><h5>Legal</h5><ul><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Use</a></li><li><a href="telemedicine-policy.html">Telemedicine Policy</a></li><li><a href="grievance.html">Grievance Policy</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Serenest. All rights reserved.</p>
+    <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
+  </div>
+</footer>
+
+<script>
+const observer=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+function updateNavScroll(){
+  const nav=document.getElementById('navbar');
+  const isMobile=window.innerWidth<=900;
+  nav.style.padding=isMobile?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');
+}
+window.addEventListener('scroll',updateNavScroll);
+window.addEventListener('resize',updateNavScroll);
+updateNavScroll();
+const hamburgerBtn=document.getElementById('hamburger');
+hamburgerBtn.addEventListener('click',()=>{
+  const menu=document.getElementById('nav-menu');
+  const isOpen=menu.classList.toggle('open');
+  hamburgerBtn.setAttribute('aria-expanded',isOpen);
+  hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');
+});
+function handleApply(e){
+  e.preventDefault();
+  var btn=document.getElementById('applySubmitBtn');
+  var origText=btn.textContent;
+  btn.textContent='Submitting...';
+  btn.disabled=true;
+  var form=e.target;
+  var data={};
+  ['first_name','last_name','email','phone','specialty','years_experience','introduction'].forEach(function(name){
+    var el=form.querySelector('[name="'+name+'"]');
+    if(el) data[name]=el.value;
+  });
+  fetch((window.API_BASE||'')+'/api/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
+    .then(function(r){return r.json();})
+    .then(function(json){
+      if(json.ok){
+        btn.textContent='✅ Application Submitted!';
+        btn.style.background='var(--sage-dark)';
+        btn.disabled=true;
+      }else{
+        btn.textContent=origText;
+        btn.disabled=false;
+        alert(json.error||'Something went wrong. Please try again.');
+      }
+    })
+    .catch(function(){
+      btn.textContent=origText;
+      btn.disabled=false;
+      alert('Could not reach server. Please check your connection and try again.');
+    });
+}
+</script>
+</body>
+</html>

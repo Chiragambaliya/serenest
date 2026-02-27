@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Serenest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sage: #7D9B76;
+      --sage-dark: #5A7A54;
+      --cream: #F7F5F0;
+      --cream-dark: #EDE9E1;
+      --dark: #1C2420;
+      --text: #3A4A44;
+      --text-light: #6B7E77;
+      --white: #FFFFFF;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--cream);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+
+    /* Login */
+    .login-wrap {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+    .login-card {
+      background: var(--white);
+      padding: 48px;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(28,36,32,0.08);
+      border: 1px solid var(--cream-dark);
+      width: 100%;
+      max-width: 400px;
+    }
+    .login-card h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 8px;
+    }
+    .login-card p {
+      font-size: 0.9rem;
+      color: var(--text-light);
+      margin-bottom: 28px;
+    }
+    .login-card label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+    .login-card input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1.5px solid var(--cream-dark);
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+    }
+    .login-card input:focus {
+      outline: none;
+      border-color: var(--sage);
+    }
+    .login-card button {
+      width: 100%;
+      padding: 14px;
+      background: var(--sage);
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .login-card button:hover { background: var(--sage-dark); }
+    .login-error {
+      font-size: 0.85rem;
+      color: #c0392b;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* Dashboard */
+    .dashboard { display: none; }
+    .dashboard.visible { display: block; }
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 32px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--cream-dark);
+    }
+    .admin-header h1 { font-size: 1.4rem; font-weight: 600; color: var(--dark); }
+    .btn-logout {
+      padding: 10px 20px;
+      background: transparent;
+      color: var(--text-light);
+      border: 1px solid var(--cream-dark);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .btn-logout:hover { border-color: var(--sage); color: var(--sage-dark); }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 12px 20px;
+      background: var(--white);
+      border: 1.5px solid var(--cream-dark);
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--text-light);
+      cursor: pointer;
+    }
+    .tab:hover { border-color: var(--sage); color: var(--sage-dark); }
+    .tab.active { background: var(--sage); border-color: var(--sage); color: var(--white); }
+
+    .panel { display: none; }
+    .panel.visible { display: block; }
+    .panel h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 16px;
+    }
+    .table-wrap {
+      overflow-x: auto;
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--cream-dark);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--cream-dark);
+    }
+    th {
+      font-weight: 600;
+      color: var(--dark);
+      background: rgba(125,155,118,0.06);
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: rgba(125,155,118,0.03); }
+    .muted { color: var(--text-light); font-size: 0.8rem; }
+    .load-btn {
+      padding: 10px 18px;
+      background: var(--sage);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      margin-bottom: 16px;
+    }
+    .load-btn:hover { background: var(--sage-dark); }
+    .empty { color: var(--text-light); padding: 24px; text-align: center; }
+    .err-msg { color: #c0392b; padding: 12px 0; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+
+  <div id="loginView" class="login-wrap">
+    <div class="login-card">
+      <h1>Serenest Admin</h1>
+      <p>Enter your admin key to continue.</p>
+      <form id="loginForm">
+        <label for="adminKey">Admin key</label>
+        <input type="password" id="adminKey" name="adminKey" placeholder="Paste admin key" autocomplete="off" required>
+        <button type="submit">Continue</button>
+        <p id="loginError" class="login-error">Invalid key. Try again.</p>
+      </form>
+    </div>
+  </div>
+
+  <div id="dashboardView" class="dashboard">
+    <div class="container">
+      <header class="admin-header">
+        <h1>Serenest Admin</h1>
+        <button type="button" class="btn-logout" id="logoutBtn">Log out</button>
+      </header>
+
+      <div class="tabs">
+        <button type="button" class="tab active" data-tab="bookings">Bookings</button>
+        <button type="button" class="tab" data-tab="contact">Contact messages</button>
+        <button type="button" class="tab" data-tab="applications">Doctor applications</button>
+      </div>
+
+      <div id="panelBookings" class="panel visible">
+        <h2>Bookings</h2>
+        <button type="button" class="load-btn" data-load="bookings">Refresh</button>
+        <div id="bookingsError" class="err-msg" style="display:none;"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Specialist</th>
+                <th>Session</th>
+                <th>Date / Time</th>
+                <th>Notes</th>
+              </tr>
+            </thead>
+            <tbody id="bookingsBody"></tbody>
+          </table>
+        </div>
+        <p id="bookingsEmpty" class="empty" style="display:none;">No bookings yet.</p>
+      </div>
+
+      <div id="panelContact" class="panel">
+        <h2>Contact messages</h2>
+        <button type="button" class="load-btn" data-load="contact">Refresh</button>
+        <div id="contactError" class="err-msg" style="display:none;"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>As</th>
+                <th>Subject</th>
+                <th>Message</th>
+              </tr>
+            </thead>
+            <tbody id="contactBody"></tbody>
+          </table>
+        </div>
+        <p id="contactEmpty" class="empty" style="display:none;">No messages yet.</p>
+      </div>
+
+      <div id="panelApplications" class="panel">
+        <h2>Doctor applications</h2>
+        <button type="button" class="load-btn" data-load="applications">Refresh</button>
+        <div id="applicationsError" class="err-msg" style="display:none;"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Specialty</th>
+                <th>Experience</th>
+                <th>Introduction</th>
+              </tr>
+            </thead>
+            <tbody id="applicationsBody"></tbody>
+          </table>
+        </div>
+        <p id="applicationsEmpty" class="empty" style="display:none;">No applications yet.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/config.js"></script>
+  <script>
+    (function() {
+      var STORAGE_KEY = 'serenest_admin_key';
+      var API = (window.API_BASE || '') + '/api';
+
+      function getKey() {
+        return sessionStorage.getItem(STORAGE_KEY) || '';
+      }
+      function setKey(key) {
+        sessionStorage.setItem(STORAGE_KEY, key);
+      }
+      function clearKey() {
+        sessionStorage.removeItem(STORAGE_KEY);
+      }
+
+      function authHeaders() {
+        return { 'X-Admin-Key': getKey(), 'Content-Type': 'application/json' };
+      }
+
+      function showLogin() {
+        document.getElementById('loginView').style.display = 'flex';
+        document.getElementById('dashboardView').classList.remove('visible');
+        document.getElementById('adminKey').value = '';
+        document.getElementById('loginError').style.display = 'none';
+      }
+      function showDashboard() {
+        document.getElementById('loginView').style.display = 'none';
+        document.getElementById('dashboardView').classList.add('visible');
+        loadBookings();
+      }
+
+      document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var key = document.getElementById('adminKey').value.trim();
+        var errEl = document.getElementById('loginError');
+        errEl.style.display = 'none';
+        if (!key) return;
+        setKey(key);
+        fetch(API + '/admin/bookings', { headers: authHeaders() })
+          .then(function(r) {
+            if (r.status === 401) {
+              clearKey();
+              errEl.style.display = 'block';
+              return;
+            }
+            return r.json();
+          })
+          .then(function(data) {
+            if (data && data.ok) {
+              showDashboard();
+            } else if (data && !data.ok) {
+              clearKey();
+              errEl.style.display = 'block';
+            }
+          })
+          .catch(function() {
+            clearKey();
+            errEl.textContent = 'Network error. Try again.';
+            errEl.style.display = 'block';
+          });
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', function() {
+        clearKey();
+        showLogin();
+      });
+
+      function switchTab(tabId) {
+        document.querySelectorAll('.tab').forEach(function(t) {
+          t.classList.toggle('active', t.getAttribute('data-tab') === tabId);
+        });
+        document.querySelectorAll('.panel').forEach(function(p) {
+          var id = p.id;
+          var visible = (id === 'panelBookings' && tabId === 'bookings') ||
+            (id === 'panelContact' && tabId === 'contact') ||
+            (id === 'panelApplications' && tabId === 'applications');
+          p.classList.toggle('visible', visible);
+        });
+        if (tabId === 'contact' && !document.getElementById('contactBody').innerHTML) loadContact();
+        if (tabId === 'applications' && !document.getElementById('applicationsBody').innerHTML) loadApplications();
+      }
+      document.querySelectorAll('.tab').forEach(function(t) {
+        t.addEventListener('click', function() {
+          switchTab(this.getAttribute('data-tab'));
+        });
+      });
+
+      function showErr(panel, msg) {
+        var el = document.getElementById(panel + 'Error');
+        if (el) {
+          el.textContent = msg || 'Failed to load.';
+          el.style.display = 'block';
+        }
+      }
+      function hideErr(panel) {
+        var el = document.getElementById(panel + 'Error');
+        if (el) el.style.display = 'none';
+      }
+
+      function loadBookings() {
+        hideErr('bookings');
+        fetch(API + '/admin/bookings', { headers: authHeaders() })
+          .then(function(r) {
+            if (r.status === 401) { showLogin(); return null; }
+            return r.json();
+          })
+          .then(function(data) {
+            if (!data) return;
+            if (!data.ok) {
+              showErr('bookings', data.error || 'Failed to load');
+              return;
+            }
+            var rows = data.data || [];
+            var tbody = document.getElementById('bookingsBody');
+            tbody.innerHTML = '';
+            document.getElementById('bookingsEmpty').style.display = rows.length ? 'none' : 'block';
+            rows.forEach(function(row) {
+              var tr = document.createElement('tr');
+              tr.innerHTML =
+                '<td class="muted">' + escapeHtml(row.created_at || '') + '</td>' +
+                '<td>' + escapeHtml(row.first_name + ' ' + row.last_name) + '</td>' +
+                '<td>' + escapeHtml(row.email) + '</td>' +
+                '<td>' + escapeHtml(row.phone || '') + '</td>' +
+                '<td>' + escapeHtml(row.specialist || '') + '</td>' +
+                '<td>' + escapeHtml(row.session_type || '') + '</td>' +
+                '<td>' + escapeHtml(row.preferred_date || '') + ' · ' + escapeHtml(row.time_slot || '') + '</td>' +
+                '<td>' + escapeHtml(row.notes || '—') + '</td>';
+              tbody.appendChild(tr);
+            });
+          })
+          .catch(function() { showErr('bookings', 'Network error'); });
+      }
+
+      function loadContact() {
+        hideErr('contact');
+        fetch(API + '/admin/contact', { headers: authHeaders() })
+          .then(function(r) {
+            if (r.status === 401) { showLogin(); return null; }
+            return r.json();
+          })
+          .then(function(data) {
+            if (!data) return;
+            if (!data.ok) {
+              showErr('contact', data.error || 'Failed to load');
+              return;
+            }
+            var rows = data.data || [];
+            var tbody = document.getElementById('contactBody');
+            tbody.innerHTML = '';
+            document.getElementById('contactEmpty').style.display = rows.length ? 'none' : 'block';
+            rows.forEach(function(row) {
+              var tr = document.createElement('tr');
+              tr.innerHTML =
+                '<td class="muted">' + escapeHtml(row.created_at || '') + '</td>' +
+                '<td>' + escapeHtml(row.first_name + ' ' + row.last_name) + '</td>' +
+                '<td>' + escapeHtml(row.email) + '</td>' +
+                '<td>' + escapeHtml(row.phone || '—') + '</td>' +
+                '<td>' + escapeHtml(row.reaching_out_as || '—') + '</td>' +
+                '<td>' + escapeHtml(row.subject || '—') + '</td>' +
+                '<td>' + escapeHtml(row.message || '') + '</td>';
+              tbody.appendChild(tr);
+            });
+          })
+          .catch(function() { showErr('contact', 'Network error'); });
+      }
+
+      function loadApplications() {
+        hideErr('applications');
+        fetch(API + '/admin/applications', { headers: authHeaders() })
+          .then(function(r) {
+            if (r.status === 401) { showLogin(); return null; }
+            return r.json();
+          })
+          .then(function(data) {
+            if (!data) return;
+            if (!data.ok) {
+              showErr('applications', data.error || 'Failed to load');
+              return;
+            }
+            var rows = data.data || [];
+            var tbody = document.getElementById('applicationsBody');
+            tbody.innerHTML = '';
+            document.getElementById('applicationsEmpty').style.display = rows.length ? 'none' : 'block';
+            rows.forEach(function(row) {
+              var tr = document.createElement('tr');
+              tr.innerHTML =
+                '<td class="muted">' + escapeHtml(row.created_at || '') + '</td>' +
+                '<td>' + escapeHtml(row.first_name + ' ' + row.last_name) + '</td>' +
+                '<td>' + escapeHtml(row.email) + '</td>' +
+                '<td>' + escapeHtml(row.phone || '') + '</td>' +
+                '<td>' + escapeHtml(row.specialty || '') + '</td>' +
+                '<td>' + escapeHtml(row.years_experience || '') + '</td>' +
+                '<td>' + escapeHtml(row.introduction || '—') + '</td>';
+              tbody.appendChild(tr);
+            });
+          })
+          .catch(function() { showErr('applications', 'Network error'); });
+      }
+
+      function escapeHtml(s) {
+        if (s == null) return '';
+        var div = document.createElement('div');
+        div.textContent = s;
+        return div.innerHTML;
+      }
+
+      document.querySelectorAll('.load-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var which = this.getAttribute('data-load');
+          if (which === 'bookings') loadBookings();
+          else if (which === 'contact') loadContact();
+          else if (which === 'applications') loadApplications();
+        });
+      });
+
+      if (getKey()) {
+        fetch(API + '/admin/bookings', { headers: authHeaders() })
+          .then(function(r) {
+            if (r.status === 401) { clearKey(); showLogin(); }
+            else { showDashboard(); }
+          })
+          .catch(function() { showLogin(); });
+      }
+    })();
+  </script>
+</body>
+</html>

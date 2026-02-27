@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Book a Consultation — Serenest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);transition:all 0.3s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
+nav ul a{text-decoration:none;font-size:0.85rem;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;transition:color 0.2s;}
+nav ul a:hover{color:var(--sage-dark);}
+.nav-cta{background:var(--sage)!important;color:var(--white)!important;padding:10px 22px;border-radius:40px;font-weight:500!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+.hamburger span{width:24px;height:2px;background:var(--dark);border-radius:2px;display:block;}
+
+/* BOOKING PAGE */
+.booking-page{min-height:100vh;padding:120px 60px 80px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;max-width:1100px;margin:0 auto;}
+.booking-left h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,4vw,3.8rem);font-weight:300;color:var(--dark);margin-bottom:16px;line-height:1.1;}
+.booking-left h1 em{font-style:italic;color:var(--sage-dark);}
+.booking-left p{font-size:0.95rem;line-height:1.8;color:var(--text-light);font-weight:300;margin-bottom:40px;}
+.trust-list{list-style:none;}
+.trust-list li{display:flex;align-items:center;gap:12px;font-size:0.87rem;color:var(--text);margin-bottom:14px;font-weight:300;}
+.trust-icon{width:32px;height:32px;border-radius:10px;background:rgba(125,155,118,0.1);border:1px solid rgba(125,155,118,0.2);display:flex;align-items:center;justify-content:center;font-size:0.9rem;flex-shrink:0;}
+.testimonial-snippet{margin-top:40px;background:var(--white);border-radius:20px;padding:24px;border:1.5px solid var(--cream-dark);}
+.testimonial-snippet p{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-style:italic;color:var(--dark);line-height:1.6;margin-bottom:12px;}
+.test-author{display:flex;align-items:center;gap:10px;}
+.test-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--sage-light),var(--teal));display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:500;color:white;}
+.test-author p{font-size:0.78rem;color:var(--text-light);}
+
+/* FORM */
+.booking-form-card{background:var(--white);border-radius:28px;padding:44px;box-shadow:0 24px 72px rgba(28,36,32,0.08);border:1.5px solid var(--cream-dark);position:sticky;top:100px;}
+.step-indicator{display:flex;gap:8px;margin-bottom:32px;}
+.step-dot{width:8px;height:8px;border-radius:50%;background:var(--cream-dark);}
+.step-dot.active{background:var(--sage);width:24px;border-radius:4px;}
+.form-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:400;color:var(--dark);margin-bottom:6px;}
+.form-subtitle{font-size:0.84rem;color:var(--text-light);margin-bottom:28px;font-weight:300;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:0.76rem;font-weight:500;color:var(--text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:7px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:13px 16px;border:1.5px solid var(--cream-dark);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--text);background:var(--cream);outline:none;transition:border-color 0.2s;appearance:none;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--sage);background:white;}
+.form-group textarea{height:90px;resize:vertical;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+
+/* SESSION TYPE SELECTOR */
+.session-types{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px;}
+.session-type{border:1.5px solid var(--cream-dark);border-radius:12px;padding:12px;cursor:pointer;text-align:center;transition:all 0.2s;background:var(--cream);}
+.session-type:hover,.session-type.selected{border-color:var(--sage);background:rgba(125,155,118,0.06);}
+.session-type.selected{background:rgba(125,155,118,0.1);}
+.session-type-icon{font-size:1.2rem;margin-bottom:4px;}
+.session-type h4{font-size:0.78rem;font-weight:500;color:var(--dark);}
+.session-type p{font-size:0.7rem;color:var(--text-light);}
+
+/* TIME SLOTS */
+.slot-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;}
+.time-slot{border:1.5px solid var(--cream-dark);border-radius:10px;padding:8px;text-align:center;cursor:pointer;font-size:0.78rem;font-weight:400;color:var(--text-light);background:var(--cream);transition:all 0.2s;}
+.time-slot:hover,.time-slot.selected{border-color:var(--sage);color:var(--sage-dark);background:rgba(125,155,118,0.06);}
+.time-slot.unavailable{opacity:0.35;cursor:not-allowed;}
+
+.form-submit{width:100%;background:var(--sage);color:var(--white);border:none;padding:16px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.25s;margin-top:8px;}
+.form-submit:hover{background:var(--sage-dark);transform:translateY(-2px);box-shadow:0 12px 30px rgba(125,155,118,0.3);}
+.form-note{text-align:center;font-size:0.72rem;color:var(--text-light);margin-top:12px;font-style:italic;}
+
+/* SUCCESS STATE */
+.success-state{display:none;text-align:center;padding:20px 0;}
+.success-icon{font-size:4rem;margin-bottom:16px;}
+.success-state h2{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--dark);margin-bottom:12px;}
+.success-state p{font-size:0.9rem;color:var(--text-light);line-height:1.7;font-weight:300;}
+
+footer{background:var(--dark);padding:48px 60px 36px;}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
+.compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.anim-in{opacity:0;animation:fadeUp 0.9s ease forwards;}
+
+@media(max-width:900px){
+  nav{padding:16px 24px;}nav ul{display:none;}
+  .hamburger{display:flex;}
+  .booking-page{grid-template-columns:1fr;padding:100px 24px 60px;gap:40px;}
+  .booking-form-card{position:static;padding:28px;}
+  .session-types{grid-template-columns:1fr 1fr 1fr;}
+  .slot-grid{grid-template-columns:repeat(3,1fr);}
+  footer{padding:32px 24px;}
+}
+</style>
+<script src="/config.js"></script>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="specialists.html">Specialists</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="booking-page">
+  <!-- LEFT SIDE -->
+  <div class="booking-left">
+    <h1 class="anim-in" style="animation-delay:0.2s">Book your <em>first session</em> — it takes 5 minutes.</h1>
+    <p class="anim-in" style="animation-delay:0.4s">Choose your specialist, pick a time that works for you, and you're set. Your session will be secure, private, and completely confidential.</p>
+    <ul class="trust-list anim-in" style="animation-delay:0.5s">
+      <li><div class="trust-icon">🔒</div>100% confidential — your information is never shared</li>
+      <li><div class="trust-icon">🏥</div>All specialists are verified and licensed</li>
+      <li><div class="trust-icon">🎥</div>Secure video connection — no tech expertise needed</li>
+      <li><div class="trust-icon">📋</div>Structured clinical care — not just a chat</li>
+      <li><div class="trust-icon">💊</div>Digital prescriptions available (where applicable)</li>
+      <li><div class="trust-icon">↩️</div>Reschedule or cancel up to 24 hours before</li>
+    </ul>
+    <div class="testimonial-snippet anim-in" style="animation-delay:0.7s">
+      <p>"I was nervous before my first session. By the end, I felt more understood than I had in years."</p>
+      <div class="test-author">
+        <div class="test-avatar">S</div>
+        <p>S.K. · Mumbai · Serenest patient</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOOKING FORM -->
+  <div class="booking-form-card anim-in" style="animation-delay:0.6s">
+    <div id="booking-form-content">
+      <div class="step-indicator">
+        <div class="step-dot active"></div>
+        <div class="step-dot"></div>
+        <div class="step-dot"></div>
+      </div>
+      <div class="form-title">Book a Consultation</div>
+      <div class="form-subtitle">Fill in your details and we'll confirm your session by email.</div>
+
+      <form id="bookingForm" onsubmit="handleBooking(event)">
+        <input type="hidden" name="session_type" id="booking_session_type" value="Video">
+        <input type="hidden" name="time_slot" id="booking_time_slot" value="3:30 PM">
+        <div class="form-row">
+          <div class="form-group">
+            <label>First Name</label>
+            <input type="text" name="first_name" placeholder="Your name" required>
+          </div>
+          <div class="form-group">
+            <label>Last Name</label>
+            <input type="text" name="last_name" placeholder="Last name" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" name="email" placeholder="your@email.com" required>
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" name="phone" placeholder="+91 98765 43210" required>
+        </div>
+        <div class="form-group">
+          <label>Choose Specialist</label>
+          <select name="specialist" required>
+            <option value="">Select a specialist</option>
+            <option value="Dr. Chirag Aambalia — Psychiatrist">Dr. Chirag Aambalia — Psychiatrist</option>
+            <option value="Dr. Priya Sharma — Psychiatrist">Dr. Priya Sharma — Psychiatrist</option>
+            <option value="Ms. Kavya Nair — Clinical Psychologist">Ms. Kavya Nair — Clinical Psychologist</option>
+            <option value="Mr. Arjun Mehta — Counselling Psychologist">Mr. Arjun Mehta — Counselling Psychologist</option>
+            <option value="Dr. Meera Iyer — Addiction Psychiatrist">Dr. Meera Iyer — Addiction Psychiatrist</option>
+            <option value="Ms. Ananya Gupta — Trauma Therapist">Ms. Ananya Gupta — Trauma Therapist</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Session Type</label>
+          <div class="session-types">
+            <div class="session-type selected" onclick="selectType(this)">
+              <div class="session-type-icon">🎥</div>
+              <h4>Video</h4>
+              <p>Recommended</p>
+            </div>
+            <div class="session-type" onclick="selectType(this)">
+              <div class="session-type-icon">📞</div>
+              <h4>Audio</h4>
+              <p>Voice only</p>
+            </div>
+            <div class="session-type" onclick="selectType(this)">
+              <div class="session-type-icon">💬</div>
+              <h4>Chat</h4>
+              <p>Text-based</p>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Preferred Date</label>
+          <input type="date" name="preferred_date" required min="">
+        </div>
+        <div class="form-group">
+          <label>Available Time Slots</label>
+          <div class="slot-grid">
+            <div class="time-slot" onclick="selectSlot(this)">9:00 AM</div>
+            <div class="time-slot unavailable">10:00 AM</div>
+            <div class="time-slot" onclick="selectSlot(this)">11:00 AM</div>
+            <div class="time-slot unavailable">12:00 PM</div>
+            <div class="time-slot" onclick="selectSlot(this)">2:00 PM</div>
+            <div class="time-slot selected" onclick="selectSlot(this)">3:30 PM</div>
+            <div class="time-slot" onclick="selectSlot(this)">5:00 PM</div>
+            <div class="time-slot" onclick="selectSlot(this)">6:30 PM</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>What brings you here? <span style="color:var(--text-light);font-weight:300;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <textarea name="notes" placeholder="Briefly describe what you'd like support with. This helps your specialist prepare for your session."></textarea>
+        </div>
+        <button type="submit" class="form-submit" id="bookingSubmitBtn">Confirm Booking →</button>
+        <p class="form-note">🔒 Your information is completely confidential. We'll send a confirmation to your email.</p>
+      </form>
+    </div>
+
+    <div class="success-state" id="successState">
+      <div class="success-icon">✅</div>
+      <h2>You're booked in.</h2>
+      <p>A confirmation has been sent to your email with your session link, specialist details, and what to expect. See you soon.</p>
+      <br>
+      <p style="font-size:0.8rem;color:var(--text-light);">Need to change your booking? Email us at <a href="mailto:hello@serenest.in" style="color:var(--sage)">hello@serenest.in</a></p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <p>© 2025 Serenest. All rights reserved.</p>
+    <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
+  </div>
+</footer>
+
+<script>
+function updateNavScroll(){const nav=document.getElementById('navbar');const isMobile=window.innerWidth<=900;nav.style.padding=isMobile?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
+window.addEventListener('scroll',updateNavScroll);
+window.addEventListener('resize',updateNavScroll);
+updateNavScroll();
+const hamburgerBtn=document.getElementById('hamburger');
+hamburgerBtn.addEventListener('click',()=>{const menu=document.getElementById('nav-menu');const isOpen=menu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
+
+// Set min date to today
+document.querySelector('input[type="date"]').min=new Date().toISOString().split('T')[0];
+
+function selectType(el){
+  document.querySelectorAll('.session-type').forEach(t=>t.classList.remove('selected'));
+  el.classList.add('selected');
+  var h4=el.querySelector('h4');
+  if(h4) document.getElementById('booking_session_type').value=h4.textContent.trim();
+}
+function selectSlot(el){
+  if(el.classList.contains('unavailable'))return;
+  document.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('booking_time_slot').value=el.textContent.trim();
+}
+function handleBooking(e){
+  e.preventDefault();
+  var btn=document.getElementById('bookingSubmitBtn');
+  var origText=btn.textContent;
+  btn.textContent='Sending...';
+  btn.disabled=true;
+  var form=e.target;
+  var data={};
+  ['first_name','last_name','email','phone','specialist','session_type','preferred_date','time_slot','notes'].forEach(function(name){
+    var el=form.querySelector('[name="'+name+'"]');
+    if(el) data[name]=el.value;
+  });
+  fetch((window.API_BASE||'')+'/api/booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
+    .then(function(r){return r.json();})
+    .then(function(json){
+      if(json.ok){
+        document.getElementById('booking-form-content').style.display='none';
+        var s=document.getElementById('successState');
+        s.style.display='block';
+        s.style.opacity='0';
+        setTimeout(function(){s.style.transition='opacity 0.5s ease';s.style.opacity='1';},50);
+      }else{
+        btn.textContent=origText;
+        btn.disabled=false;
+        alert(json.error||'Something went wrong. Please try again.');
+      }
+    })
+    .catch(function(){
+      btn.textContent=origText;
+      btn.disabled=false;
+      alert('Could not reach server. Please check your connection and try again.');
+    });
+}
+</script>
+</body>
+</html>

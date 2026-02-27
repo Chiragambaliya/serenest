@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact — Serenest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);transition:all 0.3s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
+nav ul a{text-decoration:none;font-size:0.85rem;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;transition:color 0.2s;}
+nav ul a:hover{color:var(--sage-dark);}
+.nav-cta{background:var(--sage)!important;color:var(--white)!important;padding:10px 22px;border-radius:40px;font-weight:500!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+.hamburger span{width:24px;height:2px;background:var(--dark);border-radius:2px;display:block;}
+.section-tag{display:inline-block;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--sage);margin-bottom:16px;}
+
+.contact-page{min-height:100vh;padding:120px 60px 100px;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;max-width:1100px;margin:0 auto;}
+
+.contact-left h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.5rem,4vw,3.8rem);font-weight:300;color:var(--dark);margin-bottom:16px;line-height:1.1;}
+.contact-left h1 em{font-style:italic;color:var(--sage-dark);}
+.contact-left p{font-size:0.95rem;line-height:1.8;color:var(--text-light);font-weight:300;margin-bottom:44px;}
+
+.contact-methods{display:flex;flex-direction:column;gap:16px;margin-bottom:40px;}
+.contact-method{display:flex;align-items:center;gap:16px;background:var(--white);border-radius:16px;padding:20px 22px;border:1.5px solid var(--cream-dark);transition:all 0.3s;text-decoration:none;}
+.contact-method:hover{border-color:var(--sage-light);transform:translateX(6px);}
+.cm-icon{width:44px;height:44px;border-radius:12px;background:rgba(125,155,118,0.1);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.cm-text h4{font-size:0.9rem;font-weight:500;color:var(--dark);}
+.cm-text p{font-size:0.8rem;color:var(--text-light);margin-top:2px;}
+
+.emergency-box{background:rgba(255,100,100,0.05);border:1.5px solid rgba(255,100,100,0.15);border-radius:16px;padding:20px 22px;}
+.emergency-box h4{font-size:0.87rem;font-weight:500;color:#C0392B;margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+.emergency-box p{font-size:0.82rem;line-height:1.7;color:var(--text-light);font-weight:300;}
+.emergency-box a{color:#C0392B;}
+
+.contact-form-card{background:var(--white);border-radius:28px;padding:44px;box-shadow:0 24px 72px rgba(28,36,32,0.08);border:1.5px solid var(--cream-dark);position:sticky;top:100px;}
+.form-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:400;color:var(--dark);margin-bottom:6px;}
+.form-subtitle{font-size:0.84rem;color:var(--text-light);margin-bottom:28px;font-weight:300;}
+.form-group{margin-bottom:18px;}
+.form-group label{display:block;font-size:0.76rem;font-weight:500;color:var(--text);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:7px;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:13px 16px;border:1.5px solid var(--cream-dark);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--text);background:var(--cream);outline:none;transition:border-color 0.2s;appearance:none;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--sage);background:white;}
+.form-group textarea{height:120px;resize:vertical;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-submit{width:100%;background:var(--sage);color:var(--white);border:none;padding:16px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.25s;margin-top:8px;}
+.form-submit:hover{background:var(--sage-dark);}
+.form-note{text-align:center;font-size:0.72rem;color:var(--text-light);margin-top:12px;font-style:italic;}
+
+.success-state{display:none;text-align:center;padding:20px;}
+.success-icon{font-size:3.5rem;margin-bottom:12px;}
+.success-state h2{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--dark);margin-bottom:12px;}
+.success-state p{font-size:0.9rem;color:var(--text-light);line-height:1.7;}
+
+footer{background:var(--dark);padding:48px 60px 36px;}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
+.compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.anim-in{opacity:0;animation:fadeUp 0.9s ease forwards;}
+
+@media(max-width:900px){
+  nav{padding:16px 24px;}nav ul{display:none;}
+  .hamburger{display:flex;}
+  .contact-page{grid-template-columns:1fr;padding:100px 24px 60px;gap:40px;}
+  .contact-form-card{position:static;padding:28px;}
+  .form-row{grid-template-columns:1fr;}
+  footer{padding:32px 24px;}
+}
+</style>
+<script src="/config.js"></script>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="specialists.html">Specialists</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<div class="contact-page">
+  <div class="contact-left">
+    <div class="section-tag anim-in" style="animation-delay:0.1s">Get in Touch</div>
+    <h1 class="anim-in" style="animation-delay:0.2s">We're here.<br><em>How can we help?</em></h1>
+    <p class="anim-in" style="animation-delay:0.3s">Whether you have a question about our platform, need help with a booking, or want to partner with us — we'd love to hear from you.</p>
+
+    <div class="contact-methods anim-in" style="animation-delay:0.4s">
+      <a href="mailto:hello@serenest.in" class="contact-method">
+        <div class="cm-icon">✉️</div>
+        <div class="cm-text"><h4>Email Us</h4><p>hello@serenest.in · We reply within 24 hours</p></div>
+      </a>
+      <a href="https://wa.me/919876543210" class="contact-method" target="_blank">
+        <div class="cm-icon">💬</div>
+        <div class="cm-text"><h4>WhatsApp</h4><p>+91 98765 43210 · Quick responses during working hours</p></div>
+      </a>
+      <a href="#" class="contact-method">
+        <div class="cm-icon">📷</div>
+        <div class="cm-text"><h4>Instagram</h4><p>@serenest.in · Follow for mental health content</p></div>
+      </a>
+      <a href="#" class="contact-method">
+        <div class="cm-icon">💼</div>
+        <div class="cm-text"><h4>LinkedIn</h4><p>Serenest · Updates, articles, and team news</p></div>
+      </a>
+    </div>
+
+    <div class="emergency-box anim-in" style="animation-delay:0.5s">
+      <h4>🚨 Mental Health Crisis?</h4>
+      <p>If you or someone you know is in immediate danger, please contact emergency services (112) or a crisis helpline immediately. iCall: <a href="tel:9152987821">9152987821</a> · Vandrevala Foundation: <a href="tel:18602662345">1860-2662-345</a> (24/7)</p>
+    </div>
+  </div>
+
+  <div class="contact-form-card anim-in" style="animation-delay:0.5s">
+    <div id="contact-form-content">
+      <div class="form-title">Send a Message</div>
+      <div class="form-subtitle">We typically respond within one business day.</div>
+      <form onsubmit="handleContact(event)">
+        <div class="form-row">
+          <div class="form-group"><label>First Name</label><input type="text" name="first_name" placeholder="Your name" required></div>
+          <div class="form-group"><label>Last Name</label><input type="text" name="last_name" placeholder="Last name" required></div>
+        </div>
+        <div class="form-group"><label>Email Address</label><input type="email" name="email" placeholder="your@email.com" required></div>
+        <div class="form-group"><label>Phone (optional)</label><input type="tel" name="phone" placeholder="+91 ..."></div>
+        <div class="form-group">
+          <label>I'm reaching out as a...</label>
+          <select name="reaching_out_as">
+            <option value="Patient / prospective patient">Patient / prospective patient</option>
+            <option value="Doctor / mental health professional">Doctor / mental health professional</option>
+            <option value="Media / press">Media / press</option>
+            <option value="Partner / investor">Partner / investor</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Subject</label>
+          <select name="subject">
+            <option value="General enquiry">General enquiry</option>
+            <option value="Booking help">Booking help</option>
+            <option value="Technical support">Technical support</option>
+            <option value="Doctor application">Doctor application</option>
+            <option value="Partnership">Partnership</option>
+            <option value="Feedback">Feedback</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label>Your Message</label><textarea name="message" placeholder="How can we help you?" required></textarea></div>
+        <button type="submit" class="form-submit" id="contactSubmitBtn">Send Message →</button>
+        <p class="form-note">🔒 Your message is private. We'll never share your details with third parties.</p>
+      </form>
+    </div>
+    <div class="success-state" id="contactSuccess">
+      <div class="success-icon">📨</div>
+      <h2>Message received.</h2>
+      <p>Thank you for reaching out. We'll get back to you within one business day at your email address.</p>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-bottom">
+    <p>© 2025 Serenest. All rights reserved.</p>
+    <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
+  </div>
+</footer>
+
+<script>
+function updateNavScroll(){const nav=document.getElementById('navbar');const isMobile=window.innerWidth<=900;nav.style.padding=isMobile?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
+window.addEventListener('scroll',updateNavScroll);
+window.addEventListener('resize',updateNavScroll);
+updateNavScroll();
+const hamburgerBtn=document.getElementById('hamburger');
+hamburgerBtn.addEventListener('click',()=>{const menu=document.getElementById('nav-menu');const isOpen=menu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
+function handleContact(e){
+  e.preventDefault();
+  var btn=document.getElementById('contactSubmitBtn');
+  var origText=btn.textContent;
+  btn.textContent='Sending...';
+  btn.disabled=true;
+  var form=e.target;
+  var data={};
+  ['first_name','last_name','email','phone','reaching_out_as','subject','message'].forEach(function(name){
+    var el=form.querySelector('[name="'+name+'"]');
+    if(el) data[name]=el.value;
+  });
+  fetch((window.API_BASE||'')+'/api/contact',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
+    .then(function(r){return r.json();})
+    .then(function(json){
+      if(json.ok){
+        document.getElementById('contact-form-content').style.display='none';
+        var s=document.getElementById('contactSuccess');
+        s.style.display='block';
+        s.style.opacity='0';
+        setTimeout(function(){s.style.transition='opacity 0.5s';s.style.opacity='1';},50);
+      }else{
+        btn.textContent=origText;
+        btn.disabled=false;
+        alert(json.error||'Something went wrong. Please try again.');
+      }
+    })
+    .catch(function(){
+      btn.textContent=origText;
+      btn.disabled=false;
+      alert('Could not reach server. Please check your connection and try again.');
+    });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+node_modules/
+serenest.db
+serenest.db-wal
+serenest.db-shm
+.env
+*.log

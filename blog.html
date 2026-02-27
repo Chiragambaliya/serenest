@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blog — Serenest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);transition:all 0.3s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
+nav ul a{text-decoration:none;font-size:0.85rem;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;transition:color 0.2s;}
+nav ul a:hover{color:var(--sage-dark);}nav ul a.active{color:var(--sage-dark);font-weight:500;}
+.nav-cta{background:var(--sage)!important;color:var(--white)!important;padding:10px 22px;border-radius:40px;font-weight:500!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+.hamburger span{width:24px;height:2px;background:var(--dark);border-radius:2px;display:block;}
+.section-tag{display:inline-block;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--sage);margin-bottom:16px;}
+
+/* HERO */
+.page-hero{padding:160px 60px 80px;background:var(--dark);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(125,155,118,0.1) 0%,transparent 60%);pointer-events:none;}
+.page-hero-inner{max-width:700px;position:relative;z-index:1;}
+.page-hero .section-tag{color:rgba(168,196,162,0.7);}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5vw,4.5rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:16px;}
+.page-hero h1 em{font-style:italic;color:var(--sage-light);}
+.page-hero p{font-size:1rem;line-height:1.8;color:rgba(247,245,240,0.6);font-weight:300;}
+
+/* BLOG CATEGORIES */
+.category-bar{padding:28px 60px;background:var(--white);border-bottom:1px solid var(--cream-dark);}
+.cat-inner{display:flex;gap:10px;flex-wrap:wrap;}
+.cat-btn{padding:8px 18px;border-radius:40px;border:1.5px solid var(--cream-dark);background:var(--cream);font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--text-light);cursor:pointer;transition:all 0.2s;}
+.cat-btn:hover,.cat-btn.active{background:var(--sage);border-color:var(--sage);color:var(--white);}
+
+/* FEATURED POST */
+.section-featured{padding:72px 60px 48px;}
+.featured-post{display:grid;grid-template-columns:1fr 1fr;gap:0;border-radius:28px;overflow:hidden;background:var(--white);border:1.5px solid var(--cream-dark);max-width:1100px;margin:0 auto;transition:all 0.3s;text-decoration:none;color:inherit;}
+.featured-post:hover{box-shadow:0 24px 60px rgba(125,155,118,0.1);border-color:var(--sage-light);}
+.featured-visual{background:linear-gradient(135deg,var(--sage),var(--teal));display:flex;align-items:center;justify-content:center;min-height:360px;font-size:6rem;position:relative;overflow:hidden;}
+.featured-visual::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.08) 1px,transparent 1px);background-size:28px 28px;}
+.featured-visual span{position:relative;z-index:1;}
+.featured-content{padding:52px 48px;display:flex;flex-direction:column;justify-content:center;}
+.post-meta{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.post-category{background:rgba(125,155,118,0.1);border:1px solid rgba(125,155,118,0.25);color:var(--sage-dark);padding:4px 12px;border-radius:20px;font-size:0.72rem;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;}
+.post-date{font-size:0.78rem;color:var(--text-light);}
+.featured-content h2{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--dark);margin-bottom:16px;line-height:1.2;}
+.featured-content p{font-size:0.9rem;line-height:1.8;color:var(--text-light);font-weight:300;margin-bottom:24px;}
+.post-author{display:flex;align-items:center;gap:10px;}
+.author-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--sage-light),var(--teal));display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:500;color:white;}
+.author-name{font-size:0.82rem;font-weight:500;color:var(--dark);}
+.author-title{font-size:0.72rem;color:var(--text-light);}
+.read-time{margin-left:auto;font-size:0.75rem;color:var(--text-light);}
+
+/* BLOG GRID */
+.section-posts{padding:0 60px 100px;}
+.posts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1100px;margin:0 auto;}
+.post-card{background:var(--white);border-radius:20px;overflow:hidden;border:1.5px solid var(--cream-dark);transition:all 0.3s;text-decoration:none;color:inherit;display:block;}
+.post-card:hover{transform:translateY(-6px);box-shadow:0 20px 50px rgba(125,155,118,0.1);border-color:var(--sage-light);}
+.post-thumbnail{height:180px;display:flex;align-items:center;justify-content:center;font-size:3.5rem;position:relative;overflow:hidden;}
+.post-thumbnail::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.06) 1px,transparent 1px);background-size:24px 24px;}
+.post-thumbnail span{position:relative;z-index:1;}
+.post-content{padding:24px 24px 28px;}
+.post-content .post-meta{margin-bottom:12px;}
+.post-content h3{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--dark);margin-bottom:10px;line-height:1.3;}
+.post-content p{font-size:0.84rem;line-height:1.7;color:var(--text-light);font-weight:300;margin-bottom:16px;}
+.post-footer{display:flex;align-items:center;justify-content:space-between;}
+.post-author-mini{display:flex;align-items:center;gap:8px;}
+.mini-avatar{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--sage-light),var(--teal));display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:white;}
+.mini-name{font-size:0.76rem;color:var(--text-light);}
+.read-more{font-size:0.78rem;color:var(--sage-dark);font-weight:500;}
+
+/* NEWSLETTER */
+.section-newsletter{padding:80px 60px;background:var(--dark);text-align:center;position:relative;overflow:hidden;}
+.section-newsletter::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(125,155,118,0.08) 0%,transparent 60%);pointer-events:none;}
+.section-newsletter h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:300;color:var(--cream);margin-bottom:12px;position:relative;z-index:1;}
+.section-newsletter p{font-size:0.9rem;color:rgba(247,245,240,0.55);margin-bottom:32px;font-weight:300;position:relative;z-index:1;}
+.newsletter-form{display:flex;gap:12px;max-width:440px;margin:0 auto;position:relative;z-index:1;}
+.newsletter-form input{flex:1;padding:14px 20px;border:1px solid rgba(255,255,255,0.12);border-radius:50px;background:rgba(255,255,255,0.06);font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--cream);outline:none;}
+.newsletter-form input::placeholder{color:rgba(247,245,240,0.35);}
+.newsletter-form input:focus{border-color:var(--sage-light);}
+.newsletter-form button{background:var(--sage);color:white;border:none;border-radius:50px;padding:14px 24px;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.newsletter-form button:hover{background:var(--sage-dark);}
+
+footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(255,255,255,0.05);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
+.compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  nav{padding:16px 24px;}nav ul{display:none;}
+  .hamburger{display:flex;}
+  .page-hero{padding:120px 24px 72px;}
+  .category-bar{padding:20px 24px;}
+  .section-featured{padding:48px 24px 32px;}
+  .featured-post{grid-template-columns:1fr;}
+  .featured-visual{min-height:200px;}
+  .featured-content{padding:28px 24px;}
+  .section-posts{padding:0 24px 72px;}
+  .posts-grid{grid-template-columns:1fr;}
+  .section-newsletter{padding:60px 24px;}
+  .newsletter-form{flex-direction:column;}
+  footer{padding:32px 24px;}
+}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="specialists.html">Specialists</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html" class="active">Blog</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag" style="animation:fadeUp 0.8s ease 0.2s both">Mental Health Insights</div>
+    <h1 style="animation:fadeUp 0.9s ease 0.4s both">Understanding your mind<br>starts with <em>knowledge.</em></h1>
+    <p style="animation:fadeUp 0.9s ease 0.6s both">Thoughtful articles on mental health, psychiatry, and wellbeing — written by our specialists to help you understand, heal, and grow.</p>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<div class="category-bar">
+  <div class="cat-inner">
+    <button class="cat-btn active">All</button>
+    <button class="cat-btn">Anxiety & Stress</button>
+    <button class="cat-btn">Depression</button>
+    <button class="cat-btn">Relationships</button>
+    <button class="cat-btn">Deaddiction</button>
+    <button class="cat-btn">Sleep</button>
+    <button class="cat-btn">Psychiatry Explained</button>
+    <button class="cat-btn">Parenting & Children</button>
+  </div>
+</div>
+
+<!-- FEATURED -->
+<section class="section-featured">
+  <a href="#" class="featured-post reveal">
+    <div class="featured-visual" style="background:linear-gradient(135deg,#5A7A54,#7D9B76)">
+      <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.08) 1px,transparent 1px);background-size:28px 28px;"></div>
+      <span style="position:relative;z-index:1;font-size:6rem">🧠</span>
+    </div>
+    <div class="featured-content">
+      <div class="post-meta">
+        <span class="post-category">Psychiatry Explained</span>
+        <span class="post-date">February 18, 2025</span>
+      </div>
+      <h2>What actually happens in your first psychiatry session — and what to expect</h2>
+      <p>Many people avoid seeking psychiatric help because they don't know what to expect. Here's an honest, detailed look at what a first consultation involves — from a psychiatrist's perspective.</p>
+      <div class="post-author">
+        <div class="author-avatar">C</div>
+        <div>
+          <div class="author-name">Dr. Chirag Aambalia</div>
+          <div class="author-title">Founder & Consultant Psychiatrist</div>
+        </div>
+        <div class="read-time">8 min read</div>
+      </div>
+    </div>
+  </a>
+</section>
+
+<!-- BLOG GRID -->
+<section class="section-posts">
+  <div class="posts-grid">
+
+    <a href="#" class="post-card reveal">
+      <div class="post-thumbnail" style="background:linear-gradient(135deg,#8BB8B9,#5B8A8B)"><span>😴</span></div>
+      <div class="post-content">
+        <div class="post-meta"><span class="post-category">Sleep</span><span class="post-date" style="margin-left:8px">Feb 14</span></div>
+        <h3>Why anxiety destroys sleep — and 5 things that actually help</h3>
+        <p>The anxiety-sleep cycle is one of the most common patterns we see in psychiatry. Here's how to break it.</p>
+        <div class="post-footer">
+          <div class="post-author-mini"><div class="mini-avatar">P</div><span class="mini-name">Dr. Priya Sharma</span></div>
+          <span class="read-more">5 min →</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#" class="post-card reveal" style="transition-delay:0.1s">
+      <div class="post-thumbnail" style="background:linear-gradient(135deg,#7D9B76,#A8C4A2)"><span>💊</span></div>
+      <div class="post-content">
+        <div class="post-meta"><span class="post-category">Psychiatry Explained</span><span class="post-date" style="margin-left:8px">Feb 10</span></div>
+        <h3>Antidepressants: what they do, how they work, and what no one tells you</h3>
+        <p>Medication is one of the most misunderstood aspects of mental health treatment. A plain-language guide.</p>
+        <div class="post-footer">
+          <div class="post-author-mini"><div class="mini-avatar">C</div><span class="mini-name">Dr. Chirag Aambalia</span></div>
+          <span class="read-more">7 min →</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#" class="post-card reveal" style="transition-delay:0.2s">
+      <div class="post-thumbnail" style="background:linear-gradient(135deg,#5B8A8B,#7D9B76)"><span>❤️</span></div>
+      <div class="post-content">
+        <div class="post-meta"><span class="post-category">Relationships</span><span class="post-date" style="margin-left:8px">Feb 6</span></div>
+        <h3>How to support a partner with depression without burning yourself out</h3>
+        <p>Loving someone with depression takes both compassion and boundaries. Here's how to navigate it.</p>
+        <div class="post-footer">
+          <div class="post-author-mini"><div class="mini-avatar">K</div><span class="mini-name">Ms. Kavya Nair</span></div>
+          <span class="read-more">6 min →</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#" class="post-card reveal">
+      <div class="post-thumbnail" style="background:linear-gradient(135deg,#5A7A54,#5B8A8B)"><span>🍷</span></div>
+      <div class="post-content">
+        <div class="post-meta"><span class="post-category">Deaddiction</span><span class="post-date" style="margin-left:8px">Feb 2</span></div>
+        <h3>Is it stress drinking or alcohol use disorder? How to tell the difference</h3>
+        <p>Not all heavy drinking is addiction — but some patterns need clinical attention. Here's a clear breakdown.</p>
+        <div class="post-footer">
+          <div class="post-author-mini"><div class="mini-avatar">M</div><span class="mini-name">Dr. Meera Iyer</span></div>
+          <span class="read-more">5 min →</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#" class="post-card reveal" style="transition-delay:0.1s">
+      <div class="post-thumbnail" style="background:linear-gradient(135deg,#A8C4A2,#7D9B76)"><span>🌿</span></div>
+      <div class="post-content">
+        <div class="post-meta"><span class="post-category">Anxiety & Stress</span><span class="post-date" style="margin-left:8px">Jan 28</span></div>
+        <h3>The neuroscience of worry — and why your brain can't stop</h3>
+        <p>Understanding why anxiety feels so relentless is the first step to managing it effectively.</p>
+        <div class="post-footer">
+          <div class="post-author-mini"><div class="mini-avatar">A</div><span class="mini-name">Ms. Ananya Gupta</span></div>
+          <span class="read-more">6 min →</span>
+        </div>
+      </div>
+    </a>
+
+    <a href="#" class="post-card reveal" style="transition-delay:0.2s">
+      <div class="post-thumbnail" style="background:linear-gradient(135deg,#8BB8B9,#A8C4A2)"><span>👦</span></div>
+      <div class="post-content">
+        <div class="post-meta"><span class="post-category">Parenting & Children</span><span class="post-date" style="margin-left:8px">Jan 22</span></div>
+        <h3>ADHD in children: signs every parent should know, and what to do next</h3>
+        <p>ADHD is often missed or misunderstood in Indian families. Here's what to look for and when to seek help.</p>
+        <div class="post-footer">
+          <div class="post-author-mini"><div class="mini-avatar">P</div><span class="mini-name">Dr. Priya Sharma</span></div>
+          <span class="read-more">7 min →</span>
+        </div>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="section-newsletter">
+  <h2 class="reveal">Mental health insights, straight to your inbox.</h2>
+  <p class="reveal">Subscribe to the Serenest newsletter — one thoughtful article a week, written by our specialists.</p>
+  <div class="newsletter-form reveal">
+    <input type="email" placeholder="your@email.com">
+    <button onclick="this.textContent='✅ Subscribed!'">Subscribe</button>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-bottom">
+    <p>© 2025 Serenest. All rights reserved.</p>
+    <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
+  </div>
+</footer>
+
+<script>
+const observer=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+function updateNavScroll(){const nav=document.getElementById('navbar');const isMobile=window.innerWidth<=900;nav.style.padding=isMobile?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
+window.addEventListener('scroll',updateNavScroll);
+window.addEventListener('resize',updateNavScroll);
+updateNavScroll();
+const hamburgerBtn=document.getElementById('hamburger');
+hamburgerBtn.addEventListener('click',()=>{const menu=document.getElementById('nav-menu');const isOpen=menu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
+document.querySelectorAll('.cat-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');});
+});
+</script>
+</body>
+</html>

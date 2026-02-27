@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Specialists — Serenest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);transition:all 0.3s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
+nav ul a{text-decoration:none;font-size:0.85rem;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;transition:color 0.2s;}
+nav ul a:hover{color:var(--sage-dark);}nav ul a.active{color:var(--sage-dark);font-weight:500;}
+.nav-cta{background:var(--sage)!important;color:var(--white)!important;padding:10px 22px;border-radius:40px;font-weight:500!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+.hamburger span{width:24px;height:2px;background:var(--dark);border-radius:2px;display:block;}
+.section-tag{display:inline-block;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--sage);margin-bottom:16px;}
+
+/* HERO */
+.page-hero{padding:160px 60px 80px;background:var(--dark);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(125,155,118,0.1) 0%,transparent 60%);pointer-events:none;}
+.page-hero-inner{max-width:700px;position:relative;z-index:1;}
+.page-hero .section-tag{color:rgba(168,196,162,0.7);}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5vw,4.5rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:20px;}
+.page-hero h1 em{font-style:italic;color:var(--sage-light);}
+.page-hero p{font-size:1.05rem;line-height:1.8;color:rgba(247,245,240,0.6);font-weight:300;}
+
+/* FILTERS */
+.filter-bar{padding:32px 60px;background:var(--white);border-bottom:1px solid var(--cream-dark);position:sticky;top:70px;z-index:50;}
+.filter-inner{display:flex;gap:12px;flex-wrap:wrap;align-items:center;}
+.filter-label{font-size:0.75rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-light);margin-right:4px;}
+.filter-btn{padding:8px 18px;border-radius:40px;border:1.5px solid var(--cream-dark);background:var(--cream);font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--text-light);cursor:pointer;transition:all 0.2s;}
+.filter-btn:hover,.filter-btn.active{background:var(--sage);border-color:var(--sage);color:var(--white);}
+
+/* SPECIALISTS GRID */
+.section-specialists{padding:72px 60px 100px;}
+.specialists-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;max-width:1100px;margin:0 auto;}
+.specialist-card{background:var(--white);border-radius:24px;overflow:hidden;border:1.5px solid var(--cream-dark);transition:all 0.3s;}
+.specialist-card:hover{transform:translateY(-8px);box-shadow:0 24px 60px rgba(125,155,118,0.12);border-color:var(--sage-light);}
+.spec-header{padding:32px 28px 24px;background:linear-gradient(135deg,rgba(125,155,118,0.08),rgba(91,138,139,0.05));}
+.spec-avatar-row{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;}
+.spec-avatar{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--sage-light),var(--teal));display:flex;align-items:center;justify-content:center;font-size:2rem;border:3px solid var(--white);}
+.spec-badge{background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.25);color:var(--sage-dark);padding:5px 12px;border-radius:40px;font-size:0.72rem;font-weight:500;}
+.spec-name{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--dark);margin-bottom:2px;}
+.spec-credentials{font-size:0.75rem;color:var(--text-light);margin-bottom:8px;}
+.spec-role{font-size:0.8rem;color:var(--sage-dark);font-weight:500;text-transform:uppercase;letter-spacing:0.04em;}
+.spec-body{padding:20px 28px 28px;}
+.spec-rating{display:flex;align-items:center;gap:6px;margin-bottom:12px;}
+.stars{color:#F5A623;font-size:0.8rem;letter-spacing:1px;}
+.rating-text{font-size:0.78rem;color:var(--text-light);}
+.spec-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+.spec-tag{background:var(--cream);border:1px solid var(--cream-dark);color:var(--text-light);padding:4px 12px;border-radius:20px;font-size:0.75rem;}
+.spec-bio{font-size:0.84rem;line-height:1.7;color:var(--text-light);font-weight:300;margin-bottom:20px;}
+.spec-meta{display:flex;gap:16px;margin-bottom:20px;font-size:0.78rem;color:var(--text-light);}
+.spec-meta span{display:flex;align-items:center;gap:4px;}
+.spec-book-btn{width:100%;background:var(--sage);color:var(--white);border:none;border-radius:50px;padding:13px;font-family:'DM Sans',sans-serif;font-size:0.87rem;font-weight:500;cursor:pointer;transition:all 0.2s;text-decoration:none;display:block;text-align:center;}
+.spec-book-btn:hover{background:var(--sage-dark);}
+
+/* CTA */
+.section-cta{padding:120px 60px;background:var(--sage);text-align:center;position:relative;overflow:hidden;}
+.section-cta::before{content:'';position:absolute;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 70%);border-radius:50%;}
+.section-cta h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,4.5vw,4rem);font-weight:300;color:var(--white);line-height:1.2;margin-bottom:20px;position:relative;z-index:1;}
+.section-cta p{font-size:1rem;color:rgba(255,255,255,0.75);max-width:520px;margin:0 auto 40px;font-weight:300;line-height:1.7;position:relative;z-index:1;}
+.btn-white{background:var(--white);color:var(--sage-dark);border:none;padding:16px 36px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.25s;position:relative;z-index:1;}
+.btn-white:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(28,36,32,0.2);}
+
+footer{background:var(--dark);padding:64px 60px 36px;}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px;}
+.footer-brand .logo{font-size:1.4rem;margin-bottom:14px;display:block;}
+.footer-brand p{font-size:0.84rem;line-height:1.7;color:rgba(247,245,240,0.45);font-weight:300;margin-bottom:20px;}
+.social-links{display:flex;gap:12px;}
+.social-link{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.2s;}
+.social-link:hover{background:var(--sage);}
+.footer-col h5{font-size:0.75rem;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:rgba(247,245,240,0.35);margin-bottom:18px;}
+.footer-col ul{list-style:none;}
+.footer-col ul li{margin-bottom:10px;}
+.footer-col ul a{font-size:0.84rem;color:rgba(247,245,240,0.55);text-decoration:none;font-weight:300;transition:color 0.2s;}
+.footer-col ul a:hover{color:var(--sage-light);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.07);padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
+.compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  nav{padding:16px 24px;}nav ul{display:none;}
+  .hamburger{display:flex;}
+  .page-hero{padding:120px 24px 72px;}
+  .filter-bar{padding:20px 24px;top:62px;}
+  .section-specialists{padding:48px 24px 72px;}
+  .specialists-grid{grid-template-columns:1fr;}
+  .section-cta{padding:72px 24px;}
+  footer{padding:48px 24px 28px;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="specialists.html" class="active">Specialists</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag" style="animation:fadeUp 0.8s ease 0.2s both">Our Team</div>
+    <h1 style="animation:fadeUp 0.9s ease 0.4s both">Meet our <em>specialists.</em></h1>
+    <p style="animation:fadeUp 0.9s ease 0.6s both">Every professional on Serenest is verified, licensed, and deeply committed to patient-centred care. Browse and find the specialist who's right for you.</p>
+  </div>
+</section>
+
+<!-- FILTER BAR -->
+<div class="filter-bar">
+  <div class="filter-inner">
+    <span class="filter-label">Filter by:</span>
+    <button class="filter-btn active" onclick="filterSpecs('all',this)">All Specialists</button>
+    <button class="filter-btn" onclick="filterSpecs('psychiatrist',this)">Psychiatrists</button>
+    <button class="filter-btn" onclick="filterSpecs('psychologist',this)">Psychologists</button>
+    <button class="filter-btn" onclick="filterSpecs('therapist',this)">Therapists</button>
+    <button class="filter-btn" onclick="filterSpecs('deaddiction',this)">Deaddiction</button>
+  </div>
+</div>
+
+<!-- SPECIALISTS GRID -->
+<section class="section-specialists">
+  <div class="specialists-grid" id="specGrid">
+
+    <div class="specialist-card reveal" data-type="psychiatrist">
+      <div class="spec-header">
+        <div class="spec-avatar-row">
+          <div class="spec-avatar">👨‍⚕️</div>
+          <span class="spec-badge">Available Today</span>
+        </div>
+        <div class="spec-name">Dr. Chirag Aambalia</div>
+        <div class="spec-credentials">MBBS, MD Psychiatry</div>
+        <div class="spec-role">Consultant Psychiatrist</div>
+      </div>
+      <div class="spec-body">
+        <div class="spec-rating">
+          <span class="stars">★★★★★</span>
+          <span class="rating-text">5.0 · 120+ sessions</span>
+        </div>
+        <div class="spec-tags">
+          <span class="spec-tag">Depression</span>
+          <span class="spec-tag">Anxiety</span>
+          <span class="spec-tag">OCD</span>
+          <span class="spec-tag">Deaddiction</span>
+          <span class="spec-tag">Bipolar</span>
+        </div>
+        <p class="spec-bio">Founder of Serenest and Consultant Psychiatrist at Rudra Hospital, Deesa. Specialises in general psychiatry, complex cases, and deaddiction management. Brings deep clinical expertise with a human-centred approach.</p>
+        <div class="spec-meta">
+          <span>🗣️ Gujarati, Hindi, English</span>
+          <span>📍 Deesa, Gujarat</span>
+        </div>
+        <a href="book.html" class="spec-book-btn">Book with Dr. Chirag →</a>
+      </div>
+    </div>
+
+    <div class="specialist-card reveal" data-type="psychiatrist" style="transition-delay:0.1s">
+      <div class="spec-header">
+        <div class="spec-avatar-row">
+          <div class="spec-avatar" style="background:linear-gradient(135deg,#A8C4A2,#8BB8B9)">👩‍⚕️</div>
+          <span class="spec-badge">Available Today</span>
+        </div>
+        <div class="spec-name">Dr. Priya Sharma</div>
+        <div class="spec-credentials">MBBS, MD Psychiatry</div>
+        <div class="spec-role">Consultant Psychiatrist</div>
+      </div>
+      <div class="spec-body">
+        <div class="spec-rating">
+          <span class="stars">★★★★★</span>
+          <span class="rating-text">4.9 · 95+ sessions</span>
+        </div>
+        <div class="spec-tags">
+          <span class="spec-tag">Anxiety</span>
+          <span class="spec-tag">PTSD</span>
+          <span class="spec-tag">Perinatal MH</span>
+          <span class="spec-tag">Sleep</span>
+        </div>
+        <p class="spec-bio">8 years of psychiatric practice with special interest in anxiety disorders, PTSD, and perinatal mental health. Known for her warm, supportive consultation style and evidence-based approach.</p>
+        <div class="spec-meta">
+          <span>🗣️ Hindi, English</span>
+          <span>📍 Mumbai, Maharashtra</span>
+        </div>
+        <a href="book.html" class="spec-book-btn">Book with Dr. Priya →</a>
+      </div>
+    </div>
+
+    <div class="specialist-card reveal" data-type="psychologist" style="transition-delay:0.2s">
+      <div class="spec-header">
+        <div class="spec-avatar-row">
+          <div class="spec-avatar" style="background:linear-gradient(135deg,#5B8A8B,#7D9B76)">🧠</div>
+          <span class="spec-badge">Next: Tomorrow</span>
+        </div>
+        <div class="spec-name">Ms. Kavya Nair</div>
+        <div class="spec-credentials">M.Phil Clinical Psychology (RCI)</div>
+        <div class="spec-role">Clinical Psychologist</div>
+      </div>
+      <div class="spec-body">
+        <div class="spec-rating">
+          <span class="stars">★★★★★</span>
+          <span class="rating-text">4.9 · 80+ sessions</span>
+        </div>
+        <div class="spec-tags">
+          <span class="spec-tag">CBT</span>
+          <span class="spec-tag">Trauma</span>
+          <span class="spec-tag">Adolescents</span>
+          <span class="spec-tag">OCD</span>
+        </div>
+        <p class="spec-bio">RCI-registered clinical psychologist specialising in CBT, trauma-focused therapy, and adolescent mental health. 6 years of experience across hospital and private settings.</p>
+        <div class="spec-meta">
+          <span>🗣️ Malayalam, Hindi, English</span>
+          <span>📍 Bangalore, Karnataka</span>
+        </div>
+        <a href="book.html" class="spec-book-btn">Book with Ms. Kavya →</a>
+      </div>
+    </div>
+
+    <div class="specialist-card reveal" data-type="therapist" style="transition-delay:0.3s">
+      <div class="spec-header">
+        <div class="spec-avatar-row">
+          <div class="spec-avatar" style="background:linear-gradient(135deg,#8BB8B9,#A8C4A2)">💬</div>
+          <span class="spec-badge">Available Today</span>
+        </div>
+        <div class="spec-name">Mr. Arjun Mehta</div>
+        <div class="spec-credentials">MA Psychology, PG Diploma Counselling</div>
+        <div class="spec-role">Counselling Psychologist</div>
+      </div>
+      <div class="spec-body">
+        <div class="spec-rating">
+          <span class="stars">★★★★☆</span>
+          <span class="rating-text">4.8 · 60+ sessions</span>
+        </div>
+        <div class="spec-tags">
+          <span class="spec-tag">Stress</span>
+          <span class="spec-tag">Relationships</span>
+          <span class="spec-tag">Grief</span>
+          <span class="spec-tag">Career</span>
+        </div>
+        <p class="spec-bio">Specialises in supporting individuals through life transitions, relationship challenges, and workplace stress. Uses an integrative approach blending CBT, mindfulness, and person-centred therapy.</p>
+        <div class="spec-meta">
+          <span>🗣️ Marathi, Hindi, English</span>
+          <span>📍 Pune, Maharashtra</span>
+        </div>
+        <a href="book.html" class="spec-book-btn">Book with Mr. Arjun →</a>
+      </div>
+    </div>
+
+    <div class="specialist-card reveal" data-type="deaddiction psychiatrist" style="transition-delay:0.4s">
+      <div class="spec-header">
+        <div class="spec-avatar-row">
+          <div class="spec-avatar" style="background:linear-gradient(135deg,#5A7A54,#7D9B76)">🌿</div>
+          <span class="spec-badge">Available Today</span>
+        </div>
+        <div class="spec-name">Dr. Meera Iyer</div>
+        <div class="spec-credentials">MBBS, DPM, Fellowship Addiction Med.</div>
+        <div class="spec-role">Addiction Psychiatrist</div>
+      </div>
+      <div class="spec-body">
+        <div class="spec-rating">
+          <span class="stars">★★★★★</span>
+          <span class="rating-text">5.0 · 75+ sessions</span>
+        </div>
+        <div class="spec-tags">
+          <span class="spec-tag">Alcohol</span>
+          <span class="spec-tag">Substance Use</span>
+          <span class="spec-tag">Relapse Prevention</span>
+          <span class="spec-tag">Family Therapy</span>
+        </div>
+        <p class="spec-bio">Specialist in addiction psychiatry with fellowship training. Works with patients and families navigating alcohol and substance use disorders — from motivational counselling to structured recovery planning.</p>
+        <div class="spec-meta">
+          <span>🗣️ Tamil, Hindi, English</span>
+          <span>📍 Chennai, Tamil Nadu</span>
+        </div>
+        <a href="book.html" class="spec-book-btn">Book with Dr. Meera →</a>
+      </div>
+    </div>
+
+    <div class="specialist-card reveal" data-type="psychologist therapist" style="transition-delay:0.5s">
+      <div class="spec-header">
+        <div class="spec-avatar-row">
+          <div class="spec-avatar" style="background:linear-gradient(135deg,#A8C4A2,#5B8A8B)">🌸</div>
+          <span class="spec-badge">Next: Tomorrow</span>
+        </div>
+        <div class="spec-name">Ms. Ananya Gupta</div>
+        <div class="spec-credentials">MSc Clinical Psychology, EMDR Certified</div>
+        <div class="spec-role">Trauma & EMDR Therapist</div>
+      </div>
+      <div class="spec-body">
+        <div class="spec-rating">
+          <span class="stars">★★★★★</span>
+          <span class="rating-text">4.9 · 50+ sessions</span>
+        </div>
+        <div class="spec-tags">
+          <span class="spec-tag">EMDR</span>
+          <span class="spec-tag">Trauma & PTSD</span>
+          <span class="spec-tag">Anxiety</span>
+          <span class="spec-tag">Childhood Trauma</span>
+        </div>
+        <p class="spec-bio">EMDR-certified therapist with expertise in trauma, PTSD, and complex emotional difficulties. Creates a deeply safe and structured environment for processing difficult experiences and moving forward.</p>
+        <div class="spec-meta">
+          <span>🗣️ Hindi, English</span>
+          <span>📍 Delhi, NCR</span>
+        </div>
+        <a href="book.html" class="spec-book-btn">Book with Ms. Ananya →</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta">
+  <h2 class="reveal">Not sure who to see?</h2>
+  <p class="reveal">Book an initial consultation and let our specialists guide you to the right type of care for your needs.</p>
+  <a href="book.html" class="btn-white reveal">Book a Consultation →</a>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">Sere<span>nest</span></a>
+      <p>India's clinical-grade telepsychiatry platform. Connecting patients with qualified mental health professionals — privately, securely, on your schedule.</p>
+      <div class="social-links"><a href="#" class="social-link" aria-label="Instagram">📷</a><a href="#" class="social-link" aria-label="LinkedIn">💼</a><a href="#" class="social-link" aria-label="X (Twitter)">𝕏</a></div>
+    </div>
+    <div class="footer-col"><h5>Platform</h5><ul><li><a href="patients.html">For Patients</a></li><li><a href="doctors.html">For Doctors</a></li><li><a href="specialists.html">Specialists</a></li><li><a href="services.html">Services</a></li><li><a href="book.html">Book Now</a></li></ul></div>
+    <div class="footer-col"><h5>Company</h5><ul><li><a href="about.html">About</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    <div class="footer-col"><h5>Legal</h5><ul><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Use</a></li><li><a href="telemedicine-policy.html">Telemedicine Policy</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Serenest. All rights reserved.</p>
+    <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
+  </div>
+</footer>
+
+<script>
+const observer=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+function updateNavScroll(){const nav=document.getElementById('navbar');const isMobile=window.innerWidth<=900;nav.style.padding=isMobile?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
+window.addEventListener('scroll',updateNavScroll);
+window.addEventListener('resize',updateNavScroll);
+updateNavScroll();
+const hamburgerBtn=document.getElementById('hamburger');
+hamburgerBtn.addEventListener('click',()=>{const menu=document.getElementById('nav-menu');const isOpen=menu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
+
+function filterSpecs(type,btn){
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.specialist-card').forEach(card=>{
+    if(type==='all'||card.dataset.type.includes(type)){
+      card.style.display='block';
+    }else{
+      card.style.display='none';
+    }
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Serenest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--teal-light:#8BB8B9;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);transition:all 0.3s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
+nav ul a{text-decoration:none;font-size:0.85rem;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;transition:color 0.2s;}
+nav ul a:hover{color:var(--sage-dark);}nav ul a.active{color:var(--sage-dark);font-weight:500;}
+.nav-cta{background:var(--sage)!important;color:var(--white)!important;padding:10px 22px;border-radius:40px;font-weight:500!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+.hamburger span{width:24px;height:2px;background:var(--dark);border-radius:2px;display:block;}
+.section-tag{display:inline-block;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--sage);margin-bottom:16px;}
+.section-header{text-align:center;margin-bottom:64px;}
+.section-header h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:300;color:var(--dark);margin-bottom:12px;line-height:1.2;}
+.section-header p{font-size:0.95rem;color:var(--text-light);font-weight:300;max-width:540px;margin:0 auto;line-height:1.7;}
+
+/* HERO */
+.page-hero{padding:160px 60px 100px;background:var(--dark);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 60%,rgba(125,155,118,0.1) 0%,transparent 55%),radial-gradient(circle at 80% 20%,rgba(91,138,139,0.07) 0%,transparent 50%);pointer-events:none;}
+.hero-inner{position:relative;z-index:1;max-width:800px;}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(3rem,5.5vw,5rem);font-weight:300;line-height:1.05;color:var(--cream);margin-bottom:28px;}
+.page-hero h1 em{font-style:italic;color:var(--sage-light);}
+.page-hero p{font-size:1.1rem;line-height:1.8;color:rgba(247,245,240,0.6);font-weight:300;max-width:600px;}
+.hero-scroll{display:flex;align-items:center;gap:10px;margin-top:48px;color:rgba(247,245,240,0.3);font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;}
+.scroll-line{width:40px;height:1px;background:rgba(247,245,240,0.2);}
+
+/* MISSION */
+.section-mission{padding:100px 60px;background:var(--white);}
+.mission-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:80px;align-items:center;max-width:1000px;margin:0 auto;}
+.mission-text h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:300;color:var(--dark);margin-bottom:28px;line-height:1.2;}
+.mission-text p{font-size:0.95rem;line-height:1.9;color:var(--text-light);font-weight:300;margin-bottom:20px;}
+.mission-values{margin-top:36px;}
+.value-item{display:flex;gap:16px;margin-bottom:24px;align-items:flex-start;}
+.value-dot{width:8px;height:8px;border-radius:50%;background:var(--sage);flex-shrink:0;margin-top:7px;}
+.value-item h4{font-size:0.9rem;font-weight:500;color:var(--dark);margin-bottom:4px;}
+.value-item p{font-size:0.84rem;line-height:1.7;color:var(--text-light);font-weight:300;}
+.mission-visual{position:relative;}
+.mission-stat-stack{display:flex;flex-direction:column;gap:20px;}
+.mission-stat{background:var(--cream);border-radius:20px;padding:28px 32px;border:1.5px solid var(--cream-dark);transition:all 0.3s;}
+.mission-stat:hover{border-color:var(--sage-light);transform:translateX(8px);}
+.mission-stat h3{font-family:'Cormorant Garamond',serif;font-size:2.8rem;font-weight:300;color:var(--sage-dark);margin-bottom:4px;}
+.mission-stat p{font-size:0.84rem;color:var(--text-light);font-weight:300;}
+
+/* FOUNDER */
+.section-founder{padding:100px 60px;background:var(--cream);}
+.founder-layout{display:grid;grid-template-columns:1fr 1.4fr;gap:80px;align-items:start;max-width:1000px;margin:0 auto;}
+.founder-visual{position:sticky;top:100px;}
+.founder-photo{width:100%;aspect-ratio:3/4;max-width:320px;border-radius:28px;background:linear-gradient(145deg,var(--sage),var(--teal));display:flex;align-items:center;justify-content:center;font-size:7rem;position:relative;overflow:hidden;}
+.founder-photo::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(28,36,32,0.5));}
+.founder-name-tag{position:absolute;bottom:24px;left:24px;right:24px;z-index:1;}
+.founder-name-tag h3{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:white;margin-bottom:2px;}
+.founder-name-tag p{font-size:0.75rem;color:rgba(255,255,255,0.7);}
+.founder-text .section-tag{margin-bottom:16px;}
+.founder-text h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2rem,3.5vw,3rem);font-weight:300;color:var(--dark);margin-bottom:28px;line-height:1.2;}
+.founder-text p{font-size:0.95rem;line-height:1.9;color:var(--text-light);font-weight:300;margin-bottom:20px;}
+.founder-quote{border-left:3px solid var(--sage);padding:20px 24px;margin:32px 0;background:var(--white);border-radius:0 16px 16px 0;}
+.founder-quote p{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-style:italic;color:var(--dark);line-height:1.6;margin-bottom:8px;}
+.founder-quote cite{font-size:0.75rem;color:var(--text-light);font-style:normal;text-transform:uppercase;letter-spacing:0.06em;}
+.founder-credentials{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px;}
+.cred-tag{background:rgba(125,155,118,0.1);border:1px solid rgba(125,155,118,0.25);color:var(--sage-dark);padding:7px 16px;border-radius:40px;font-size:0.78rem;font-weight:400;}
+
+/* STORY TIMELINE */
+.section-story{padding:100px 60px;background:var(--dark);position:relative;overflow:hidden;}
+.section-story::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(125,155,118,0.07) 0%,transparent 60%);pointer-events:none;}
+.section-story .section-header h2{color:var(--cream);}
+.section-story .section-header p{color:rgba(247,245,240,0.5);}
+.timeline{max-width:700px;margin:0 auto;position:relative;}
+.timeline::before{content:'';position:absolute;left:20px;top:0;bottom:0;width:1px;background:rgba(125,155,118,0.2);}
+.timeline-item{display:flex;gap:40px;margin-bottom:48px;position:relative;}
+.timeline-marker{width:40px;height:40px;border-radius:50%;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.9rem;position:relative;z-index:1;}
+.timeline-content{}
+.timeline-year{font-size:0.72rem;text-transform:uppercase;letter-spacing:0.08em;color:var(--sage-light);opacity:0.7;margin-bottom:6px;}
+.timeline-content h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:var(--cream);margin-bottom:8px;}
+.timeline-content p{font-size:0.85rem;line-height:1.75;color:rgba(247,245,240,0.5);font-weight:300;}
+
+/* TEAM */
+.section-team{padding:100px 60px;background:var(--white);}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px;max-width:900px;margin:0 auto;}
+.team-card{text-align:center;padding:36px 28px;border-radius:24px;border:1.5px solid var(--cream-dark);background:var(--cream);transition:all 0.3s;}
+.team-card:hover{border-color:var(--sage-light);transform:translateY(-6px);box-shadow:0 20px 50px rgba(125,155,118,0.1);}
+.team-avatar{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--sage-light),var(--teal-light));display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:2.2rem;}
+.team-card h3{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:var(--dark);margin-bottom:4px;}
+.team-card .role{font-size:0.78rem;text-transform:uppercase;letter-spacing:0.06em;color:var(--sage-dark);margin-bottom:12px;}
+.team-card p{font-size:0.83rem;line-height:1.7;color:var(--text-light);font-weight:300;}
+
+/* CTA */
+.section-cta{padding:120px 60px;background:var(--sage);text-align:center;position:relative;overflow:hidden;}
+.section-cta::before{content:'';position:absolute;top:-200px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(255,255,255,0.08) 0%,transparent 70%);border-radius:50%;}
+.section-cta h2{font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,4.5vw,4rem);font-weight:300;color:var(--white);line-height:1.2;margin-bottom:20px;position:relative;z-index:1;}
+.section-cta p{font-size:1rem;color:rgba(255,255,255,0.75);max-width:520px;margin:0 auto 40px;font-weight:300;line-height:1.7;position:relative;z-index:1;}
+.cta-buttons{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;position:relative;z-index:1;}
+.btn-white{background:var(--white);color:var(--sage-dark);border:none;padding:16px 36px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.25s;}
+.btn-white:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(28,36,32,0.2);}
+.btn-outline-white{background:transparent;color:var(--white);border:1.5px solid rgba(255,255,255,0.4);padding:15px 32px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.9rem;cursor:pointer;text-decoration:none;display:inline-block;transition:all 0.25s;}
+.btn-outline-white:hover{border-color:white;background:rgba(255,255,255,0.1);}
+
+footer{background:var(--dark);padding:64px 60px 36px;}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:48px;margin-bottom:48px;}
+.footer-brand .logo{font-size:1.4rem;margin-bottom:14px;display:block;}
+.footer-brand p{font-size:0.84rem;line-height:1.7;color:rgba(247,245,240,0.45);font-weight:300;margin-bottom:20px;}
+.social-links{display:flex;gap:12px;}
+.social-link{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all 0.2s;}
+.social-link:hover{background:var(--sage);}
+.footer-col h5{font-size:0.75rem;font-weight:500;text-transform:uppercase;letter-spacing:0.08em;color:rgba(247,245,240,0.35);margin-bottom:18px;}
+.footer-col ul{list-style:none;}
+.footer-col ul li{margin-bottom:10px;}
+.footer-col ul a{font-size:0.84rem;color:rgba(247,245,240,0.55);text-decoration:none;font-weight:300;transition:color 0.2s;}
+.footer-col ul a:hover{color:var(--sage-light);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,0.07);padding-top:28px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
+.compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  nav{padding:16px 24px;}nav ul{display:none;}
+  .hamburger{display:flex;}
+  .page-hero{padding:120px 24px 72px;}
+  .section-mission,.section-founder,.section-story,.section-team,.section-cta{padding:72px 24px;}
+  .mission-layout,.founder-layout{grid-template-columns:1fr;}
+  .founder-visual{position:static;}
+  .team-grid{grid-template-columns:1fr;}
+  .mission-stat-stack{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+  footer{padding:48px 24px 28px;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+.anim-02{animation:fadeUp 0.8s ease 0.2s both!important;}
+.anim-04{animation:fadeUp 0.9s ease 0.4s both!important;}
+.anim-06{animation:fadeUp 0.9s ease 0.6s both!important;}
+.anim-08{animation:fadeUp 0.9s ease 0.8s both!important;}
+.anim-1{animation:fadeUp 0.9s ease 1s both!important;}
+.delay-1{transition-delay:0.1s!important;}
+.delay-2{transition-delay:0.2s!important;}
+.delay-3{transition-delay:0.3s!important;}
+.delay-4{transition-delay:0.4s!important;}
+.delay-5{transition-delay:0.5s!important;}
+.color-faded-dark{color:rgba(168,196,162,0.7)!important;}
+.color-faded-light{color:rgba(247,245,240,0.5)!important;}
+.center-mt-56{text-align:center;margin-top:56px!important;}
+.center-mt-48{text-align:center;margin-top:48px!important;}
+.z-1{position:relative;z-index:1!important;}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="specialists.html">Specialists</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<!-- HERO -->
+<section class="page-hero">
+  <div class="hero-inner">
+    <div class="section-tag anim-02">Our Story</div>
+    <h1 class="anim-04">Built by a psychiatrist.<br><em>For every patient</em><br>who needed more.</h1>
+    <p style="animation:fadeUp 0.9s ease 0.6s both">Serenest exists because one doctor saw the same problem too many times — patients unable to access care not because it didn't exist, but because the system made it too hard to reach.</p>
+    <div class="hero-scroll anim-1">
+      <div class="scroll-line"></div> Scroll to explore our story
+    </div>
+  </div>
+</section>
+
+<!-- MISSION -->
+<section class="section-mission">
+  <div class="mission-layout">
+    <div class="mission-text">
+      <div class="section-tag reveal">Our Mission</div>
+      <h2 class="reveal">Mental healthcare that reaches everyone who needs it.</h2>
+      <p class="reveal">India has one of the largest mental health treatment gaps in the world. With fewer than 0.3 psychiatrists per 100,000 people and massive geographic barriers, millions of people suffer without access to proper care.</p>
+      <p class="reveal">Serenest was built to close that gap — not by replacing in-person care, but by making high-quality psychiatric and psychological support accessible to anyone with a phone and an internet connection.</p>
+      <div class="mission-values">
+        <div class="value-item reveal">
+          <div class="value-dot"></div>
+          <div><h4>Clinical excellence, always</h4><p>We never compromise on the quality of care. Every specialist is verified. Every interaction is structured for clinical outcomes.</p></div>
+        </div>
+        <div class="value-item reveal">
+          <div class="value-dot"></div>
+          <div><h4>Dignity and privacy</h4><p>Mental health carries stigma in India. We've built Serenest to be a space where patients feel completely safe to seek help.</p></div>
+        </div>
+        <div class="value-item reveal">
+          <div class="value-dot"></div>
+          <div><h4>Technology in service of humanity</h4><p>Every feature exists to serve patient outcomes — not engagement metrics. We measure success in recoveries, not app opens.</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="mission-visual">
+      <div class="mission-stat-stack">
+        <div class="mission-stat reveal">
+          <h3>150M+</h3>
+          <p>Indians estimated to need mental health support</p>
+        </div>
+        <div class="mission-stat reveal">
+          <h3>&lt;1%</h3>
+          <p>Who currently receive adequate treatment</p>
+        </div>
+        <div class="mission-stat reveal">
+          <h3>∞</h3>
+          <p>People we're working to help — one session at a time</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOUNDER -->
+<section class="section-founder">
+  <div class="founder-layout">
+    <div class="founder-visual">
+      <div class="founder-photo">
+        <span class="z-1">👨‍⚕️</span>
+        <div class="founder-name-tag">
+          <h3>Dr. Chirag Aambalia</h3>
+          <p>Founder & Lead Psychiatrist</p>
+        </div>
+      </div>
+    </div>
+    <div class="founder-text">
+      <div class="section-tag reveal">The Founder</div>
+      <h2 class="reveal">He didn't wait for someone else to build it.</h2>
+      <p class="reveal">Dr. Chirag Aambalia is a Consultant Psychiatrist based in Deesa, Gujarat, where he practices at Rudra Neuropsychiatry and Deaddiction Hospital. After completing his MBBS and MD in Psychiatry, he has dedicated his career to treating patients with a full spectrum of psychiatric conditions.</p>
+      <p class="reveal">But years of practice revealed a pattern that troubled him deeply: patients who needed care couldn't access it — not because qualified professionals didn't exist, but because geography, stigma, logistics, and cost created insurmountable barriers.</p>
+      <p class="reveal">So he decided to build the solution himself — teaching himself programming, design, and technology to create a platform that reflects his clinical values as much as his technical vision.</p>
+      <div class="founder-quote reveal">
+        <p>"I've seen what happens when someone doesn't get help in time. I built Serenest so that's a problem of the past, not the future."</p>
+        <cite>— Dr. Chirag Aambalia, MBBS MD (Psychiatry)</cite>
+      </div>
+      <div class="founder-credentials reveal">
+        <span class="cred-tag">MBBS</span>
+        <span class="cred-tag">MD Psychiatry</span>
+        <span class="cred-tag">Consultant Psychiatrist</span>
+        <span class="cred-tag">Rudra Hospital, Deesa</span>
+        <span class="cred-tag">Gujarat</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STORY TIMELINE -->
+<section class="section-story">
+  <div class="section-header reveal">
+    <div class="section-tag color-faded-dark">Our Journey</div>
+    <h2>The story of Serenest.</h2>
+    <p class="color-faded-light">From a clinical observation to a living platform — built with purpose.</p>
+  </div>
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-marker">🌱</div>
+      <div class="timeline-content">
+        <div class="timeline-year">The Problem</div>
+        <h3>Seeing the gap firsthand</h3>
+        <p>Dr. Chirag begins noticing a consistent pattern in his clinic — patients who could have been helped months earlier if access to care wasn't so difficult. The idea for Serenest begins to take shape.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-marker">💡</div>
+      <div class="timeline-content">
+        <div class="timeline-year">The Vision</div>
+        <h3>Designing from the inside out</h3>
+        <p>As a clinician with no engineering background, Dr. Chirag begins learning to build — combining psychiatric expertise with technology to design a platform that reflects real clinical workflows, not just chat interfaces.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-marker">🏗️</div>
+      <div class="timeline-content">
+        <div class="timeline-year">The Build</div>
+        <h3>Creating Serenest</h3>
+        <p>Serenest takes shape — built on compliance, clinical structure, and a deep respect for patient dignity. Every feature is designed with a real patient need in mind.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-marker">🚀</div>
+      <div class="timeline-content">
+        <div class="timeline-year">Today</div>
+        <h3>Growing, one session at a time</h3>
+        <p>Serenest is live and helping patients across India access quality mental healthcare — from urban centres to towns that have never had a psychiatrist nearby.</p>
+      </div>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-marker">🌍</div>
+      <div class="timeline-content">
+        <div class="timeline-year">The Future</div>
+        <h3>A mental health ecosystem for India</h3>
+        <p>A full ecosystem — expanded specialist network, multilingual support, mental health education, and a community platform. Serenest's work has only just begun.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="section-team">
+  <div class="section-header">
+    <div class="section-tag reveal">The Team</div>
+    <h2 class="reveal">Specialists who share our vision.</h2>
+    <p class="reveal">Every person on the Serenest platform is committed to delivering clinical excellence with genuine compassion.</p>
+  </div>
+  <div class="team-grid">
+    <div class="team-card reveal">
+      <div class="team-avatar">👨‍⚕️</div>
+      <h3>Dr. Chirag Aambalia</h3>
+      <div class="role">Founder & Consultant Psychiatrist</div>
+      <p>MBBS MD (Psychiatry). Specialist in general psychiatry, deaddiction, and complex mental health conditions. Based in Deesa, Gujarat.</p>
+    </div>
+    <div class="team-card reveal delay-1">
+      <div class="team-avatar">👩‍⚕️</div>
+      <h3>Dr. Priya Sharma</h3>
+      <div class="role">Consultant Psychiatrist</div>
+      <p>MD Psychiatry. Expertise in anxiety, mood disorders, and perinatal mental health. 8 years of clinical experience.</p>
+    </div>
+    <div class="team-card reveal delay-2">
+      <div class="team-avatar">🧠</div>
+      <h3>Ms. Kavya Nair</h3>
+      <div class="role">Clinical Psychologist</div>
+      <p>M.Phil Clinical Psychology (RCI registered). Specialised in CBT, trauma-focused therapy, and adolescent mental health.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section-cta">
+  <h2 class="reveal">Be part of this story.</h2>
+  <p class="reveal">Whether you're seeking help or looking to provide it — Serenest is here for you.</p>
+  <div class="cta-buttons">
+    <a href="book.html" class="btn-white reveal">Book a Consultation →</a>
+    <a href="doctors.html" class="btn-outline-white reveal">Join as a Specialist</a>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <a href="index.html" class="logo">Sere<span>nest</span></a>
+      <p>India's clinical-grade telepsychiatry platform. Connecting patients with qualified mental health professionals — privately, securely, on your schedule.</p>
+      <div class="social-links">
+        <a href="#" class="social-link" aria-label="Instagram">📷</a><a href="#" class="social-link" aria-label="LinkedIn">💼</a><a href="#" class="social-link" aria-label="X (Twitter)">𝕏</a>
+      </div>
+    </div>
+    <div class="footer-col"><h5>Platform</h5><ul><li><a href="patients.html">For Patients</a></li><li><a href="doctors.html">For Doctors</a></li><li><a href="specialists.html">Our Specialists</a></li><li><a href="services.html">Services</a></li><li><a href="book.html">Book a Session</a></li></ul></div>
+    <div class="footer-col"><h5>Company</h5><ul><li><a href="about.html">About Us</a></li><li><a href="blog.html">Blog</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+    <div class="footer-col"><h5>Legal</h5><ul><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms of Use</a></li><li><a href="telemedicine-policy.html">Telemedicine Policy</a></li><li><a href="grievance.html">Grievance Policy</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Serenest. All rights reserved.</p>
+    <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
+  </div>
+</footer>
+
+<script>
+const observer=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+function updateNavScroll(){const nav=document.getElementById('navbar');const isMobile=window.innerWidth<=900;nav.style.padding=isMobile?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
+window.addEventListener('scroll',updateNavScroll);
+window.addEventListener('resize',updateNavScroll);
+updateNavScroll();
+const hamburgerBtn=document.getElementById('hamburger');
+hamburgerBtn.addEventListener('click',()=>{const menu=document.getElementById('nav-menu');const isOpen=menu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
+</script>
+</body>
+</html>
