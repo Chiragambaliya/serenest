@@ -114,6 +114,7 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
 }
 </style>
 <link rel="stylesheet" href="premium.css">
+<script src="scripts/dark-mode.js"></script>
 </head>
 <body>
 
@@ -155,9 +156,9 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
   </div>
 </div>
 
-<!-- FEATURED -->
-<section class="section-featured">
-  <a href="post.html" class="featured-post reveal">
+<!-- FEATURED (static fallback; replaced by API if available) -->
+<section class="section-featured" id="blogFeaturedSection">
+  <a href="post.html" class="featured-post reveal" id="blogFeaturedLink">
     <div class="featured-visual" style="background:linear-gradient(135deg,#5A7A54,#7D9B76)">
       <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.08) 1px,transparent 1px);background-size:28px 28px;"></div>
       <span style="position:relative;z-index:1;font-size:6rem">🧠</span>
@@ -181,9 +182,9 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
   </a>
 </section>
 
-<!-- BLOG GRID -->
+<!-- BLOG GRID (static fallback; replaced by API if available) -->
 <section class="section-posts">
-  <div class="posts-grid">
+  <div class="posts-grid" id="blogGrid">
 
     <a href="#" class="post-card reveal">
       <div class="post-thumbnail" style="background:linear-gradient(135deg,#8BB8B9,#5B8A8B)"><span>😴</span></div>
@@ -299,6 +300,39 @@ document.querySelectorAll('.cat-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');});
 });
 (function(){
+  var api=(window.API_BASE||'')+'/api/posts';
+  fetch(api).then(function(r){return r.json();}).then(function(d){
+    if(!d||!d.ok||!d.data||!d.data.length) return;
+    var posts=d.data;
+    function esc(s){if(s==null)return'';var div=document.createElement('div');div.textContent=s;return div.innerHTML;}
+    var first=posts[0];
+    var link=document.getElementById('blogFeaturedLink');
+    if(link){
+      link.href='post.html?slug='+encodeURIComponent(first.slug||'');
+      var content=link.querySelector('.featured-content');
+      if(content){
+        var cat=first.category||'';
+        var dateStr=first.created_at?new Date(first.created_at).toLocaleDateString('en-IN',{year:'numeric',month:'long',day:'numeric'}):'';
+        content.innerHTML='<div class="post-meta"><span class="post-category">'+esc(cat)+'</span><span class="post-date">'+esc(dateStr)+'</span></div><h2>'+esc(first.title)+'</h2><p>'+esc(first.excerpt||'')+'</p><div class="post-author"><div class="author-avatar">'+(first.author_name?esc(first.author_name.charAt(0)):'')+'</div><div><div class="author-name">'+esc(first.author_name)+'</div><div class="author-title"></div></div><div class="read-time"></div></div>';
+      }
+    }
+    var grid=document.getElementById('blogGrid');
+    if(!grid||posts.length<=1) return;
+    var rest=posts.slice(1);
+    var gradients=['linear-gradient(135deg,#8BB8B9,#5B8A8B)','linear-gradient(135deg,#7D9B76,#A8C4A2)','linear-gradient(135deg,#5B8A8B,#7D9B76)','linear-gradient(135deg,#5A7A54,#5B8A8B)','linear-gradient(135deg,#A8C4A2,#7D9B76)','linear-gradient(135deg,#8BB8B9,#A8C4A2)'];
+    var emojis=['\uD83D\uDE34','\uD83D\uDC8A','\u2764\uFE0F','\uD83C\uDF77','\uD83C\uDF3F','\uD83D\uDC66'];
+    grid.innerHTML=rest.map(function(p,i){
+      var slug=encodeURIComponent(p.slug||'');
+      var dateStr=p.created_at?new Date(p.created_at).toLocaleDateString('en-IN',{month:'short',day:'numeric'}):'';
+      var bg=gradients[i%gradients.length];
+      var em=emojis[i%emojis.length];
+      var initial=p.author_name?p.author_name.charAt(0):'';
+      return '<a href="post.html?slug='+slug+'" class="post-card reveal"><div class="post-thumbnail" style="background:'+bg+'"><span>'+em+'</span></div><div class="post-content"><div class="post-meta"><span class="post-category">'+esc(p.category||'')+'</span><span class="post-date" style="margin-left:8px">'+esc(dateStr)+'</span></div><h3>'+esc(p.title)+'</h3><p>'+esc(p.excerpt||'')+'</p><div class="post-footer"><div class="post-author-mini"><div class="mini-avatar">'+esc(initial)+'</div><span class="mini-name">'+esc(p.author_name)+'</span></div><span class="read-more">Read \u2192</span></div></div></a>';
+    }).join('');
+    document.querySelectorAll('.reveal').forEach(function(el){if(typeof observer!=='undefined')observer.observe(el);});
+  }).catch(function(){});
+})();
+(function(){
   var form=document.getElementById('newsletter-form');
   var btn=document.getElementById('newsletter-btn');
   var msg=document.getElementById('newsletter-msg');
@@ -323,6 +357,8 @@ document.querySelectorAll('.cat-btn').forEach(btn=>{
   });
 })();
 </script>
+<script src="scripts/cookie-consent.js"></script>
+<script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/visit-notify.js"></script>
 </body>
 </html>

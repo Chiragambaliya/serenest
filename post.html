@@ -55,6 +55,7 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 }
 </style>
 <link rel="stylesheet" href="premium.css">
+<script src="scripts/dark-mode.js"></script>
 </head>
 <body>
 
@@ -76,6 +77,18 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 
 <article class="article-wrap">
   <a href="blog.html" class="article-back">← Back to Blog</a>
+  <div id="postDynamic" style="display:none;">
+    <div class="post-meta" id="postMeta"></div>
+    <h1 id="postTitle"></h1>
+    <div class="article-author" id="postAuthor"></div>
+    <div class="article-body" id="postBody"></div>
+    <div class="article-cta">
+      <h3>Ready to take the first step?</h3>
+      <p>Book a confidential consultation with a qualified psychiatrist or therapist.</p>
+      <a href="book.html" class="btn-primary">Book a consultation</a>
+    </div>
+  </div>
+  <div id="postStatic">
   <div class="post-meta">
     <span class="post-category">Psychiatry Explained</span>
     <span class="post-date">February 18, 2025</span>
@@ -116,6 +129,7 @@ footer{background:var(--dark);padding:48px 60px 36px;}
     <p>Book a confidential consultation with a qualified psychiatrist or therapist.</p>
     <a href="book.html" class="btn-primary">Book a consultation</a>
   </div>
+  </div>
 </article>
 
 <footer>
@@ -126,10 +140,33 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 </footer>
 
 <script>
+(function(){
+  var params=new URLSearchParams(window.location.search);
+  var slug=params.get('slug');
+  if(!slug){ return; }
+  fetch((window.API_BASE||'')+'/api/posts?slug='+encodeURIComponent(slug))
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(!d||!d.ok||!d.post){ return; }
+      var p=d.post;
+      document.title=(p.title||'Post')+' — Serenest Blog';
+      var dateStr=p.created_at?new Date(p.created_at).toLocaleDateString('en-IN',{year:'numeric',month:'long',day:'numeric'}):'';
+      document.getElementById('postMeta').innerHTML='<span class="post-category">'+(p.category||'')+'</span><span class="post-date">'+dateStr+'</span>';
+      document.getElementById('postTitle').textContent=p.title||'';
+      var authorInitial=p.author_name?p.author_name.charAt(0):'';
+      document.getElementById('postAuthor').innerHTML='<div class="author-avatar">'+authorInitial+'</div><div><div class="author-name">'+(p.author_name||'')+'</div><div class="author-title"></div></div>';
+      document.getElementById('postBody').innerHTML=p.body||'';
+      document.getElementById('postStatic').style.display='none';
+      document.getElementById('postDynamic').style.display='block';
+    })
+    .catch(function(){});
+})();
 function updateNavScroll(){var n=document.getElementById('navbar');if(n)n.style.padding=window.innerWidth<=900?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
 window.addEventListener('scroll',updateNavScroll);window.addEventListener('resize',updateNavScroll);updateNavScroll();
 var h=document.getElementById('hamburger'),m=document.getElementById('nav-menu');if(h){h.addEventListener('click',function(){m.classList.toggle('open');h.classList.toggle('open');h.setAttribute('aria-expanded',m.classList.contains('open'));h.setAttribute('aria-label',m.classList.contains('open')?'Close menu':'Open menu');});}if(m)m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');if(h){h.classList.remove('open');h.setAttribute('aria-expanded','false');h.setAttribute('aria-label','Open menu');}});});
 </script>
+<script src="scripts/cookie-consent.js"></script>
+<script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/visit-notify.js"></script>
 </body>
 </html>

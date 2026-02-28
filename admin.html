@@ -219,6 +219,10 @@
         <button type="button" class="tab" data-tab="contact">Contact messages</button>
         <button type="button" class="tab" data-tab="applications">Doctor applications</button>
         <button type="button" class="tab" data-tab="newsletter">Newsletter</button>
+        <button type="button" class="tab" data-tab="grievances">Grievances</button>
+        <button type="button" class="tab" data-tab="blog">Blog</button>
+        <button type="button" class="tab" data-tab="slots">Availability</button>
+        <button type="button" class="tab" data-tab="analytics">Analytics</button>
       </div>
 
       <div id="panelBookings" class="panel visible">
@@ -236,6 +240,7 @@
                 <th>Specialist</th>
                 <th>Session</th>
                 <th>Date / Time</th>
+                <th>Video link</th>
                 <th>Notes</th>
               </tr>
             </thead>
@@ -307,6 +312,155 @@
           </table>
         </div>
         <p id="newsletterEmpty" class="empty" style="display:none;">No subscribers yet.</p>
+      </div>
+
+      <div id="panelGrievances" class="panel">
+        <h2>Grievances</h2>
+        <button type="button" class="load-btn" data-load="grievances">Refresh</button>
+        <div id="grievancesError" class="err-msg" style="display:none;"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Subject</th>
+                <th>Message</th>
+              </tr>
+            </thead>
+            <tbody id="grievancesBody"></tbody>
+          </table>
+        </div>
+        <p id="grievancesEmpty" class="empty" style="display:none;">No grievances yet.</p>
+      </div>
+
+      <div id="panelBlog" class="panel">
+        <h2>Blog posts</h2>
+        <button type="button" class="load-btn" data-load="blog">Refresh</button>
+        <button type="button" id="blogAddBtn" style="margin-left:8px;padding:10px 20px;background:var(--sage);color:var(--white);border:none;border-radius:10px;font-family:inherit;font-size:0.85rem;cursor:pointer;">Add post</button>
+        <div id="blogError" class="err-msg" style="display:none;"></div>
+        <div class="table-wrap" id="blogTableWrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Category</th>
+                <th>Author</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="blogBody"></tbody>
+          </table>
+        </div>
+        <p id="blogEmpty" class="empty" style="display:none;">No posts yet. Add one above.</p>
+        <div id="blogFormWrap" style="display:none;margin-top:24px;padding:24px;background:var(--white);border-radius:16px;border:1px solid var(--cream-dark);">
+          <h3 style="font-size:1.1rem;margin-bottom:16px;color:var(--dark);" id="blogFormTitle">Add post</h3>
+          <form id="blogForm">
+            <input type="hidden" id="blogPostId" value="">
+            <div style="margin-bottom:16px;">
+              <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-light);margin-bottom:6px;">Title</label>
+              <input type="text" id="blogTitle" required style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;font-family:inherit;">
+            </div>
+            <div style="margin-bottom:16px;">
+              <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-light);margin-bottom:6px;">Slug (URL: post.html?slug=...)</label>
+              <input type="text" id="blogSlug" placeholder="e.g. first-session" style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;font-family:inherit;">
+            </div>
+            <div style="margin-bottom:16px;">
+              <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-light);margin-bottom:6px;">Excerpt (short summary)</label>
+              <textarea id="blogExcerpt" rows="2" style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;font-family:inherit;"></textarea>
+            </div>
+            <div style="margin-bottom:16px;">
+              <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-light);margin-bottom:6px;">Body (HTML allowed)</label>
+              <textarea id="blogBodyField" rows="12" required style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;font-family:inherit;"></textarea>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+              <div>
+                <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-light);margin-bottom:6px;">Category</label>
+                <input type="text" id="blogCategory" placeholder="e.g. Psychiatry Explained" style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;font-family:inherit;">
+              </div>
+              <div>
+                <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-light);margin-bottom:6px;">Author name</label>
+                <input type="text" id="blogAuthor" placeholder="e.g. Dr. Chirag Aambalia" style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;font-family:inherit;">
+              </div>
+            </div>
+            <div style="display:flex;gap:12px;">
+              <button type="submit" style="padding:12px 24px;background:var(--sage);color:var(--white);border:none;border-radius:10px;font-family:inherit;font-weight:500;cursor:pointer;">Save</button>
+              <button type="button" id="blogFormCancel" style="padding:12px 24px;background:transparent;color:var(--text-light);border:1px solid var(--cream-dark);border-radius:10px;font-family:inherit;cursor:pointer;">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="panelSlots" class="panel">
+        <h2>Availability (slots)</h2>
+        <button type="button" class="load-btn" data-load="slots">Refresh</button>
+        <button type="button" id="slotAddBtn" style="margin-left:8px;padding:10px 20px;background:var(--sage);color:var(--white);border:none;border-radius:10px;font-family:inherit;font-size:0.85rem;cursor:pointer;">Add slot</button>
+        <div id="slotsError" class="err-msg" style="display:none;"></div>
+        <div class="table-wrap" id="slotsTableWrap">
+          <table>
+            <thead><tr><th>Date</th><th>Time</th><th>Specialist</th><th></th></tr></thead>
+            <tbody id="slotsBody"></tbody>
+          </table>
+        </div>
+        <p id="slotsEmpty" class="empty" style="display:none;">No slots. Add slots so book.html shows "available today/tomorrow".</p>
+        <div id="slotFormWrap" style="display:none;margin-top:24px;padding:24px;background:var(--white);border-radius:16px;border:1px solid var(--cream-dark);">
+          <h3 style="font-size:1.1rem;margin-bottom:16px;">Add slot</h3>
+          <form id="slotForm">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:12px;align-items:end;flex-wrap:wrap;">
+              <div>
+                <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-light);margin-bottom:6px;">Specialist</label>
+                <select id="slotSpecialist" required style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;">
+                  <option value="Dr. Chirag Aambalia — Psychiatrist">Dr. Chirag Aambalia — Psychiatrist</option>
+                  <option value="Dr. Priya Sharma — Psychiatrist">Dr. Priya Sharma — Psychiatrist</option>
+                  <option value="Ms. Kavya Nair — Clinical Psychologist">Ms. Kavya Nair — Clinical Psychologist</option>
+                  <option value="Mr. Arjun Mehta — Counselling Psychologist">Mr. Arjun Mehta — Counselling Psychologist</option>
+                  <option value="Dr. Meera Iyer — Addiction Psychiatrist">Dr. Meera Iyer — Addiction Psychiatrist</option>
+                  <option value="Ms. Ananya Gupta — Trauma Therapist">Ms. Ananya Gupta — Trauma Therapist</option>
+                </select>
+              </div>
+              <div>
+                <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-light);margin-bottom:6px;">Date</label>
+                <input type="date" id="slotDate" required style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;">
+              </div>
+              <div>
+                <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-light);margin-bottom:6px;">Time</label>
+                <input type="text" id="slotTime" placeholder="e.g. 10:00 AM" required style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;">
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button type="submit" style="padding:12px 24px;background:var(--sage);color:var(--white);border:none;border-radius:10px;font-family:inherit;font-weight:500;cursor:pointer;">Add</button>
+                <button type="button" id="slotFormCancel" style="padding:12px 24px;background:transparent;color:var(--text-light);border:1px solid var(--cream-dark);border-radius:10px;font-family:inherit;cursor:pointer;">Cancel</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="panelAnalytics" class="panel">
+        <h2>Analytics</h2>
+        <button type="button" class="load-btn" data-load="analytics">Refresh</button>
+        <div id="analyticsError" class="err-msg" style="display:none;"></div>
+        <div id="analyticsContent" style="display:none;margin-top:20px;">
+          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;margin-bottom:28px;">
+            <div style="background:var(--white);border:1px solid var(--cream-dark);border-radius:16px;padding:24px;">
+              <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-light);margin-bottom:8px;">Total visits</div>
+              <div id="analyticsVisitsTotal" style="font-size:2rem;font-weight:600;color:var(--dark);">—</div>
+            </div>
+            <div style="background:var(--white);border:1px solid var(--cream-dark);border-radius:16px;padding:24px;">
+              <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-light);margin-bottom:8px;">Bookings this month</div>
+              <div id="analyticsBookingsMonth" style="font-size:2rem;font-weight:600;color:var(--dark);">—</div>
+            </div>
+          </div>
+          <h3 style="font-size:1rem;margin-bottom:12px;color:var(--dark);">Top pages (by visits)</h3>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Page</th><th>Visits</th></tr></thead>
+              <tbody id="analyticsTopPages"></tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -388,12 +542,20 @@
           var visible = (id === 'panelBookings' && tabId === 'bookings') ||
             (id === 'panelContact' && tabId === 'contact') ||
             (id === 'panelApplications' && tabId === 'applications') ||
-            (id === 'panelNewsletter' && tabId === 'newsletter');
+            (id === 'panelNewsletter' && tabId === 'newsletter') ||
+            (id === 'panelGrievances' && tabId === 'grievances') ||
+            (id === 'panelBlog' && tabId === 'blog') ||
+            (id === 'panelSlots' && tabId === 'slots') ||
+            (id === 'panelAnalytics' && tabId === 'analytics');
           p.classList.toggle('visible', visible);
         });
         if (tabId === 'contact' && !document.getElementById('contactBody').innerHTML) loadContact();
         if (tabId === 'applications' && !document.getElementById('applicationsBody').innerHTML) loadApplications();
         if (tabId === 'newsletter' && !document.getElementById('newsletterBody').innerHTML) loadNewsletter();
+        if (tabId === 'grievances' && !document.getElementById('grievancesBody').innerHTML) loadGrievances();
+        if (tabId === 'blog') loadPosts();
+        if (tabId === 'slots') loadSlots();
+        if (tabId === 'analytics') loadAnalytics();
       }
       document.querySelectorAll('.tab').forEach(function(t) {
         t.addEventListener('click', function() {
@@ -432,6 +594,7 @@
             document.getElementById('bookingsEmpty').style.display = rows.length ? 'none' : 'block';
             rows.forEach(function(row) {
               var tr = document.createElement('tr');
+              var vid = (row.video_link || '');
               tr.innerHTML =
                 '<td class="muted">' + escapeHtml(row.created_at || '') + '</td>' +
                 '<td>' + escapeHtml(row.first_name + ' ' + row.last_name) + '</td>' +
@@ -440,12 +603,82 @@
                 '<td>' + escapeHtml(row.specialist || '') + '</td>' +
                 '<td>' + escapeHtml(row.session_type || '') + '</td>' +
                 '<td>' + escapeHtml(row.preferred_date || '') + ' · ' + escapeHtml(row.time_slot || '') + '</td>' +
+                '<td><span class="muted" style="font-size:0.8rem;">' + (vid ? escapeHtml(vid.slice(0,30)) + (vid.length>30?'…':'') : '—') + '</span> <button type="button" class="booking-set-video" data-id="' + row.id + '" style="padding:4px 10px;font-size:0.75rem;background:var(--sage);color:white;border:none;border-radius:6px;cursor:pointer;">Set link</button></td>' +
                 '<td>' + escapeHtml(row.notes || '—') + '</td>';
               tbody.appendChild(tr);
+            });
+            document.querySelectorAll('.booking-set-video').forEach(function(btn) {
+              btn.addEventListener('click', function() {
+                var id = btn.getAttribute('data-id');
+                var url = prompt('Video call URL (Zoom/Meet):', '');
+                if (url === null) return;
+                fetch(API + '/admin/bookings/' + id, { method: 'PUT', headers: authHeaders(), body: JSON.stringify({ video_link: url.trim() }) })
+                  .then(function(r) { return r.json(); })
+                  .then(function(d) { if (d && d.ok) loadBookings(); else alert(d && d.error || 'Failed'); })
+                  .catch(function() { alert('Network error'); });
+              });
             });
           })
           .catch(function() { showErr('bookings', 'Network error'); });
       }
+
+      function loadSlots() {
+        hideErr('slots');
+        fetch(API + '/admin/slots', { headers: authHeaders() })
+          .then(function(r) {
+            if (r.status === 401) { showLogin(); return null; }
+            return r.json();
+          })
+          .then(function(data) {
+            if (!data) return;
+            if (!data.ok) {
+              showErr('slots', data.error || 'Failed to load');
+              return;
+            }
+            var rows = data.data || [];
+            var tbody = document.getElementById('slotsBody');
+            tbody.innerHTML = '';
+            document.getElementById('slotsEmpty').style.display = rows.length ? 'none' : 'block';
+            document.getElementById('slotsTableWrap').style.display = rows.length ? 'block' : 'none';
+            rows.forEach(function(row) {
+              var tr = document.createElement('tr');
+              tr.innerHTML = '<td>' + escapeHtml(row.slot_date || '') + '</td><td>' + escapeHtml(row.slot_time || '') + '</td><td>' + escapeHtml(row.specialist || '') + '</td><td><button type="button" class="slot-delete" data-id="' + row.id + '" style="padding:4px 10px;font-size:0.75rem;background:transparent;color:#c0392b;border:1px solid #c0392b;border-radius:6px;cursor:pointer;">Delete</button></td>';
+              tbody.appendChild(tr);
+            });
+            document.querySelectorAll('.slot-delete').forEach(function(btn) {
+              btn.addEventListener('click', function() {
+                if (!confirm('Delete this slot?')) return;
+                var id = btn.getAttribute('data-id');
+                fetch(API + '/admin/slots/' + id, { method: 'DELETE', headers: authHeaders() })
+                  .then(function(r) { return r.json(); })
+                  .then(function(d) { if (d && d.ok) loadSlots(); else alert(d && d.error || 'Failed'); })
+                  .catch(function() { alert('Network error'); });
+              });
+            });
+          })
+          .catch(function() { showErr('slots', 'Network error'); });
+      }
+      document.getElementById('slotAddBtn').addEventListener('click', function() {
+        document.getElementById('slotFormWrap').style.display = 'block';
+        document.getElementById('slotDate').value = new Date().toISOString().slice(0, 10);
+      });
+      document.getElementById('slotFormCancel').addEventListener('click', function() {
+        document.getElementById('slotFormWrap').style.display = 'none';
+      });
+      document.getElementById('slotForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var payload = { specialist: document.getElementById('slotSpecialist').value, slot_date: document.getElementById('slotDate').value, slot_time: document.getElementById('slotTime').value.trim() };
+        fetch(API + '/admin/slots', { method: 'POST', headers: authHeaders(), body: JSON.stringify(payload) })
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (d && d.ok) {
+              document.getElementById('slotFormWrap').style.display = 'none';
+              document.getElementById('slotTime').value = '';
+              loadSlots();
+            } else { alert(d && d.error || 'Failed'); }
+          })
+          .catch(function() { alert('Network error'); });
+      });
 
       function loadContact() {
         hideErr('contact');
@@ -541,6 +774,66 @@
           .catch(function() { showErr('newsletter', 'Network error'); });
       }
 
+      function loadGrievances() {
+        hideErr('grievances');
+        fetch(API + '/admin/grievances', { headers: authHeaders() })
+          .then(function(r) {
+            if (r.status === 401) { showLogin(); return null; }
+            return r.json();
+          })
+          .then(function(data) {
+            if (!data) return;
+            if (!data.ok) {
+              showErr('grievances', data.error || 'Failed to load');
+              return;
+            }
+            var rows = data.data || [];
+            var tbody = document.getElementById('grievancesBody');
+            tbody.innerHTML = '';
+            document.getElementById('grievancesEmpty').style.display = rows.length ? 'none' : 'block';
+            rows.forEach(function(row) {
+              var tr = document.createElement('tr');
+              tr.innerHTML =
+                '<td class="muted">' + escapeHtml(row.created_at || '') + '</td>' +
+                '<td>' + escapeHtml(row.first_name || '') + ' ' + escapeHtml(row.last_name || '') + '</td>' +
+                '<td>' + escapeHtml(row.email || '') + '</td>' +
+                '<td>' + escapeHtml(row.phone || '') + '</td>' +
+                '<td>' + escapeHtml(row.subject || '') + '</td>' +
+                '<td>' + escapeHtml(row.message || '') + '</td>';
+              tbody.appendChild(tr);
+            });
+          })
+          .catch(function() { showErr('grievances', 'Network error'); });
+      }
+
+      function loadAnalytics() {
+        hideErr('analytics');
+        fetch(API + '/admin/analytics', { headers: authHeaders() })
+          .then(function(r) {
+            if (r.status === 401) { showLogin(); return null; }
+            return r.json();
+          })
+          .then(function(data) {
+            if (!data) return;
+            if (!data.ok) {
+              showErr('analytics', data.error || 'Failed to load');
+              return;
+            }
+            var d = data.data || {};
+            document.getElementById('analyticsVisitsTotal').textContent = d.visitsTotal != null ? d.visitsTotal : '—';
+            document.getElementById('analyticsBookingsMonth').textContent = d.bookingsThisMonth != null ? d.bookingsThisMonth : '—';
+            var tbody = document.getElementById('analyticsTopPages');
+            tbody.innerHTML = '';
+            (d.topPages || []).forEach(function(row) {
+              var tr = document.createElement('tr');
+              tr.innerHTML = '<td>' + escapeHtml(row.page || '/') + '</td><td>' + (row.count != null ? row.count : '') + '</td>';
+              tbody.appendChild(tr);
+            });
+            document.getElementById('analyticsContent').style.display = 'block';
+          })
+          .catch(function() { showErr('analytics', 'Network error'); });
+      }
+
       function escapeHtml(s) {
         if (s == null) return '';
         var div = document.createElement('div');
@@ -555,7 +848,113 @@
           else if (which === 'contact') loadContact();
           else if (which === 'applications') loadApplications();
           else if (which === 'newsletter') loadNewsletter();
+          else if (which === 'grievances') loadGrievances();
+          else if (which === 'blog') loadPosts();
+          else if (which === 'analytics') loadAnalytics();
+          else if (which === 'slots') loadSlots();
         });
+      });
+
+      function loadPosts() {
+        hideErr('blog');
+        fetch(API + '/posts', { headers: authHeaders() })
+          .then(function(r) {
+            if (r.status === 401) { showLogin(); return null; }
+            return r.json();
+          })
+          .then(function(data) {
+            if (!data) return;
+            if (!data.ok) {
+              showErr('blog', data.error || 'Failed to load');
+              return;
+            }
+            var rows = data.data || [];
+            var tbody = document.getElementById('blogBody');
+            tbody.innerHTML = '';
+            document.getElementById('blogEmpty').style.display = rows.length ? 'none' : 'block';
+            document.getElementById('blogTableWrap').style.display = rows.length ? 'block' : 'none';
+            rows.forEach(function(row) {
+              var tr = document.createElement('tr');
+              var actions = '<button type="button" class="blog-edit" data-id="' + row.id + '" style="padding:6px 12px;margin-right:6px;background:var(--sage);color:white;border:none;border-radius:8px;font-size:0.8rem;cursor:pointer;">Edit</button>' +
+                '<button type="button" class="blog-delete" data-id="' + row.id + '" style="padding:6px 12px;background:transparent;color:#c0392b;border:1px solid #c0392b;border-radius:8px;font-size:0.8rem;cursor:pointer;">Delete</button>';
+              tr.innerHTML = '<td class="muted">' + escapeHtml(row.created_at || '') + '</td><td>' + escapeHtml(row.title || '') + '</td><td>' + escapeHtml(row.category || '') + '</td><td>' + escapeHtml(row.author_name || '') + '</td><td>' + actions + '</td>';
+              tbody.appendChild(tr);
+            });
+            document.querySelectorAll('.blog-edit').forEach(function(btn) {
+              btn.addEventListener('click', function() { openBlogForm(parseInt(btn.getAttribute('data-id'), 10)); });
+            });
+            document.querySelectorAll('.blog-delete').forEach(function(btn) {
+              btn.addEventListener('click', function() {
+                if (!confirm('Delete this post?')) return;
+                var id = parseInt(btn.getAttribute('data-id'), 10);
+                fetch(API + '/admin/posts/' + id, { method: 'DELETE', headers: authHeaders() })
+                  .then(function(r) { return r.json(); })
+                  .then(function(d) { if (d && d.ok) loadPosts(); else alert(d && d.error || 'Delete failed'); })
+                  .catch(function() { alert('Network error'); });
+              });
+            });
+          })
+          .catch(function() { showErr('blog', 'Network error'); });
+      }
+
+      function openBlogForm(id) {
+        var wrap = document.getElementById('blogFormWrap');
+        var formTitle = document.getElementById('blogFormTitle');
+        document.getElementById('blogPostId').value = id ? id : '';
+        formTitle.textContent = id ? 'Edit post' : 'Add post';
+        if (id) {
+          fetch(API + '/posts/' + id, { headers: authHeaders() })
+            .then(function(r) { return r.json(); })
+            .then(function(d) {
+              if (d && d.ok && d.post) {
+                var p = d.post;
+                document.getElementById('blogTitle').value = p.title || '';
+                document.getElementById('blogSlug').value = p.slug || '';
+                document.getElementById('blogExcerpt').value = p.excerpt || '';
+                document.getElementById('blogBodyField').value = p.body || '';
+                document.getElementById('blogCategory').value = p.category || '';
+                document.getElementById('blogAuthor').value = p.author_name || '';
+              }
+            });
+        } else {
+          document.getElementById('blogTitle').value = '';
+          document.getElementById('blogSlug').value = '';
+          document.getElementById('blogExcerpt').value = '';
+          document.getElementById('blogBodyField').value = '';
+          document.getElementById('blogCategory').value = '';
+          document.getElementById('blogAuthor').value = '';
+        }
+        wrap.style.display = 'block';
+      }
+
+      document.getElementById('blogAddBtn').addEventListener('click', function() { openBlogForm(null); });
+      document.getElementById('blogFormCancel').addEventListener('click', function() {
+        document.getElementById('blogFormWrap').style.display = 'none';
+      });
+      document.getElementById('blogForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var id = document.getElementById('blogPostId').value;
+        var payload = {
+          title: document.getElementById('blogTitle').value.trim(),
+          slug: document.getElementById('blogSlug').value.trim(),
+          excerpt: document.getElementById('blogExcerpt').value.trim(),
+          body: document.getElementById('blogBodyField').value,
+          category: document.getElementById('blogCategory').value.trim(),
+          author_name: document.getElementById('blogAuthor').value.trim()
+        };
+        var url = id ? API + '/admin/posts/' + id : API + '/admin/posts';
+        var method = id ? 'PUT' : 'POST';
+        fetch(url, { method: method, headers: authHeaders(), body: JSON.stringify(payload) })
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (d && d.ok) {
+              document.getElementById('blogFormWrap').style.display = 'none';
+              loadPosts();
+            } else {
+              alert(d && d.error || 'Save failed');
+            }
+          })
+          .catch(function() { alert('Network error'); });
       });
 
       if (getKey()) {
