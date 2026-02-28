@@ -24,11 +24,12 @@ nav{padding:20px 60px;display:flex;align-items:center;justify-content:space-betw
 </style>
 </head>
 <body>
-<nav><a href="index.html" class="logo">Sere<span>nest</span></a><a href="signup.html">Sign up</a></nav>
+<nav><a href="index.html" class="logo">Sere<span>nest</span></a><div><a href="signup.html">Sign up</a> &nbsp; <a href="book.html">Book</a></div></nav>
 <div class="patient-auth">
   <div class="auth-card">
     <h1>Log in</h1>
-    <p>Access your bookings and session details.</p>
+    <p id="loginIntro">Access your bookings and session details.</p>
+    <p id="signedUpMsg" style="display:none;margin-bottom:16px;padding:12px;background:rgba(125,155,118,0.12);border-radius:10px;font-size:0.9rem;color:var(--sage-dark);">Account created. Please log in.</p>
     <form id="loginForm">
       <label>Email</label>
       <input type="email" name="email" required placeholder="your@email.com">
@@ -42,6 +43,10 @@ nav{padding:20px 60px;display:flex;align-items:center;justify-content:space-betw
 </div>
 <script>
 (function(){
+  if(window.location.search.indexOf('signedup=1')!==-1){
+    document.getElementById('signedUpMsg').style.display='block';
+    document.getElementById('loginIntro').style.display='none';
+  }
   var TOKEN_KEY='serenest_patient_token';
   var API=(window.API_BASE||'')+'/api';
   var form=document.getElementById('loginForm');

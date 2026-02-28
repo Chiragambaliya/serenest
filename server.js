@@ -661,6 +661,36 @@ app.get('/api/me', requirePatient, (req, res) => {
   }
 });
 
+app.put('/api/me', requirePatient, (req, res) => {
+  try {
+    const full_name = trimStr(req.body.full_name).slice(0, 200);
+    db.prepare('UPDATE patients SET full_name = ? WHERE id = ?').run(full_name || null, req.patientId);
+    const p = db.prepare('SELECT id, email, full_name, created_at FROM patients WHERE id = ?').get(req.patientId);
+    res.json({ ok: true, patient: p });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.post('/api/me/change-password', requirePatient, (req, res) => {
+  try {
+    const current = req.body.current_password;
+    const newPassword = req.body.new_password;
+    if (!current || !newPassword || typeof newPassword !== 'string' || newPassword.length < 8) {
+      return res.status(400).json({ ok: false, error: 'Current password and new password (min 8 characters) required.' });
+    }
+    const patient = db.prepare('SELECT password_hash FROM patients WHERE id = ?').get(req.patientId);
+    if (!patient || !verifyPassword(current, patient.password_hash)) {
+      return res.status(401).json({ ok: false, error: 'Current password is incorrect.' });
+    }
+    const password_hash = hashPassword(newPassword);
+    db.prepare('UPDATE patients SET password_hash = ? WHERE id = ?').run(password_hash, req.patientId);
+    res.json({ ok: true, message: 'Password updated.' });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 app.get('/api/me/bookings', requirePatient, (req, res) => {
   try {
     const rows = db.prepare('SELECT id, specialist, session_type, preferred_date, time_slot, video_link, created_at FROM bookings WHERE patient_id = ? ORDER BY created_at DESC').all(req.patientId);
