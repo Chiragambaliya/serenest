@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Book a Consultation — Serenest</title>
+<meta name="description" content="Book a confidential video consultation with a psychiatrist or therapist. Choose your specialist, date and time. India's telepsychiatry platform.">
+<link rel="canonical" href="https://serenest.in/book.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -65,6 +67,8 @@ nav ul a:hover{color:var(--sage-dark);}
 .form-submit{width:100%;background:var(--sage);color:var(--white);border:none;padding:16px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.25s;margin-top:8px;}
 .form-submit:hover{background:var(--sage-dark);transform:translateY(-2px);box-shadow:0 12px 30px rgba(125,155,118,0.3);}
 .form-note{text-align:center;font-size:0.72rem;color:var(--text-light);margin-top:12px;font-style:italic;}
+.fee-line{font-size:0.85rem;color:var(--text);margin-bottom:16px;padding:10px 14px;background:rgba(125,155,118,0.08);border-radius:10px;border:1px solid rgba(125,155,118,0.2);}
+.fee-line strong{color:var(--sage-dark);}
 
 /* SUCCESS STATE */
 .success-state{display:none;text-align:center;padding:20px 0;}
@@ -76,6 +80,8 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 .footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
 .footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
 .compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+.float-cta{position:fixed;bottom:24px;right:24px;z-index:90;display:flex;align-items:center;gap:10px;background:var(--sage);color:var(--white);padding:14px 20px;border-radius:50px;text-decoration:none;font-size:0.88rem;font-weight:500;box-shadow:0 8px 28px rgba(125,155,118,0.4);transition:transform 0.2s;}
+.float-cta:hover{background:var(--sage-dark);transform:translateY(-2px);color:white;}
 
 @keyframes fadeUp{from{opacity:0;transform:translateY(24px);}to{opacity:1;transform:translateY(0);}}
 .anim-in{opacity:0;animation:fadeUp 0.9s ease forwards;}
@@ -83,6 +89,8 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 @media(max-width:900px){
   nav{padding:16px 24px;}nav ul{display:none;}
   .hamburger{display:flex;}
+  nav{overflow:visible;}
+  #nav-menu.open{display:flex!important;flex-direction:column;position:absolute;top:100%;right:24px;left:24px;margin-top:8px;background:rgba(247,245,240,0.98);padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(28,36,32,0.1);gap:12px;z-index:101;}
   .booking-page{grid-template-columns:1fr;padding:100px 24px 60px;gap:40px;}
   .booking-form-card{position:static;padding:28px;}
   .session-types{grid-template-columns:1fr 1fr 1fr;}
@@ -90,7 +98,9 @@ footer{background:var(--dark);padding:48px 60px 36px;}
   footer{padding:32px 24px;}
 }
 </style>
+<link rel="stylesheet" href="premium.css">
 <script src="/config.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 
@@ -103,6 +113,8 @@ footer{background:var(--dark);padding:48px 60px 36px;}
     <li><a href="specialists.html">Specialists</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="blog.html">Blog</a></li>
+    <li><a href="screenings.html">Screenings</a></li>
+    <li><a href="faq.html">FAQ</a></li>
     <li><a href="book.html" class="nav-cta">Book Now</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -141,6 +153,7 @@ footer{background:var(--dark);padding:48px 60px 36px;}
       <div class="form-title">Book a Consultation</div>
       <div class="form-subtitle">Fill in your details and we'll confirm your session by email.</div>
 
+      <div class="fee-line">Consultation fee: <strong>₹<span id="consultationFee">500</span></strong> (pay securely after filling details)</div>
       <form id="bookingForm" onsubmit="handleBooking(event)">
         <input type="hidden" name="session_type" id="booking_session_type" value="Video">
         <input type="hidden" name="time_slot" id="booking_time_slot" value="3:30 PM">
@@ -215,8 +228,8 @@ footer{background:var(--dark);padding:48px 60px 36px;}
           <label>What brings you here? <span style="color:var(--text-light);font-weight:300;text-transform:none;letter-spacing:0">(optional)</span></label>
           <textarea name="notes" placeholder="Briefly describe what you'd like support with. This helps your specialist prepare for your session."></textarea>
         </div>
-        <button type="submit" class="form-submit" id="bookingSubmitBtn">Confirm Booking →</button>
-        <p class="form-note">🔒 Your information is completely confidential. We'll send a confirmation to your email.</p>
+        <button type="submit" class="form-submit" id="bookingSubmitBtn">Pay ₹<span id="submitFee">500</span> &amp; Confirm Booking →</button>
+        <p class="form-note">🔒 Secure payment via Razorpay. Your information is confidential. We'll send confirmation to your email.</p>
       </form>
     </div>
 
@@ -236,6 +249,7 @@ footer{background:var(--dark);padding:48px 60px 36px;}
     <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
   </div>
 </footer>
+<a href="contact.html" class="float-cta" aria-label="Contact us"><span>💬</span><span>Questions? Contact us</span></a>
 
 <script>
 function updateNavScroll(){const nav=document.getElementById('navbar');const isMobile=window.innerWidth<=900;nav.style.padding=isMobile?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
@@ -243,7 +257,11 @@ window.addEventListener('scroll',updateNavScroll);
 window.addEventListener('resize',updateNavScroll);
 updateNavScroll();
 const hamburgerBtn=document.getElementById('hamburger');
-hamburgerBtn.addEventListener('click',()=>{const menu=document.getElementById('nav-menu');const isOpen=menu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
+const navMenu=document.getElementById('nav-menu');
+if(hamburgerBtn&&navMenu){
+  hamburgerBtn.addEventListener('click',()=>{const isOpen=navMenu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
+  navMenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ navMenu.classList.remove('open'); hamburgerBtn.setAttribute('aria-expanded','false'); hamburgerBtn.setAttribute('aria-label','Open menu'); }); });
+}
 
 // Set min date to today
 document.querySelector('input[type="date"]').min=new Date().toISOString().split('T')[0];
@@ -260,39 +278,77 @@ function selectSlot(el){
   el.classList.add('selected');
   document.getElementById('booking_time_slot').value=el.textContent.trim();
 }
-function handleBooking(e){
-  e.preventDefault();
-  var btn=document.getElementById('bookingSubmitBtn');
-  var origText=btn.textContent;
-  btn.textContent='Sending...';
-  btn.disabled=true;
-  var form=e.target;
+function getBookingData(form){
   var data={};
   ['first_name','last_name','email','phone','specialist','session_type','preferred_date','time_slot','notes'].forEach(function(name){
     var el=form.querySelector('[name="'+name+'"]');
     if(el) data[name]=el.value;
   });
-  fetch((window.API_BASE||'')+'/api/booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
-    .then(function(r){return r.json();})
-    .then(function(json){
-      if(json.ok){
-        document.getElementById('booking-form-content').style.display='none';
-        var s=document.getElementById('successState');
-        s.style.display='block';
-        s.style.opacity='0';
-        setTimeout(function(){s.style.transition='opacity 0.5s ease';s.style.opacity='1';},50);
-      }else{
+  return data;
+}
+function showBookingSuccess(){
+  document.getElementById('booking-form-content').style.display='none';
+  var s=document.getElementById('successState');
+  s.style.display='block';
+  s.style.opacity='0';
+  setTimeout(function(){s.style.transition='opacity 0.5s ease';s.style.opacity='1';},50);
+}
+function handleBooking(e){
+  e.preventDefault();
+  var btn=document.getElementById('bookingSubmitBtn');
+  var origText=btn.textContent;
+  var form=e.target;
+  var data=getBookingData(form);
+  var apiBase=window.API_BASE||'';
+
+  function submitBooking(paymentPayload){
+    var payload=Object.assign({},data,paymentPayload);
+    btn.textContent='Confirming...';
+    fetch(apiBase+'/api/booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){return r.json();})
+      .then(function(json){
+        if(json.ok){ showBookingSuccess(); }
+        else{ btn.textContent=origText; btn.disabled=false; alert(json.error||'Something went wrong. Please try again.'); }
+      })
+      .catch(function(){ btn.textContent=origText; btn.disabled=false; alert('Could not reach server. Please check your connection and try again.'); });
+  }
+
+  btn.textContent='Preparing payment...';
+  btn.disabled=true;
+  fetch(apiBase+'/api/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount:500})})
+    .then(function(r){ return r.json().then(function(j){ return { status: r.status, json: j }; }); })
+    .then(function(out){
+      var json=out.json;
+      if(!json.ok||!json.order_id){
         btn.textContent=origText;
         btn.disabled=false;
-        alert(json.error||'Something went wrong. Please try again.');
+        submitBooking({});
+        return;
       }
-    })
-    .catch(function(){
+      var options={
+        key:json.key_id,
+        amount:json.amount*100,
+        currency:'INR',
+        order_id:json.order_id,
+        name:'Serenest',
+        description:'Consultation booking',
+        prefill:{name:data.first_name+' '+data.last_name,email:data.email,contact:data.phone},
+        handler:function(res){
+          submitBooking({razorpay_payment_id:res.razorpay_payment_id,razorpay_order_id:res.razorpay_order_id,razorpay_signature:res.razorpay_signature});
+        }
+      };
+      if(typeof Razorpay==='undefined'){ submitBooking({}); return; }
+      var rzp=new Razorpay(options);
+      rzp.on('payment.failed',function(){ btn.textContent=origText; btn.disabled=false; alert('Payment failed. You can try again or book without paying now.'); });
+      rzp.open();
       btn.textContent=origText;
       btn.disabled=false;
-      alert('Could not reach server. Please check your connection and try again.');
+    })
+    .catch(function(){
+      submitBooking({});
     });
 }
 </script>
+<script src="scripts/visit-notify.js"></script>
 </body>
 </html>

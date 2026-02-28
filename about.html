@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>About — Serenest</title>
+<meta name="description" content="Serenest was founded by Dr. Chirag Aambalia to make quality mental healthcare accessible. Our story and mission.">
+<link rel="canonical" href="https://serenest.in/about.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -126,6 +128,8 @@ footer{background:var(--dark);padding:64px 60px 36px;}
 @media(max-width:900px){
   nav{padding:16px 24px;}nav ul{display:none;}
   .hamburger{display:flex;}
+  nav{overflow:visible;}
+  #nav-menu.open{display:flex!important;flex-direction:column;position:absolute;top:100%;right:24px;left:24px;margin-top:8px;background:rgba(247,245,240,0.98);padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(28,36,32,0.1);gap:12px;z-index:101;}
   .page-hero{padding:120px 24px 72px;}
   .section-mission,.section-founder,.section-story,.section-team,.section-cta{padding:72px 24px;}
   .mission-layout,.founder-layout{grid-template-columns:1fr;}
@@ -151,6 +155,7 @@ footer{background:var(--dark);padding:64px 60px 36px;}
 .center-mt-48{text-align:center;margin-top:48px!important;}
 .z-1{position:relative;z-index:1!important;}
 </style>
+<link rel="stylesheet" href="premium.css">
 </head>
 <body>
 
@@ -163,6 +168,8 @@ footer{background:var(--dark);padding:64px 60px 36px;}
     <li><a href="specialists.html">Specialists</a></li>
     <li><a href="about.html" class="active">About</a></li>
     <li><a href="blog.html">Blog</a></li>
+    <li><a href="screenings.html">Screenings</a></li>
+    <li><a href="faq.html">FAQ</a></li>
     <li><a href="book.html" class="nav-cta">Book Now</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -373,7 +380,12 @@ window.addEventListener('scroll',updateNavScroll);
 window.addEventListener('resize',updateNavScroll);
 updateNavScroll();
 const hamburgerBtn=document.getElementById('hamburger');
-hamburgerBtn.addEventListener('click',()=>{const menu=document.getElementById('nav-menu');const isOpen=menu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
+const navMenu=document.getElementById('nav-menu');
+if(hamburgerBtn&&navMenu){
+  hamburgerBtn.addEventListener('click',()=>{const isOpen=navMenu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
+  navMenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ navMenu.classList.remove('open'); hamburgerBtn.setAttribute('aria-expanded','false'); hamburgerBtn.setAttribute('aria-label','Open menu'); }); });
+}
 </script>
+<script src="scripts/visit-notify.js"></script>
 </body>
 </html>

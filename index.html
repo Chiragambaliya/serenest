@@ -4,23 +4,34 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Serenest — Mental Healthcare, From Home</title>
+<meta name="description" content="India's telepsychiatry platform. Book confidential video sessions with verified psychiatrists and therapists. Depression, anxiety, stress — care from home.">
+<link rel="canonical" href="https://serenest.in/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Serenest — Mental Healthcare, From Home">
+<meta property="og:description" content="India's telepsychiatry platform. Book confidential video sessions with verified psychiatrists and therapists. Care from home.">
+<meta property="og:url" content="https://serenest.in/">
+<meta property="og:locale" content="en_IN">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Serenest — Mental Healthcare, From Home">
+<meta name="twitter:description" content="India's telepsychiatry platform. Book confidential video sessions with verified psychiatrists and therapists.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
 <style>
   :root {
-    --sage: #7D9B76;
-    --sage-light: #A8C4A2;
-    --sage-dark: #5A7A54;
-    --teal: #5B8A8B;
-    --teal-light: #8BB8B9;
-    --cream: #F7F5F0;
-    --cream-dark: #EDE9E1;
-    --dark: #1C2420;
-    --dark-mid: #2E3D37;
-    --text: #3A4A44;
-    --text-light: #6B7E77;
+    /* Base tokens (premium.css overrides with refined palette) */
+    --sage: #6B8F71;
+    --sage-light: #9BB89F;
+    --sage-dark: #4A6B50;
+    --teal: #4E7C7D;
+    --teal-light: #7BA8A9;
+    --cream: #F8F6F1;
+    --cream-dark: #EDE9E2;
+    --dark: #161D1A;
+    --dark-mid: #252F2B;
+    --text: #2D3B36;
+    --text-light: #5C6E66;
     --white: #FFFFFF;
   }
 
@@ -346,6 +357,7 @@
   }
 
   .card-book-btn {
+    display: block;
     width: 100%;
     background: var(--sage);
     color: white;
@@ -356,7 +368,11 @@
     font-size: 0.85rem;
     font-weight: 500;
     cursor: pointer;
+    text-decoration: none;
+    text-align: center;
+    box-sizing: border-box;
   }
+  .card-book-btn:hover { background: var(--sage-dark); }
 
   .floating-card {
     position: absolute;
@@ -829,6 +845,51 @@
   .author-info p { font-size: 0.72rem; color: rgba(247,245,240,0.4); margin-top: 2px; }
 
   /* ─── FINAL CTA ─── */
+  .section-screenings-promo {
+    padding: 80px 60px;
+    background: var(--white);
+    text-align: center;
+    border-top: 1px solid var(--cream-dark);
+  }
+  .screenings-promo-inner {
+    max-width: 620px;
+    margin: 0 auto;
+  }
+  .section-screenings-promo .section-tag {
+    color: var(--sage);
+  }
+  .section-screenings-promo h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 300;
+    color: var(--dark);
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+  .section-screenings-promo p {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    line-height: 1.7;
+    margin-bottom: 28px;
+  }
+  .btn-screenings {
+    display: inline-block;
+    padding: 14px 28px;
+    background: var(--sage);
+    color: var(--white);
+    border-radius: 50px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.25s;
+  }
+  .btn-screenings:hover {
+    background: var(--sage-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(125,155,118,0.3);
+    color: white;
+  }
+
   .section-cta {
     padding: 120px 60px;
     background: var(--sage);
@@ -1032,16 +1093,44 @@
   /* Center text with margin */
   .center-mt-48 { text-align: center; margin-top: 48px; }
 
+  /* Floating contact CTA */
+  .float-cta {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--sage);
+    color: var(--white);
+    padding: 14px 20px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 0.88rem;
+    font-weight: 500;
+    box-shadow: 0 8px 28px rgba(125,155,118,0.4);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .float-cta:hover {
+    background: var(--sage-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(125,155,118,0.45);
+    color: white;
+  }
+  .float-cta span:first-child { font-size: 1.2rem; }
+
   /* ─── RESPONSIVE ─── */
   @media (max-width: 900px) {
     nav { padding: 16px 24px; }
     nav ul { display: none; }
     .hamburger { display: flex; }
     /* when nav is toggled open */
-    nav.nav-open ul { display: flex; flex-direction: column; gap: 12px; position: absolute; top: 64px; right: 24px; background: rgba(247,245,240,0.95); padding: 12px 16px; border-radius: 8px; box-shadow: 0 8px 30px rgba(28,36,32,0.08); }
+    nav.nav-open { overflow: visible; }
+    nav.nav-open ul { display: flex; flex-direction: column; gap: 12px; position: absolute; top: 64px; right: 24px; left: 24px; background: rgba(247,245,240,0.98); padding: 16px 20px; border-radius: 12px; box-shadow: 0 8px 30px rgba(28,36,32,0.12); z-index: 101; }
     .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; }
     .hero-visual { display: none; }
-    .section-problem, .section-how, .section-conditions, .section-why, .section-founder, .section-testimonials, .section-cta { padding: 72px 24px; }
+    .section-problem, .section-how, .section-conditions, .section-why, .section-founder, .section-testimonials, .section-screenings-promo, .section-cta { padding: 72px 24px; }
     .features-grid { grid-template-columns: repeat(2, 1fr); }
     .founder-inner { grid-template-columns: 1fr; }
     .founder-photo-frame { max-width: 220px; }
@@ -1052,24 +1141,30 @@
     .steps-grid::before { display: none; }
   }
 </style>
+<link rel="stylesheet" href="premium.css">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"MedicalOrganization","name":"Serenest","description":"India's clinical-grade telepsychiatry platform. Video consultations with verified psychiatrists and therapists.","url":"https://serenest.in","areaServed":"IN","medicalSpecialty":["Psychiatry","Mental Health"]}
+</script>
 </head>
 <body>
 
 <!-- NAV -->
 <nav>
-  <div class="logo">Sere<span>nest</span></div>
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
   <button class="hamburger" aria-label="Open menu" aria-expanded="false">
     <span></span>
     <span></span>
     <span></span>
   </button>
   <ul>
-    <li><a href="#">For Patients</a></li>
-    <li><a href="#">For Doctors</a></li>
-    <li><a href="#">Services</a></li>
-    <li><a href="#">About</a></li>
-    <li><a href="#">Blog</a></li>
-    <li><a href="#" class="nav-cta">Book Now</a></li>
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="screenings.html">Screenings</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
   </ul>
 </nav>
 
@@ -1080,7 +1175,7 @@
     <h1>Mental healthcare,<br><em>from the comfort</em><br>of your home.</h1>
     <p>Serenest connects you with qualified psychiatrists and therapists across India — privately, securely, and on your schedule.</p>
     <div class="hero-buttons">
-      <a href="#" class="btn-primary">Book a Consultation →</a>
+      <a href="book.html" class="btn-primary">Book a Consultation →</a>
       <a href="#how" class="btn-secondary">How It Works</a>
     </div>
     <div class="hero-trust">
@@ -1114,7 +1209,7 @@
         <div class="session-time">3:30 PM</div>
         <div class="session-date">Today · Video Session</div>
       </div>
-      <button class="card-book-btn">Confirm Booking</button>
+      <a href="book.html" class="card-book-btn">Confirm Booking</a>
     </div>
 
     <div class="floating-card float-2">
@@ -1295,18 +1390,28 @@
   </div>
 </section>
 
+<!-- SCREENINGS / TOOLS -->
+<section class="section-screenings-promo">
+  <div class="screenings-promo-inner">
+    <div class="section-tag reveal">Free & anonymous</div>
+    <h2 class="reveal">Check how you've been feeling</h2>
+    <p class="reveal">Short screenings for depression, anxiety, sleep, and stress. Not a diagnosis — just a way to see if talking to a professional might help.</p>
+    <a href="screenings.html" class="btn-screenings reveal">Take a screening →</a>
+  </div>
+</section>
+
 <!-- CTA -->
 <section class="section-cta">
   <h2 class="reveal">You don't have to figure<br>this out alone.</h2>
   <p class="reveal">Take the first step. Book a confidential consultation with a qualified specialist today.</p>
-  <a href="#" class="btn-white reveal">Book a Consultation →</a>
+  <a href="book.html" class="btn-white reveal">Book a Consultation →</a>
 </section>
 
 <!-- FOOTER -->
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <span class="logo">Sere<span>nest</span></span>
+      <a href="index.html" class="logo">Sere<span>nest</span></a>
       <p>India's clinical-grade telepsychiatry platform. Connecting patients with qualified mental health professionals — privately, securely, on your schedule.</p>
       <div class="social-links">
         <a href="#" class="social-link" aria-label="Instagram">📷</a>
@@ -1317,29 +1422,35 @@
     <div class="footer-col">
       <h5>Platform</h5>
       <ul>
-        <li><a href="#">For Patients</a></li>
-        <li><a href="#">For Doctors</a></li>
-        <li><a href="#">Our Specialists</a></li>
-        <li><a href="#">Services</a></li>
-        <li><a href="#">Book a Session</a></li>
+        <li><a href="patients.html">For Patients</a></li>
+        <li><a href="doctors.html">For Doctors</a></li>
+        <li><a href="specialists.html">Our Specialists</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="book.html">Book a Session</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h5>Company</h5>
       <ul>
-        <li><a href="#">About Us</a></li>
-        <li><a href="#">Blog</a></li>
-        <li><a href="#">Contact</a></li>
-        <li><a href="#">Careers</a></li>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="blog.html">Blog</a></li>
+        <li><a href="contact.html">Contact</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><a href="pricing.html">Pricing</a></li>
+        <li><a href="testimonials.html">Patient Stories</a></li>
+        <li><a href="resources.html">Resources</a></li>
+        <li><a href="screenings.html">Screenings</a></li>
+        <li><a href="wellbeing-check.html">Wellbeing check</a></li>
+        <li><a href="crisis.html">Crisis support</a></li>
       </ul>
     </div>
     <div class="footer-col">
       <h5>Legal</h5>
       <ul>
-        <li><a href="#">Privacy Policy</a></li>
-        <li><a href="#">Terms of Use</a></li>
-        <li><a href="#">Telemedicine Policy</a></li>
-        <li><a href="#">Grievance Policy</a></li>
+        <li><a href="privacy.html">Privacy Policy</a></li>
+        <li><a href="terms.html">Terms of Use</a></li>
+        <li><a href="telemedicine-policy.html">Telemedicine Policy</a></li>
+        <li><a href="grievance.html">Grievance Policy</a></li>
       </ul>
     </div>
   </div>
@@ -1348,6 +1459,11 @@
     <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
   </div>
 </footer>
+
+<a href="contact.html" class="float-cta" aria-label="Contact us">
+  <span>💬</span>
+  <span>Need help? Contact us</span>
+</a>
 
 <script>
   // Scroll reveal
@@ -1375,15 +1491,25 @@
 
   // Mobile nav toggle
   const hamburger = document.querySelector('.hamburger');
-  if (hamburger) {
+  const nav = document.querySelector('nav');
+  if (hamburger && nav) {
     hamburger.addEventListener('click', () => {
-      const nav = document.querySelector('nav');
       const isOpen = nav.classList.toggle('nav-open');
       hamburger.classList.toggle('open');
       hamburger.setAttribute('aria-expanded', isOpen);
       hamburger.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
     });
+    // Close menu when a nav link is clicked (so navigation works)
+    nav.querySelectorAll('ul a').forEach(function(a) {
+      a.addEventListener('click', function() {
+        nav.classList.remove('nav-open');
+        hamburger.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        hamburger.setAttribute('aria-label', 'Open menu');
+      });
+    });
   }
 </script>
+<script src="scripts/visit-notify.js"></script>
 </body>
 </html>

@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>For Doctors — Serenest</title>
+<meta name="description" content="Join Serenest as a psychiatrist or therapist. Telepsychiatry platform for Indian mental health professionals. Apply to list your practice.">
+<link rel="canonical" href="https://serenest.in/doctors.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -133,6 +135,8 @@ footer{background:var(--dark);padding:64px 60px 36px;}
 @media(max-width:900px){
   nav{padding:16px 24px;}nav ul{display:none;}
   .hamburger{display:flex;}
+  #nav-menu.open{display:flex!important;flex-direction:column;position:absolute;top:100%;right:24px;left:24px;margin-top:8px;background:rgba(247,245,240,0.98);padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(28,36,32,0.1);gap:12px;z-index:101;}
+  nav{overflow:visible;}
   .page-hero{padding:120px 24px 72px;}
   .page-hero-grid{grid-template-columns:1fr;}
   .hero-stats-card{display:none;}
@@ -147,6 +151,7 @@ footer{background:var(--dark);padding:64px 60px 36px;}
   .footer-grid{grid-template-columns:1fr 1fr;}
 }
 </style>
+<link rel="stylesheet" href="premium.css">
 <script src="/config.js"></script>
 </head>
 <body>
@@ -160,6 +165,8 @@ footer{background:var(--dark);padding:64px 60px 36px;}
     <li><a href="specialists.html">Specialists</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="blog.html">Blog</a></li>
+    <li><a href="screenings.html">Screenings</a></li>
+    <li><a href="faq.html">FAQ</a></li>
     <li><a href="book.html" class="nav-cta">Book Now</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -248,6 +255,7 @@ footer{background:var(--dark);padding:64px 60px 36px;}
     <div class="section-tag reveal">Getting Started</div>
     <h2 class="reveal">From application to first patient — in days.</h2>
     <p class="reveal">Our onboarding is designed to be fast and frictionless.</p>
+    <p class="reveal" style="margin-top:16px;"><a href="onboarding.html" style="color:var(--sage-dark);font-weight:500;">See the full onboarding process →</a></p>
   </div>
   <div class="how-steps">
     <div class="how-step reveal">
@@ -313,6 +321,7 @@ footer{background:var(--dark);padding:64px 60px 36px;}
         <li class="reveal"><div class="check">✓</div>Reliable internet connection and a private space</li>
         <li class="reveal"><div class="check">✓</div>Commitment to patient-centred, ethical care</li>
       </ul>
+      <p class="reveal" style="margin-top:24px;"><a href="onboarding.html" style="color:var(--sage-dark);font-weight:500;font-size:0.9rem;">What happens after I apply? See our onboarding process →</a></p>
     </div>
     <div class="apply-form-card reveal">
       <h3>Application Form</h3>
@@ -408,12 +417,17 @@ window.addEventListener('scroll',updateNavScroll);
 window.addEventListener('resize',updateNavScroll);
 updateNavScroll();
 const hamburgerBtn=document.getElementById('hamburger');
-hamburgerBtn.addEventListener('click',()=>{
-  const menu=document.getElementById('nav-menu');
-  const isOpen=menu.classList.toggle('open');
-  hamburgerBtn.setAttribute('aria-expanded',isOpen);
-  hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');
-});
+const navMenu=document.getElementById('nav-menu');
+if(hamburgerBtn&&navMenu){
+  hamburgerBtn.addEventListener('click',()=>{
+    const isOpen=navMenu.classList.toggle('open');
+    hamburgerBtn.setAttribute('aria-expanded',isOpen);
+    hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');
+  });
+  navMenu.querySelectorAll('a').forEach(function(a){
+    a.addEventListener('click',function(){ navMenu.classList.remove('open'); hamburgerBtn.setAttribute('aria-expanded','false'); hamburgerBtn.setAttribute('aria-label','Open menu'); });
+  });
+}
 function handleApply(e){
   e.preventDefault();
   var btn=document.getElementById('applySubmitBtn');
@@ -446,5 +460,6 @@ function handleApply(e){
     });
 }
 </script>
+<script src="scripts/visit-notify.js"></script>
 </body>
 </html>

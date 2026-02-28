@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Blog — Serenest</title>
+<meta name="description" content="Mental health articles and updates from Serenest. Tips, resources, and news from India's telepsychiatry platform.">
+<link rel="canonical" href="https://serenest.in/blog.html">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -96,6 +98,8 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
 @media(max-width:900px){
   nav{padding:16px 24px;}nav ul{display:none;}
   .hamburger{display:flex;}
+  nav{overflow:visible;}
+  #nav-menu.open{display:flex!important;flex-direction:column;position:absolute;top:100%;right:24px;left:24px;margin-top:8px;background:rgba(247,245,240,0.98);padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(28,36,32,0.1);gap:12px;z-index:101;}
   .page-hero{padding:120px 24px 72px;}
   .category-bar{padding:20px 24px;}
   .section-featured{padding:48px 24px 32px;}
@@ -109,6 +113,7 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
   footer{padding:32px 24px;}
 }
 </style>
+<link rel="stylesheet" href="premium.css">
 </head>
 <body>
 
@@ -121,6 +126,8 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
     <li><a href="specialists.html">Specialists</a></li>
     <li><a href="about.html">About</a></li>
     <li><a href="blog.html" class="active">Blog</a></li>
+    <li><a href="screenings.html">Screenings</a></li>
+    <li><a href="faq.html">FAQ</a></li>
     <li><a href="book.html" class="nav-cta">Book Now</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -150,7 +157,7 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
 
 <!-- FEATURED -->
 <section class="section-featured">
-  <a href="#" class="featured-post reveal">
+  <a href="post.html" class="featured-post reveal">
     <div class="featured-visual" style="background:linear-gradient(135deg,#5A7A54,#7D9B76)">
       <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.08) 1px,transparent 1px);background-size:28px 28px;"></div>
       <span style="position:relative;z-index:1;font-size:6rem">🧠</span>
@@ -263,10 +270,11 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
 <section class="section-newsletter">
   <h2 class="reveal">Mental health insights, straight to your inbox.</h2>
   <p class="reveal">Subscribe to the Serenest newsletter — one thoughtful article a week, written by our specialists.</p>
-  <div class="newsletter-form reveal">
-    <input type="email" placeholder="your@email.com">
-    <button onclick="this.textContent='✅ Subscribed!'">Subscribe</button>
-  </div>
+  <form class="newsletter-form reveal" id="newsletter-form" action="#" method="post">
+    <input type="email" name="email" placeholder="your@email.com" required aria-label="Email address">
+    <button type="submit" id="newsletter-btn">Subscribe</button>
+  </form>
+  <p class="reveal" id="newsletter-msg" style="margin-top:12px;font-size:0.88rem;display:none;"></p>
 </section>
 
 <footer>
@@ -284,10 +292,37 @@ window.addEventListener('scroll',updateNavScroll);
 window.addEventListener('resize',updateNavScroll);
 updateNavScroll();
 const hamburgerBtn=document.getElementById('hamburger');
-hamburgerBtn.addEventListener('click',()=>{const menu=document.getElementById('nav-menu');const isOpen=menu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
+var navMenu=document.getElementById('nav-menu');
+hamburgerBtn.addEventListener('click',()=>{const isOpen=navMenu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
+if(navMenu) navMenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ navMenu.classList.remove('open'); hamburgerBtn.setAttribute('aria-expanded','false'); hamburgerBtn.setAttribute('aria-label','Open menu'); }); });
 document.querySelectorAll('.cat-btn').forEach(btn=>{
   btn.addEventListener('click',()=>{document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');});
 });
+(function(){
+  var form=document.getElementById('newsletter-form');
+  var btn=document.getElementById('newsletter-btn');
+  var msg=document.getElementById('newsletter-msg');
+  if(!form) return;
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var email=(form.email&&form.email.value)||'';
+    if(!email.trim()) return;
+    btn.disabled=true;
+    msg.style.display='none';
+    var api=(window.API_BASE||'')+'/api/newsletter';
+    fetch(api,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email.trim()})})
+      .then(function(r){return r.json();})
+      .then(function(data){
+        msg.textContent=data.message||(data.ok?'Subscribed.':'Something went wrong.');
+        msg.style.color=data.ok?'var(--sage-light)':'#c0392b';
+        msg.style.display='block';
+        if(data.ok) form.reset();
+      })
+      .catch(function(){msg.textContent='Could not subscribe. Try again.';msg.style.color='#c0392b';msg.style.display='block';})
+      .finally(function(){btn.disabled=false;});
+  });
+})();
 </script>
+<script src="scripts/visit-notify.js"></script>
 </body>
 </html>

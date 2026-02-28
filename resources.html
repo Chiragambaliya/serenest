@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mental Health Resources — Serenest</title>
+<meta name="description" content="Tools, screenings, breathing exercises and mental health resources. Serenest — India's telepsychiatry platform.">
+<link rel="canonical" href="https://serenest.in/resources.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);transition:all 0.3s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
+nav ul a{text-decoration:none;font-size:0.85rem;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;}
+nav ul a:hover{color:var(--sage-dark);}.nav-cta{background:var(--sage)!important;color:var(--white)!important;padding:10px 22px;border-radius:40px;font-weight:500!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+.hamburger span{width:24px;height:2px;background:var(--dark);border-radius:2px;display:block;}
+
+.page-hero{padding:160px 60px 80px;background:var(--dark);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(125,155,118,0.1) 0%,transparent 60%);pointer-events:none;}
+.page-hero-inner{max-width:700px;position:relative;z-index:1;}
+.page-hero .section-tag{color:rgba(168,196,162,0.7);font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5vw,4.5rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:16px;}
+.page-hero h1 em{font-style:italic;color:var(--sage-light);}
+.page-hero p{font-size:1rem;line-height:1.8;color:rgba(247,245,240,0.6);font-weight:300;}
+
+.section-resources{padding:80px 60px 100px;}
+.resources-inner{max-width:800px;margin:0 auto;}
+.resources-inner h2{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);margin:48px 0 20px;}
+.resources-inner h2:first-of-type{margin-top:0;}
+.resource-card{background:var(--white);border-radius:20px;padding:24px 28px;margin-bottom:16px;border:1.5px solid var(--cream-dark);transition:all 0.25s;}
+.resource-card:hover{border-color:var(--sage-light);}
+.resource-card h3{font-size:1rem;font-weight:600;color:var(--dark);margin-bottom:8px;}
+.resource-card p{font-size:0.88rem;line-height:1.65;color:var(--text-light);margin-bottom:12px;}
+.resource-card a{font-size:0.85rem;color:var(--sage-dark);font-weight:500;}
+.resource-card a:hover{text-decoration:underline;}
+.tip-box{background:rgba(125,155,118,0.08);border:1px solid rgba(125,155,118,0.2);border-radius:16px;padding:24px 28px;margin:24px 0;}
+.tip-box h3{font-size:0.9rem;font-weight:600;color:var(--sage-dark);margin-bottom:12px;}
+.tip-box p,.tip-box ul{font-size:0.88rem;line-height:1.7;color:var(--text);}
+.tip-box ul{margin:12px 0 0 1.2em;}
+
+.section-cta{padding:80px 60px;background:var(--sage);text-align:center;}
+.section-cta h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:300;color:var(--white);margin-bottom:12px;}
+.section-cta p{font-size:0.9rem;color:rgba(255,255,255,0.8);margin-bottom:24px;}
+.btn-white{background:var(--white);color:var(--sage-dark);padding:14px 28px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;text-decoration:none;display:inline-block;transition:all 0.25s;}
+
+footer{background:var(--dark);padding:48px 60px 36px;}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
+.compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  nav{padding:16px 24px;}nav ul{display:none;}.hamburger{display:flex;}
+  nav{overflow:visible;}
+  #nav-menu.open{display:flex!important;flex-direction:column;position:absolute;top:100%;right:24px;left:24px;margin-top:8px;background:rgba(247,245,240,0.98);padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(28,36,32,0.1);gap:12px;z-index:101;}
+  .page-hero{padding:120px 24px 60px;}
+  .section-resources{padding:48px 24px 72px;}
+  .section-cta{padding:60px 24px;}
+  footer{padding:32px 24px;}
+}
+</style>
+<link rel="stylesheet" href="premium.css">
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="specialists.html">Specialists</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="screenings.html">Screenings</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag">Self-care & support</div>
+    <h1>Mental health <em>resources</em></h1>
+    <p>Curated links and simple practices to support your wellbeing. For clinical care, book a consultation with our specialists.</p>
+  </div>
+</section>
+
+<section class="section-resources">
+  <div class="resources-inner">
+    <h2 class="reveal">In crisis? Get help now</h2>
+    <p class="reveal" style="margin-bottom:20px;font-size:0.92rem;color:var(--text-light);">If you or someone you know is in crisis, please use our dedicated page with 24/7 helplines across India.</p>
+    <div class="resource-card reveal">
+      <h3>Crisis support & helplines</h3>
+      <p>Vandrevala, iCall, Kiran, and other free, confidential mental health helplines in India.</p>
+      <a href="crisis.html">View helplines →</a>
+    </div>
+
+    <h2 class="reveal">Wellbeing tools</h2>
+    <p class="reveal" style="margin-bottom:20px;font-size:0.92rem;color:var(--text-light);">Free, anonymous tools to check in with yourself or take a short break.</p>
+    <div class="resource-card reveal">
+      <h3>Mental health screenings</h3>
+      <p>Condition-specific screenings for depression (PHQ-9), anxiety (GAD-7), sleep, and stress. Score-based result and next-step suggestions. For awareness only, not a diagnosis.</p>
+      <a href="screenings.html">View all screenings →</a>
+    </div>
+    <div class="resource-card reveal">
+      <h3>Wellbeing check</h3>
+      <p>A short anonymous check-in (about 1 min). Not a diagnosis — just a way to see how you’ve been feeling and get gentle next-step suggestions.</p>
+      <a href="wellbeing-check.html">Take the check →</a>
+    </div>
+    <div class="resource-card reveal">
+      <h3>Guided breathing</h3>
+      <p>Box breathing: 4 seconds in, hold, out, hold. Calms the nervous system. Takes about 2 minutes.</p>
+      <a href="breathe.html">Start breathing exercise →</a>
+    </div>
+
+    <h2 class="reveal">Quick grounding practices</h2>
+    <div class="tip-box reveal">
+      <h3>5-4-3-2-1 grounding</h3>
+      <p>When you feel overwhelmed, name aloud:</p>
+      <ul>
+        <li>5 things you can see</li>
+        <li>4 you can touch</li>
+        <li>3 you can hear</li>
+        <li>2 you can smell</li>
+        <li>1 you can taste</li>
+      </ul>
+      <p style="margin-top:12px;">This can help bring you back to the present moment.</p>
+    </div>
+    <div class="tip-box reveal">
+      <h3>Box breathing</h3>
+      <p>Breathe in for 4 counts, hold for 4, out for 4, hold for 4. Repeat 4–5 times. Simple and effective for calming the nervous system.</p>
+    </div>
+
+    <h2 class="reveal">Learn more from our blog</h2>
+    <p class="reveal" style="margin-bottom:16px;font-size:0.92rem;color:var(--text-light);">Articles on mental health, what to expect in therapy, and practical tips — written by our team.</p>
+    <div class="resource-card reveal">
+      <h3>Blog — Serenest</h3>
+      <p>Psychiatry explained, anxiety & stress, sleep, relationships, and more.</p>
+      <a href="blog.html">Read the blog →</a>
+    </div>
+    <div class="resource-card reveal">
+      <h3>What happens in your first psychiatry session</h3>
+      <p>An honest look at what to expect when you book your first consultation.</p>
+      <a href="post.html">Read article →</a>
+    </div>
+
+    <h2 class="reveal">Book professional support</h2>
+    <p class="reveal" style="margin-bottom:16px;font-size:0.92rem;color:var(--text-light);">These resources are for general support. For assessment and treatment, our psychiatrists and therapists are here for you.</p>
+    <div class="resource-card reveal">
+      <h3>Book a consultation</h3>
+      <p>Confidential video or audio sessions with verified specialists. Book online in a few steps.</p>
+      <a href="book.html">Book now →</a>
+    </div>
+  </div>
+</section>
+
+<section class="section-cta">
+  <h2 class="reveal">Need someone to talk to?</h2>
+  <p class="reveal">Our specialists are here. Book a session or contact us.</p>
+  <a href="book.html" class="btn-white reveal">Book a consultation</a>
+</section>
+
+<footer>
+  <div class="footer-bottom">
+    <p>© 2025 Serenest. All rights reserved.</p>
+    <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
+  </div>
+</footer>
+
+<script>
+var observer=new IntersectionObserver(function(e){e.forEach(function(el){if(el.isIntersecting)el.target.classList.add('visible')});},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(function(el){observer.observe(el);});
+function updateNavScroll(){var n=document.getElementById('navbar');if(n)n.style.padding=window.innerWidth<=900?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
+window.addEventListener('scroll',updateNavScroll);window.addEventListener('resize',updateNavScroll);updateNavScroll();
+var h=document.getElementById('hamburger'),m=document.getElementById('nav-menu');if(h){h.addEventListener('click',function(){m.classList.toggle('open');h.classList.toggle('open');h.setAttribute('aria-expanded',m.classList.contains('open'));h.setAttribute('aria-label',m.classList.contains('open')?'Close menu':'Open menu');});}if(m)m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');if(h){h.classList.remove('open');h.setAttribute('aria-expanded','false');h.setAttribute('aria-label','Open menu');}});});
+</script>
+<script src="scripts/visit-notify.js"></script>
+</body>
+</html>

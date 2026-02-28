@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sleep screening — Serenest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-dark:#5A7A54;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav a{text-decoration:none;font-size:0.85rem;color:var(--text-light);}.nav-cta{background:var(--sage);color:var(--white);padding:10px 20px;border-radius:40px;font-weight:500;}
+.tool-wrap{max-width:560px;margin:0 auto;padding:140px 24px 80px;}
+.tool-wrap h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3.5vw,2.4rem);font-weight:300;color:var(--dark);margin-bottom:8px;}
+.tool-wrap .subtitle{font-size:0.9rem;color:var(--text-light);margin-bottom:24px;}
+.disclaimer{background:rgba(125,155,118,0.08);border:1px solid rgba(125,155,118,0.2);border-radius:12px;padding:14px 18px;margin-bottom:28px;font-size:0.8rem;line-height:1.5;}
+.disclaimer a{color:var(--sage-dark);}
+.card{background:var(--white);border-radius:24px;padding:36px 32px;border:1.5px solid var(--cream-dark);box-shadow:0 12px 40px rgba(28,36,32,0.06);}
+.card h2{font-size:0.98rem;font-weight:600;color:var(--dark);margin-bottom:20px;}
+.option-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--cream-dark);cursor:pointer;}
+.option-row:last-child{border-bottom:none;}
+.option-row input{width:20px;height:20px;accent-color:var(--sage);}
+.option-row label{flex:1;cursor:pointer;font-size:0.92rem;}
+.btn-tool{display:block;width:100%;margin-top:24px;padding:16px;background:var(--sage);color:var(--white);border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;}
+.btn-tool:hover{background:var(--sage-dark);}
+.btn-tool:disabled{opacity:0.6;cursor:not-allowed;}
+.progress-dots{display:flex;gap:6px;margin-bottom:24px;}
+.progress-dots span{width:8px;height:8px;border-radius:50%;background:var(--cream-dark);}
+.progress-dots span.done{background:var(--sage);}
+.progress-dots span.current{background:var(--sage);transform:scale(1.2);}
+.result-screen{display:none;text-align:center;}
+.result-screen.visible{display:block;}
+.result-score{font-size:2.5rem;font-weight:300;color:var(--sage-dark);margin-bottom:8px;}
+.result-screen h2{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--dark);margin-bottom:12px;}
+.result-screen p{font-size:0.92rem;line-height:1.75;color:var(--text-light);margin-bottom:24px;}
+.result-ctas{display:flex;flex-direction:column;gap:10px;}
+.result-ctas a{display:block;text-align:center;padding:14px 24px;border-radius:50px;font-size:0.9rem;font-weight:500;text-decoration:none;}
+.result-ctas .btn-primary{background:var(--sage);color:var(--white);}
+.result-ctas .btn-secondary{background:var(--cream);color:var(--sage-dark);border:1.5px solid var(--cream-dark);}
+.back-link{display:inline-flex;gap:8px;font-size:0.88rem;color:var(--text-light);text-decoration:none;margin-bottom:28px;}
+.back-link:hover{color:var(--sage-dark);}
+@media(max-width:900px){nav{padding:16px 24px;}.tool-wrap{padding:100px 20px 60px;}}
+</style>
+<link rel="stylesheet" href="premium.css">
+</head>
+<body>
+<nav><a href="index.html" class="logo">Sere<span>nest</span></a><a href="screenings.html" class="nav-cta">← All screenings</a></nav>
+<div class="tool-wrap">
+  <a href="screenings.html" class="back-link">← Back to screenings</a>
+  <h1>Sleep screening</h1>
+  <p class="subtitle">Over the last 2 weeks, how often have the following been true for you? (For awareness only.)</p>
+  <div class="disclaimer">This is not a diagnosis. Poor sleep can be linked to stress, anxiety, or other conditions — a professional can help.</div>
+  <div id="quiz-screen" class="card">
+    <div class="progress-dots" id="progress-dots"></div>
+    <h2 id="question-text"></h2>
+    <div id="options-container"></div>
+    <button type="button" class="btn-tool" id="next-btn" disabled>Next</button>
+  </div>
+  <div id="result-screen" class="card result-screen">
+    <div class="result-score" id="result-score"></div>
+    <h2 id="result-title"></h2>
+    <p id="result-message"></p>
+    <div class="result-ctas" id="result-ctas"></div>
+  </div>
+</div>
+<script>
+(function(){
+  var scale = ['Not at all', 'Several days', 'More than half the days', 'Nearly every night'];
+  var scores = [0,1,2,3];
+  var questions = [
+    'Difficulty falling asleep',
+    'Difficulty staying asleep (waking often or too early)',
+    'Sleeping too much and still feeling tired',
+    'Poor sleep affecting your mood or energy during the day',
+    'Worry or stress about not being able to sleep',
+    'Sleep problems affecting work, relationships, or daily activities'
+  ];
+  var current = 0, totalScore = 0;
+  var progressEl = document.getElementById('progress-dots');
+  var questionEl = document.getElementById('question-text');
+  var optionsEl = document.getElementById('options-container');
+  var nextBtn = document.getElementById('next-btn');
+  var quizScreen = document.getElementById('quiz-screen');
+  var resultScreen = document.getElementById('result-screen');
+  function renderProgress(){ var h=''; for(var i=0;i<questions.length;i++){ h+='<span class="'+(i<current?'done':(i===current?'current':''))+'"></span>'; } progressEl.innerHTML=h; }
+  function renderQuestion(){
+    questionEl.textContent = questions[current];
+    optionsEl.innerHTML = '';
+    for(var i=0;i<scale.length;i++){
+      var id='q'+current+'_'+i;
+      var row=document.createElement('div'); row.className='option-row';
+      row.innerHTML='<input type="radio" name="q'+current+'" id="'+id+'" value="'+scores[i]+'"><label for="'+id+'">'+scale[i]+'</label>';
+      row.querySelector('input').onchange=function(){ nextBtn.disabled=false; };
+      optionsEl.appendChild(row);
+    }
+    nextBtn.disabled=true;
+    nextBtn.textContent=current===questions.length-1?'See my result':'Next';
+    renderProgress();
+  }
+  nextBtn.onclick=function(){
+    var r=optionsEl.querySelector('input:checked'); if(!r)return;
+    totalScore+=parseInt(r.value,10); current++;
+    if(current>=questions.length){ showResult(); return; }
+    renderQuestion();
+  };
+  function showResult(){
+    quizScreen.style.display='none';
+    resultScreen.classList.add('visible');
+    var max = 18;
+    document.getElementById('result-score').textContent = totalScore + ' / ' + max;
+    var title='', msg='', ctas='';
+    if(totalScore<=4){ title='Few sleep concerns'; msg='Your responses suggest relatively few sleep issues. Good sleep habits and our resources can help you maintain this.'; ctas='<a href="resources.html" class="btn-secondary">Resources & breathing</a><a href="book.html" class="btn-primary">Book if things change</a>'; }
+    else if(totalScore<=9){ title='Some sleep difficulties'; msg='You may be experiencing noticeable sleep problems. Stress and anxiety often affect sleep — talking to a professional can help.'; ctas='<a href="book.html" class="btn-primary">Book a consultation</a><a href="resources.html" class="btn-secondary">Resources</a>'; }
+    else{ title='Significant sleep concerns'; msg='Your score suggests significant sleep difficulties. A psychiatrist or sleep specialist can help identify causes and suggest treatment.'; ctas='<a href="book.html" class="btn-primary">Book a consultation</a><a href="resources.html" class="btn-secondary">Resources</a>'; }
+    document.getElementById('result-title').textContent = title;
+    document.getElementById('result-message').textContent = msg;
+    document.getElementById('result-ctas').innerHTML = ctas;
+  }
+  renderQuestion();
+})();
+</script>
+<script src="scripts/visit-notify.js"></script>
+</body>
+</html>

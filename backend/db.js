@@ -46,7 +46,22 @@ function initDb() {
       introduction TEXT,
       created_at TEXT DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS newsletter_subscribers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      email TEXT NOT NULL UNIQUE,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS visits (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      page TEXT,
+      referrer TEXT,
+      ip TEXT,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
   `);
+  try { db.exec('ALTER TABLE bookings ADD COLUMN payment_id TEXT'); } catch (e) { if (!e.message || !e.message.includes('duplicate')) throw e; }
   console.log('Database initialized at', dbPath);
 }
 

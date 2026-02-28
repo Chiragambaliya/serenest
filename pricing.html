@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing — Serenest</title>
+<meta name="description" content="Transparent pricing for video consultations with psychiatrists and therapists. Session fees and payment information.">
+<link rel="canonical" href="https://serenest.in/pricing.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);transition:all 0.3s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
+nav ul a{text-decoration:none;font-size:0.85rem;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;}
+nav ul a:hover{color:var(--sage-dark);}.nav-cta{background:var(--sage)!important;color:var(--white)!important;padding:10px 22px;border-radius:40px;font-weight:500!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+.hamburger span{width:24px;height:2px;background:var(--dark);border-radius:2px;display:block;}
+
+.page-hero{padding:160px 60px 80px;background:var(--dark);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(125,155,118,0.1) 0%,transparent 60%);pointer-events:none;}
+.page-hero-inner{max-width:700px;position:relative;z-index:1;}
+.page-hero .section-tag{color:rgba(168,196,162,0.7);font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5vw,4.5rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:16px;}
+.page-hero h1 em{font-style:italic;color:var(--sage-light);}
+.page-hero p{font-size:1rem;line-height:1.8;color:rgba(247,245,240,0.6);font-weight:300;}
+
+.section-pricing{padding:80px 60px 100px;}
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:28px;max-width:960px;margin:0 auto;}
+.price-card{background:var(--white);border-radius:24px;padding:40px 32px;border:1.5px solid var(--cream-dark);transition:all 0.3s;}
+.price-card:hover{border-color:var(--sage-light);box-shadow:0 20px 50px rgba(125,155,118,0.1);}
+.price-card.featured{border-color:var(--sage);background:linear-gradient(180deg,rgba(125,155,118,0.06) 0%,var(--white) 30%);}
+.price-card.featured .price-amount{color:var(--sage-dark);}
+.price-label{font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:var(--sage);margin-bottom:12px;}
+.price-card h2{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);margin-bottom:8px;}
+.price-card .price-amount{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:300;color:var(--dark);margin-bottom:4px;}
+.price-card .price-note{font-size:0.8rem;color:var(--text-light);margin-bottom:24px;}
+.price-features{list-style:none;margin-bottom:28px;}
+.price-features li{display:flex;align-items:center;gap:10px;font-size:0.88rem;color:var(--text);margin-bottom:12px;}
+.price-features li::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--sage);flex-shrink:0;}
+.btn-price{display:block;width:100%;text-align:center;background:var(--sage);color:var(--white);padding:14px 24px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;text-decoration:none;transition:all 0.25s;}
+.btn-price:hover{background:var(--sage-dark);transform:translateY(-2px);}
+.price-card.featured .btn-price{background:var(--sage-dark);}
+.price-card.featured .btn-price:hover{background:var(--dark);}
+
+.section-note{padding:0 60px 80px;max-width:720px;margin:0 auto;}
+.section-note p{font-size:0.9rem;line-height:1.8;color:var(--text-light);}
+.section-note a{color:var(--sage-dark);}
+
+.section-cta{padding:80px 60px;background:var(--sage);text-align:center;}
+.section-cta h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:300;color:var(--white);margin-bottom:12px;}
+.section-cta p{font-size:0.9rem;color:rgba(255,255,255,0.8);margin-bottom:24px;}
+.btn-white{background:var(--white);color:var(--sage-dark);padding:14px 28px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;text-decoration:none;display:inline-block;transition:all 0.25s;}
+
+footer{background:var(--dark);padding:48px 60px 36px;}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
+.compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  nav{padding:16px 24px;}nav ul{display:none;}.hamburger{display:flex;}
+  nav{overflow:visible;}
+  #nav-menu.open{display:flex!important;flex-direction:column;position:absolute;top:100%;right:24px;left:24px;margin-top:8px;background:rgba(247,245,240,0.98);padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(28,36,32,0.1);gap:12px;z-index:101;}
+  .page-hero{padding:120px 24px 60px;}
+  .section-pricing{padding:48px 24px 72px;}
+  .section-note{padding:0 24px 48px;}
+  .section-cta{padding:60px 24px;}
+  footer{padding:32px 24px;}
+}
+</style>
+<link rel="stylesheet" href="premium.css">
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="specialists.html">Specialists</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="screenings.html">Screenings</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag">Transparent pricing</div>
+    <h1>Invest in your <em>mental health</em></h1>
+    <p>Clear, simple pricing for consultations. No hidden fees. Pay per session or choose a package that suits you.</p>
+  </div>
+</section>
+
+<section class="section-pricing">
+  <div class="pricing-grid">
+    <div class="price-card reveal">
+      <div class="price-label">Single session</div>
+      <h2>First consultation</h2>
+      <div class="price-amount">₹1,500</div>
+      <div class="price-note">One-time · 45–60 min</div>
+      <ul class="price-features">
+        <li>Video or audio session</li>
+        <li>Assessment and treatment plan</li>
+        <li>Prescription if needed</li>
+        <li>Follow-up summary by email</li>
+      </ul>
+      <a href="book.html" class="btn-price">Book now</a>
+    </div>
+    <div class="price-card featured reveal">
+      <div class="price-label">Most popular</div>
+      <h2>Follow-up session</h2>
+      <div class="price-amount">₹1,200</div>
+      <div class="price-note">Per session · 30–45 min</div>
+      <ul class="price-features">
+        <li>Video or audio</li>
+        <li>Ongoing care with same doctor</li>
+        <li>Medication review</li>
+        <li>Best value for regular care</li>
+      </ul>
+      <a href="book.html" class="btn-price">Book now</a>
+    </div>
+    <div class="price-card reveal">
+      <div class="price-label">Package</div>
+      <h2>4-session pack</h2>
+      <div class="price-amount">₹4,200</div>
+      <div class="price-note">₹1,050 per session · Save ₹300</div>
+      <ul class="price-features">
+        <li>4 follow-up sessions</li>
+        <li>Use within 3 months</li>
+        <li>Same specialist preferred</li>
+        <li>Ideal for therapy or maintenance</li>
+      </ul>
+      <a href="book.html" class="btn-price">Book now</a>
+    </div>
+  </div>
+  <div class="section-note reveal">
+    <p>All prices are in INR and inclusive of GST where applicable. Cancellation and refund policy applies as per our <a href="terms.html">Terms of Use</a>. If you have financial constraints, mention it when you book — we may be able to offer limited subsidised slots.</p>
+  </div>
+</section>
+
+<section class="section-cta">
+  <h2 class="reveal">Not sure which option to choose?</h2>
+  <p class="reveal">Book a first consultation and we’ll help you decide the right plan.</p>
+  <a href="book.html" class="btn-white reveal">Book a consultation</a>
+</section>
+
+<footer>
+  <div class="footer-bottom">
+    <p>© 2025 Serenest. All rights reserved.</p>
+    <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
+  </div>
+</footer>
+
+<script>
+const observer=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+function updateNavScroll(){const n=document.getElementById('navbar');n.style.padding=window.innerWidth<=900?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
+window.addEventListener('scroll',updateNavScroll);window.addEventListener('resize',updateNavScroll);updateNavScroll();
+var h=document.getElementById('hamburger'),m=document.getElementById('nav-menu');if(h){h.addEventListener('click',()=>{m.classList.toggle('open');h.classList.toggle('open');h.setAttribute('aria-expanded',m.classList.contains('open'));h.setAttribute('aria-label',m.classList.contains('open')?'Close menu':'Open menu');});}if(m)m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');if(h){h.classList.remove('open');h.setAttribute('aria-expanded','false');h.setAttribute('aria-label','Open menu');}});});
+</script>
+<script src="scripts/visit-notify.js"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAQ — Serenest</title>
+<meta name="description" content="Frequently asked questions about Serenest: bookings, confidentiality, fees, and how telepsychiatry works.">
+<link rel="canonical" href="https://serenest.in/faq.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);transition:all 0.3s;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
+nav ul a{text-decoration:none;font-size:0.85rem;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;transition:color 0.2s;}
+nav ul a:hover{color:var(--sage-dark);}nav ul a.active{color:var(--sage-dark);font-weight:500;}
+.nav-cta{background:var(--sage)!important;color:var(--white)!important;padding:10px 22px;border-radius:40px;font-weight:500!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+.hamburger span{width:24px;height:2px;background:var(--dark);border-radius:2px;display:block;}
+
+.page-hero{padding:160px 60px 80px;background:var(--dark);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 50%,rgba(125,155,118,0.1) 0%,transparent 60%);pointer-events:none;}
+.page-hero-inner{max-width:700px;position:relative;z-index:1;}
+.page-hero .section-tag{color:rgba(168,196,162,0.7);font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5vw,4.5rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:16px;}
+.page-hero h1 em{font-style:italic;color:var(--sage-light);}
+.page-hero p{font-size:1rem;line-height:1.8;color:rgba(247,245,240,0.6);font-weight:300;}
+
+/* FAQ Accordion */
+.section-faq{padding:80px 60px 100px;}
+.faq-inner{max-width:720px;margin:0 auto;}
+.faq-item{border-bottom:1px solid var(--cream-dark);}
+.faq-item:first-child{border-top:1px solid var(--cream-dark);}
+.faq-q{width:100%;padding:24px 0;display:flex;align-items:center;justify-content:space-between;gap:16px;background:none;border:none;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;color:var(--dark);text-align:left;cursor:pointer;transition:color 0.2s;}
+.faq-q:hover{color:var(--sage-dark);}
+.faq-q::after{content:'';width:20px;height:20px;flex-shrink:0;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%237D9B76'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E") center/contain no-repeat;transition:transform 0.3s;}
+.faq-item.open .faq-q::after{transform:rotate(180deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.35s ease;}
+.faq-item.open .faq-a{max-height:400px;}
+.faq-a-inner{padding:0 0 24px 0;font-size:0.92rem;line-height:1.8;color:var(--text-light);font-weight:300;}
+
+.section-cta{padding:80px 60px;background:var(--sage);text-align:center;}
+.section-cta h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:300;color:var(--white);margin-bottom:12px;}
+.section-cta p{font-size:0.9rem;color:rgba(255,255,255,0.8);margin-bottom:24px;}
+.btn-white{background:var(--white);color:var(--sage-dark);padding:14px 28px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;text-decoration:none;display:inline-block;transition:all 0.25s;}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(28,36,32,0.15);}
+
+footer{background:var(--dark);padding:48px 60px 36px;}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
+.compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:900px){
+  nav{padding:16px 24px;}nav ul{display:none;}
+  .hamburger{display:flex;}
+  nav{overflow:visible;}
+  #nav-menu.open{display:flex!important;flex-direction:column;position:absolute;top:100%;right:24px;left:24px;margin-top:8px;background:rgba(247,245,240,0.98);padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(28,36,32,0.1);gap:12px;z-index:101;}
+  .page-hero{padding:120px 24px 60px;}
+  .section-faq{padding:48px 24px 72px;}
+  .section-cta{padding:60px 24px;}
+  footer{padding:32px 24px;}
+}
+</style>
+<link rel="stylesheet" href="premium.css">
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="specialists.html">Specialists</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="screenings.html">Screenings</a></li>
+    <li><a href="faq.html" class="active">FAQ</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag">Support</div>
+    <h1>Frequently asked <em>questions</em></h1>
+    <p>Everything you need to know about booking, sessions, privacy, and how Serenest works.</p>
+  </div>
+</section>
+
+<section class="section-faq">
+  <div class="faq-inner">
+    <div class="faq-item reveal">
+      <button type="button" class="faq-q" aria-expanded="false">How do I book a consultation?</button>
+      <div class="faq-a"><div class="faq-a-inner">Go to the Book a Consultation page, choose your specialist type and session type (video/audio), pick a date and time slot, and fill in your details. We’ll confirm your appointment by email. You can join the session from the link we send or from your Serenest account.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <button type="button" class="faq-q" aria-expanded="false">Is my information kept private?</button>
+      <div class="faq-a"><div class="faq-a-inner">Yes. All sessions and personal data are confidential. We follow Indian data protection norms and our clinicians adhere to medical confidentiality. We do not share your information with third parties for marketing. For full details, see our <a href="privacy.html">Privacy Policy</a>.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <button type="button" class="faq-q" aria-expanded="false">What happens in my first session?</button>
+      <div class="faq-a"><div class="faq-a-inner">The first session is usually an assessment: the psychiatrist or therapist will ask about your concerns, history, and goals. You can ask questions and discuss what to expect from treatment. There’s no pressure — it’s a chance to see if the approach and the specialist feel right for you.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <button type="button" class="faq-q" aria-expanded="false">Can I cancel or reschedule?</button>
+      <div class="faq-a"><div class="faq-a-inner">Yes. Please cancel or reschedule at least 24 hours before your appointment. You can do this by replying to your confirmation email or by contacting us. Late cancellations may be subject to our cancellation policy as stated at the time of booking.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <button type="button" class="faq-q" aria-expanded="false">How do I pay for sessions?</button>
+      <div class="faq-a"><div class="faq-a-inner">Payment is collected at or before the time of booking, depending on the option you choose. We accept major cards, UPI, and other methods as shown on the booking page. You’ll receive a receipt by email. For pricing, see our <a href="pricing.html">Pricing</a> page.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <button type="button" class="faq-q" aria-expanded="false">Do you prescribe medication?</button>
+      <div class="faq-a"><div class="faq-a-inner">Our psychiatrists can prescribe medication when clinically appropriate, in line with Indian telemedicine guidelines. Prescriptions are shared electronically and can be used at your local pharmacy. Therapists (non‑psychiatrists) do not prescribe; they provide therapy and may work alongside your psychiatrist if you’re on medication.</div></div>
+    </div>
+    <div class="faq-item reveal">
+      <button type="button" class="faq-q" aria-expanded="false">Is Serenest only for people in India?</button>
+      <div class="faq-a"><div class="faq-a-inner">Our specialists are licensed to practise in India and our services are designed for patients based in India. If you’re travelling or living abroad, please contact us to check if we can support you.</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-cta">
+  <h2 class="reveal">Still have questions?</h2>
+  <p class="reveal">Reach out and we’ll get back to you within one business day.</p>
+  <a href="contact.html" class="btn-white reveal">Contact Us</a>
+</section>
+
+<footer>
+  <div class="footer-bottom">
+    <p>© 2025 Serenest. All rights reserved.</p>
+    <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const item = btn.closest('.faq-item');
+    const isOpen = item.classList.toggle('open');
+    btn.setAttribute('aria-expanded', isOpen);
+    document.querySelectorAll('.faq-item').forEach(other => {
+      if (other !== item) { other.classList.remove('open'); other.querySelector('.faq-q').setAttribute('aria-expanded', 'false'); }
+    });
+  });
+});
+const observer = new IntersectionObserver(entries => { entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }); }, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+function updateNavScroll(){const n=document.getElementById('navbar');n.style.padding=window.innerWidth<=900?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
+window.addEventListener('scroll',updateNavScroll);window.addEventListener('resize',updateNavScroll);updateNavScroll();
+var h=document.getElementById('hamburger'),m=document.getElementById('nav-menu');if(h){h.addEventListener('click',()=>{m.classList.toggle('open');const o=!h.classList.toggle('open');h.setAttribute('aria-expanded',!o);h.setAttribute('aria-label',o?'Open menu':'Close menu');});}if(m)m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');if(h){h.classList.remove('open');h.setAttribute('aria-expanded','false');h.setAttribute('aria-label','Open menu');}});});
+</script>
+<script src="scripts/visit-notify.js"></script>
+</body>
+</html>

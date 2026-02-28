@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Guided Breathing — Serenest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav a{text-decoration:none;font-size:0.85rem;color:var(--text-light);}
+nav a:hover{color:var(--sage-dark);}.nav-cta{background:var(--sage);color:var(--white);padding:10px 20px;border-radius:40px;font-weight:500;}
+.breathe-wrap{text-align:center;padding:120px 24px 80px;}
+.breathe-wrap h1{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.4rem);font-weight:300;color:var(--dark);margin-bottom:8px;}
+.breathe-wrap .sub{font-size:0.88rem;color:var(--text-light);margin-bottom:40px;}
+.circle-wrap{width:200px;height:200px;margin:0 auto 32px;display:flex;align-items:center;justify-content:center;}
+.breathe-circle{width:120px;height:120px;border-radius:50%;background:linear-gradient(135deg,var(--sage-light),var(--teal));opacity:0.9;transition:transform 0.4s ease-in-out;}
+.breathe-circle.big{transform:scale(1.7);}
+.phase-text{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:300;color:var(--dark);margin-bottom:8px;}
+.phase-hint{font-size:0.82rem;color:var(--text-light);}
+.countdown{font-size:2.5rem;font-weight:300;color:var(--sage-dark);margin-top:16px;}
+.btn-start{display:inline-block;margin-top:24px;padding:16px 40px;background:var(--sage);color:var(--white);border:none;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:1rem;font-weight:500;cursor:pointer;transition:all 0.25s;}
+.btn-start:hover{background:var(--sage-dark);transform:translateY(-2px);}
+.btn-start:disabled{opacity:0.7;cursor:not-allowed;}
+.cycles{font-size:0.85rem;color:var(--text-light);margin-top:20px;}
+.back-link{position:fixed;top:80px;left:60px;font-size:0.88rem;color:var(--text-light);text-decoration:none;}
+.back-link:hover{color:var(--sage-dark);}
+@media(max-width:900px){nav{padding:16px 24px;}.back-link{left:24px;}}
+</style>
+<link rel="stylesheet" href="premium.css">
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <a href="resources.html" class="nav-cta">← Resources</a>
+</nav>
+
+<a href="resources.html" class="back-link">← Back to Resources</a>
+
+<div class="breathe-wrap">
+  <h1>Box breathing</h1>
+  <p class="sub">4 seconds in · 4 hold · 4 out · 4 hold. Calms the nervous system.</p>
+  <div class="circle-wrap">
+    <div class="breathe-circle" id="circle"></div>
+  </div>
+  <div class="phase-text" id="phase-text">Ready?</div>
+  <div class="phase-hint" id="phase-hint">Click Start when you’re comfortable</div>
+  <div class="countdown" id="countdown"></div>
+  <button type="button" class="btn-start" id="start-btn">Start</button>
+  <div class="cycles" id="cycles">0 / 3 cycles</div>
+</div>
+
+<script>
+(function(){
+  var phases = [
+    { name: 'Breathe in', hint: 'Slow inhale', big: true, duration: 4000 },
+    { name: 'Hold', hint: 'Keep gently', big: true, duration: 4000 },
+    { name: 'Breathe out', hint: 'Slow exhale', big: false, duration: 4000 },
+    { name: 'Hold', hint: 'Keep gently', big: false, duration: 4000 }
+  ];
+  var totalCycles = 3;
+  var currentCycle = 0;
+  var phaseIndex = 0;
+  var timer = null;
+  var running = false;
+  var circle = document.getElementById('circle');
+  var phaseText = document.getElementById('phase-text');
+  var phaseHint = document.getElementById('phase-hint');
+  var countdownEl = document.getElementById('countdown');
+  var startBtn = document.getElementById('start-btn');
+  var cyclesEl = document.getElementById('cycles');
+
+  function setPhase(phase, secondsLeft){
+    phaseText.textContent = phase.name;
+    phaseHint.textContent = phase.hint;
+    circle.classList.toggle('big', phase.big);
+    countdownEl.textContent = secondsLeft > 0 ? secondsLeft : '';
+  }
+  function tick(){
+    var phase = phases[phaseIndex];
+    var duration = phase.duration;
+    var elapsed = duration - (phase.remaining || duration);
+    phase.remaining = (phase.remaining || duration) - 1000;
+    var sec = Math.ceil((phase.remaining || 0) / 1000);
+    setPhase(phase, sec > 0 ? sec : '');
+    if (phase.remaining <= 0) {
+      phaseIndex = (phaseIndex + 1) % phases.length;
+      if (phaseIndex === 0) {
+        currentCycle++;
+        cyclesEl.textContent = currentCycle + ' / ' + totalCycles + ' cycles';
+        if (currentCycle >= totalCycles) {
+          stop();
+          phaseText.textContent = 'Done';
+          phaseHint.textContent = 'Well done. Take your time.';
+          countdownEl.textContent = '';
+          startBtn.style.display = 'inline-block';
+          startBtn.disabled = false;
+          startBtn.textContent = 'Do again';
+          return;
+        }
+      }
+      phase = phases[phaseIndex];
+      phase.remaining = phase.duration;
+      setPhase(phase, 4);
+      timer = setTimeout(tick, 1000);
+    } else {
+      timer = setTimeout(tick, 1000);
+    }
+  }
+  function run(){
+    running = true;
+    startBtn.style.display = 'none';
+    countdownEl.textContent = '';
+    phaseIndex = 0;
+    var phase = phases[0];
+    phase.remaining = phase.duration;
+    setPhase(phase, 4);
+    timer = setTimeout(tick, 1000);
+  }
+  function stop(){
+    running = false;
+    if (timer) clearTimeout(timer);
+    timer = null;
+    circle.classList.remove('big');
+  }
+  startBtn.addEventListener('click', function(){
+    if (running) return;
+    currentCycle = 0;
+    cyclesEl.textContent = '0 / ' + totalCycles + ' cycles';
+    run();
+  });
+})();
+</script>
+<script src="scripts/visit-notify.js"></script>
+</body>
+</html>

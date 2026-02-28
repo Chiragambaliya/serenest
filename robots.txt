@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Exclude admin from indexing
+Disallow: /admin.html
+
+Sitemap: https://serenest.in/sitemap.xml

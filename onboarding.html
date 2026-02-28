@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Professional Onboarding — Serenest</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--sage:#7D9B76;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+*{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);backdrop-filter:blur(16px);border-bottom:1px solid rgba(125,155,118,0.15);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
+nav ul a{text-decoration:none;font-size:0.85rem;color:var(--text-light);letter-spacing:0.04em;text-transform:uppercase;}
+nav ul a:hover{color:var(--sage-dark);}.nav-cta{background:var(--sage)!important;color:var(--white)!important;padding:10px 22px;border-radius:40px;font-weight:500!important;}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;}
+.hamburger span{width:24px;height:2px;background:var(--dark);border-radius:2px;display:block;}
+
+.page-hero{padding:160px 60px 80px;background:var(--dark);position:relative;overflow:hidden;}
+.page-hero{background:linear-gradient(135deg,#1a2d26 0%,#2e3d37 100%);}
+.page-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 40%,rgba(125,155,118,0.12) 0%,transparent 60%);pointer-events:none;}
+.page-hero-inner{max-width:720px;position:relative;z-index:1;}
+.page-hero .section-tag{color:var(--sage-light);opacity:0.8;font-size:0.72rem;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:16px;}
+.page-hero h1{font-family:'Cormorant Garamond',serif;font-size:clamp(2.8rem,5vw,4rem);font-weight:300;line-height:1.1;color:var(--cream);margin-bottom:16px;}
+.page-hero h1 em{font-style:italic;color:var(--sage-light);}
+.page-hero p{font-size:1rem;line-height:1.8;color:rgba(247,245,240,0.6);font-weight:300;}
+
+.section-onboarding{padding:80px 60px 100px;}
+.onboarding-inner{max-width:800px;margin:0 auto;}
+.onboarding-step{display:grid;grid-template-columns:80px 1fr;gap:32px;margin-bottom:56px;padding-bottom:48px;border-bottom:1px solid var(--cream-dark);}
+.onboarding-step:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0;}
+.step-num{width:72px;height:72px;border-radius:50%;background:rgba(125,155,118,0.12);border:2px solid var(--sage);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--sage-dark);flex-shrink:0;}
+.step-content h2{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);margin-bottom:10px;}
+.step-meta{font-size:0.78rem;color:var(--sage-dark);font-weight:500;margin-bottom:16px;}
+.step-content p{margin-bottom:14px;font-size:0.92rem;line-height:1.8;color:var(--text-light);font-weight:300;}
+.step-content ul{margin:12px 0 0 1.2em;}
+.step-content li{margin-bottom:8px;font-size:0.9rem;line-height:1.7;color:var(--text-light);}
+.step-content strong{color:var(--dark);}
+
+.section-cta{padding:80px 60px;background:var(--sage);text-align:center;}
+.section-cta h2{font-family:'Cormorant Garamond',serif;font-size:clamp(1.8rem,3vw,2.6rem);font-weight:300;color:var(--white);margin-bottom:12px;}
+.section-cta p{font-size:0.9rem;color:rgba(255,255,255,0.8);margin-bottom:24px;}
+.btn-white{background:var(--white);color:var(--sage-dark);padding:14px 28px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;text-decoration:none;display:inline-block;transition:all 0.25s;}
+.btn-white:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(28,36,32,0.15);}
+
+footer{background:var(--dark);padding:48px 60px 36px;}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:0.75rem;color:rgba(247,245,240,0.3);}
+.compliance-badge{display:flex;align-items:center;gap:8px;background:rgba(125,155,118,0.12);border:1px solid rgba(125,155,118,0.2);border-radius:40px;padding:6px 14px;font-size:0.72rem;color:var(--sage-light);}
+
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+@media(max-width:900px){
+  nav{padding:16px 24px;}nav ul{display:none;}.hamburger{display:flex;}
+  .page-hero{padding:120px 24px 60px;}
+  .section-onboarding{padding:48px 24px 72px;}
+  .onboarding-step{grid-template-columns:1fr;gap:20px;}
+  .step-num{width:56px;height:56px;font-size:1.4rem;}
+  .section-cta{padding:60px 24px;}
+  footer{padding:32px 24px;}
+  nav{overflow:visible;}
+  #nav-menu.open{display:flex!important;flex-direction:column;position:absolute;top:100%;right:24px;left:24px;margin-top:8px;background:rgba(247,245,240,0.98);padding:20px;border-radius:12px;box-shadow:0 8px 30px rgba(28,36,32,0.1);gap:12px;z-index:101;}
+}
+</style>
+<link rel="stylesheet" href="premium.css">
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="screenings.html">Screenings</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+</nav>
+
+<section class="page-hero">
+  <div class="page-hero-inner">
+    <div class="section-tag">For Specialists</div>
+    <h1>Your <em>onboarding</em> journey</h1>
+    <p>From application to your first patient — here’s exactly what happens when you join Serenest. We keep it simple and transparent.</p>
+  </div>
+</section>
+
+<section class="section-onboarding">
+  <div class="onboarding-inner">
+    <div class="onboarding-step reveal">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h2>Apply online</h2>
+        <div class="step-meta">Day 1 · ~5 minutes</div>
+        <p>Fill out our application form with your name, contact details, specialty, years of experience, and a short introduction. No documents yet — we’ll ask for those after the first review.</p>
+        <p><strong>What you need:</strong> Basic professional info and why you’d like to join Serenest.</p>
+        <p>We aim to acknowledge your application within <strong>1 business day</strong> and complete an initial review within <strong>3–5 business days</strong>.</p>
+      </div>
+    </div>
+
+    <div class="onboarding-step reveal">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h2>Verification & review</h2>
+        <div class="step-meta">Days 2–7</div>
+        <p>Our team verifies your credentials so we can maintain a trusted platform for patients. We’ll contact you by email (and phone if needed) to request:</p>
+        <ul>
+          <li>Medical council / RCI registration details</li>
+          <li>Post-graduate qualification proof</li>
+          <li>ID and address verification (as per our policy)</li>
+        </ul>
+        <p>You can upload documents securely via a link we send. Verification usually takes <strong>3–5 business days</strong> once we have everything. We’ll let you know if anything is missing.</p>
+      </div>
+    </div>
+
+    <div class="onboarding-step reveal">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h2>Agreement & platform onboarding</h2>
+        <div class="step-meta">Days 5–10</div>
+        <p>Once verification is complete, we’ll send you:</p>
+        <ul>
+          <li><strong>Practitioner agreement</strong> — terms of engagement, fees, confidentiality, and compliance (including Indian telemedicine guidelines).</li>
+          <li><strong>Platform access</strong> — login to the specialist dashboard where you’ll set up your profile and availability.</li>
+        </ul>
+        <p>We’ll also share a short <strong>platform guide</strong> (or optional call) so you know how to manage appointments, join video sessions, and use the dashboard. Typically this step takes 1–2 days once you’ve signed and we’ve activated your account.</p>
+      </div>
+    </div>
+
+    <div class="onboarding-step reveal">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h2>Profile setup & go live</h2>
+        <div class="step-meta">Days 7–14</div>
+        <p>You complete your public profile: photo, bio, specialisations, languages, and consultation fees. You then set your <strong>availability</strong> (days and time slots) so patients can book you.</p>
+        <p>Once your profile is complete and approved, we <strong>go live</strong> — your profile appears on Serenest and patients can book sessions with you. You’ll receive booking notifications and can join sessions via the platform.</p>
+        <p><strong>Ongoing:</strong> We’re here for support, platform updates, and any questions. You can update your availability and profile anytime from your dashboard.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section-cta">
+  <h2 class="reveal">Ready to start?</h2>
+  <p class="reveal">Apply now and we’ll guide you through each step.</p>
+  <a href="doctors.html#apply" class="btn-white reveal">Apply to join Serenest</a>
+</section>
+
+<footer>
+  <div class="footer-bottom">
+    <p>© 2025 Serenest. All rights reserved.</p>
+    <div class="compliance-badge">✅ Compliant with Indian Telemedicine Practice Guidelines 2020</div>
+  </div>
+</footer>
+
+<script>
+var observer=new IntersectionObserver(function(e){e.forEach(function(el){if(el.isIntersecting)el.target.classList.add('visible')});},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(function(el){observer.observe(el);});
+function updateNavScroll(){var n=document.getElementById('navbar');if(n)n.style.padding=window.innerWidth<=900?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
+window.addEventListener('scroll',updateNavScroll);window.addEventListener('resize',updateNavScroll);updateNavScroll();
+var h=document.getElementById('hamburger'),m=document.getElementById('nav-menu');if(h){h.addEventListener('click',function(){m.classList.toggle('open');h.classList.toggle('open');h.setAttribute('aria-expanded',m.classList.contains('open'));h.setAttribute('aria-label',m.classList.contains('open')?'Close menu':'Open menu');});}if(m)m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');if(h){h.classList.remove('open');h.setAttribute('aria-expanded','false');h.setAttribute('aria-label','Open menu');}});});
+</script>
+<script src="scripts/visit-notify.js"></script>
+</body>
+</html>

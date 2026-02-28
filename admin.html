@@ -190,6 +190,7 @@
     .empty { color: var(--text-light); padding: 24px; text-align: center; }
     .err-msg { color: #c0392b; padding: 12px 0; font-size: 0.9rem; }
   </style>
+  <link rel="stylesheet" href="premium.css">
 </head>
 <body>
 
@@ -217,6 +218,7 @@
         <button type="button" class="tab active" data-tab="bookings">Bookings</button>
         <button type="button" class="tab" data-tab="contact">Contact messages</button>
         <button type="button" class="tab" data-tab="applications">Doctor applications</button>
+        <button type="button" class="tab" data-tab="newsletter">Newsletter</button>
       </div>
 
       <div id="panelBookings" class="panel visible">
@@ -287,6 +289,24 @@
           </table>
         </div>
         <p id="applicationsEmpty" class="empty" style="display:none;">No applications yet.</p>
+      </div>
+
+      <div id="panelNewsletter" class="panel">
+        <h2>Newsletter subscribers</h2>
+        <button type="button" class="load-btn" data-load="newsletter">Refresh</button>
+        <div id="newsletterError" class="err-msg" style="display:none;"></div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Subscribed at</th>
+                <th>Email</th>
+              </tr>
+            </thead>
+            <tbody id="newsletterBody"></tbody>
+          </table>
+        </div>
+        <p id="newsletterEmpty" class="empty" style="display:none;">No subscribers yet.</p>
       </div>
     </div>
   </div>
@@ -367,11 +387,13 @@
           var id = p.id;
           var visible = (id === 'panelBookings' && tabId === 'bookings') ||
             (id === 'panelContact' && tabId === 'contact') ||
-            (id === 'panelApplications' && tabId === 'applications');
+            (id === 'panelApplications' && tabId === 'applications') ||
+            (id === 'panelNewsletter' && tabId === 'newsletter');
           p.classList.toggle('visible', visible);
         });
         if (tabId === 'contact' && !document.getElementById('contactBody').innerHTML) loadContact();
         if (tabId === 'applications' && !document.getElementById('applicationsBody').innerHTML) loadApplications();
+        if (tabId === 'newsletter' && !document.getElementById('newsletterBody').innerHTML) loadNewsletter();
       }
       document.querySelectorAll('.tab').forEach(function(t) {
         t.addEventListener('click', function() {
@@ -491,6 +513,34 @@
           .catch(function() { showErr('applications', 'Network error'); });
       }
 
+      function loadNewsletter() {
+        hideErr('newsletter');
+        fetch(API + '/admin/newsletter', { headers: authHeaders() })
+          .then(function(r) {
+            if (r.status === 401) { showLogin(); return null; }
+            return r.json();
+          })
+          .then(function(data) {
+            if (!data) return;
+            if (!data.ok) {
+              showErr('newsletter', data.error || 'Failed to load');
+              return;
+            }
+            var rows = data.data || [];
+            var tbody = document.getElementById('newsletterBody');
+            tbody.innerHTML = '';
+            document.getElementById('newsletterEmpty').style.display = rows.length ? 'none' : 'block';
+            rows.forEach(function(row) {
+              var tr = document.createElement('tr');
+              tr.innerHTML =
+                '<td class="muted">' + escapeHtml(row.created_at || '') + '</td>' +
+                '<td>' + escapeHtml(row.email || '') + '</td>';
+              tbody.appendChild(tr);
+            });
+          })
+          .catch(function() { showErr('newsletter', 'Network error'); });
+      }
+
       function escapeHtml(s) {
         if (s == null) return '';
         var div = document.createElement('div');
@@ -504,6 +554,7 @@
           if (which === 'bookings') loadBookings();
           else if (which === 'contact') loadContact();
           else if (which === 'applications') loadApplications();
+          else if (which === 'newsletter') loadNewsletter();
         });
       });
 
