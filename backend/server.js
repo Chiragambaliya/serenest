@@ -525,11 +525,29 @@ app.post('/api/admin/specialists', requireAdmin, (req, res) => {
   }
 });
 
-app.delete('/api/admin/specialists/:id', requireAdmin, (req, res) => {
+function deleteSpecialistById(req, res) {
   try {
     const id = parseInt(req.params.id, 10);
     if (!Number.isFinite(id)) return res.status(400).json({ ok: false, error: 'Invalid id' });
     const info = db.prepare('DELETE FROM specialists WHERE id = ?').run(id);
+    if (info.changes === 0) return res.status(404).json({ ok: false, error: 'Specialist not found' });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+}
+
+app.delete('/api/admin/specialists/:id', requireAdmin, deleteSpecialistById);
+
+// DELETE by id (for admin panel)
+app.delete('/api/specialists/:id', requireAdmin, deleteSpecialistById);
+
+// DELETE by name (for clients that send name in URL; name must be encoded, e.g. Dr.%20Priya%20Sharma)
+app.delete('/api/specialists/:name', requireAdmin, (req, res) => {
+  try {
+    const name = decodeURIComponent(req.params.name || '').trim().slice(0, 200);
+    if (!name) return res.status(400).json({ ok: false, error: 'Name is required.' });
+    const info = db.prepare('DELETE FROM specialists WHERE name = ?').run(name);
     if (info.changes === 0) return res.status(404).json({ ok: false, error: 'Specialist not found' });
     res.json({ ok: true });
   } catch (err) {
