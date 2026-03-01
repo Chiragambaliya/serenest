@@ -78,15 +78,17 @@ Click **Deploy**. Wait for the build to finish. Your site will be at:
 - Book: `/book.html`
 - Admin: `/admin.html` (log in with the value you set for `ADMIN_SECRET`)
 
-### 5. Custom domain (e.g. serenest.info)
+### 5. Custom domain (e.g. serenest.fit or serenest.info)
 
-1. In Render → your service → **Settings** → **Custom Domains** → Add `serenest.info` (and `www.serenest.info` if you use it).
-2. Render shows a CNAME (e.g. `serenest-xxxx.onrender.com`). At your domain registrar (where you bought the domain), add:
+1. In Render → your service → **Settings** → **Custom Domains** → Add your domain (e.g. `serenest.fit` and optionally `www.serenest.fit`).
+2. Render shows a CNAME (e.g. `serenest-xxxx.onrender.com`). At your domain registrar, add:
    - **Type:** CNAME  
    - **Name:** `@` or `www` (as Render instructs)  
    - **Value:** the CNAME Render gave you
 3. After DNS propagates, Render will issue HTTPS automatically.
-4. Update **Environment** → `ALLOWED_ORIGIN` to `https://serenest.info` and save (redeploy if needed).
+4. **Important:** Update **Environment** → `ALLOWED_ORIGIN` to your live URL, e.g. `https://serenest.fit` (no trailing slash). Save and redeploy if needed.
+
+**If things break on your domain:** Ensure `ALLOWED_ORIGIN` exactly matches the URL users see (e.g. `https://serenest.fit`). All script and asset paths in the repo are relative so they work on any domain.
 
 ---
 
