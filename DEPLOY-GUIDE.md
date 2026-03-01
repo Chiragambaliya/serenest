@@ -4,6 +4,21 @@ Choose **one** of these:
 
 ---
 
+## Deploy to Render (quick — Blueprint)
+
+1. **Push** this repo to GitHub (you already have it at `Chiragambaliya/serenest`).
+2. Go to [render.com](https://render.com) → **Sign in** (e.g. with GitHub).
+3. **New +** → **Blueprint**.
+4. Connect **GitHub** and select the **serenest** repo. Render will read `render.yaml` from the repo.
+5. Click **Apply**. Render creates one **Web Service** (Node, root: `backend`).
+6. In the Dashboard → your **serenest** service → **Environment**:
+   - **ADMIN_SECRET:** set a long random string (you’ll use this to log in to `/admin.html`).
+   - **ALLOWED_ORIGIN:** set your live URL, e.g. `https://serenest.onrender.com` (no trailing slash). Use the URL Render shows for your service; add a custom domain later if you want.
+7. **Save** → Render will redeploy. When the deploy is green, open `https://your-service-name.onrender.com`.
+8. **(Optional)** Add more env vars (Telegram, Resend, Twilio, etc.) as in **Option 1** below, then redeploy.
+
+---
+
 ## Option 1: Everything on Render (one service for site + API)
 
 **Use this if your whole app (HTML + API) is on a single Render service.** Same origin = no `API_URL` or build step. Keep `config.js` with `window.API_BASE = ''`.

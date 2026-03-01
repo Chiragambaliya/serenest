@@ -1,0 +1,19 @@
+# Render Blueprint — Serenest (site + API in one service)
+# Deploy: connect this repo in Render → New → Blueprint → select repo → Apply
+# Then set env vars in Dashboard (Environment) and redeploy.
+
+services:
+  - type: web
+    runtime: node
+    name: serenest
+    rootDir: backend
+    branch: main
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: ADMIN_SECRET
+        sync: false
+      - key: ALLOWED_ORIGIN
+        sync: false
