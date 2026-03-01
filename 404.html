@@ -27,7 +27,7 @@
       var path = window.location.pathname.replace(/\/$/, '') || '/';
       if (path.endsWith('.html')) return;
       var name = path === '/' ? 'index' : path.split('/').pop();
-      var pages = ['about','account','admin','blog','book','breathe','contact','crisis','dashboard','doctors','faq','grievance','login','onboarding','patients','post','pricing','privacy','profile','resources','screening-anxiety','screening-depression','screening-sleep','screening-stress','screenings','services','signup','specialists','telemedicine-policy','terms','testimonials','wellbeing-check','index'];
+      var pages = ['about','account','admin','blog','book','breathe','conditions','contact','crisis','dashboard','doctors','faq','grievance','login','onboarding','patients','post','pricing','privacy','profile','resources','screening-anxiety','screening-depression','screening-sleep','screening-stress','screenings','services','signup','specialists','telemedicine-policy','terms','testimonials','wellbeing-check','index'];
       if (pages.indexOf(name) !== -1) {
         var base = path.slice(0, -name.length) || '/';
         var newPath = base + name + '.html' + window.location.search + window.location.hash;

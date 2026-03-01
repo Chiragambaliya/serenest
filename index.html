@@ -194,6 +194,13 @@
   }
 
   /* ─── HERO ─── */
+  /* Ensure removed booking card never shows (cache or stray markup) */
+  .hero .hero-visual,
+  .hero .hero-card-main,
+  .hero .floating-card,
+  .hero .card-doc,
+  .hero .session-preview,
+  .hero .card-book-btn { display: none !important; visibility: hidden !important; }
   .hero {
     min-height: 100vh;
     display: grid;
@@ -524,9 +531,12 @@
     border-radius: 40px;
     font-size: 0.85rem;
     font-weight: 400;
-    cursor: default;
+    text-decoration: none;
+    cursor: pointer;
     transition: all 0.25s ease;
+    display: inline-block;
   }
+  a.condition-pill:hover { color: var(--sage-dark); }
 
   .condition-pill:hover {
     border-color: var(--sage);
@@ -1168,20 +1178,20 @@
     <p>Whatever it is — big or small — you don't have to face it alone.</p>
   </div>
   <div class="conditions-grid reveal">
-    <div class="condition-pill">Depression</div>
-    <div class="condition-pill">Anxiety</div>
-    <div class="condition-pill">OCD</div>
-    <div class="condition-pill">PTSD</div>
-    <div class="condition-pill">Sleep Disorders</div>
-    <div class="condition-pill">Relationship Issues</div>
-    <div class="condition-pill">Work Stress</div>
-    <div class="condition-pill">Alcohol & Substance Use</div>
-    <div class="condition-pill">Bipolar Disorder</div>
-    <div class="condition-pill">ADHD</div>
-    <div class="condition-pill">Grief & Loss</div>
-    <div class="condition-pill">Anger Management</div>
-    <div class="condition-pill">Panic Attacks</div>
-    <div class="condition-pill">Eating Disorders</div>
+    <a href="conditions.html#depression" class="condition-pill">Depression</a>
+    <a href="conditions.html#anxiety" class="condition-pill">Anxiety</a>
+    <a href="conditions.html#ocd" class="condition-pill">OCD</a>
+    <a href="conditions.html#ptsd" class="condition-pill">PTSD</a>
+    <a href="conditions.html#sleep-disorders" class="condition-pill">Sleep Disorders</a>
+    <a href="conditions.html#relationship-issues" class="condition-pill">Relationship Issues</a>
+    <a href="conditions.html#work-stress" class="condition-pill">Work Stress</a>
+    <a href="conditions.html#alcohol-substance-use" class="condition-pill">Alcohol & Substance Use</a>
+    <a href="conditions.html#bipolar-disorder" class="condition-pill">Bipolar Disorder</a>
+    <a href="conditions.html#adhd" class="condition-pill">ADHD</a>
+    <a href="conditions.html#grief-loss" class="condition-pill">Grief & Loss</a>
+    <a href="conditions.html#anger-management" class="condition-pill">Anger Management</a>
+    <a href="conditions.html#panic-attacks" class="condition-pill">Panic Attacks</a>
+    <a href="conditions.html#eating-disorders" class="condition-pill">Eating Disorders</a>
   </div>
   <p class="conditions-note reveal">Not sure what you're experiencing? That's okay — our specialists will help you understand.</p>
 </section>
