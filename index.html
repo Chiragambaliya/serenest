@@ -197,10 +197,11 @@
   .hero {
     min-height: 100vh;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     align-items: center;
     padding: 120px 60px 80px;
-    gap: 60px;
+    max-width: 720px;
+    margin: 0 auto;
     position: relative;
     overflow: hidden;
   }
@@ -353,153 +354,6 @@
   .trust-item span {
     font-size: 1rem;
   }
-
-  /* ─── HERO VISUAL ─── */
-  .hero-visual {
-    position: relative;
-    height: 520px;
-    opacity: 1;
-    animation: fadeIn 1.2s ease 0.5s forwards;
-  }
-
-  .hero-card-main {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 320px;
-    background: var(--white);
-    border-radius: 24px;
-    padding: 28px;
-    box-shadow: 0 30px 80px rgba(28,36,32,0.12);
-  }
-
-  .card-doc {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 20px;
-  }
-
-  .doc-avatar {
-    width: 52px; height: 52px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--sage-light), var(--teal-light));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.4rem;
-  }
-
-  .doc-info h4 {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--dark);
-  }
-
-  .doc-info p {
-    font-size: 0.75rem;
-    color: var(--text-light);
-    margin-top: 2px;
-  }
-
-  .online-dot {
-    display: inline-block;
-    width: 7px; height: 7px;
-    background: #4CAF50;
-    border-radius: 50%;
-    margin-right: 5px;
-  }
-
-  .doc-status {
-    font-size: 0.72rem;
-    color: #4CAF50;
-    font-weight: 500;
-  }
-
-  .session-preview {
-    background: var(--cream);
-    border-radius: 14px;
-    padding: 14px;
-    margin-bottom: 16px;
-  }
-
-  .session-label {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--text-light);
-    margin-bottom: 6px;
-  }
-
-  .session-time {
-    font-family: var(--font-display);
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: var(--dark);
-  }
-
-  .session-date {
-    font-size: 0.78rem;
-    color: var(--text-light);
-    margin-top: 2px;
-  }
-
-  .card-book-btn {
-    display: block;
-    width: 100%;
-    background: var(--sage);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 12px;
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    font-weight: 500;
-    cursor: pointer;
-    text-decoration: none;
-    text-align: center;
-    box-sizing: border-box;
-  }
-  .card-book-btn:hover { background: var(--sage-dark); }
-
-  .floating-card {
-    position: absolute;
-    background: var(--white);
-    border-radius: 16px;
-    padding: 14px 18px;
-    box-shadow: 0 16px 48px rgba(28,36,32,0.1);
-  }
-
-  .float-1 {
-    top: 40px; right: 10px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    animation: float 4s ease-in-out infinite;
-  }
-
-  .float-2 {
-    bottom: 80px; left: 0px;
-    animation: float 4s ease-in-out 1s infinite;
-  }
-
-  .float-icon {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    background: rgba(125,155,118,0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1rem;
-  }
-
-  .float-text h5 { font-size: 0.8rem; font-weight: 500; color: var(--dark); }
-  .float-text p { font-size: 0.7rem; color: var(--text-light); }
-
-  .float-2-inner { display: flex; align-items: center; gap: 10px; }
-
-  .stars { color: #F5A623; font-size: 0.7rem; letter-spacing: 1px; margin-top: 2px; }
 
   /* ─── PROBLEM SECTION ─── */
   .section-problem {
@@ -1151,11 +1005,6 @@
     to   { opacity: 1; }
   }
 
-  @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50%       { transform: translateY(-10px); }
-  }
-
   /* Scroll reveal */
   .reveal {
     opacity: 0;
@@ -1212,7 +1061,6 @@
   /* ─── RESPONSIVE ─── */
   @media (max-width: 900px) {
     .hero { grid-template-columns: 1fr; padding: 100px 24px 60px; }
-    .hero-visual { display: none; }
     .section-problem, .section-how, .section-conditions, .section-why, .section-founder, .section-testimonials, .section-screenings-promo, .section-cta { padding: 72px 24px; }
     .features-grid { grid-template-columns: repeat(2, 1fr); }
     .founder-inner { grid-template-columns: 1fr; }
@@ -1271,43 +1119,6 @@
     </div>
   </div>
 
-  <div class="hero-visual">
-    <!-- Floating cards -->
-    <div class="floating-card float-1">
-      <div class="float-icon">🎥</div>
-      <div class="float-text">
-        <h5>Live Session</h5>
-        <p>Secure video call</p>
-      </div>
-    </div>
-
-    <div class="hero-card-main">
-      <div class="card-doc">
-        <div class="doc-avatar">👨‍⚕️</div>
-        <div class="doc-info">
-          <h4>Dr. Priya Sharma</h4>
-          <p>Consultant Psychiatrist</p>
-          <div><span class="online-dot"></span><span class="doc-status">Available today</span></div>
-        </div>
-      </div>
-      <div class="session-preview">
-        <div class="session-label">Next available slot</div>
-        <div class="session-time">3:30 PM</div>
-        <div class="session-date">Today · Video Session</div>
-      </div>
-      <a href="book.html" class="card-book-btn">Confirm Booking</a>
-    </div>
-
-    <div class="floating-card float-2">
-      <div class="float-2-inner">
-        <div class="float-icon">⭐</div>
-        <div class="float-text">
-          <h5>4.9 / 5 rating</h5>
-          <div class="stars">★ ★ ★ ★ ★</div>
-        </div>
-      </div>
-    </div>
-  </div>
 </section>
 
 <!-- PROBLEM -->
