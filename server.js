@@ -73,8 +73,11 @@ function trimStr(val) {
 }
 
 function requireAdmin(req, res, next) {
-  if (!isProd || !ADMIN_SECRET) {
-    return next();
+  if (!isProd) {
+    return next(); // dev: no auth needed
+  }
+  if (!ADMIN_SECRET) {
+    return res.status(503).json({ ok: false, error: 'Admin access not configured. Set ADMIN_SECRET in environment.' });
   }
   const key = req.get('X-Admin-Key') || req.query.admin_key || '';
   if (key !== ADMIN_SECRET) {
@@ -121,7 +124,7 @@ function sendTelegramMessage(text) {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
   }, () => {});
-  req.on('error', () => {});
+  req.on('error', (err) => { console.error('Telegram send error:', err.message); });
   req.write(body);
   req.end();
 }
@@ -145,7 +148,7 @@ function sendWhatsAppMessage(text) {
       'Authorization': `Basic ${auth}`
     }
   }, () => {});
-  req.on('error', () => {});
+  req.on('error', (err) => { console.error('WhatsApp send error:', err.message); });
   req.write(body);
   req.end();
 }
@@ -169,7 +172,7 @@ function sendResendEmail(to, subject, html) {
       'Content-Length': Buffer.byteLength(body)
     }
   }, () => {});
-  req.on('error', () => {});
+  req.on('error', (err) => { console.error('Resend email error:', err.message); });
   req.write(body);
   req.end();
 }
@@ -794,6 +797,19 @@ app.post('/api/visit', visitLimiter, (req, res) => {
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, status: 'ok', env: NODE_ENV });
+});
+
+// Public: list available specialists
+const DEFAULT_SPECIALISTS = [
+  { name: 'Dr. Chirag Aambalia — Psychiatrist' },
+  { name: 'Dr. Priya Sharma — Psychiatrist' },
+  { name: 'Ms. Kavya Nair — Clinical Psychologist' },
+  { name: 'Mr. Arjun Mehta — Counselling Psychologist' },
+  { name: 'Dr. Meera Iyer — Addiction Psychiatrist' },
+  { name: 'Ms. Ananya Gupta — Trauma Therapist' }
+];
+app.get('/api/specialists', (req, res) => {
+  res.json({ ok: true, data: DEFAULT_SPECIALISTS });
 });
 
 // Start server

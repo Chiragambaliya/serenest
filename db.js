@@ -117,9 +117,9 @@ function initDb() {
       created_at TEXT DEFAULT (datetime('now'))
     );
   `);
-  try { db.exec('ALTER TABLE bookings ADD COLUMN payment_id TEXT'); } catch (e) { if (!e.message || !e.message.includes('duplicate')) throw e; }
-  try { db.exec('ALTER TABLE bookings ADD COLUMN video_link TEXT'); } catch (e) { if (!e.message || !e.message.includes('duplicate')) throw e; }
-  try { db.exec('ALTER TABLE bookings ADD COLUMN patient_id INTEGER REFERENCES patients(id)'); } catch (e) { if (!e.message || !e.message.includes('duplicate')) throw e; }
+  try { db.exec('ALTER TABLE bookings ADD COLUMN payment_id TEXT'); } catch (e) { if (!e.message || !e.message.includes('duplicate column')) throw e; }
+  try { db.exec('ALTER TABLE bookings ADD COLUMN video_link TEXT'); } catch (e) { if (!e.message || !e.message.includes('duplicate column')) throw e; }
+  try { db.exec('ALTER TABLE bookings ADD COLUMN patient_id INTEGER REFERENCES patients(id)'); } catch (e) { if (!e.message || !e.message.includes('duplicate column')) throw e; }
   console.log('Database initialized at', dbPath);
 }
 

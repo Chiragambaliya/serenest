@@ -266,6 +266,7 @@ var specialistSelect=document.querySelector('select[name="specialist"]');
 if(dateInput) dateInput.min=new Date().toISOString().split('T')[0];
 
 function loadSlotsForDate(){
+  if(!dateInput) return;
   var date=dateInput.value;
   var specialist=(specialistSelect&&specialistSelect.value)||'';
   if(!date){ document.getElementById('slotsHint').textContent='Select date and specialist to see available times.'; return; }
@@ -357,5 +358,6 @@ function handleBooking(e){
 <script src="scripts/cookie-consent.js"></script>
 <script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/visit-notify.js"></script>
+<script src="premium.js"></script>
 </body>
 </html>

@@ -1,7 +1,7 @@
 (function() {
   'use strict';
   var ID = 'whatsapp-float-btn';
-  var number = '917777936367';
+  var number = (window.WHATSAPP_NUMBER) || '917777936367';
   var label = 'Chat on WhatsApp';
 
   function addWhatsApp() {

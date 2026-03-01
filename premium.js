@@ -120,61 +120,6 @@
   }
 
   /* ─────────────────────────────────────────
-     MOBILE NAV DRAWER
-  ───────────────────────────────────────── */
-  const hamburger = document.getElementById('hamburger');
-  if (hamburger) {
-    // Build drawer from nav-menu links
-    const navMenu = document.getElementById('nav-menu');
-    const links   = navMenu ? Array.from(navMenu.querySelectorAll('a')) : [];
-
-    const drawer = document.createElement('div');
-    drawer.className = 'nav-drawer';
-    const currentPage = location.pathname.split('/').pop() || 'index.html';
-
-    const linkHTML = links
-      .filter(l => !l.classList.contains('nav-cta'))
-      .map(l => {
-        const href = l.getAttribute('href') || '#';
-        const isActive = href === currentPage ? ' active-link' : '';
-        return `<a href="${href}" class="drawer-link${isActive}">${l.textContent.trim()}</a>`;
-      }).join('');
-
-    drawer.innerHTML = `
-      <div class="drawer-backdrop"></div>
-      <div class="drawer-panel">
-        <button class="drawer-close" aria-label="Close menu">✕</button>
-        <a href="index.html" class="drawer-logo">Sere<span>nest</span></a>
-        <nav class="drawer-nav">${linkHTML}</nav>
-        <a href="book.html" class="drawer-cta-btn">Book a Consultation →</a>
-      </div>`;
-    document.body.appendChild(drawer);
-
-    const openDrawer  = () => {
-      drawer.classList.add('open');
-      hamburger.classList.add('is-open');
-      document.body.style.overflow = 'hidden';
-      hamburger.setAttribute('aria-expanded', 'true');
-      hamburger.setAttribute('aria-label', 'Close menu');
-    };
-    const closeDrawer = () => {
-      drawer.classList.remove('open');
-      hamburger.classList.remove('is-open');
-      document.body.style.overflow = '';
-      hamburger.setAttribute('aria-expanded', 'false');
-      hamburger.setAttribute('aria-label', 'Open menu');
-    };
-
-    hamburger.addEventListener('click', openDrawer);
-    drawer.querySelector('.drawer-close').addEventListener('click', closeDrawer);
-    drawer.querySelector('.drawer-backdrop').addEventListener('click', closeDrawer);
-    drawer.querySelectorAll('.drawer-link').forEach(l => l.addEventListener('click', closeDrawer));
-
-    // Escape key
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeDrawer(); });
-  }
-
-  /* ─────────────────────────────────────────
      ANIMATED COUNTER
   ───────────────────────────────────────── */
   const countObs = new IntersectionObserver((entries) => {
