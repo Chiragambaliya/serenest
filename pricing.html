@@ -89,6 +89,9 @@ footer{background:var(--dark);padding:48px 60px 36px;}
     <li><a href="blog.html">Blog</a></li>
     <li><a href="screenings.html">Screenings</a></li>
     <li><a href="faq.html">FAQ</a></li>
+    <li><a href="login.html">Log in</a></li>
+    <li><a href="signup.html">Sign up</a></li>
+    <li><a href="dashboard.html">My bookings</a></li>
     <li><a href="book.html" class="nav-cta">Book Now</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -169,6 +172,7 @@ function updateNavScroll(){const n=document.getElementById('navbar');n.style.pad
 window.addEventListener('scroll',updateNavScroll);window.addEventListener('resize',updateNavScroll);updateNavScroll();
 var h=document.getElementById('hamburger'),m=document.getElementById('nav-menu');if(h){h.addEventListener('click',()=>{m.classList.toggle('open');h.classList.toggle('open');h.setAttribute('aria-expanded',m.classList.contains('open'));h.setAttribute('aria-label',m.classList.contains('open')?'Close menu':'Open menu');});}if(m)m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');if(h){h.classList.remove('open');h.setAttribute('aria-expanded','false');h.setAttribute('aria-label','Open menu');}});});
 </script>
+<script src="scripts/cookie-consent.js"></script>
 <script src="scripts/visit-notify.js"></script>
 </body>
 </html>

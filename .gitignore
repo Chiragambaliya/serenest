@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Environment / secrets
+.env
+.env.local
+.env.*.local
+
+# Database (if used from root)
+*.db
+*.db-wal
+*.db-shm
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / temp
+*.tmp
+*.temp
+_nav-fix-temp.txt
+.cursor/
+
+# Optional: uncomment if you build to a dist folder
+# dist/
+# build/

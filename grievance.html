@@ -62,12 +62,30 @@ footer p{font-size:0.75rem;color:rgba(247,245,240,0.35);}
   <h2>External recourse</h2>
   <p>You have the right to approach the relevant medical council or consumer forum in your state if you believe your concern has not been adequately addressed. We will cooperate with any lawful investigation.</p>
 
-  <div class="contact-box">
-    <p><strong>To raise a grievance:</strong></p>
-    <p>Use our <a href="contact.html">Contact</a> page or email us with the subject “Grievance”. We will respond as per the timelines above.</p>
+  <div class="contact-box" id="grievanceFormBox">
+    <p><strong>Submit a grievance</strong></p>
+    <form id="grievanceForm" onsubmit="submitGrievance(event)">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px;">
+        <div><label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text);margin-bottom:4px;">First name</label><input type="text" name="first_name" required style="width:100%;padding:10px 12px;border:1px solid var(--cream-dark);border-radius:8px;font-family:inherit;"></div>
+        <div><label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text);margin-bottom:4px;">Last name</label><input type="text" name="last_name" required style="width:100%;padding:10px 12px;border:1px solid var(--cream-dark);border-radius:8px;font-family:inherit;"></div>
+      </div>
+      <div style="margin-top:12px;"><label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text);margin-bottom:4px;">Email</label><input type="email" name="email" required style="width:100%;padding:10px 12px;border:1px solid var(--cream-dark);border-radius:8px;font-family:inherit;"></div>
+      <div style="margin-top:12px;"><label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text);margin-bottom:4px;">Phone (optional)</label><input type="tel" name="phone" style="width:100%;padding:10px 12px;border:1px solid var(--cream-dark);border-radius:8px;font-family:inherit;"></div>
+      <div style="margin-top:12px;"><label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text);margin-bottom:4px;">Subject (optional)</label><input type="text" name="subject" placeholder="e.g. Billing" style="width:100%;padding:10px 12px;border:1px solid var(--cream-dark);border-radius:8px;font-family:inherit;"></div>
+      <div style="margin-top:12px;"><label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text);margin-bottom:4px;">Your grievance</label><textarea name="message" required rows="4" placeholder="Describe the issue." style="width:100%;padding:10px 12px;border:1px solid var(--cream-dark);border-radius:8px;font-family:inherit;resize:vertical;"></textarea></div>
+      <button type="submit" id="grievanceBtn" style="margin-top:16px;padding:12px 24px;background:var(--sage);color:white;border:none;border-radius:40px;font-family:inherit;font-size:0.9rem;cursor:pointer;">Submit</button>
+    </form>
+    <p id="grievanceSuccess" style="display:none;margin-top:12px;color:var(--sage-dark);font-weight:500;">Thank you. We will acknowledge within 3 working days.</p>
   </div>
+  <p style="margin-top:16px;font-size:0.9rem;color:var(--text-light);">Or use our <a href="contact.html">Contact</a> page or email with subject Grievance.</p>
 </div>
+<script>
+function submitGrievance(e){e.preventDefault();var f=e.target;var btn=document.getElementById('grievanceBtn');var orig=btn.textContent;btn.disabled=true;btn.textContent='Sending...';var d={first_name:f.first_name.value.trim(),last_name:f.last_name.value.trim(),email:f.email.value.trim(),phone:f.phone.value.trim()||'',subject:f.subject.value.trim()||'',message:f.message.value.trim()};fetch((window.API_BASE||'')+'/api/grievance',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(d)}).then(function(r){return r.json();}).then(function(j){if(j.ok){document.getElementById('grievanceForm').style.display='none';document.getElementById('grievanceSuccess').style.display='block';}else{btn.disabled=false;btn.textContent=orig;alert(j.error||'Something went wrong.');}}).catch(function(){btn.disabled=false;btn.textContent=orig;alert('Could not reach server. Please try again.');});}
+</script>
 <footer><p>© 2025 Serenest. All rights reserved.</p></footer>
+<script src="scripts/dark-mode.js"></script>
+<script src="scripts/cookie-consent.js"></script>
+<script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/visit-notify.js"></script>
 </body>
 </html>

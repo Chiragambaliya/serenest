@@ -119,6 +119,9 @@ footer{background:var(--dark);padding:64px 60px 36px;}
     <li><a href="blog.html">Blog</a></li>
     <li><a href="screenings.html">Screenings</a></li>
     <li><a href="faq.html">FAQ</a></li>
+    <li><a href="login.html">Log in</a></li>
+    <li><a href="signup.html">Sign up</a></li>
+    <li><a href="dashboard.html">My bookings</a></li>
     <li><a href="book.html" class="nav-cta">Book Now</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -332,6 +335,11 @@ footer{background:var(--dark);padding:64px 60px 36px;}
   </div>
 </section>
 
+<section class="section-specialists" style="padding-top:0;">
+  <h2 style="font-size:1.3rem;margin-bottom:20px;color:var(--dark);">What patients say</h2>
+  <div id="specialistReviews" class="specialists-grid" style="grid-template-columns:repeat(auto-fill,minmax(300px,1fr));"></div>
+</section>
+
 <!-- CTA -->
 <section class="section-cta">
   <h2 class="reveal">Not sure who to see?</h2>
@@ -379,7 +387,24 @@ function filterSpecs(type,btn){
     }
   });
 }
+(function(){
+  fetch((window.API_BASE||'')+'/api/reviews').then(function(r){return r.json();}).then(function(d){
+    if(!d||!d.ok||!d.data||!d.data.length) return;
+    var el=document.getElementById('specialistReviews');
+    var stars=function(n){var s='';for(var i=0;i<5;i++) s+=i<n?'★':'☆'; return s;};
+    d.data.slice(0,6).forEach(function(r){
+      var card=document.createElement('div');
+      card.className='specialist-card reveal';
+      card.style.minHeight='auto';
+      card.innerHTML='<div class="spec-body"><div class="spec-rating"><span class="stars">'+stars(r.rating||0)+'</span><span class="rating-text">'+(r.specialist_name||'')+'</span></div><p class="spec-bio">'+(r.comment||'—')+'</p><div class="spec-meta"><span>'+(r.patient_name||'Patient')+'</span></div></div>';
+      el.appendChild(card);
+    });
+  }).catch(function(){});
+})();
 </script>
+<script src="scripts/dark-mode.js"></script>
+<script src="scripts/cookie-consent.js"></script>
+<script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/visit-notify.js"></script>
 </body>
 </html>

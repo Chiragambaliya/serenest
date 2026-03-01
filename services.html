@@ -142,6 +142,9 @@ footer{background:var(--dark);padding:64px 60px 36px;}
     <li><a href="blog.html">Blog</a></li>
     <li><a href="screenings.html">Screenings</a></li>
     <li><a href="faq.html">FAQ</a></li>
+    <li><a href="login.html">Log in</a></li>
+    <li><a href="signup.html">Sign up</a></li>
+    <li><a href="dashboard.html">My bookings</a></li>
     <li><a href="book.html" class="nav-cta">Book Now</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -383,6 +386,9 @@ var navMenu=document.getElementById('nav-menu');
 hamburgerBtn.addEventListener('click',()=>{const isOpen=navMenu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
 if(navMenu) navMenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ navMenu.classList.remove('open'); hamburgerBtn.setAttribute('aria-expanded','false'); hamburgerBtn.setAttribute('aria-label','Open menu'); }); });
 </script>
+<script src="scripts/dark-mode.js"></script>
+<script src="scripts/cookie-consent.js"></script>
+<script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/visit-notify.js"></script>
 </body>
 </html>

@@ -67,8 +67,6 @@ nav ul a:hover{color:var(--sage-dark);}
 .form-submit{width:100%;background:var(--sage);color:var(--white);border:none;padding:16px;border-radius:50px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.25s;margin-top:8px;}
 .form-submit:hover{background:var(--sage-dark);transform:translateY(-2px);box-shadow:0 12px 30px rgba(125,155,118,0.3);}
 .form-note{text-align:center;font-size:0.72rem;color:var(--text-light);margin-top:12px;font-style:italic;}
-.fee-line{font-size:0.85rem;color:var(--text);margin-bottom:16px;padding:10px 14px;background:rgba(125,155,118,0.08);border-radius:10px;border:1px solid rgba(125,155,118,0.2);}
-.fee-line strong{color:var(--sage-dark);}
 
 /* SUCCESS STATE */
 .success-state{display:none;text-align:center;padding:20px 0;}
@@ -100,7 +98,6 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 </style>
 <link rel="stylesheet" href="premium.css">
 <script src="/config.js"></script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 <body>
 
@@ -115,6 +112,9 @@ footer{background:var(--dark);padding:48px 60px 36px;}
     <li><a href="blog.html">Blog</a></li>
     <li><a href="screenings.html">Screenings</a></li>
     <li><a href="faq.html">FAQ</a></li>
+    <li><a href="login.html">Log in</a></li>
+    <li><a href="signup.html">Sign up</a></li>
+    <li><a href="dashboard.html">My bookings</a></li>
     <li><a href="book.html" class="nav-cta">Book Now</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -153,7 +153,6 @@ footer{background:var(--dark);padding:48px 60px 36px;}
       <div class="form-title">Book a Consultation</div>
       <div class="form-subtitle">Fill in your details and we'll confirm your session by email.</div>
 
-      <div class="fee-line">Consultation fee: <strong>₹<span id="consultationFee">500</span></strong> (pay securely after filling details)</div>
       <form id="bookingForm" onsubmit="handleBooking(event)">
         <input type="hidden" name="session_type" id="booking_session_type" value="Video">
         <input type="hidden" name="time_slot" id="booking_time_slot" value="3:30 PM">
@@ -213,11 +212,12 @@ footer{background:var(--dark);padding:48px 60px 36px;}
         </div>
         <div class="form-group">
           <label>Available Time Slots</label>
-          <div class="slot-grid">
+          <p id="slotsHint" class="form-subtitle" style="margin-bottom:8px;">Select date and specialist to see available times.</p>
+          <div class="slot-grid" id="slotGrid">
             <div class="time-slot" onclick="selectSlot(this)">9:00 AM</div>
-            <div class="time-slot unavailable">10:00 AM</div>
+            <div class="time-slot" onclick="selectSlot(this)">10:00 AM</div>
             <div class="time-slot" onclick="selectSlot(this)">11:00 AM</div>
-            <div class="time-slot unavailable">12:00 PM</div>
+            <div class="time-slot" onclick="selectSlot(this)">12:00 PM</div>
             <div class="time-slot" onclick="selectSlot(this)">2:00 PM</div>
             <div class="time-slot selected" onclick="selectSlot(this)">3:30 PM</div>
             <div class="time-slot" onclick="selectSlot(this)">5:00 PM</div>
@@ -228,15 +228,16 @@ footer{background:var(--dark);padding:48px 60px 36px;}
           <label>What brings you here? <span style="color:var(--text-light);font-weight:300;text-transform:none;letter-spacing:0">(optional)</span></label>
           <textarea name="notes" placeholder="Briefly describe what you'd like support with. This helps your specialist prepare for your session."></textarea>
         </div>
-        <button type="submit" class="form-submit" id="bookingSubmitBtn">Pay ₹<span id="submitFee">500</span> &amp; Confirm Booking →</button>
-        <p class="form-note">🔒 Secure payment via Razorpay. Your information is confidential. We'll send confirmation to your email.</p>
+        <button type="submit" class="form-submit" id="bookingSubmitBtn">Confirm Booking →</button>
+        <p class="form-note">🔒 Your information is confidential. We'll send a confirmation to your email.</p>
       </form>
     </div>
 
     <div class="success-state" id="successState">
       <div class="success-icon">✅</div>
       <h2>You're booked in.</h2>
-      <p>A confirmation has been sent to your email with your session link, specialist details, and what to expect. See you soon.</p>
+      <p>A confirmation has been sent to your email with your session details. See you soon.</p>
+      <p id="successVideoWrap" style="display:none;margin-top:16px;"><a href="#" id="successVideoLink" target="_blank" rel="noopener" class="form-submit" style="display:inline-block;text-decoration:none;width:auto;padding:12px 24px;">Join video call</a></p>
       <br>
       <p style="font-size:0.8rem;color:var(--text-light);">Need to change your booking? Email us at <a href="mailto:hello@serenest.in" style="color:var(--sage)">hello@serenest.in</a></p>
     </div>
@@ -264,7 +265,39 @@ if(hamburgerBtn&&navMenu){
 }
 
 // Set min date to today
-document.querySelector('input[type="date"]').min=new Date().toISOString().split('T')[0];
+var dateInput=document.querySelector('input[name="preferred_date"]');
+var specialistSelect=document.querySelector('select[name="specialist"]');
+dateInput.min=new Date().toISOString().split('T')[0];
+
+function loadSlotsForDate(){
+  var date=dateInput.value;
+  var specialist=(specialistSelect&&specialistSelect.value)||'';
+  if(!date){ document.getElementById('slotsHint').textContent='Select date and specialist to see available times.'; return; }
+  var apiBase=window.API_BASE||'';
+  var url=apiBase+'/api/slots?date='+encodeURIComponent(date);
+  if(specialist) url+='&specialist='+encodeURIComponent(specialist);
+  document.getElementById('slotsHint').textContent='Loading…';
+  fetch(url).then(function(r){return r.json();}).then(function(d){
+    var grid=document.getElementById('slotGrid');
+    if(d&&d.ok&&d.data&&d.data.length>0){
+      grid.innerHTML=d.data.map(function(s){
+        var t=s.slot_time;
+        return '<div class="time-slot" onclick="selectSlot(this)" data-time="'+t.replace(/"/g,'&quot;')+'">'+t+'</div>';
+      }).join('');
+      var first=grid.querySelector('.time-slot');
+      if(first){ first.classList.add('selected'); document.getElementById('booking_time_slot').value=first.getAttribute('data-time')||first.textContent; }
+      document.getElementById('slotsHint').textContent='Available times for '+date+'.';
+    } else {
+      grid.innerHTML='<div class="time-slot" onclick="selectSlot(this)" data-time="9:00 AM">9:00 AM</div><div class="time-slot" onclick="selectSlot(this)" data-time="10:00 AM">10:00 AM</div><div class="time-slot" onclick="selectSlot(this)" data-time="11:00 AM">11:00 AM</div><div class="time-slot" onclick="selectSlot(this)" data-time="3:30 PM">3:30 PM</div><div class="time-slot selected" onclick="selectSlot(this)" data-time="3:30 PM">3:30 PM</div>';
+      document.getElementById('booking_time_slot').value='3:30 PM';
+      document.getElementById('slotsHint').textContent='No specific slots for this date; choose a time below.';
+    }
+  }).catch(function(){
+    document.getElementById('slotsHint').textContent='Select date and specialist to see available times.';
+  });
+}
+if(dateInput) dateInput.addEventListener('change',loadSlotsForDate);
+if(specialistSelect) specialistSelect.addEventListener('change',loadSlotsForDate);
 
 function selectType(el){
   document.querySelectorAll('.session-type').forEach(t=>t.classList.remove('selected'));
@@ -276,79 +309,56 @@ function selectSlot(el){
   if(el.classList.contains('unavailable'))return;
   document.querySelectorAll('.time-slot').forEach(s=>s.classList.remove('selected'));
   el.classList.add('selected');
-  document.getElementById('booking_time_slot').value=el.textContent.trim();
-}
-function getBookingData(form){
-  var data={};
-  ['first_name','last_name','email','phone','specialist','session_type','preferred_date','time_slot','notes'].forEach(function(name){
-    var el=form.querySelector('[name="'+name+'"]');
-    if(el) data[name]=el.value;
-  });
-  return data;
-}
-function showBookingSuccess(){
-  document.getElementById('booking-form-content').style.display='none';
-  var s=document.getElementById('successState');
-  s.style.display='block';
-  s.style.opacity='0';
-  setTimeout(function(){s.style.transition='opacity 0.5s ease';s.style.opacity='1';},50);
+  document.getElementById('booking_time_slot').value=(el.getAttribute('data-time')||el.textContent).trim();
 }
 function handleBooking(e){
   e.preventDefault();
   var btn=document.getElementById('bookingSubmitBtn');
   var origText=btn.textContent;
-  var form=e.target;
-  var data=getBookingData(form);
-  var apiBase=window.API_BASE||'';
-
-  function submitBooking(paymentPayload){
-    var payload=Object.assign({},data,paymentPayload);
-    btn.textContent='Confirming...';
-    fetch(apiBase+'/api/booking',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
-      .then(function(r){return r.json();})
-      .then(function(json){
-        if(json.ok){ showBookingSuccess(); }
-        else{ btn.textContent=origText; btn.disabled=false; alert(json.error||'Something went wrong. Please try again.'); }
-      })
-      .catch(function(){ btn.textContent=origText; btn.disabled=false; alert('Could not reach server. Please check your connection and try again.'); });
-  }
-
-  btn.textContent='Preparing payment...';
+  btn.textContent='Sending...';
   btn.disabled=true;
-  fetch(apiBase+'/api/create-order',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({amount:500})})
-    .then(function(r){ return r.json().then(function(j){ return { status: r.status, json: j }; }); })
-    .then(function(out){
-      var json=out.json;
-      if(!json.ok||!json.order_id){
+  var form=e.target;
+  var data={};
+  ['first_name','last_name','email','phone','specialist','session_type','preferred_date','time_slot','notes'].forEach(function(name){
+    var el=form.querySelector('[name="'+name+'"]');
+    if(el) data[name]=el.value;
+  });
+  var apiBase=window.API_BASE||'';
+  var headers={'Content-Type':'application/json'};
+  var token=localStorage.getItem('serenest_patient_token');
+  if(token) headers['X-Patient-Token']=token;
+  fetch(apiBase+'/api/booking',{method:'POST',headers:headers,body:JSON.stringify(data)})
+    .then(function(r){return r.json();})
+    .then(function(json){
+      if(json.ok){
+        document.getElementById('booking-form-content').style.display='none';
+        var s=document.getElementById('successState');
+        s.style.display='block';
+        s.style.opacity='0';
+        setTimeout(function(){s.style.transition='opacity 0.5s ease';s.style.opacity='1';},50);
+        var v=json.video_link;
+        var wrap=document.getElementById('successVideoWrap');
+        var link=document.getElementById('successVideoLink');
+        if(v&&link){
+          link.href=v;
+          wrap.style.display='block';
+        } else { wrap.style.display='none'; }
+      }else{
         btn.textContent=origText;
         btn.disabled=false;
-        submitBooking({});
-        return;
+        alert(json.error||'Something went wrong. Please try again.');
       }
-      var options={
-        key:json.key_id,
-        amount:json.amount*100,
-        currency:'INR',
-        order_id:json.order_id,
-        name:'Serenest',
-        description:'Consultation booking',
-        prefill:{name:data.first_name+' '+data.last_name,email:data.email,contact:data.phone},
-        handler:function(res){
-          submitBooking({razorpay_payment_id:res.razorpay_payment_id,razorpay_order_id:res.razorpay_order_id,razorpay_signature:res.razorpay_signature});
-        }
-      };
-      if(typeof Razorpay==='undefined'){ submitBooking({}); return; }
-      var rzp=new Razorpay(options);
-      rzp.on('payment.failed',function(){ btn.textContent=origText; btn.disabled=false; alert('Payment failed. You can try again or book without paying now.'); });
-      rzp.open();
-      btn.textContent=origText;
-      btn.disabled=false;
     })
     .catch(function(){
-      submitBooking({});
+      btn.textContent=origText;
+      btn.disabled=false;
+      alert('Could not reach server. Please check your connection and try again.');
     });
 }
 </script>
+<script src="scripts/dark-mode.js"></script>
+<script src="scripts/cookie-consent.js"></script>
+<script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/visit-notify.js"></script>
 </body>
 </html>

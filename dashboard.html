@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My bookings — Serenest</title>
+<link rel="stylesheet" href="premium.css">
+<script src="/config.js"></script>
+<style>
+.dash-page{min-height:100vh;padding:100px 60px 80px;max-width:900px;margin:0 auto;}
+.dash-page h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--dark);margin-bottom:8px;}
+.dash-page .sub{font-size:0.9rem;color:var(--text-light);margin-bottom:32px;}
+.dash-page a{color:var(--sage-dark);}
+.booking-list{display:flex;flex-direction:column;gap:16px;}
+.booking-card{background:var(--white);border:1.5px solid var(--cream-dark);border-radius:16px;padding:24px;}
+.booking-card h3{font-size:1rem;color:var(--dark);margin-bottom:8px;}
+.booking-card p{margin:4px 0;font-size:0.88rem;color:var(--text-light);}
+.booking-card .video-link{margin-top:12px;}
+.booking-card .video-link a{display:inline-block;padding:10px 20px;background:var(--sage);color:white!important;border-radius:40px;font-size:0.85rem;text-decoration:none;}
+.booking-card .video-link a:hover{background:var(--sage-dark);}
+.empty-bookings{background:var(--white);border:1.5px solid var(--cream-dark);border-radius:16px;padding:48px;text-align:center;color:var(--text-light);}
+nav{padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);border-bottom:1px solid rgba(125,155,118,0.15);}
+.logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
+nav a{text-decoration:none;font-size:0.9rem;color:var(--text-light);}
+@media(max-width:900px){.dash-page{padding:80px 24px 60px;}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <div><a href="book.html">Book</a> &nbsp; <a href="dashboard.html">My bookings</a> &nbsp; <a href="profile.html">Profile</a> &nbsp; <a href="#" id="logoutLink">Log out</a></div>
+</nav>
+<div class="dash-page">
+  <h1>My bookings</h1>
+  <p class="sub">Your upcoming and past sessions. Click "Join video call" when your specialist has shared a link.</p>
+  <div id="bookingList" class="booking-list"></div>
+  <div id="emptyBookings" class="empty-bookings" style="display:none;">
+    <p>You don't have any bookings yet.</p>
+    <p style="margin-top:12px;"><a href="book.html">Book a consultation</a></p>
+  </div>
+  <p id="dashboardError" style="display:none;color:#c0392b;margin-top:16px;"></p>
+</div>
+<script>
+(function(){
+  var TOKEN_KEY='serenest_patient_token';
+  var API=(window.API_BASE||'')+'/api';
+  var token=localStorage.getItem(TOKEN_KEY);
+  if(!token){ window.location.href='login.html'; return; }
+  document.getElementById('logoutLink').addEventListener('click',function(e){ e.preventDefault(); localStorage.removeItem(TOKEN_KEY); window.location.href='index.html'; });
+  var headers={'X-Patient-Token':token,'Content-Type':'application/json'};
+  fetch(API+'/me/bookings',{headers:headers})
+    .then(function(r){
+      if(r.status===401){ localStorage.removeItem(TOKEN_KEY); window.location.href='login.html'; return null; }
+      return r.json();
+    })
+    .then(function(d){
+      if(!d) return;
+      if(!d.ok){ document.getElementById('dashboardError').textContent=d.error||'Failed to load'; document.getElementById('dashboardError').style.display='block'; return; }
+      var list=document.getElementById('bookingList');
+      var empty=document.getElementById('emptyBookings');
+      var rows=d.data||[];
+      if(rows.length===0){ empty.style.display='block'; return; }
+      rows.forEach(function(b){
+        var card=document.createElement('div');
+        card.className='booking-card';
+        var html='<h3>'+escapeHtml(b.specialist||'')+'</h3><p><strong>Session:</strong> '+(b.session_type||'')+'</p><p><strong>Date:</strong> '+(b.preferred_date||'')+' · '+(b.time_slot||'')+'</p>';
+        if(b.video_link){
+          html+='<div class="video-link"><a href="'+escapeHtml(b.video_link)+'" target="_blank" rel="noopener">Join video call</a></div>';
+        }
+        card.innerHTML=html;
+        list.appendChild(card);
+      });
+    })
+    .catch(function(){
+      document.getElementById('dashboardError').textContent='Network error. Try again.';
+      document.getElementById('dashboardError').style.display='block';
+    });
+  function escapeHtml(s){ if(s==null) return ''; var d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+})();
+</script>
+<script src="scripts/dark-mode.js"></script>
+</body>
+</html>

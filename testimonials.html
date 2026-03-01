@@ -77,6 +77,9 @@ footer{background:var(--dark);padding:48px 60px 36px;}
     <li><a href="blog.html">Blog</a></li>
     <li><a href="screenings.html">Screenings</a></li>
     <li><a href="faq.html">FAQ</a></li>
+    <li><a href="login.html">Log in</a></li>
+    <li><a href="signup.html">Sign up</a></li>
+    <li><a href="dashboard.html">My bookings</a></li>
     <li><a href="book.html" class="nav-cta">Book Now</a></li>
   </ul>
   <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
@@ -91,6 +94,42 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 </section>
 
 <section class="section-testimonials">
+  <h2 style="font-size:1.2rem;margin-bottom:20px;color:var(--dark);">Leave a review</h2>
+  <form id="reviewForm" style="max-width:560px;margin-bottom:48px;padding:24px;background:var(--white);border-radius:16px;border:1px solid var(--cream-dark);">
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:0.8rem;font-weight:500;color:var(--text);margin-bottom:6px;">Specialist</label>
+      <select name="specialist_name" required style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;">
+        <option value="Dr. Chirag Aambalia — Psychiatrist">Dr. Chirag Aambalia</option>
+        <option value="Dr. Priya Sharma — Psychiatrist">Dr. Priya Sharma</option>
+        <option value="Ms. Kavya Nair — Clinical Psychologist">Ms. Kavya Nair</option>
+        <option value="Mr. Arjun Mehta — Counselling Psychologist">Mr. Arjun Mehta</option>
+        <option value="Dr. Meera Iyer — Addiction Psychiatrist">Dr. Meera Iyer</option>
+        <option value="Ms. Ananya Gupta — Trauma Therapist">Ms. Ananya Gupta</option>
+      </select>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:0.8rem;font-weight:500;color:var(--text);margin-bottom:6px;">Rating (1–5)</label>
+      <select name="rating" required style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;">
+        <option value="5">5 ★</option>
+        <option value="4">4 ★</option>
+        <option value="3">3 ★</option>
+        <option value="2">2 ★</option>
+        <option value="1">1 ★</option>
+      </select>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:0.8rem;font-weight:500;color:var(--text);margin-bottom:6px;">Your review (optional)</label>
+      <textarea name="comment" rows="3" style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;"></textarea>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:0.8rem;font-weight:500;color:var(--text);margin-bottom:6px;">Your name (optional)</label>
+      <input type="text" name="patient_name" style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;">
+    </div>
+    <button type="submit" style="padding:12px 24px;background:var(--sage);color:white;border:none;border-radius:50px;font-family:inherit;font-weight:500;cursor:pointer;">Submit review</button>
+    <p id="reviewFormMsg" style="margin-top:12px;font-size:0.85rem;display:none;"></p>
+  </form>
+  <h2 style="font-size:1.2rem;margin-bottom:20px;color:var(--dark);">Patient stories</h2>
+  <div id="apiReviews" class="testimonials-grid"></div>
   <div class="testimonials-grid">
     <div class="testimonial-card reveal">
       <div class="testimonial-stars">★ ★ ★ ★ ★</div>
@@ -175,12 +214,42 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 </footer>
 
 <script>
+(function(){
+  var api=(window.API_BASE||'')+'/api/reviews';
+  fetch(api).then(function(r){return r.json();}).then(function(d){
+    if(!d||!d.ok||!d.data||!d.data.length) return;
+    var grid=document.getElementById('apiReviews');
+    var stars=function(n){var s='';for(var i=0;i<5;i++) s+=i<n?'★':'☆'; return s;};
+    d.data.slice(0,12).forEach(function(r){
+      var card=document.createElement('div');
+      card.className='testimonial-card reveal';
+      card.innerHTML='<div class="testimonial-stars">'+stars(r.rating||0)+'</div><blockquote>'+(r.comment||'—')+'</blockquote><div class="testimonial-author"><div class="testimonial-avatar">'+(r.patient_name?(r.patient_name.charAt(0)):'?')+'</div><div><div class="testimonial-name">'+(r.patient_name||'Patient')+'</div><div class="testimonial-meta">'+(r.specialist_name||'')+'</div></div></div>';
+      grid.appendChild(card);
+    });
+    document.querySelectorAll('#apiReviews .reveal').forEach(function(el){if(typeof observer!=='undefined')observer.observe(el);});
+  }).catch(function(){});
+  var form=document.getElementById('reviewForm');
+  var msg=document.getElementById('reviewFormMsg');
+  if(form) form.addEventListener('submit',function(e){
+    e.preventDefault();
+    var fd=new FormData(form);
+    var payload={specialist_name:fd.get('specialist_name'),rating:parseInt(fd.get('rating'),10),comment:fd.get('comment')||'',patient_name:fd.get('patient_name')||''};
+    msg.style.display='none';
+    fetch((window.API_BASE||'')+'/api/reviews',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+      .then(function(r){return r.json();})
+      .then(function(d){msg.textContent=d.ok?(d.message||'Thank you!'):(d.error||'Failed');msg.style.color=d.ok?'var(--sage-dark)':'#c0392b';msg.style.display='block';if(d.ok) form.reset();})
+      .catch(function(){msg.textContent='Network error';msg.style.color='#c0392b';msg.style.display='block';});
+  });
+})();
 var observer=new IntersectionObserver(function(e){e.forEach(function(el){if(el.isIntersecting)el.target.classList.add('visible')});},{threshold:0.1});
 document.querySelectorAll('.reveal').forEach(function(el){observer.observe(el);});
 function updateNavScroll(){var n=document.getElementById('navbar');if(n)n.style.padding=window.innerWidth<=900?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
 window.addEventListener('scroll',updateNavScroll);window.addEventListener('resize',updateNavScroll);updateNavScroll();
 var h=document.getElementById('hamburger'),m=document.getElementById('nav-menu');if(h){h.addEventListener('click',function(){m.classList.toggle('open');h.classList.toggle('open');h.setAttribute('aria-expanded',m.classList.contains('open'));h.setAttribute('aria-label',m.classList.contains('open')?'Close menu':'Open menu');});}if(m)m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');if(h){h.classList.remove('open');h.setAttribute('aria-expanded','false');h.setAttribute('aria-label','Open menu');}});});
 </script>
+<script src="scripts/dark-mode.js"></script>
+<script src="scripts/cookie-consent.js"></script>
+<script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/visit-notify.js"></script>
 </body>
 </html>
