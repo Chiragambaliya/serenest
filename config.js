@@ -1,5 +1,6 @@
-// API base URL. Everything on Render (one service) = same origin → leave ''.
-// Only set this if the site is on a different host (e.g. Vercel) and API is on Render — then set your Render API URL.
+// API base URL. Leave '' if the site and backend are on the same domain (e.g. serenest.fit serves both).
+// If admin shows "Network error" when adding/removing specialists, set this to your backend URL, e.g.:
+// window.API_BASE = 'https://serenest-xxxx.onrender.com';
 window.API_BASE = '';
 
 // WhatsApp contact number (digits only, with country code, no + or spaces).

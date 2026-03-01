@@ -722,49 +722,74 @@
 
       function loadSpecialists() {
         hideErr('specialists');
-        fetch(API + '/specialists').then(function(r) { return r.json(); })
-          .then(function(data) {
-            if (!data || !data.ok) {
-              showErr('specialists', (data && data.error) || 'Failed to load');
-              return;
-            }
-            var rows = data.data || [];
-            var tbody = document.getElementById('specialistsBody');
-            tbody.innerHTML = '';
-            document.getElementById('specialistsEmpty').style.display = rows.length ? 'none' : 'block';
-            document.getElementById('specialistsTableWrap').style.display = rows.length ? 'block' : 'none';
-            rows.forEach(function(row) {
-              var tr = document.createElement('tr');
-              tr.innerHTML = '<td>' + escapeHtml(row.name || '') + '</td><td><button type="button" class="specialist-delete" data-id="' + row.id + '" style="padding:4px 10px;font-size:0.75rem;background:transparent;color:#c0392b;border:1px solid #c0392b;border-radius:6px;cursor:pointer;">Remove</button></td>';
-              tbody.appendChild(tr);
-            });
-            document.querySelectorAll('.specialist-delete').forEach(function(btn) {
-              btn.addEventListener('click', function() {
-                if (!confirm('Remove this specialist? They will no longer appear in the booking list. Existing bookings are unchanged.')) return;
-                var id = btn.getAttribute('data-id');
+        fetch(API + '/specialists').then(function(r) {
+          return r.json().then(function(data) { return { ok: r.ok, data: data }; }).catch(function() { return { ok: false, data: null }; });
+        }).then(function(result) {
+          if (!result.ok || !result.data || !result.data.ok) {
+            showErr('specialists', (result.data && result.data.error) || 'Cannot reach server. If site and API are on different domains, set API_BASE in config.js.');
+            return;
+          }
+          var rows = result.data.data || [];
+          var tbody = document.getElementById('specialistsBody');
+          tbody.innerHTML = '';
+          document.getElementById('specialistsEmpty').style.display = rows.length ? 'none' : 'block';
+          document.getElementById('specialistsTableWrap').style.display = rows.length ? 'block' : 'none';
+          rows.forEach(function(row) {
+            var tr = document.createElement('tr');
+            tr.innerHTML = '<td>' + escapeHtml(row.name || '') + '</td><td><button type="button" class="specialist-delete" data-id="' + row.id + '" style="padding:4px 10px;font-size:0.75rem;background:transparent;color:#c0392b;border:1px solid #c0392b;border-radius:6px;cursor:pointer;">Remove</button></td>';
+            tbody.appendChild(tr);
+          });
+          document.querySelectorAll('.specialist-delete').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+              if (!confirm('Remove this specialist? They will no longer appear in the booking list. Existing bookings are unchanged.')) return;
+              var id = btn.getAttribute('data-id');
                 fetch(API + '/admin/specialists/' + id, { method: 'DELETE', headers: authHeaders() })
-                  .then(function(r) { return r.json(); })
-                  .then(function(d) { if (d && d.ok) { loadSpecialists(); populateSlotSpecialistDropdown(); } else { alert(d && d.error || 'Failed'); } })
-                  .catch(function() { alert('Network error'); });
-              });
+                  .then(function(r) { return r.json().catch(function() { return {}; }); })
+                  .then(function(d) {
+                    if (d && d.ok) { loadSpecialists(); populateSlotSpecialistDropdown(); }
+                    else { showErr('specialists', (d && d.error) || 'Could not remove. If you see network errors, set API_BASE in config.js to your backend URL.'); }
+                  })
+                  .catch(function() { showErr('specialists', 'Network error. Check connection. If site and API are on different domains, set API_BASE in config.js to your backend URL.'); });
             });
-          })
-          .catch(function() { showErr('specialists', 'Network error'); });
+          });
+        }).catch(function() {
+          showErr('specialists', 'Network error. Check connection. If site and API are on different domains, set API_BASE in config.js.');
+        });
       }
       document.getElementById('specialistForm').addEventListener('submit', function(e) {
         e.preventDefault();
         var name = document.getElementById('specialistName').value.trim();
         if (!name) return;
+        hideErr('specialists');
+        var btn = document.querySelector('#specialistForm button[type="submit"]');
+        if (btn) { btn.disabled = true; btn.textContent = 'Adding…'; }
         fetch(API + '/admin/specialists', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ name: name }) })
-          .then(function(r) { return r.json(); })
-          .then(function(d) {
-            if (d && d.ok) {
+          .then(function(r) {
+            return r.json().then(function(d) { return { ok: r.ok, status: r.status, data: d }; });
+          })
+          .catch(function() {
+            return { ok: false, status: 0, data: null };
+          })
+          .then(function(result) {
+            if (btn) { btn.disabled = false; btn.textContent = 'Add specialist'; }
+            if (result.ok && result.data && result.data.ok) {
               document.getElementById('specialistName').value = '';
               loadSpecialists();
               populateSlotSpecialistDropdown();
-            } else { alert(d && d.error || 'Failed'); }
-          })
-          .catch(function() { alert('Network error'); });
+            } else {
+              var msg = 'Could not add specialist. ';
+              if (result.status === 0) {
+                msg += 'Cannot reach the server. Check your connection. If the site and API are on different domains, set API_BASE in config.js to your backend URL (e.g. https://your-app.onrender.com).';
+              } else if (result.data && result.data.error) {
+                msg += result.data.error;
+              } else if (result.status === 401) {
+                msg += 'Admin key invalid or expired. Log in again.';
+              } else {
+                msg += 'Server error (status ' + result.status + ').';
+              }
+              showErr('specialists', msg);
+            }
+          });
       });
 
       function loadContact() {
