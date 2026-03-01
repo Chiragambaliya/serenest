@@ -201,11 +201,11 @@ nav.scrolled,
               0 1px 3px rgba(15, 20, 18, 0.03);
 }
 
-/* Inner: centered 3-column layout — logo (left) | nav (center) | CTA area (right) */
+/* Inner: centered 3-column layout — logo (left) | nav (center) | CTA/hamburger (right) */
 nav .nav-inner,
 #navbar .nav-inner {
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: 1fr minmax(0, 2fr) 1fr;
   align-items: center;
   width: 100%;
   max-width: 1280px;
@@ -219,6 +219,7 @@ nav .nav-inner > *:first-child,
 nav .nav-inner > *:nth-child(2),
 #navbar .nav-inner > *:nth-child(2) {
   justify-self: center;
+  min-width: 0;
 }
 nav .nav-inner > *:last-child,
 #navbar .nav-inner > *:last-child {
