@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page not found — Serenest</title>
+  <link rel="stylesheet" href="premium.css">
+  <style>
+    .error-page { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; text-align: center; }
+    .error-inner { max-width: 420px; }
+    .error-page h1 { font-size: var(--text-3xl); color: var(--dark); margin-bottom: 12px; }
+    .error-page p { color: var(--text-light); margin-bottom: 24px; line-height: 1.6; }
+    .error-page a { display: inline-block; padding: 14px 28px; background: var(--sage); color: var(--white); border-radius: var(--radius-full); font-weight: 500; text-decoration: none; transition: background 0.2s, transform 0.2s; }
+    .error-page a:hover { background: var(--sage-dark); transform: translateY(-2px); }
+  </style>
+</head>
+<body>
+  <main class="error-page">
+    <div class="error-inner">
+      <h1>Page not found</h1>
+      <p>We couldn’t find that page. It may have moved or the link might be outdated.</p>
+      <a href="index.html">Back to home</a>
+    </div>
+  </main>
+  <script>
+    (function() {
+      var path = window.location.pathname.replace(/\/$/, '') || '/';
+      if (path.endsWith('.html')) return;
+      var name = path === '/' ? 'index' : path.split('/').pop();
+      var pages = ['about','account','admin','blog','book','breathe','contact','crisis','dashboard','doctors','faq','grievance','login','onboarding','patients','post','pricing','privacy','profile','resources','screening-anxiety','screening-depression','screening-sleep','screening-stress','screenings','services','signup','specialists','telemedicine-policy','terms','testimonials','wellbeing-check','index'];
+      if (pages.indexOf(name) !== -1) {
+        var base = path.slice(0, -name.length) || '/';
+        var newPath = base + name + '.html' + window.location.search + window.location.hash;
+        window.location.replace(newPath);
+      }
+    })();
+  </script>
+</body>
+</html>

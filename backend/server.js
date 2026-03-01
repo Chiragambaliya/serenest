@@ -77,6 +77,14 @@ app.get('*', (req, res, next) => {
   next();
 });
 
+// 404 fallback: serve 404.html for missing frontend routes (not API)
+app.get('*', (req, res, next) => {
+  if (req.method !== 'GET' || req.path.startsWith('/api')) return next();
+  const notFoundPath = path.join(staticRoot, '404.html');
+  if (fs.existsSync(notFoundPath)) res.status(404).sendFile(notFoundPath);
+  else res.status(404).send('Page not found');
+});
+
 // ——— Helpers ———
 function trimStr(val) {
   return typeof val === 'string' ? val.trim().slice(0, 2000) : '';

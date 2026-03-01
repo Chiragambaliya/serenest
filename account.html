@@ -1,115 +1,115 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Account — Log in, Sign up, My bookings — Serenest</title>
-<meta name="description" content="Log in to Serenest, create an account, or view your bookings. One place for all your account needs.">
-<link rel="canonical" href="https://serenest.in/account.html">
-<link rel="stylesheet" href="premium.css">
-<script src="config.js"></script>
-<style>
-.account-page { min-height: 100vh; padding: 120px 24px 80px; }
-.account-inner { max-width: 880px; margin: 0 auto; }
-.account-hero { text-align: center; margin-bottom: 48px; }
-.account-hero h1 { font-size: var(--text-4xl); font-weight: 400; color: var(--dark); margin-bottom: 12px; }
-.account-hero p { font-size: var(--text-lg); color: var(--text-light); }
-.account-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-.account-card {
-  background: var(--white);
-  border: 1.5px solid var(--cream-dark);
-  border-radius: var(--radius-lg);
-  padding: 32px 28px;
-  text-align: center;
-  transition: transform var(--duration-normal) var(--ease-out-expo), box-shadow var(--duration-normal), border-color var(--duration-fast);
-}
-.account-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
-  border-color: var(--sage-light);
-}
-.account-card .card-icon { width: 56px; height: 56px; margin: 0 auto 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
-.account-card.card-login .card-icon { background: var(--sage-muted); }
-.account-card.card-signup .card-icon { background: var(--teal-muted); }
-.account-card.card-bookings .card-icon { background: var(--warm-muted); }
-.account-card h2 { font-size: var(--text-xl); font-weight: 600; color: var(--dark); margin-bottom: 10px; }
-.account-card p { font-size: var(--text-sm); color: var(--text-light); margin-bottom: 20px; line-height: 1.6; }
-.account-card .btn { display: inline-block; padding: 12px 24px; border-radius: var(--radius-full); font-weight: 500; font-size: var(--text-sm); text-decoration: none; transition: background var(--duration-fast), transform var(--duration-fast); }
-.account-card.card-login .btn { background: var(--sage); color: var(--white); }
-.account-card.card-login .btn:hover { background: var(--sage-dark); }
-.account-card.card-signup .btn { background: var(--teal); color: var(--white); }
-.account-card.card-signup .btn:hover { background: var(--teal-light); }
-.account-card.card-bookings .btn { background: var(--dark); color: var(--cream); }
-.account-card.card-bookings .btn:hover { background: var(--dark-mid); }
-.account-footer { text-align: center; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--cream-dark); }
-.account-footer p { font-size: var(--text-sm); color: var(--text-muted); }
-.account-footer a { color: var(--sage); text-decoration: none; font-weight: 500; }
-@media (max-width: 768px) {
-  .account-cards { grid-template-columns: 1fr; }
-  .account-page { padding: 100px 20px 60px; }
-}
-</style>
-</head>
-<body>
-
-<nav id="navbar">
-  <div class="nav-inner">
-  <a href="index.html" class="logo">Sere<span>nest</span></a>
-  <ul id="nav-menu">
-    <li><a href="patients.html">For Patients</a></li>
-    <li><a href="doctors.html">For Doctors</a></li>
-    <li><a href="services.html">Services</a></li>
-    <li><a href="specialists.html">Specialists</a></li>
-    <li><a href="about.html">About</a></li>
-    <li><a href="blog.html">Blog</a></li>
-    <li><a href="screenings.html">Screenings</a></li>
-    <li><a href="faq.html">FAQ</a></li>
-    <li><a href="account.html" class="active">Account</a></li>
-    <li><a href="dashboard.html">My bookings</a></li>
-    <li><a href="book.html" class="nav-cta">Book Now</a></li>
-  </ul>
-  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
-  </div>
-</nav>
-
-<main class="account-page">
-  <div class="account-inner">
-    <header class="account-hero">
-      <h1>Your account, <em>one place</em></h1>
-      <p>Log in, create an account, or manage your bookings — all right here.</p>
-    </header>
-
-    <div class="account-cards">
-      <div class="account-card card-login">
-        <div class="card-icon" aria-hidden="true">🔐</div>
-        <h2>Log in</h2>
-        <p>Already have an account? Sign in to view your bookings and session details.</p>
-        <a href="login.html" class="btn">Log in</a>
-      </div>
-      <div class="account-card card-signup">
-        <div class="card-icon" aria-hidden="true">✨</div>
-        <h2>Sign up</h2>
-        <p>Create a free account to book sessions and keep your care history in one place.</p>
-        <a href="signup.html" class="btn">Sign up</a>
-      </div>
-      <div class="account-card card-bookings">
-        <div class="card-icon" aria-hidden="true">📋</div>
-        <h2>My bookings</h2>
-        <p>View upcoming and past sessions. Join video calls and manage your appointments.</p>
-        <a href="dashboard.html" class="btn">My bookings</a>
-      </div>
-    </div>
-
-    <footer class="account-footer">
-      <p>New to Serenest? <a href="book.html">Book a consultation</a> — no account required for your first step.</p>
-    </footer>
-  </div>
-</main>
-
-<script src="scripts/nav.js"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account — Log in, Sign up, My bookings — Serenest</title>
+<meta name="description" content="Log in to Serenest, create an account, or view your bookings. One place for all your account needs.">
+<link rel="canonical" href="https://serenest.in/account.html">
+<link rel="stylesheet" href="premium.css">
+<script src="config.js"></script>
+<style>
+.account-page { min-height: 100vh; padding: 120px 24px 80px; }
+.account-inner { max-width: 880px; margin: 0 auto; }
+.account-hero { text-align: center; margin-bottom: 48px; }
+.account-hero h1 { font-size: var(--text-4xl); font-weight: 400; color: var(--dark); margin-bottom: 12px; }
+.account-hero p { font-size: var(--text-lg); color: var(--text-light); }
+.account-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.account-card {
+  background: var(--white);
+  border: 1.5px solid var(--cream-dark);
+  border-radius: var(--radius-lg);
+  padding: 32px 28px;
+  text-align: center;
+  transition: transform var(--duration-normal) var(--ease-out-expo), box-shadow var(--duration-normal), border-color var(--duration-fast);
+}
+.account-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--sage-light);
+}
+.account-card .card-icon { width: 56px; height: 56px; margin: 0 auto 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; }
+.account-card.card-login .card-icon { background: var(--sage-muted); }
+.account-card.card-signup .card-icon { background: var(--teal-muted); }
+.account-card.card-bookings .card-icon { background: var(--warm-muted); }
+.account-card h2 { font-size: var(--text-xl); font-weight: 600; color: var(--dark); margin-bottom: 10px; }
+.account-card p { font-size: var(--text-sm); color: var(--text-light); margin-bottom: 20px; line-height: 1.6; }
+.account-card .btn { display: inline-block; padding: 12px 24px; border-radius: var(--radius-full); font-weight: 500; font-size: var(--text-sm); text-decoration: none; transition: background var(--duration-fast), transform var(--duration-fast); }
+.account-card.card-login .btn { background: var(--sage); color: var(--white); }
+.account-card.card-login .btn:hover { background: var(--sage-dark); }
+.account-card.card-signup .btn { background: var(--teal); color: var(--white); }
+.account-card.card-signup .btn:hover { background: var(--teal-light); }
+.account-card.card-bookings .btn { background: var(--dark); color: var(--cream); }
+.account-card.card-bookings .btn:hover { background: var(--dark-mid); }
+.account-footer { text-align: center; margin-top: 48px; padding-top: 32px; border-top: 1px solid var(--cream-dark); }
+.account-footer p { font-size: var(--text-sm); color: var(--text-muted); }
+.account-footer a { color: var(--sage); text-decoration: none; font-weight: 500; }
+@media (max-width: 768px) {
+  .account-cards { grid-template-columns: 1fr; }
+  .account-page { padding: 100px 20px 60px; }
+}
+</style>
+</head>
+<body>
+
+<nav id="navbar">
+  <div class="nav-inner">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <ul id="nav-menu">
+    <li><a href="patients.html">For Patients</a></li>
+    <li><a href="doctors.html">For Doctors</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="specialists.html">Specialists</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="blog.html">Blog</a></li>
+    <li><a href="screenings.html">Screenings</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="dashboard.html">My bookings</a></li>
+    <li><a href="book.html" class="nav-cta">Book Now</a></li>
+    <li><a href="account.html" class="active">Account</a></li>
+  </ul>
+  <button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<main class="account-page">
+  <div class="account-inner">
+    <header class="account-hero">
+      <h1>Your account, <em>one place</em></h1>
+      <p>Log in, create an account, or manage your bookings — all right here.</p>
+    </header>
+
+    <div class="account-cards">
+      <div class="account-card card-login">
+        <div class="card-icon" aria-hidden="true">🔐</div>
+        <h2>Log in</h2>
+        <p>Already have an account? Sign in to view your bookings and session details.</p>
+        <a href="login.html" class="btn">Log in</a>
+      </div>
+      <div class="account-card card-signup">
+        <div class="card-icon" aria-hidden="true">✨</div>
+        <h2>Sign up</h2>
+        <p>Create a free account to book sessions and keep your care history in one place.</p>
+        <a href="signup.html" class="btn">Sign up</a>
+      </div>
+      <div class="account-card card-bookings">
+        <div class="card-icon" aria-hidden="true">📋</div>
+        <h2>My bookings</h2>
+        <p>View upcoming and past sessions. Join video calls and manage your appointments.</p>
+        <a href="dashboard.html" class="btn">My bookings</a>
+      </div>
+    </div>
+
+    <footer class="account-footer">
+      <p>New to Serenest? <a href="book.html">Book a consultation</a> — no account required for your first step.</p>
+    </footer>
+  </div>
+</main>
+
+<script src="scripts/nav.js"></script>
 <script src="premium.js"></script>
-<script src="scripts/dark-mode.js"></script>
-<script src="scripts/cookie-consent.js"></script>
-<script src="scripts/whatsapp-float.js"></script>
-</body>
-</html>
+<script src="scripts/dark-mode.js"></script>
+<script src="scripts/cookie-consent.js"></script>
+<script src="scripts/whatsapp-float.js"></script>
+</body>
+</html>
