@@ -155,7 +155,7 @@ nav,
   z-index: 1000;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   overflow: visible;
   padding: 14px clamp(20px, 4vw, 48px);
   min-height: 64px;
@@ -167,6 +167,18 @@ nav,
   transition: background var(--duration-normal) var(--ease-out-expo),
               box-shadow var(--duration-normal) var(--ease-out-expo),
               padding var(--duration-normal);
+}
+
+/* Inner wrapper: keeps logo and links in a balanced band (no huge gap in middle) */
+nav .nav-inner,
+#navbar .nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  gap: 24px;
 }
 nav.scrolled,
 #navbar.scrolled {
@@ -733,9 +745,16 @@ body:has(#whatsapp-float-btn) .float-cta {
   box-shadow: 0 16px 44px rgba(107, 143, 113, 0.4);
 }
 
-/* WhatsApp float button — always on top, bottom-right */
-#whatsapp-float-btn {
-  z-index: 99999;
+/* WhatsApp float button — always on top, bottom-right, never hidden */
+#whatsapp-float-btn,
+a[data-whatsapp-float="true"] {
+  z-index: 2147483647 !important;
+  position: fixed !important;
+  bottom: 24px !important;
+  right: 24px !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 /* Page hero (inner pages) */

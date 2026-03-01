@@ -67,6 +67,16 @@ app.use(express.static(staticRoot, {
   etag: true
 }));
 
+// Clean URLs: /patients -> patients.html (so "Cannot GET /patients" is fixed)
+app.get('*', (req, res, next) => {
+  if (req.method !== 'GET' || req.path.startsWith('/api')) return next();
+  if (req.path.includes('.')) return next(); // already has extension
+  const base = req.path === '/' ? '/index' : req.path;
+  const htmlPath = path.join(staticRoot, base + '.html');
+  if (fs.existsSync(htmlPath)) return res.sendFile(htmlPath);
+  next();
+});
+
 // ——— Helpers ———
 function trimStr(val) {
   return typeof val === 'string' ? val.trim().slice(0, 2000) : '';
