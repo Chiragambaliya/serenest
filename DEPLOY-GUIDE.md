@@ -1,5 +1,7 @@
 # How to deploy Serenest
 
+**Landing page:** The site root (`/`) serves `index.html` as the main landing page.
+
 Choose **one** of these:
 
 ---

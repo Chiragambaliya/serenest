@@ -67,11 +67,11 @@ app.use(express.static(staticRoot, {
   etag: true
 }));
 
-// Clean URLs: /patients -> patients.html (so "Cannot GET /patients" is fixed)
+// Landing page: / serves index.html. Clean URLs: /patients -> patients.html
 app.get('*', (req, res, next) => {
   if (req.method !== 'GET' || req.path.startsWith('/api')) return next();
   if (req.path.includes('.')) return next(); // already has extension
-  const base = req.path === '/' ? '/index' : req.path;
+  const base = req.path === '/' ? '/index' : req.path; // index.html is the landing page
   const htmlPath = path.join(staticRoot, base + '.html');
   if (fs.existsSync(htmlPath)) return res.sendFile(htmlPath);
   next();
