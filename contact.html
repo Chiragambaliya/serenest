@@ -187,14 +187,6 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 </footer>
 
 <script>
-function updateNavScroll(){const nav=document.getElementById('navbar');const isMobile=window.innerWidth<=900;nav.style.padding=isMobile?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');}
-window.addEventListener('scroll',updateNavScroll);
-window.addEventListener('resize',updateNavScroll);
-updateNavScroll();
-const hamburgerBtn=document.getElementById('hamburger');
-var navMenu=document.getElementById('nav-menu');
-hamburgerBtn.addEventListener('click',()=>{const isOpen=navMenu.classList.toggle('open');hamburgerBtn.setAttribute('aria-expanded',isOpen);hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');});
-if(navMenu) navMenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ navMenu.classList.remove('open'); hamburgerBtn.setAttribute('aria-expanded','false'); hamburgerBtn.setAttribute('aria-label','Open menu'); }); });
 function handleContact(e){
   e.preventDefault();
   var btn=document.getElementById('contactSubmitBtn');

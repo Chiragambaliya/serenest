@@ -1480,19 +1480,6 @@
   }, { rootMargin: '0px 0px -6% 0px', threshold: 0 });
 
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
-
-  // Nav scroll effect
-  function updateNavScroll() {
-    const nav = document.querySelector('nav');
-    const isMobile = window.innerWidth <= 900;
-    const padding = isMobile ? '16px 24px' : (window.scrollY > 60 ? '14px 60px' : '20px 60px');
-    nav.style.padding = padding;
-    nav.style.boxShadow = window.scrollY > 60 ? '0 4px 30px rgba(28,36,32,0.08)' : 'none';
-  }
-  window.addEventListener('scroll', updateNavScroll);
-  window.addEventListener('resize', updateNavScroll);
-  updateNavScroll();
-
 </script>
 <script src="scripts/nav.js"></script>
 <script src="scripts/dark-mode.js"></script>

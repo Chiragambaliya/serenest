@@ -431,36 +431,22 @@ footer{background:var(--dark);padding:64px 60px 36px;}
 </footer>
 
 <script>
-const observer=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting)el.target.classList.add('visible')})},{threshold:0.12});
-document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
-function updateNavScroll(){
-  const nav=document.getElementById('navbar');
-  const isMobile=window.innerWidth<=900;
-  nav.style.padding=isMobile?'16px 24px':(window.scrollY>60?'14px 60px':'20px 60px');
-  nav.style.boxShadow=window.scrollY>60?'0 4px 30px rgba(28,36,32,0.08)':'none';
-}
-window.addEventListener('scroll',updateNavScroll);
-window.addEventListener('resize',updateNavScroll);
-updateNavScroll();
-const hamburgerBtn=document.getElementById('hamburger');
-const navMenu=document.getElementById('nav-menu');
-if(hamburgerBtn&&navMenu){
-  hamburgerBtn.addEventListener('click',()=>{
-    const isOpen=navMenu.classList.toggle('open');
-    hamburgerBtn.setAttribute('aria-expanded',isOpen);
-    hamburgerBtn.setAttribute('aria-label',isOpen?'Close menu':'Open menu');
-  });
-  navMenu.querySelectorAll('a').forEach(function(a){ a.addEventListener('click',function(){ navMenu.classList.remove('open'); hamburgerBtn.setAttribute('aria-expanded','false'); hamburgerBtn.setAttribute('aria-label','Open menu'); }); });
-}
-document.querySelectorAll('.faq-item').forEach(item=>{
-  item.querySelector('.faq-question').addEventListener('click',()=>{
-    const isOpen=item.classList.contains('open');
-    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
-    if(!isOpen)item.classList.add('open');
+(function(){
+  var observer=new IntersectionObserver(function(entries){ entries.forEach(function(el){ if(el.isIntersecting) el.target.classList.add('visible'); }); },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); });
+})();
+document.querySelectorAll('.faq-item').forEach(function(item){
+  var q=item.querySelector('.faq-question');
+  if(q) q.addEventListener('click',function(){
+    var isOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(function(i){ i.classList.remove('open'); });
+    if(!isOpen) item.classList.add('open');
   });
 });
 </script>
 <script src="scripts/nav.js"></script>
+<script src="scripts/dark-mode.js"></script>
+<script src="scripts/cookie-consent.js"></script>
 <script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/visit-notify.js"></script>
 </body>
