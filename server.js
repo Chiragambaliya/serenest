@@ -48,6 +48,7 @@ app.use(cors({
   origin: isProd && ALLOWED_ORIGIN ? ALLOWED_ORIGIN : true,
   credentials: true
 }));
+app.options('*', cors()); // Handle CORS preflight for all routes
 
 app.use(express.json({ limit: '100kb' }));
 
@@ -799,17 +800,38 @@ app.get('/api/health', (req, res) => {
   res.json({ ok: true, status: 'ok', env: NODE_ENV });
 });
 
-// Public: list available specialists
-const DEFAULT_SPECIALISTS = [
-  { name: 'Dr. Chirag Aambalia — Psychiatrist' },
-  { name: 'Dr. Priya Sharma — Psychiatrist' },
-  { name: 'Ms. Kavya Nair — Clinical Psychologist' },
-  { name: 'Mr. Arjun Mehta — Counselling Psychologist' },
-  { name: 'Dr. Meera Iyer — Addiction Psychiatrist' },
-  { name: 'Ms. Ananya Gupta — Trauma Therapist' }
-];
+// ——— Specialists (DB-backed) ———
 app.get('/api/specialists', (req, res) => {
-  res.json({ ok: true, data: DEFAULT_SPECIALISTS });
+  try {
+    const rows = db.prepare('SELECT id, name FROM specialists ORDER BY id ASC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.post('/api/admin/specialists', requireAdmin, (req, res) => {
+  try {
+    const name = trimStr(req.body.name).slice(0, 200);
+    if (!name) return res.status(400).json({ ok: false, error: 'Name required.' });
+    db.prepare('INSERT INTO specialists (name) VALUES (?)').run(name);
+    const row = db.prepare('SELECT id, name FROM specialists WHERE id = last_insert_rowid()').get();
+    res.status(201).json({ ok: true, specialist: row });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.delete('/api/admin/specialists/:id', requireAdmin, (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isFinite(id)) return res.status(400).json({ ok: false, error: 'Invalid id' });
+    const info = db.prepare('DELETE FROM specialists WHERE id = ?').run(id);
+    if (info.changes === 0) return res.status(404).json({ ok: false, error: 'Specialist not found' });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
 });
 
 // Start server
