@@ -222,6 +222,7 @@
         <button type="button" class="tab" data-tab="grievances">Grievances</button>
         <button type="button" class="tab" data-tab="blog">Blog</button>
         <button type="button" class="tab" data-tab="slots">Availability</button>
+        <button type="button" class="tab" data-tab="specialists">Specialists</button>
         <button type="button" class="tab" data-tab="analytics">Analytics</button>
       </div>
 
@@ -413,12 +414,7 @@
               <div>
                 <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-light);margin-bottom:6px;">Specialist</label>
                 <select id="slotSpecialist" required style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;">
-                  <option value="Dr. Chirag Aambalia — Psychiatrist">Dr. Chirag Aambalia — Psychiatrist</option>
-                  <option value="Dr. Priya Sharma — Psychiatrist">Dr. Priya Sharma — Psychiatrist</option>
-                  <option value="Ms. Kavya Nair — Clinical Psychologist">Ms. Kavya Nair — Clinical Psychologist</option>
-                  <option value="Mr. Arjun Mehta — Counselling Psychologist">Mr. Arjun Mehta — Counselling Psychologist</option>
-                  <option value="Dr. Meera Iyer — Addiction Psychiatrist">Dr. Meera Iyer — Addiction Psychiatrist</option>
-                  <option value="Ms. Ananya Gupta — Trauma Therapist">Ms. Ananya Gupta — Trauma Therapist</option>
+                  <option value="">Loading…</option>
                 </select>
               </div>
               <div>
@@ -433,6 +429,32 @@
                 <button type="submit" style="padding:12px 24px;background:var(--sage);color:var(--white);border:none;border-radius:10px;font-family:inherit;font-weight:500;cursor:pointer;">Add</button>
                 <button type="button" id="slotFormCancel" style="padding:12px 24px;background:transparent;color:var(--text-light);border:1px solid var(--cream-dark);border-radius:10px;font-family:inherit;cursor:pointer;">Cancel</button>
               </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div id="panelSpecialists" class="panel">
+        <h2>Specialists (doctors)</h2>
+        <p style="font-size:0.9rem;color:var(--text-light);margin-bottom:16px;">These appear in the booking dropdown and when adding slots. Add or remove doctors here.</p>
+        <button type="button" class="load-btn" data-load="specialists">Refresh</button>
+        <div id="specialistsError" class="err-msg" style="display:none;"></div>
+        <div class="table-wrap" id="specialistsTableWrap" style="margin-top:16px;">
+          <table>
+            <thead><tr><th>Name</th><th></th></tr></thead>
+            <tbody id="specialistsBody"></tbody>
+          </table>
+        </div>
+        <p id="specialistsEmpty" class="empty" style="display:none;">No specialists yet. Add one below.</p>
+        <div id="specialistFormWrap" style="margin-top:24px;padding:24px;background:var(--white);border-radius:16px;border:1px solid var(--cream-dark);">
+          <h3 style="font-size:1.1rem;margin-bottom:16px;">Add specialist</h3>
+          <form id="specialistForm">
+            <div style="display:flex;gap:12px;align-items:end;flex-wrap:wrap;">
+              <div style="flex:1;min-width:200px;">
+                <label style="display:block;font-size:0.75rem;font-weight:500;color:var(--text-light);margin-bottom:6px;">Full name and title</label>
+                <input type="text" id="specialistName" placeholder="e.g. Dr. Priya Sharma — Psychiatrist" required style="width:100%;padding:12px;border:1px solid var(--cream-dark);border-radius:10px;">
+              </div>
+              <button type="submit" style="padding:12px 24px;background:var(--sage);color:var(--white);border:none;border-radius:10px;font-family:inherit;font-weight:500;cursor:pointer;">Add</button>
             </div>
           </form>
         </div>
@@ -546,6 +568,7 @@
             (id === 'panelGrievances' && tabId === 'grievances') ||
             (id === 'panelBlog' && tabId === 'blog') ||
             (id === 'panelSlots' && tabId === 'slots') ||
+            (id === 'panelSpecialists' && tabId === 'specialists') ||
             (id === 'panelAnalytics' && tabId === 'analytics');
           p.classList.toggle('visible', visible);
         });
@@ -554,7 +577,8 @@
         if (tabId === 'newsletter' && !document.getElementById('newsletterBody').innerHTML) loadNewsletter();
         if (tabId === 'grievances' && !document.getElementById('grievancesBody').innerHTML) loadGrievances();
         if (tabId === 'blog') loadPosts();
-        if (tabId === 'slots') loadSlots();
+        if (tabId === 'slots') { loadSlots(); populateSlotSpecialistDropdown(); }
+        if (tabId === 'specialists') loadSpecialists();
         if (tabId === 'analytics') loadAnalytics();
       }
       document.querySelectorAll('.tab').forEach(function(t) {
@@ -658,9 +682,25 @@
           })
           .catch(function() { showErr('slots', 'Network error'); });
       }
+      function populateSlotSpecialistDropdown() {
+        var sel = document.getElementById('slotSpecialist');
+        if (!sel) return;
+        fetch(API + '/specialists').then(function(r) { return r.json(); }).then(function(d) {
+          sel.innerHTML = '<option value="">Select specialist</option>';
+          if (d && d.ok && d.data && d.data.length) {
+            d.data.forEach(function(s) {
+              var opt = document.createElement('option');
+              opt.value = s.name;
+              opt.textContent = s.name;
+              sel.appendChild(opt);
+            });
+          }
+        }).catch(function() { sel.innerHTML = '<option value="">Failed to load</option>'; });
+      }
       document.getElementById('slotAddBtn').addEventListener('click', function() {
         document.getElementById('slotFormWrap').style.display = 'block';
         document.getElementById('slotDate').value = new Date().toISOString().slice(0, 10);
+        populateSlotSpecialistDropdown();
       });
       document.getElementById('slotFormCancel').addEventListener('click', function() {
         document.getElementById('slotFormWrap').style.display = 'none';
@@ -675,6 +715,53 @@
               document.getElementById('slotFormWrap').style.display = 'none';
               document.getElementById('slotTime').value = '';
               loadSlots();
+            } else { alert(d && d.error || 'Failed'); }
+          })
+          .catch(function() { alert('Network error'); });
+      });
+
+      function loadSpecialists() {
+        hideErr('specialists');
+        fetch(API + '/specialists').then(function(r) { return r.json(); })
+          .then(function(data) {
+            if (!data || !data.ok) {
+              showErr('specialists', (data && data.error) || 'Failed to load');
+              return;
+            }
+            var rows = data.data || [];
+            var tbody = document.getElementById('specialistsBody');
+            tbody.innerHTML = '';
+            document.getElementById('specialistsEmpty').style.display = rows.length ? 'none' : 'block';
+            document.getElementById('specialistsTableWrap').style.display = rows.length ? 'block' : 'none';
+            rows.forEach(function(row) {
+              var tr = document.createElement('tr');
+              tr.innerHTML = '<td>' + escapeHtml(row.name || '') + '</td><td><button type="button" class="specialist-delete" data-id="' + row.id + '" style="padding:4px 10px;font-size:0.75rem;background:transparent;color:#c0392b;border:1px solid #c0392b;border-radius:6px;cursor:pointer;">Remove</button></td>';
+              tbody.appendChild(tr);
+            });
+            document.querySelectorAll('.specialist-delete').forEach(function(btn) {
+              btn.addEventListener('click', function() {
+                if (!confirm('Remove this specialist? They will no longer appear in the booking list. Existing bookings are unchanged.')) return;
+                var id = btn.getAttribute('data-id');
+                fetch(API + '/admin/specialists/' + id, { method: 'DELETE', headers: authHeaders() })
+                  .then(function(r) { return r.json(); })
+                  .then(function(d) { if (d && d.ok) { loadSpecialists(); populateSlotSpecialistDropdown(); } else { alert(d && d.error || 'Failed'); } })
+                  .catch(function() { alert('Network error'); });
+              });
+            });
+          })
+          .catch(function() { showErr('specialists', 'Network error'); });
+      }
+      document.getElementById('specialistForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        var name = document.getElementById('specialistName').value.trim();
+        if (!name) return;
+        fetch(API + '/admin/specialists', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ name: name }) })
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (d && d.ok) {
+              document.getElementById('specialistName').value = '';
+              loadSpecialists();
+              populateSlotSpecialistDropdown();
             } else { alert(d && d.error || 'Failed'); }
           })
           .catch(function() { alert('Network error'); });
@@ -967,5 +1054,6 @@
       }
     })();
   </script>
+  <script src="scripts/whatsapp-float.js"></script>
 </body>
 </html>

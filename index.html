@@ -1492,26 +1492,8 @@
   window.addEventListener('resize', updateNavScroll);
   updateNavScroll();
 
-  // Mobile nav toggle
-  const hamburger = document.getElementById('hamburger');
-  const navMenu = document.getElementById('nav-menu');
-  if (hamburger && navMenu) {
-    hamburger.addEventListener('click', function() {
-      const isOpen = navMenu.classList.toggle('open');
-      hamburger.classList.toggle('open');
-      hamburger.setAttribute('aria-expanded', isOpen);
-      hamburger.setAttribute('aria-label', isOpen ? 'Close menu' : 'Open menu');
-    });
-    navMenu.querySelectorAll('a').forEach(function(a) {
-      a.addEventListener('click', function() {
-        navMenu.classList.remove('open');
-        hamburger.classList.remove('open');
-        hamburger.setAttribute('aria-expanded', 'false');
-        hamburger.setAttribute('aria-label', 'Open menu');
-      });
-    });
-  }
 </script>
+<script src="scripts/nav.js"></script>
 <script src="scripts/dark-mode.js"></script>
 <script src="scripts/cookie-consent.js"></script>
 <script src="scripts/whatsapp-float.js"></script>

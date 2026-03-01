@@ -116,7 +116,27 @@ function initDb() {
       patient_name TEXT,
       created_at TEXT DEFAULT (datetime('now'))
     );
+
+    CREATE TABLE IF NOT EXISTS specialists (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      display_order INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
   `);
+  const specCount = db.prepare('SELECT COUNT(*) as n FROM specialists').get();
+  if (specCount && specCount.n === 0) {
+    const defaults = [
+      'Dr. Chirag Aambalia — Psychiatrist',
+      'Dr. Priya Sharma — Psychiatrist',
+      'Ms. Kavya Nair — Clinical Psychologist',
+      'Mr. Arjun Mehta — Counselling Psychologist',
+      'Dr. Meera Iyer — Addiction Psychiatrist',
+      'Ms. Ananya Gupta — Trauma Therapist'
+    ];
+    const ins = db.prepare('INSERT INTO specialists (name, display_order) VALUES (?, ?)');
+    defaults.forEach((name, i) => ins.run(name, i));
+  }
   try { db.exec('ALTER TABLE bookings ADD COLUMN payment_id TEXT'); } catch (e) { if (!e.message || !e.message.includes('duplicate')) throw e; }
   try { db.exec('ALTER TABLE bookings ADD COLUMN video_link TEXT'); } catch (e) { if (!e.message || !e.message.includes('duplicate')) throw e; }
   try { db.exec('ALTER TABLE bookings ADD COLUMN patient_id INTEGER REFERENCES patients(id)'); } catch (e) { if (!e.message || !e.message.includes('duplicate')) throw e; }

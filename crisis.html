@@ -166,6 +166,8 @@ function updateNavScroll(){const n=document.getElementById('navbar');n.style.pad
 window.addEventListener('scroll',updateNavScroll);window.addEventListener('resize',updateNavScroll);updateNavScroll();
 var h=document.getElementById('hamburger'),m=document.getElementById('nav-menu');if(h){h.addEventListener('click',()=>{m.classList.toggle('open');h.classList.toggle('open');h.setAttribute('aria-expanded',m.classList.contains('open'));h.setAttribute('aria-label',m.classList.contains('open')?'Close menu':'Open menu');});}if(m)m.querySelectorAll('a').forEach(function(a){a.addEventListener('click',function(){m.classList.remove('open');if(h){h.classList.remove('open');h.setAttribute('aria-expanded','false');h.setAttribute('aria-label','Open menu');}});});
 </script>
+<script src="scripts/nav.js"></script>
+<script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/cookie-consent.js"></script>
 <script src="scripts/visit-notify.js"></script>
 </body>

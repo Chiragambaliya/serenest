@@ -483,6 +483,42 @@ app.delete('/api/admin/slots/:id', requireAdmin, (req, res) => {
   }
 });
 
+// ——— Specialists (doctors) ———
+app.get('/api/specialists', (req, res) => {
+  try {
+    const rows = db.prepare('SELECT id, name, display_order FROM specialists ORDER BY display_order ASC, name ASC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.post('/api/admin/specialists', requireAdmin, (req, res) => {
+  try {
+    const name = trimStr(req.body.name).slice(0, 200);
+    if (!name) return res.status(400).json({ ok: false, error: 'Name is required.' });
+    const maxOrder = db.prepare('SELECT COALESCE(MAX(display_order), -1) + 1 AS next_order FROM specialists').get();
+    const nextOrder = maxOrder && Number.isFinite(maxOrder.next_order) ? maxOrder.next_order : 0;
+    db.prepare('INSERT INTO specialists (name, display_order) VALUES (?, ?)').run(name, nextOrder);
+    const row = db.prepare('SELECT * FROM specialists WHERE id = last_insert_rowid()').get();
+    res.status(201).json({ ok: true, specialist: row });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.delete('/api/admin/specialists/:id', requireAdmin, (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isFinite(id)) return res.status(400).json({ ok: false, error: 'Invalid id' });
+    const info = db.prepare('DELETE FROM specialists WHERE id = ?').run(id);
+    if (info.changes === 0) return res.status(404).json({ ok: false, error: 'Specialist not found' });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 // ——— Blog (public + admin) ———
 app.get('/api/posts', (req, res) => {
   try {
