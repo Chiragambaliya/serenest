@@ -387,7 +387,7 @@ app.post('/api/newsletter', (req, res) => {
     }
     const stmt = db.prepare('INSERT INTO newsletter_subscribers (email) VALUES (?)');
     stmt.run(email);
-    res.status(201).json({ ok: true, message: 'You're subscribed. We'll send you our next update.' });
+    res.status(201).json({ ok: true, message: "You're subscribed. We'll send you our next update." });
   } catch (err) {
     if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       return res.status(200).json({ ok: true, message: 'This email is already subscribed.' });
@@ -949,6 +949,54 @@ app.get('/api/admin/patients', requireAdmin, (req, res) => {
     res.json({ ok: true, data: patients });
   } catch (err) {
     console.error('Admin patients error:', err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// Admin: generate unique Jitsi room for a booking
+app.post('/api/admin/bookings/:id/room', requireAdmin, (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isFinite(id)) return res.status(400).json({ ok: false, error: 'Invalid id' });
+    const booking = db.prepare('SELECT * FROM bookings WHERE id = ?').get(id);
+    if (!booking) return res.status(404).json({ ok: false, error: 'Booking not found' });
+
+    // Generate a unique room name — deterministic from booking id + a secret salt so it's not guessable
+    const salt = (process.env.ADMIN_SECRET || 'serenest').slice(0, 16);
+    const rawName = `serenest-${salt}-${id}-${Date.now().toString(36)}`;
+    const roomName = rawName.toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 48);
+
+    // Jitsi Meet public server — no account needed, free, end-to-end encrypted
+    const APP_BASE = process.env.APP_BASE_URL || 'https://serenest.onrender.com';
+    const jitsiUrl = `https://meet.jit.si/${roomName}`;
+    // Internal session page wraps Jitsi with patient display name pre-filled
+    const sessionUrl = `${APP_BASE}/session.html?room=${encodeURIComponent(roomName)}&booking=${id}`;
+
+    // Save sessionUrl as the video_link
+    db.prepare('UPDATE bookings SET video_link = ? WHERE id = ?').run(sessionUrl, id);
+    const updated = db.prepare('SELECT * FROM bookings WHERE id = ?').get(id);
+
+    // Auto-confirm and email patient
+    db.prepare('UPDATE bookings SET status = ?, confirmed_at = ? WHERE id = ?')
+      .run('confirmed', new Date().toISOString(), id);
+
+    if (updated.email) {
+      const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;line-height:1.6;color:#333;max-width:560px;margin:0 auto;padding:24px;">
+        <h2 style="color:#4A6B50;">Your session is ready \u2014 Serenest</h2>
+        <p>Hi ${escapeHtml(updated.first_name || 'there')},</p>
+        <p>Your session with <strong>${escapeHtml(updated.specialist || '')}</strong> on <strong>${escapeHtml(updated.preferred_date || '')}</strong> at <strong>${escapeHtml(updated.time_slot || '')}</strong> is confirmed.</p>
+        <p>
+          <a href="${sessionUrl}" style="display:inline-block;background:#4A6B50;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;">Join your video session</a>
+        </p>
+        <p style="font-size:0.85rem;color:#666;">Or copy this link: <a href="${sessionUrl}">${sessionUrl}</a></p>
+        <p>Please be ready a few minutes before your session time. Allow camera and microphone access when prompted.</p>
+        <p>\u2014 The Serenest Team</p></body></html>`;
+      sendResendEmail(updated.email, 'Your Serenest video session is ready', html);
+    }
+
+    res.json({ ok: true, room: roomName, session_url: sessionUrl, jitsi_url: jitsiUrl, booking: db.prepare('SELECT * FROM bookings WHERE id = ?').get(id) });
+  } catch (err) {
+    console.error('Generate room error:', err);
     res.status(500).json({ ok: false, error: err.message });
   }
 });

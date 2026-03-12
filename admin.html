@@ -241,7 +241,8 @@
                 <th>Specialist</th>
                 <th>Session</th>
                 <th>Date / Time</th>
-                <th>Video link</th>
+                <th>Status</th>
+                <th>Video / Room</th>
                 <th>Notes</th>
               </tr>
             </thead>
@@ -599,6 +600,19 @@
         if (el) el.style.display = 'none';
       }
 
+      // ── Status badge helper ──
+      function statusBadge(status) {
+        var colors = {
+          confirmed: 'background:rgba(46,160,67,0.15);color:#1a7f37;',
+          pending:   'background:rgba(210,153,34,0.15);color:#9a6700;',
+          cancelled: 'background:rgba(207,34,46,0.12);color:#c0392b;',
+          rescheduled:'background:rgba(52,152,219,0.15);color:#1a5276;'
+        };
+        var s = status || 'pending';
+        var label = s.charAt(0).toUpperCase() + s.slice(1);
+        return '<span style="display:inline-block;padding:2px 9px;border-radius:40px;font-size:0.72rem;font-weight:700;letter-spacing:.04em;' + (colors[s] || colors.pending) + '">' + label + '</span>';
+      }
+
       function loadBookings() {
         hideErr('bookings');
         fetch(API + '/admin/bookings', { headers: authHeaders() })
@@ -608,10 +622,7 @@
           })
           .then(function(data) {
             if (!data) return;
-            if (!data.ok) {
-              showErr('bookings', data.error || 'Failed to load');
-              return;
-            }
+            if (!data.ok) { showErr('bookings', data.error || 'Failed to load'); return; }
             var rows = data.data || [];
             var tbody = document.getElementById('bookingsBody');
             tbody.innerHTML = '';
@@ -619,29 +630,103 @@
             rows.forEach(function(row) {
               var tr = document.createElement('tr');
               var vid = (row.video_link || '');
+              var isSession = vid.indexOf('session.html') !== -1;
+              var hasRoom = vid.length > 0;
+              var status = row.status || 'pending';
+
+              // Video cell: show room link + generate button
+              var videoCell = '';
+              if (hasRoom) {
+                var displayUrl = isSession ? '✅ Room ready' : escapeHtml(vid.slice(0,28)) + (vid.length>28?'…':'');
+                var linkStyle = 'font-size:0.78rem;color:var(--sage-dark);text-decoration:none;display:block;margin-bottom:4px;';
+                videoCell = '<a href="' + escapeHtml(vid) + '" target="_blank" style="' + linkStyle + '">' + displayUrl + '</a>';
+              }
+              // Generate Room button (always available for non-cancelled)
+              if (status !== 'cancelled') {
+                var btnLabel = hasRoom ? '↺ New room' : '▶ Generate room';
+                var btnStyle = 'padding:4px 10px;font-size:0.73rem;font-weight:600;border:none;border-radius:6px;cursor:pointer;margin-right:4px;' +
+                  (hasRoom ? 'background:rgba(125,155,118,0.2);color:var(--sage-dark);' : 'background:var(--sage);color:white;');
+                videoCell += '<button type="button" class="booking-gen-room" data-id="' + row.id + '" style="' + btnStyle + '">' + btnLabel + '</button>';
+              }
+              // Copy link button if room exists
+              if (hasRoom) {
+                videoCell += '<button type="button" class="booking-copy-link" data-url="' + escapeHtml(vid) + '" style="padding:4px 8px;font-size:0.72rem;background:transparent;border:1px solid var(--cream-dark);border-radius:6px;cursor:pointer;">📋</button>';
+              }
+              // Admin join button
+              if (hasRoom && status !== 'cancelled') {
+                videoCell += '<br><a href="' + escapeHtml(vid) + '" target="_blank" style="display:inline-block;margin-top:4px;padding:4px 10px;font-size:0.72rem;font-weight:600;background:#4A6B50;color:white;border-radius:6px;text-decoration:none;">Join as specialist</a>';
+              }
+
+              // Status change select
+              var statusCell = statusBadge(status) +
+                '<br><select class="booking-status-sel" data-id="' + row.id + '" style="margin-top:5px;font-size:0.72rem;padding:3px 6px;border:1px solid var(--cream-dark);border-radius:6px;font-family:inherit;background:var(--white);">' +
+                ['pending','confirmed','cancelled','rescheduled'].map(function(s){
+                  return '<option value="'+s+'"'+(s===status?' selected':'')+'>'+s.charAt(0).toUpperCase()+s.slice(1)+'</option>';
+                }).join('') + '</select>';
+
               tr.innerHTML =
-                '<td class="muted">' + escapeHtml(row.created_at || '') + '</td>' +
-                '<td>' + escapeHtml(row.first_name + ' ' + row.last_name) + '</td>' +
-                '<td>' + escapeHtml(row.email) + '</td>' +
+                '<td class="muted" style="font-size:0.78rem;white-space:nowrap;">' + escapeHtml((row.created_at||'').slice(0,10)) + '</td>' +
+                '<td style="white-space:nowrap;">' + escapeHtml(row.first_name + ' ' + row.last_name) + '</td>' +
+                '<td style="font-size:0.82rem;">' + escapeHtml(row.email) + '</td>' +
                 '<td>' + escapeHtml(row.phone || '') + '</td>' +
-                '<td>' + escapeHtml(row.specialist || '') + '</td>' +
+                '<td style="white-space:nowrap;">' + escapeHtml(row.specialist || '') + '</td>' +
                 '<td>' + escapeHtml(row.session_type || '') + '</td>' +
-                '<td>' + escapeHtml(row.preferred_date || '') + ' · ' + escapeHtml(row.time_slot || '') + '</td>' +
-                '<td><span class="muted" style="font-size:0.8rem;">' + (vid ? escapeHtml(vid.slice(0,30)) + (vid.length>30?'…':'') : '—') + '</span> <button type="button" class="booking-set-video" data-id="' + row.id + '" style="padding:4px 10px;font-size:0.75rem;background:var(--sage);color:white;border:none;border-radius:6px;cursor:pointer;">Set link</button></td>' +
-                '<td>' + escapeHtml(row.notes || '—') + '</td>';
+                '<td style="white-space:nowrap;">' + escapeHtml(row.preferred_date || '') + '<br><span class="muted">' + escapeHtml(row.time_slot || '') + '</span></td>' +
+                '<td>' + statusCell + '</td>' +
+                '<td style="min-width:160px;">' + videoCell + '</td>' +
+                '<td class="muted" style="font-size:0.82rem;">' + escapeHtml(row.notes || '—') + '</td>';
               tbody.appendChild(tr);
             });
-            document.querySelectorAll('.booking-set-video').forEach(function(btn) {
+
+            // Generate room handler
+            tbody.querySelectorAll('.booking-gen-room').forEach(function(btn) {
               btn.addEventListener('click', function() {
                 var id = btn.getAttribute('data-id');
-                var url = prompt('Video call URL (Zoom/Meet):', '');
-                if (url === null) return;
-                fetch(API + '/admin/bookings/' + id, { method: 'PUT', headers: authHeaders(), body: JSON.stringify({ video_link: url.trim() }) })
+                if (!confirm('Generate a new Jitsi video room for this booking? The patient will receive a confirmation email with the session link.')) return;
+                btn.disabled = true; btn.textContent = 'Generating…';
+                fetch(API + '/admin/bookings/' + id + '/room', { method: 'POST', headers: authHeaders() })
                   .then(function(r) { return r.json(); })
-                  .then(function(d) { if (d && d.ok) loadBookings(); else alert(d && d.error || 'Failed'); })
-                  .catch(function() { alert('Network error'); });
+                  .then(function(d) {
+                    if (d && d.ok) {
+                      loadBookings();
+                    } else {
+                      alert((d && d.error) || 'Failed to generate room.');
+                      btn.disabled = false; btn.textContent = btn.textContent.indexOf('New') !== -1 ? '↺ New room' : '▶ Generate room';
+                    }
+                  })
+                  .catch(function() { alert('Network error'); btn.disabled = false; });
               });
             });
+
+            // Copy link handler
+            tbody.querySelectorAll('.booking-copy-link').forEach(function(btn) {
+              btn.addEventListener('click', function() {
+                var url = btn.getAttribute('data-url');
+                if (navigator.clipboard) {
+                  navigator.clipboard.writeText(url).then(function() { btn.textContent = '✓'; setTimeout(function(){ btn.textContent = '📋'; }, 1500); });
+                } else {
+                  var ta = document.createElement('textarea');
+                  ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+                  btn.textContent = '✓'; setTimeout(function(){ btn.textContent = '📋'; }, 1500);
+                }
+              });
+            });
+
+            // Status change handler
+            tbody.querySelectorAll('.booking-status-sel').forEach(function(sel) {
+              sel.addEventListener('change', function() {
+                var id = sel.getAttribute('data-id');
+                var newStatus = sel.value;
+                fetch(API + '/admin/bookings/' + id + '/status', {
+                  method: 'PATCH', headers: authHeaders(),
+                  body: JSON.stringify({ status: newStatus })
+                })
+                .then(function(r) { return r.json(); })
+                .then(function(d) { if (d && d.ok) loadBookings(); else { alert((d && d.error) || 'Failed'); } })
+                .catch(function() { alert('Network error'); });
+              });
+            });
+
           })
           .catch(function() { showErr('bookings', 'Network error'); });
       }

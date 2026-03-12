@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your session — Serenest</title>
+<link rel="stylesheet" href="premium.css">
+<script src="config.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;background:#0f1a12;}
+
+/* ── Top bar ── */
+.session-bar{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:52px;
+  background:rgba(15,26,18,0.96);
+  border-bottom:1px solid rgba(125,155,118,0.2);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;gap:12px;
+}
+.session-bar .logo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.25rem;font-weight:600;
+  color:#c8dbc0;text-decoration:none;white-space:nowrap;
+}
+.session-bar .logo span{color:#7d9b76;}
+.session-info{
+  display:flex;align-items:center;gap:10px;
+  font-size:0.8rem;color:rgba(200,219,192,0.7);
+  overflow:hidden;
+}
+.session-info .pill{
+  background:rgba(125,155,118,0.18);
+  border:1px solid rgba(125,155,118,0.3);
+  color:#a8c9a0;
+  border-radius:40px;padding:3px 11px;
+  font-size:0.72rem;font-weight:600;
+  white-space:nowrap;
+}
+.session-info .pill.live{
+  background:rgba(46,204,113,0.15);
+  border-color:rgba(46,204,113,0.3);
+  color:#2ecc71;
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
+.session-bar-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.btn-leave{
+  padding:7px 18px;
+  background:rgba(192,57,43,0.18);
+  border:1px solid rgba(192,57,43,0.4);
+  color:#e74c3c;
+  border-radius:40px;font-family:inherit;font-size:0.8rem;font-weight:600;
+  cursor:pointer;transition:background .2s,border-color .2s;white-space:nowrap;
+}
+.btn-leave:hover{background:rgba(192,57,43,0.3);border-color:rgba(192,57,43,0.7);}
+
+/* ── Main: call frame ── */
+#callFrame{
+  position:fixed;top:52px;left:0;right:0;bottom:0;
+  width:100%;height:calc(100% - 52px);
+  border:none;display:block;background:#0f1a12;
+}
+
+/* ── Pre-join screen ── */
+#prejoin{
+  position:fixed;top:52px;left:0;right:0;bottom:0;
+  display:flex;align-items:center;justify-content:center;
+  background:#0f1a12;z-index:50;
+  padding:24px;
+}
+.prejoin-card{
+  background:#162319;
+  border:1.5px solid rgba(125,155,118,0.25);
+  border-radius:20px;
+  padding:40px 36px;
+  max-width:400px;width:100%;
+  text-align:center;
+}
+.prejoin-icon{
+  width:72px;height:72px;border-radius:50%;
+  background:rgba(125,155,118,0.15);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 20px;font-size:2rem;
+}
+.prejoin-card h1{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.6rem;font-weight:400;
+  color:#c8dbc0;margin-bottom:8px;
+}
+.prejoin-card p{font-size:0.88rem;color:rgba(200,219,192,0.6);margin-bottom:28px;line-height:1.6;}
+.prejoin-card label{
+  display:block;text-align:left;
+  font-size:0.72rem;font-weight:600;text-transform:uppercase;letter-spacing:0.06em;
+  color:rgba(200,219,192,0.5);margin-bottom:8px;
+}
+.prejoin-card input{
+  width:100%;padding:13px 16px;
+  background:#1e2f23;
+  border:1.5px solid rgba(125,155,118,0.25);
+  border-radius:12px;
+  color:#c8dbc0;font-family:inherit;font-size:0.95rem;
+  margin-bottom:20px;
+  outline:none;transition:border-color .2s;
+}
+.prejoin-card input:focus{border-color:#7d9b76;}
+.btn-join{
+  width:100%;padding:14px;
+  background:#4A6B50;color:#fff;
+  border:none;border-radius:12px;
+  font-family:inherit;font-size:0.95rem;font-weight:600;
+  cursor:pointer;transition:background .2s;
+}
+.btn-join:hover{background:#3a5540;}
+.btn-join:disabled{opacity:0.6;cursor:not-allowed;}
+.prejoin-note{
+  margin-top:16px;font-size:0.78rem;
+  color:rgba(200,219,192,0.4);line-height:1.5;
+}
+.prejoin-note a{color:#7d9b76;text-decoration:none;}
+
+/* ── Post-call screen ── */
+#postcall{
+  position:fixed;top:52px;left:0;right:0;bottom:0;
+  display:none;align-items:center;justify-content:center;
+  background:#0f1a12;z-index:60;padding:24px;
+}
+.postcall-card{
+  background:#162319;border:1.5px solid rgba(125,155,118,0.25);
+  border-radius:20px;padding:40px 36px;max-width:380px;width:100%;text-align:center;
+}
+.postcall-card .check{font-size:3rem;margin-bottom:16px;}
+.postcall-card h2{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;color:#c8dbc0;margin-bottom:10px;}
+.postcall-card p{font-size:0.88rem;color:rgba(200,219,192,0.6);margin-bottom:24px;line-height:1.6;}
+.postcall-card a{
+  display:inline-block;padding:12px 28px;
+  background:#4A6B50;color:#fff;border-radius:12px;
+  text-decoration:none;font-weight:600;font-size:0.9rem;
+}
+.postcall-card a:hover{background:#3a5540;}
+
+/* ── Loading state ── */
+#loading{
+  position:fixed;top:52px;left:0;right:0;bottom:0;
+  display:none;align-items:center;justify-content:center;
+  background:#0f1a12;z-index:40;
+  color:rgba(200,219,192,0.5);font-size:0.9rem;
+}
+.spinner{
+  width:36px;height:36px;border-radius:50%;
+  border:3px solid rgba(125,155,118,0.15);
+  border-top-color:#7d9b76;
+  animation:spin .7s linear infinite;margin:0 auto 16px;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:600px){
+  .session-info .label{display:none;}
+  .prejoin-card{padding:28px 20px;}
+}
+</style>
+</head>
+<body>
+
+<!-- Top bar -->
+<div class="session-bar">
+  <a href="index.html" class="logo">Sere<span>nest</span></a>
+  <div class="session-info">
+    <span class="pill live" id="statusPill">Connecting…</span>
+    <span class="label" id="sessionLabel"></span>
+  </div>
+  <div class="session-bar-right">
+    <button class="btn-leave" id="leaveBtn">Leave call</button>
+  </div>
+</div>
+
+<!-- Jitsi iframe (hidden until joined) -->
+<iframe id="callFrame" allow="camera; microphone; display-capture; autoplay; clipboard-write; fullscreen" allowfullscreen style="display:none;"></iframe>
+
+<!-- Loading -->
+<div id="loading">
+  <div>
+    <div class="spinner"></div>
+    <div>Setting up your room…</div>
+  </div>
+</div>
+
+<!-- Pre-join -->
+<div id="prejoin">
+  <div class="prejoin-card">
+    <div class="prejoin-icon">🎥</div>
+    <h1>Ready to join?</h1>
+    <p id="prejoinDesc">Your secure video session with your Serenest specialist.</p>
+    <label>Your name</label>
+    <input type="text" id="displayName" placeholder="Enter your name" autocomplete="name">
+    <button class="btn-join" id="joinBtn">Join session</button>
+    <p class="prejoin-note">
+      Your camera and microphone will be requested after joining.<br>
+      This session uses <a href="https://jitsi.org" target="_blank" rel="noopener">Jitsi Meet</a> — open-source, encrypted, no app download needed.
+    </p>
+  </div>
+</div>
+
+<!-- Post-call -->
+<div id="postcall">
+  <div class="postcall-card">
+    <div class="check">✅</div>
+    <h2>Session ended</h2>
+    <p>Thank you for your Serenest session. Take care of yourself — we're always here when you need us.</p>
+    <a href="dashboard.html">Back to my bookings</a>
+  </div>
+</div>
+
+<script>
+(function() {
+  var TOKEN_KEY = 'serenest_patient_token';
+  var API = (window.API_BASE || '') + '/api';
+
+  // ── Parse URL params ──
+  var params = new URLSearchParams(window.location.search);
+  var roomName = (params.get('room') || '').replace(/[^a-zA-Z0-9\-_]/g, '').slice(0, 64);
+  var bookingId = parseInt(params.get('booking') || '0', 10) || null;
+
+  if (!roomName) {
+    document.getElementById('prejoin').innerHTML =
+      '<div class="prejoin-card"><div class="prejoin-icon">❌</div><h1>Invalid session</h1>' +
+      '<p>This session link is invalid or has expired. Please check your email for the correct link.</p>' +
+      '<a href="dashboard.html" style="color:#7d9b76;font-size:0.88rem;">Go to my bookings</a></div>';
+    return;
+  }
+
+  // ── Pre-fill name from patient token if available ──
+  var token = localStorage.getItem(TOKEN_KEY);
+  if (token) {
+    fetch(API + '/me', { headers: { 'X-Patient-Token': token } })
+      .then(function(r) { return r.json(); })
+      .then(function(d) {
+        if (d && d.ok && d.patient && d.patient.full_name) {
+          document.getElementById('displayName').value = d.patient.full_name;
+        }
+      })
+      .catch(function() {});
+  }
+
+  // ── Jitsi room URL ──
+  var jitsiDomain = 'meet.jit.si';
+  var jitsiRoomUrl = 'https://' + jitsiDomain + '/' + roomName;
+
+  // Update status label
+  document.getElementById('sessionLabel').textContent = 'Room: ' + roomName.slice(0, 20) + (roomName.length > 20 ? '…' : '');
+
+  // ── Join button ──
+  document.getElementById('joinBtn').addEventListener('click', function() {
+    var name = (document.getElementById('displayName').value.trim() || 'Patient');
+    joinRoom(name);
+  });
+  document.getElementById('displayName').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') document.getElementById('joinBtn').click();
+  });
+
+  function joinRoom(displayName) {
+    document.getElementById('prejoin').style.display = 'none';
+    document.getElementById('loading').style.display = 'flex';
+
+    var frame = document.getElementById('callFrame');
+
+    // Build Jitsi URL with config overrides via fragment
+    // Jitsi config: hide watermark, set subject, pre-fill name
+    var config = [
+      'config.prejoinPageEnabled=false',
+      'config.startWithAudioMuted=false',
+      'config.startWithVideoMuted=false',
+      'config.subject=' + encodeURIComponent('Serenest Session'),
+      'config.disableDeepLinking=true',
+      'config.hideConferenceSubject=false',
+      'config.toolbarButtons=["microphone","camera","desktop","chat","tileview","hangup","raisehand","participants-pane","invite"]',
+      'config.disableInviteFunctions=true',
+      'config.requireDisplayName=false',
+      'config.defaultRemoteDisplayName=Specialist',
+      'interfaceConfig.SHOW_JITSI_WATERMARK=false',
+      'interfaceConfig.SHOW_WATERMARK_FOR_GUESTS=false',
+      'interfaceConfig.SHOW_BRAND_WATERMARK=false',
+      'interfaceConfig.DEFAULT_REMOTE_DISPLAY_NAME=Specialist',
+      'interfaceConfig.APP_NAME=Serenest',
+      'interfaceConfig.NATIVE_APP_NAME=Serenest',
+      'interfaceConfig.PROVIDER_NAME=Serenest',
+      'userInfo.displayName=' + encodeURIComponent(displayName)
+    ].join('&');
+
+    frame.src = 'https://' + jitsiDomain + '/' + roomName + '#' + config;
+    frame.style.display = 'block';
+
+    frame.onload = function() {
+      document.getElementById('loading').style.display = 'none';
+      document.getElementById('statusPill').textContent = 'Live';
+      document.getElementById('statusPill').className = 'pill live';
+    };
+
+    // Fallback: hide loading after 6s even if onload doesn't fire
+    setTimeout(function() {
+      document.getElementById('loading').style.display = 'none';
+    }, 6000);
+  }
+
+  // ── Leave button ──
+  document.getElementById('leaveBtn').addEventListener('click', function() {
+    endCall();
+  });
+
+  function endCall() {
+    document.getElementById('callFrame').src = 'about:blank';
+    document.getElementById('callFrame').style.display = 'none';
+    document.getElementById('statusPill').textContent = 'Ended';
+    document.getElementById('statusPill').className = 'pill';
+    document.getElementById('postcall').style.display = 'flex';
+    document.getElementById('leaveBtn').style.display = 'none';
+  }
+
+  // ── Listen for Jitsi hangup events via postMessage ──
+  window.addEventListener('message', function(e) {
+    try {
+      if (!e.origin || e.origin.indexOf('jit.si') === -1) return;
+      var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+      if (data && (data.action === 'video-conference-left' || data.event === 'readyToClose')) {
+        endCall();
+      }
+    } catch(err) {}
+  });
+
+})();
+</script>
+</body>
+</html>
