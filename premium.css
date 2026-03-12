@@ -201,7 +201,7 @@ nav.scrolled,
               0 1px 3px rgba(15, 20, 18, 0.03);
 }
 
-/* Inner: 3-column layout — logo (left) | nav links (center) | CTA/hamburger (right) */
+/* Inner: 3-column layout — logo (left) | nav links (center) | actions (right) */
 nav .nav-inner,
 #navbar .nav-inner {
   display: grid;
@@ -210,7 +210,7 @@ nav .nav-inner,
   width: 100%;
   max-width: 1280px;
   margin: 0 auto;
-  gap: 16px 24px;
+  gap: 0 24px;
 }
 nav .nav-inner > *:first-child,
 #navbar .nav-inner > *:first-child {
@@ -245,9 +245,9 @@ nav ul li,
   margin-right: 2px;
 }
 #nav-menu li a:not(.nav-cta) {
-  padding: 10px 14px;
+  padding: 8px 10px;
   border-radius: 10px;
-  font-size: 0.875rem;
+  font-size: 0.82rem;
   font-weight: 500;
   letter-spacing: 0.025em;
   color: var(--text-light);
@@ -326,6 +326,36 @@ nav ul li,
 .nav-cta:active {
   transform: translateY(-1px) scale(1);
   box-shadow: 0 2px 8px rgba(61, 90, 66, 0.25) inset;
+}
+
+/* Logo wrap: logo + FOR PATIENTS tag inline */
+.nav-logo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.nav-tag {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sage-dark);
+  background: var(--sage-muted);
+  border: 1px solid rgba(61,90,66,0.15);
+  border-radius: 40px;
+  padding: 3px 10px;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+
+/* Nav right-side actions: dark toggle + hamburger */
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-self: end;
 }
 
 /* Logo: premium wordmark + hover */
@@ -465,11 +495,17 @@ nav ul a {
   #nav-menu.open a:hover {
     background: var(--sage-muted);
   }
-  .hamburger {
-    display: flex !important;
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     flex-shrink: 0;
     z-index: 1003;
     position: relative;
+  }
+  .hamburger {
+    display: flex !important;
+    flex-shrink: 0;
   }
 }
 

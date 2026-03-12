@@ -12,27 +12,29 @@
     btn.type = 'button';
     btn.className = 'dark-mode-toggle';
     btn.setAttribute('aria-label', 'Toggle dark mode');
-    btn.textContent = isDark() ? 'Light' : 'Dark';
+    btn.textContent = isDark() ? '\u2600\uFE0F' : '\uD83C\uDF19';
     btn.addEventListener('click', function() {
       var on = !isDark();
       applyTheme(on);
-      btn.textContent = on ? 'Light' : 'Dark';
+      btn.textContent = on ? '\u2600\uFE0F' : '\uD83C\uDF19';
     });
-    var nav = document.querySelector('nav');
-    if (nav) {
-      var ul = nav.querySelector('ul');
-      if (ul) {
-        var li = document.createElement('li');
-        li.style.listStyle = 'none';
-        li.appendChild(btn);
-        ul.appendChild(li);
-      } else { nav.appendChild(btn); }
+    // Insert into .nav-actions wrapper (right side of nav), not inside the <ul>
+    var actions = document.querySelector('.nav-actions');
+    if (actions) {
+      actions.insertBefore(btn, actions.firstChild);
     } else {
-      btn.style.position = 'fixed';
-      btn.style.top = '16px';
-      btn.style.right = '16px';
-      btn.style.zIndex = '9999';
-      document.body.appendChild(btn);
+      var nav = document.querySelector('nav');
+      if (nav) {
+        var inner = nav.querySelector('.nav-inner');
+        var target = inner || nav;
+        target.appendChild(btn);
+      } else {
+        btn.style.position = 'fixed';
+        btn.style.top = '16px';
+        btn.style.right = '16px';
+        btn.style.zIndex = '9999';
+        document.body.appendChild(btn);
+      }
     }
   }
   if (document.body) addToggle();
