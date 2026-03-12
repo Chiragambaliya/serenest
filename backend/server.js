@@ -29,6 +29,10 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const BOOKING_FROM_EMAIL = process.env.BOOKING_FROM_EMAIL || '';     // e.g. Serenest <bookings@serenest.in>
 const BOOKING_VIDEO_LINK = process.env.BOOKING_VIDEO_LINK || '';     // default "Join video call" link
 const CRON_SECRET = process.env.CRON_SECRET || '';
+const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID || '';
+const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
+const GOOGLE_REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI || '';
+const APP_BASE_URL = process.env.APP_BASE_URL || 'http://localhost:3000';
 
 const app = express();
 
@@ -383,7 +387,7 @@ app.post('/api/newsletter', (req, res) => {
     }
     const stmt = db.prepare('INSERT INTO newsletter_subscribers (email) VALUES (?)');
     stmt.run(email);
-    res.status(201).json({ ok: true, message: 'You’re subscribed. We’ll send you our next update.' });
+    res.status(201).json({ ok: true, message: 'You're subscribed. We'll send you our next update.' });
   } catch (err) {
     if (err.code === 'SQLITE_CONSTRAINT_UNIQUE') {
       return res.status(200).json({ ok: true, message: 'This email is already subscribed.' });
@@ -539,14 +543,17 @@ function deleteSpecialistById(req, res) {
 
 app.delete('/api/admin/specialists/:id', requireAdmin, deleteSpecialistById);
 
-// DELETE by id (for admin panel)
-app.delete('/api/specialists/:id', requireAdmin, deleteSpecialistById);
-
-// DELETE by name (for clients that send name in URL; name must be encoded, e.g. Dr.%20Priya%20Sharma)
-app.delete('/api/specialists/:name', requireAdmin, (req, res) => {
+// DELETE by id (for admin panel) — use /api/admin/specialists/:id instead
+// This route is kept for backwards-compat but routes by numeric id only
+app.delete('/api/specialists/:id', requireAdmin, (req, res) => {
+  const id = parseInt(req.params.id, 10);
+  if (Number.isFinite(id)) {
+    return deleteSpecialistById(req, res);
+  }
+  // If not a number, treat as a name (URL-encoded)
   try {
-    const name = decodeURIComponent(req.params.name || '').trim().slice(0, 200);
-    if (!name) return res.status(400).json({ ok: false, error: 'Name is required.' });
+    const name = decodeURIComponent(req.params.id || '').trim().slice(0, 200);
+    if (!name) return res.status(400).json({ ok: false, error: 'Name or numeric id required.' });
     const info = db.prepare('DELETE FROM specialists WHERE name = ?').run(name);
     if (info.changes === 0) return res.status(404).json({ ok: false, error: 'Specialist not found' });
     res.json({ ok: true });
@@ -672,7 +679,7 @@ app.get('/api/reviews', (req, res) => {
   }
 });
 
-app.post('/api/reviews', (req, res) => {
+app.post('/api/reviews', requirePatient, (req, res) => {
   try {
     const specialist_name = trimStr(req.body.specialist_name).slice(0, 200);
     const rating = parseInt(req.body.rating, 10);
@@ -763,6 +770,16 @@ app.post('/api/me/change-password', requirePatient, (req, res) => {
   }
 });
 
+app.post('/api/logout', requirePatient, (req, res) => {
+  try {
+    const token = req.get('X-Patient-Token') || req.query.token || '';
+    db.prepare('DELETE FROM sessions WHERE token = ?').run(token);
+    res.json({ ok: true, message: 'Logged out.' });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 app.get('/api/me/bookings', requirePatient, (req, res) => {
   try {
     const rows = db.prepare('SELECT id, specialist, session_type, preferred_date, time_slot, video_link, created_at FROM bookings WHERE patient_id = ? ORDER BY created_at DESC').all(req.patientId);
@@ -785,6 +802,251 @@ app.put('/api/admin/bookings/:id', requireAdmin, (req, res) => {
     res.json({ ok: true, booking: row });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// ——— SMS OTP Auth ———
+
+// Helper: send SMS via Twilio
+function sendTwilioSms(to, body) {
+  if (!TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN) return Promise.reject(new Error('Twilio not configured'));
+  const TWILIO_SMS_FROM = process.env.TWILIO_SMS_FROM || '';
+  if (!TWILIO_SMS_FROM) return Promise.reject(new Error('TWILIO_SMS_FROM not set'));
+  const params = new URLSearchParams({ To: to, From: TWILIO_SMS_FROM, Body: body }).toString();
+  const auth = Buffer.from(`${TWILIO_ACCOUNT_SID}:${TWILIO_AUTH_TOKEN}`).toString('base64');
+  return new Promise((resolve, reject) => {
+    const req = https.request({
+      hostname: 'api.twilio.com',
+      path: `/2010-04-01/Accounts/${TWILIO_ACCOUNT_SID}/Messages.json`,
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(params),
+        'Authorization': `Basic ${auth}`
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => {
+        try {
+          const json = JSON.parse(data);
+          if (json.error_code) reject(new Error(json.message || 'Twilio error'));
+          else resolve(json);
+        } catch (e) { reject(e); }
+      });
+    });
+    req.on('error', reject);
+    req.write(params);
+    req.end();
+  });
+}
+
+// POST /api/otp/send — send a 6-digit OTP to a phone number
+app.post('/api/otp/send', async (req, res) => {
+  try {
+    const phone = trimStr(req.body.phone).slice(0, 20);
+    if (!phone || !/^\+[1-9]\d{6,14}$/.test(phone)) {
+      return res.status(400).json({ ok: false, error: 'Valid phone number in E.164 format required (e.g. +919876543210).' });
+    }
+
+    // Rate-limit: max 3 OTPs per phone per 10 minutes
+    const recent = db.prepare(
+      `SELECT COUNT(*) as n FROM otp_codes WHERE phone = ? AND datetime(created_at) > datetime('now', '-10 minutes')`
+    ).get(phone);
+    if (recent && recent.n >= 3) {
+      return res.status(429).json({ ok: false, error: 'Too many OTP requests. Please wait 10 minutes.' });
+    }
+
+    // Invalidate any previous unused OTPs for this phone
+    db.prepare(`UPDATE otp_codes SET used = 1 WHERE phone = ? AND used = 0`).run(phone);
+
+    const code = Math.floor(100000 + Math.random() * 900000).toString();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000).toISOString(); // 10 minutes
+    db.prepare('INSERT INTO otp_codes (phone, code, expires_at) VALUES (?, ?, ?)').run(phone, code, expiresAt);
+
+    await sendTwilioSms(phone, `Your Serenest OTP is: ${code}. Valid for 10 minutes. Do not share it with anyone.`);
+
+    res.json({ ok: true, message: 'OTP sent.' });
+  } catch (err) {
+    console.error('OTP send error:', err);
+    res.status(500).json({ ok: false, error: err.message || 'Could not send OTP. Please try again.' });
+  }
+});
+
+// POST /api/otp/verify — verify OTP and log in (or auto-register) the patient
+app.post('/api/otp/verify', (req, res) => {
+  try {
+    const phone = trimStr(req.body.phone).slice(0, 20);
+    const code = trimStr(req.body.code).slice(0, 10);
+    const full_name = trimStr(req.body.full_name || '').slice(0, 200);
+
+    if (!phone || !code) {
+      return res.status(400).json({ ok: false, error: 'Phone and OTP code are required.' });
+    }
+
+    const otpRow = db.prepare(
+      `SELECT id, code FROM otp_codes WHERE phone = ? AND used = 0 AND datetime(expires_at) > datetime('now') ORDER BY id DESC LIMIT 1`
+    ).get(phone);
+
+    if (!otpRow) {
+      return res.status(400).json({ ok: false, error: 'OTP expired or not found. Please request a new one.' });
+    }
+    if (otpRow.code !== code) {
+      return res.status(400).json({ ok: false, error: 'Incorrect OTP.' });
+    }
+
+    // Mark OTP as used
+    db.prepare('UPDATE otp_codes SET used = 1 WHERE id = ?').run(otpRow.id);
+
+    // Find or create patient by phone
+    let patient = db.prepare('SELECT id, email, full_name, phone, avatar_url FROM patients WHERE phone = ?').get(phone);
+    if (!patient) {
+      // Auto-register with phone only (email and password_hash can be set later)
+      const placeholder_email = `phone_${phone.replace(/\D/g, '')}@serenest.local`;
+      const password_hash = hashPassword(crypto.randomBytes(16).toString('hex')); // random unusable password
+      db.prepare('INSERT INTO patients (email, password_hash, full_name, phone) VALUES (?, ?, ?, ?)').run(
+        placeholder_email, password_hash, full_name || null, phone
+      );
+      patient = db.prepare('SELECT id, email, full_name, phone, avatar_url FROM patients WHERE phone = ?').get(phone);
+    } else if (full_name && !patient.full_name) {
+      db.prepare('UPDATE patients SET full_name = ? WHERE id = ?').run(full_name, patient.id);
+      patient.full_name = full_name;
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    db.prepare('INSERT INTO sessions (patient_id, token, expires_at) VALUES (?, ?, ?)').run(patient.id, token, expires_at);
+
+    res.json({
+      ok: true,
+      token,
+      patient: { id: patient.id, email: patient.email, full_name: patient.full_name, phone: patient.phone, avatar_url: patient.avatar_url }
+    });
+  } catch (err) {
+    console.error('OTP verify error:', err);
+    res.status(500).json({ ok: false, error: err.message || 'Verification failed. Please try again.' });
+  }
+});
+
+// ——— Google OAuth ———
+
+// Helper: exchange Google auth code for tokens and user profile
+function fetchGoogleTokens(code) {
+  const redirectUri = GOOGLE_REDIRECT_URI || `${APP_BASE_URL}/api/auth/google/callback`;
+  const body = new URLSearchParams({
+    code,
+    client_id: GOOGLE_CLIENT_ID,
+    client_secret: GOOGLE_CLIENT_SECRET,
+    redirect_uri: redirectUri,
+    grant_type: 'authorization_code'
+  }).toString();
+  return new Promise((resolve, reject) => {
+    const req = https.request({
+      hostname: 'oauth2.googleapis.com',
+      path: '/token',
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'Content-Length': Buffer.byteLength(body) }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => { try { resolve(JSON.parse(data)); } catch (e) { reject(e); } });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
+
+function fetchGoogleUserInfo(accessToken) {
+  return new Promise((resolve, reject) => {
+    const req = https.request({
+      hostname: 'www.googleapis.com',
+      path: '/oauth2/v2/userinfo',
+      method: 'GET',
+      headers: { 'Authorization': `Bearer ${accessToken}` }
+    }, (res) => {
+      let data = '';
+      res.on('data', chunk => data += chunk);
+      res.on('end', () => { try { resolve(JSON.parse(data)); } catch (e) { reject(e); } });
+    });
+    req.on('error', reject);
+    req.end();
+  });
+}
+
+// GET /api/auth/google — redirect patient to Google consent screen
+app.get('/api/auth/google', (req, res) => {
+  if (!GOOGLE_CLIENT_ID) {
+    return res.status(503).json({ ok: false, error: 'Google login is not configured.' });
+  }
+  const redirectUri = GOOGLE_REDIRECT_URI || `${APP_BASE_URL}/api/auth/google/callback`;
+  const state = crypto.randomBytes(16).toString('hex');
+  const params = new URLSearchParams({
+    client_id: GOOGLE_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: 'code',
+    scope: 'openid email profile',
+    access_type: 'online',
+    state
+  });
+  res.redirect(`https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`);
+});
+
+// GET /api/auth/google/callback — Google redirects here after consent
+app.get('/api/auth/google/callback', async (req, res) => {
+  try {
+    const code = req.query.code;
+    if (!code) {
+      return res.redirect(`${APP_BASE_URL}/login.html?error=google_denied`);
+    }
+
+    const tokens = await fetchGoogleTokens(code);
+    if (tokens.error) {
+      console.error('Google token error:', tokens.error_description || tokens.error);
+      return res.redirect(`${APP_BASE_URL}/login.html?error=google_token_failed`);
+    }
+
+    const profile = await fetchGoogleUserInfo(tokens.access_token);
+    if (!profile.id || !profile.email) {
+      return res.redirect(`${APP_BASE_URL}/login.html?error=google_no_email`);
+    }
+
+    // Find patient by google_id, then by email, then create
+    let patient = db.prepare('SELECT id, email, full_name, phone, avatar_url FROM patients WHERE google_id = ?').get(profile.id);
+    if (!patient) {
+      patient = db.prepare('SELECT id, email, full_name, phone, avatar_url FROM patients WHERE email = ?').get(profile.email.toLowerCase());
+      if (patient) {
+        // Link Google ID to existing account
+        db.prepare('UPDATE patients SET google_id = ?, avatar_url = ? WHERE id = ?').run(
+          profile.id, profile.picture || null, patient.id
+        );
+        patient.google_id = profile.id;
+        patient.avatar_url = profile.picture || patient.avatar_url;
+      } else {
+        // Auto-register new patient via Google
+        const password_hash = hashPassword(crypto.randomBytes(16).toString('hex'));
+        db.prepare('INSERT INTO patients (email, password_hash, full_name, google_id, avatar_url) VALUES (?, ?, ?, ?, ?)').run(
+          profile.email.toLowerCase(), password_hash, profile.name || null, profile.id, profile.picture || null
+        );
+        patient = db.prepare('SELECT id, email, full_name, phone, avatar_url FROM patients WHERE google_id = ?').get(profile.id);
+      }
+    } else {
+      // Update avatar in case it changed
+      if (profile.picture && profile.picture !== patient.avatar_url) {
+        db.prepare('UPDATE patients SET avatar_url = ? WHERE id = ?').run(profile.picture, patient.id);
+        patient.avatar_url = profile.picture;
+      }
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expires_at = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString();
+    db.prepare('INSERT INTO sessions (patient_id, token, expires_at) VALUES (?, ?, ?)').run(patient.id, token, expires_at);
+
+    // Redirect to frontend with token in URL fragment (never in query string)
+    res.redirect(`${APP_BASE_URL}/dashboard.html#token=${token}`);
+  } catch (err) {
+    console.error('Google callback error:', err);
+    res.redirect(`${APP_BASE_URL}/login.html?error=google_failed`);
   }
 });
 
@@ -811,7 +1073,8 @@ app.post('/api/cron/send-reminders', (req, res) => {
         if ((match[3] || '').toUpperCase() === 'AM' && hour === 12) hour = 0;
         timeStr = hour + ':' + min + ':00';
       }
-      const sessionDate = new Date(b.preferred_date + 'T' + timeStr);
+      // Treat preferred_date + time as IST (UTC+5:30); append offset so JS parses correctly
+      const sessionDate = new Date(b.preferred_date + 'T' + timeStr + '+05:30');
       const diff = sessionDate.getTime() - now.getTime();
       const hours = diff / (60 * 60 * 1000);
       if (hours >= 23 && hours <= 25) reminders.push({ ...b, when: '24h' });

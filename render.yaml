@@ -1,6 +1,6 @@
 # Render Blueprint — Serenest (site + API in one service)
 # Deploy: connect this repo in Render → New → Blueprint → select repo → Apply
-# Then set env vars in Dashboard (Environment) and redeploy.
+# Then set secret env vars in Dashboard (Environment) and redeploy.
 
 services:
   - type: web
@@ -13,7 +13,49 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+
+      # ── Core ──
       - key: ADMIN_SECRET
-        sync: false
+        sync: false   # Set in Render Dashboard → Environment
       - key: ALLOWED_ORIGIN
+        sync: false   # e.g. https://serenest.in
+      - key: APP_BASE_URL
+        sync: false   # e.g. https://serenest.in
+
+      # ── Cron ──
+      - key: CRON_SECRET
         sync: false
+
+      # ── Telegram ──
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+
+      # ── Twilio (SMS OTP + WhatsApp) ──
+      - key: TWILIO_ACCOUNT_SID
+        sync: false
+      - key: TWILIO_AUTH_TOKEN
+        sync: false
+      - key: TWILIO_SMS_FROM
+        sync: false   # e.g. +14155238886
+      - key: TWILIO_WHATSAPP_FROM
+        sync: false   # e.g. whatsapp:+14155238886
+      - key: TWILIO_WHATSAPP_TO
+        sync: false   # e.g. whatsapp:+919876543210
+
+      # ── Resend (email) ──
+      - key: RESEND_API_KEY
+        sync: false
+      - key: BOOKING_FROM_EMAIL
+        sync: false   # e.g. Serenest <bookings@serenest.in>
+      - key: BOOKING_VIDEO_LINK
+        sync: false
+
+      # ── Google OAuth ──
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: GOOGLE_REDIRECT_URI
+        sync: false   # e.g. https://serenest.in/api/auth/google/callback

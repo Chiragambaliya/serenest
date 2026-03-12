@@ -108,6 +108,15 @@ function initDb() {
       created_at TEXT DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS otp_codes (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      phone TEXT NOT NULL,
+      code TEXT NOT NULL,
+      expires_at TEXT NOT NULL,
+      used INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS reviews (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       specialist_name TEXT NOT NULL,
@@ -137,9 +146,12 @@ function initDb() {
     const ins = db.prepare('INSERT INTO specialists (name, display_order) VALUES (?, ?)');
     defaults.forEach((name, i) => ins.run(name, i));
   }
-  try { db.exec('ALTER TABLE bookings ADD COLUMN payment_id TEXT'); } catch (e) { if (!e.message || !e.message.includes('duplicate')) throw e; }
-  try { db.exec('ALTER TABLE bookings ADD COLUMN video_link TEXT'); } catch (e) { if (!e.message || !e.message.includes('duplicate')) throw e; }
-  try { db.exec('ALTER TABLE bookings ADD COLUMN patient_id INTEGER REFERENCES patients(id)'); } catch (e) { if (!e.message || !e.message.includes('duplicate')) throw e; }
+  try { db.exec('ALTER TABLE bookings ADD COLUMN payment_id TEXT'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
+  try { db.exec('ALTER TABLE patients ADD COLUMN google_id TEXT'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
+  try { db.exec('ALTER TABLE patients ADD COLUMN phone TEXT'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
+  try { db.exec('ALTER TABLE patients ADD COLUMN avatar_url TEXT'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
+  try { db.exec('ALTER TABLE bookings ADD COLUMN video_link TEXT'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
+  try { db.exec('ALTER TABLE bookings ADD COLUMN patient_id INTEGER REFERENCES patients(id)'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
   console.log('Database initialized at', dbPath);
 }
 
