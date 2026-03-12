@@ -149,8 +149,6 @@ function initDb() {
       used INTEGER DEFAULT 0,
       created_at TEXT DEFAULT (datetime('now'))
     );
-  `);
-
 
     CREATE TABLE IF NOT EXISTS pricing_plans (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -205,6 +203,7 @@ function initDb() {
       value TEXT NOT NULL,
       updated_at TEXT DEFAULT (datetime('now'))
     );
+  `);
 
   // ── Migrations: add columns if they don't exist ──
   const migrations = [
@@ -236,7 +235,7 @@ function initDb() {
 
   ];
   for (const sql of migrations) {
-    try { db.exec(sql); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
+    try { db.exec(sql); } catch (e) { if (!e.message || (!e.message.includes('already exists') && !e.message.includes('duplicate column'))) throw e; }
   }
 
   // ── Seed specialists with rich data if empty ──
