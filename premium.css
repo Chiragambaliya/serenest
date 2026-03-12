@@ -305,22 +305,42 @@ nav ul li,
 .nav-logo-wrap {
   display: flex;
   align-items: center;
-  gap: 10px;
   flex-shrink: 0;
 }
-.nav-tag {
+
+/* Audience pills — For Patients / For Doctors — in nav-actions */
+.nav-audience-pill {
   display: inline-block;
-  font-size: 0.63rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--sage-dark);
-  background: var(--sage-muted);
-  border: 1px solid rgba(30, 111, 171, 0.15);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  color: var(--text-light);
+  background: transparent;
+  border: 1.5px solid var(--cream-dark);
   border-radius: 40px;
-  padding: 3px 10px;
+  padding: 5px 13px;
   white-space: nowrap;
   line-height: 1.4;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+.nav-audience-pill:hover {
+  color: var(--sage-dark);
+  border-color: var(--sage);
+  background: var(--sage-muted);
+}
+.nav-audience-doctor {
+  color: var(--teal);
+  border-color: rgba(8, 145, 178, 0.25);
+  background: rgba(8, 145, 178, 0.05);
+}
+.nav-audience-doctor:hover {
+  color: var(--teal);
+  border-color: var(--teal);
+  background: rgba(8, 145, 178, 0.1);
+}
+@media (max-width: 900px) {
+  .nav-audience-pill { display: none; }
 }
 
 /* Nav actions */
