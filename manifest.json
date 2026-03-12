@@ -1,0 +1,47 @@
+{
+  "name": "Serenest — Premium Mental Health Care",
+  "short_name": "Serenest",
+  "description": "Book confidential video consultations with verified psychiatrists and therapists. Premium mental health care, anytime.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0D1B2E",
+  "theme_color": "#1E6FAB",
+  "orientation": "portrait-primary",
+  "lang": "en-IN",
+  "scope": "/",
+  "categories": ["health", "medical", "lifestyle"],
+  "icons": [
+    {
+      "src": "/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-512.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "label": "Serenest — Book a session"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Book a Session",
+      "url": "/book.html",
+      "description": "Book a therapy or psychiatry session"
+    },
+    {
+      "name": "Our Specialists",
+      "url": "/specialists.html",
+      "description": "Browse our verified specialists"
+    }
+  ]
+}

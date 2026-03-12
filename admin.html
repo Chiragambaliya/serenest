@@ -3,7 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/favicon-512.png">
+  <link rel="apple-touch-icon" href="/favicon-512.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1E6FAB">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Serenest">
   <title>Admin — Serenest</title>
+  <meta name="description" content="Serenest administration panel.">
+  <link rel="canonical" href="https://serenest.in/admin.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Serenest">
+  <meta property="og:image" content="https://serenest.in/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@serenest_in">
+  <meta name="twitter:image" content="https://serenest.in/og-image.png">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
@@ -223,6 +242,7 @@
         <button type="button" class="tab" data-tab="blog">Blog</button>
         <button type="button" class="tab" data-tab="slots">Availability</button>
         <button type="button" class="tab" data-tab="specialists">Specialists</button>
+        <button type="button" class="tab" data-tab="patients">Patients</button>
         <button type="button" class="tab" data-tab="analytics">Analytics</button>
       </div>
 
@@ -461,6 +481,30 @@
         </div>
       </div>
 
+      <div id="panelPatients" class="panel">
+        <h2>Patients</h2>
+        <button type="button" class="load-btn" data-load="patients">Refresh</button>
+        <div id="patientsError" class="err-msg" style="display:none;"></div>
+        <p id="patientsEmpty" style="display:none;color:var(--text-light);margin-top:16px;">No patients registered yet.</p>
+        <div class="table-wrap" id="patientsTableWrap" style="margin-top:16px;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Verified</th>
+                <th>Bookings</th>
+                <th>Last Booking</th>
+                <th>Joined</th>
+              </tr>
+            </thead>
+            <tbody id="patientsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
       <div id="panelAnalytics" class="panel">
         <h2>Analytics</h2>
         <button type="button" class="load-btn" data-load="analytics">Refresh</button>
@@ -570,6 +614,7 @@
             (id === 'panelBlog' && tabId === 'blog') ||
             (id === 'panelSlots' && tabId === 'slots') ||
             (id === 'panelSpecialists' && tabId === 'specialists') ||
+            (id === 'panelPatients' && tabId === 'patients') ||
             (id === 'panelAnalytics' && tabId === 'analytics');
           p.classList.toggle('visible', visible);
         });
@@ -581,6 +626,7 @@
         if (tabId === 'slots') { loadSlots(); populateSlotSpecialistDropdown(); }
         if (tabId === 'specialists') loadSpecialists();
         if (tabId === 'analytics') loadAnalytics();
+        if (tabId === 'patients') loadPatients();
       }
       document.querySelectorAll('.tab').forEach(function(t) {
         t.addEventListener('click', function() {
@@ -1003,6 +1049,40 @@
           .catch(function() { showErr('grievances', 'Network error'); });
       }
 
+      function loadPatients() {
+        hideErr('patients');
+        fetch(API + '/admin/patients', { headers: authHeaders() })
+          .then(function(r) {
+            if (r.status === 401) { showLogin(); return null; }
+            return r.json();
+          })
+          .then(function(data) {
+            if (!data) return;
+            if (!data.ok) { showErr('patients', data.error || 'Failed to load'); return; }
+            var rows = data.data || [];
+            var tbody = document.getElementById('patientsBody');
+            tbody.innerHTML = '';
+            document.getElementById('patientsEmpty').style.display = rows.length ? 'none' : 'block';
+            rows.forEach(function(row, i) {
+              var tr = document.createElement('tr');
+              var verifiedBadge = row.email_verified
+                ? '<span style="background:rgba(46,160,67,0.15);color:#1a7f37;padding:2px 8px;border-radius:40px;font-size:0.7rem;font-weight:700;">✓ Verified</span>'
+                : '<span style="background:rgba(210,153,34,0.15);color:#9a6700;padding:2px 8px;border-radius:40px;font-size:0.7rem;font-weight:700;">Unverified</span>';
+              tr.innerHTML =
+                '<td class="muted">' + (i + 1) + '</td>' +
+                '<td><strong>' + escapeHtml(row.full_name || '—') + '</strong></td>' +
+                '<td>' + escapeHtml(row.email || '') + '</td>' +
+                '<td>' + escapeHtml(row.phone || '—') + '</td>' +
+                '<td>' + verifiedBadge + '</td>' +
+                '<td style="text-align:center;">' + (row.booking_count || 0) + '</td>' +
+                '<td class="muted">' + escapeHtml(row.last_booking_date || '—') + '</td>' +
+                '<td class="muted">' + escapeHtml((row.created_at || '').slice(0, 10)) + '</td>';
+              tbody.appendChild(tr);
+            });
+          })
+          .catch(function() { showErr('patients', 'Network error'); });
+      }
+
       function loadAnalytics() {
         hideErr('analytics');
         fetch(API + '/admin/analytics', { headers: authHeaders() })
@@ -1048,6 +1128,7 @@
           else if (which === 'grievances') loadGrievances();
           else if (which === 'blog') loadPosts();
           else if (which === 'analytics') loadAnalytics();
+          else if (which === 'patients') loadPatients();
           else if (which === 'slots') loadSlots();
         });
       });

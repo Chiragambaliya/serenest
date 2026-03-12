@@ -173,6 +173,43 @@ function sendWhatsAppMessage(text) {
 }
 
 // Send email via Resend (booking confirmation to patient)
+function sendResendEmailWithAttachment(to, subject, html, attachFilename, attachContent, attachType) {
+  if (!RESEND_API_KEY || !to) return;
+  const attachBase64 = Buffer.from(attachContent, 'utf8').toString('base64');
+  const body = JSON.stringify({
+    from: BOOKING_FROM_EMAIL || 'Serenest <bookings@serenest.in>',
+    to: [to],
+    subject,
+    html,
+    attachments: [{ filename: attachFilename, content: attachBase64, type: attachType || 'text/plain' }]
+  });
+  try {
+    const urlObj = new URL('https://api.resend.com/emails');
+    const options = {
+      hostname: urlObj.hostname,
+      path: urlObj.pathname,
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + RESEND_API_KEY,
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    };
+    const req = https.request(options, (res2) => {
+      let d = '';
+      res2.on('data', c => d += c);
+      res2.on('end', () => {
+        if (res2.statusCode >= 400) console.error('Resend attachment error:', res2.statusCode, d);
+      });
+    });
+    req.on('error', (e) => console.error('Resend attachment request error:', e.message));
+    req.write(body);
+    req.end();
+  } catch (e) {
+    console.error('sendResendEmailWithAttachment error:', e.message);
+  }
+}
+
 function sendResendEmail(to, subject, html) {
   if (!RESEND_API_KEY || !BOOKING_FROM_EMAIL || !to) return;
   const body = JSON.stringify({
@@ -196,6 +233,47 @@ function sendResendEmail(to, subject, html) {
   req.end();
 }
 
+// Build RFC-5545 ICS calendar file for a booking
+function buildIcsCalendar(booking) {
+  const name = [booking.first_name, booking.last_name].filter(Boolean).join(' ') || 'Patient';
+  const dateStr = (booking.preferred_date || '').replace(/-/g, '');        // YYYYMMDD
+  const slot = (booking.time_slot || '09:00').replace(':', '').slice(0, 4); // HHMM
+  const dtStart = dateStr + 'T' + slot + '00';
+  // Add 50 minutes for end time
+  const startMin = parseInt(slot.slice(2, 4), 10);
+  const startHr = parseInt(slot.slice(0, 2), 10);
+  const endMin = (startMin + 50) % 60;
+  const endHr = startHr + (startMin + 50 >= 60 ? 1 : 0);
+  const dtEnd = dateStr + 'T' + String(endHr).padStart(2,'0') + String(endMin).padStart(2,'0') + '00';
+  const uid = 'booking-' + Date.now() + '@serenest.in';
+  const now = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 15) + 'Z';
+  return [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//Serenest//Mental Health Platform//EN',
+    'CALSCALE:GREGORIAN',
+    'METHOD:REQUEST',
+    'BEGIN:VEVENT',
+    'UID:' + uid,
+    'DTSTAMP:' + now,
+    'DTSTART;TZID=Asia/Kolkata:' + dtStart,
+    'DTEND;TZID=Asia/Kolkata:' + dtEnd,
+    'SUMMARY:Serenest Session – ' + (booking.specialist || 'Your Therapist'),
+    'DESCRIPTION:Your ' + (booking.session_type || 'therapy') + ' session with ' + (booking.specialist || 'your therapist') + ' on Serenest.',
+    'LOCATION:Online – Serenest Video Call',
+    'STATUS:TENTATIVE',
+    'ORGANIZER;CN=Serenest:mailto:' + (process.env.BOOKING_FROM_EMAIL || 'bookings@serenest.in').replace(/.*<(.+)>.*/, '$1'),
+    'ATTENDEE;CN=' + name + ':mailto:' + (booking.email || ''),
+    'BEGIN:VALARM',
+    'TRIGGER:-PT30M',
+    'ACTION:DISPLAY',
+    'DESCRIPTION:Reminder: Your Serenest session starts in 30 minutes',
+    'END:VALARM',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+}
+
 function sendBookingEmails(booking) {
   const name = [booking.first_name, booking.last_name].filter(Boolean).join(' ') || 'Patient';
   const dateTime = booking.preferred_date + ' ' + (booking.time_slot || '');
@@ -204,17 +282,33 @@ function sendBookingEmails(booking) {
   sendWhatsAppMessage(adminMsg);
 
   const html = '<!DOCTYPE html><html><body style="font-family:sans-serif;line-height:1.6;color:#333;max-width:560px;margin:0 auto;padding:24px;">' +
-    '<h2 style="color:#1E6FAB;">Booking received — Serenest</h2>' +
+    '<div style="background:#1E6FAB;padding:24px 32px;border-radius:12px 12px 0 0;">' +
+    '<h1 style="color:#fff;margin:0;font-size:1.4rem;font-family:sans-serif;">Serenest</h1></div>' +
+    '<div style="background:#fff;padding:32px;border:1px solid #e8f0f8;border-top:none;border-radius:0 0 12px 12px;">' +
+    '<h2 style="color:#1E6FAB;margin-top:0;">Booking Received</h2>' +
     '<p>Hi ' + escapeHtml(booking.first_name) + ',</p>' +
-    '<p>We have received your booking request.</p>' +
-    '<p><strong>Details:</strong></p>' +
-    '<ul><li>Specialist: ' + escapeHtml(booking.specialist) + '</li>' +
-    '<li>Session: ' + escapeHtml(booking.session_type) + '</li>' +
-    '<li>Preferred date: ' + escapeHtml(booking.preferred_date) + '</li>' +
-    '<li>Time slot: ' + escapeHtml(booking.time_slot) + '</li></ul>' +
-    '<p>We will confirm your appointment shortly. If you have any questions, reply to this email or contact us.</p>' +
-    '<p>— Serenest</p></body></html>';
-  sendResendEmail(booking.email, 'Booking received — Serenest', html);
+    '<p>Thank you for booking a session with Serenest. We have received your request and will confirm shortly.</p>' +
+    '<div style="background:#f5f8ff;border-left:4px solid #1E6FAB;padding:16px 20px;border-radius:0 8px 8px 0;margin:20px 0;">' +
+    '<p style="margin:0 0 8px;"><strong>Specialist:</strong> ' + escapeHtml(booking.specialist) + '</p>' +
+    '<p style="margin:0 0 8px;"><strong>Session type:</strong> ' + escapeHtml(booking.session_type) + '</p>' +
+    '<p style="margin:0 0 8px;"><strong>Preferred date:</strong> ' + escapeHtml(booking.preferred_date) + '</p>' +
+    '<p style="margin:0;"><strong>Time slot:</strong> ' + escapeHtml(booking.time_slot) + '</p>' +
+    '</div>' +
+    '<p>A calendar invite is attached. You will receive a confirmed meeting link once our team approves your booking.</p>' +
+    '<p style="color:#888;font-size:0.85rem;">If you have questions, reply to this email or visit <a href="https://serenest.in">serenest.in</a>.</p>' +
+    '<p>Warm regards,<br><strong>The Serenest Team</strong></p>' +
+    '</div></body></html>';
+
+  // Send with ICS attachment via Resend
+  const icsContent = buildIcsCalendar(booking);
+  sendResendEmailWithAttachment(
+    booking.email,
+    'Booking received — Serenest',
+    html,
+    'serenest-session.ics',
+    icsContent,
+    'text/calendar; charset=utf-8; method=REQUEST'
+  );
 }
 
 function escapeHtml(s) {
@@ -222,6 +316,21 @@ function escapeHtml(s) {
   const str = String(s);
   return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+
+
+// Booking-specific rate limit: 5 per hour per IP
+const bookingLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: isProd ? 5 : 100,
+  keyGenerator: (req) => {
+    const email = (req.body && req.body.email) ? req.body.email.toLowerCase().trim() : '';
+    const ip = req.ip || '';
+    return email ? email + '|' + ip : ip;
+  },
+  message: { ok: false, error: 'Too many booking requests. Please wait an hour before trying again.' },
+  standardHeaders: true,
+  legacyHeaders: false
+});
 
 // ——— API Routes ———
 
@@ -253,7 +362,7 @@ app.get('/api/slots', (req, res) => {
   }
 });
 
-app.post('/api/booking', (req, res) => {
+app.post('/api/booking', bookingLimiter, (req, res) => {
   try {
     const first_name = trimStr(req.body.first_name);
     const last_name = trimStr(req.body.last_name);
@@ -508,7 +617,18 @@ app.delete('/api/admin/slots/:id', requireAdmin, (req, res) => {
 // ——— Specialists (doctors) ———
 app.get('/api/specialists', (req, res) => {
   try {
-    const rows = db.prepare('SELECT id, name, display_order FROM specialists ORDER BY display_order ASC, name ASC').all();
+    const rows = db.prepare(`
+      SELECT id, name, display_order,
+             COALESCE(title, '') AS title,
+             COALESCE(bio, '') AS bio,
+             COALESCE(qualifications, '') AS qualifications,
+             COALESCE(experience_years, 0) AS experience_years,
+             COALESCE(languages, 'English') AS languages,
+             COALESCE(photo_url, '') AS photo_url,
+             COALESCE(available, 1) AS available
+      FROM specialists
+      ORDER BY display_order ASC, name ASC
+    `).all();
     res.json({ ok: true, data: rows });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });

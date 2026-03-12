@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/favicon-512.png">
+  <link rel="apple-touch-icon" href="/favicon-512.png">
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#1E6FAB">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Serenest">
+<title>Verify Email — Serenest</title>
+<meta name="description" content="Verify your Serenest email address to activate your account.">
+<link rel="canonical" href="https://serenest.in/verify-email.html">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="premium.css">
+<style>
+body{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg,#F5F8FF);}
+.verify-card{background:#fff;border-radius:24px;padding:56px 48px;max-width:480px;width:90%;text-align:center;box-shadow:0 16px 48px rgba(30,111,171,0.1);border:1px solid rgba(30,111,171,0.1);}
+.verify-icon{width:72px;height:72px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.2rem;margin:0 auto 24px;}
+.verify-icon.success{background:rgba(46,160,67,0.1);}
+.verify-icon.error{background:rgba(207,34,46,0.1);}
+.verify-icon.loading{background:rgba(30,111,171,0.1);}
+h1{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:700;color:#1E6FAB;margin-bottom:12px;}
+p{color:#6b7e77;line-height:1.7;font-size:0.95rem;margin-bottom:24px;}
+.btn-primary{background:#1E6FAB;color:#fff;padding:14px 32px;border-radius:50px;text-decoration:none;font-weight:600;display:inline-block;transition:background 0.2s;}
+.btn-primary:hover{background:#0F4C7F;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:40px;height:40px;border:3px solid rgba(30,111,171,0.2);border-top-color:#1E6FAB;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 20px;}
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+<div class="verify-card" id="verifyCard">
+  <div class="spinner" id="spinner"></div>
+  <p id="verifyMessage" style="margin-top:8px;">Verifying your email address…</p>
+</div>
+
+<script>
+(function(){
+  var params = new URLSearchParams(window.location.search);
+  var token = params.get('token') || '';
+  var card = document.getElementById('verifyCard');
+  var spinner = document.getElementById('spinner');
+  var msg = document.getElementById('verifyMessage');
+
+  if(!token){
+    spinner.style.display = 'none';
+    card.innerHTML = '<div class="verify-icon error">✖</div><h1>Invalid Link</h1><p>This verification link is missing a token. Please request a new verification email from your account settings.</p><a href="account.html" class="btn-primary">Go to Account</a>';
+    return;
+  }
+
+  fetch((window.API_BASE||'')+'/api/verify-email?token='+encodeURIComponent(token))
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(d && d.ok){
+        card.innerHTML = '<div class="verify-icon success">✓</div><h1>Email Verified!</h1><p>Your email address has been verified successfully. You can now enjoy all features of Serenest.</p><a href="dashboard.html" class="btn-primary">Go to Dashboard</a>';
+      } else {
+        card.innerHTML = '<div class="verify-icon error">✖</div><h1>Verification Failed</h1><p>'+(d && d.error ? d.error : 'This verification link may have expired. Please request a new one from your account.')+'</p><a href="account.html" class="btn-primary">Go to Account</a>';
+      }
+    })
+    .catch(function(){
+      card.innerHTML = '<div class="verify-icon error">⚠</div><h1>Something Went Wrong</h1><p>Could not connect to the server. Please check your internet connection and try again.</p><a href="account.html" class="btn-primary">Go to Account</a>';
+    });
+})();
+</script>
+</body>
+</html>
