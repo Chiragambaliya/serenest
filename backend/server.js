@@ -81,6 +81,243 @@ app.get('*', (req, res, next) => {
   next();
 });
 
+
+// ════════════════════════════════════════════════════════════════
+//  CMS ADMIN ENDPOINTS — Full content management
+// ════════════════════════════════════════════════════════════════
+
+// ── PRICING PLANS ──
+app.get('/api/pricing', (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM pricing_plans WHERE active = 1 ORDER BY display_order ASC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.get('/api/admin/pricing', requireAdmin, (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM pricing_plans ORDER BY display_order ASC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.post('/api/admin/pricing', requireAdmin, (req, res) => {
+  try {
+    const { label, title, amount, note, features, is_featured, display_order } = req.body;
+    if (!title || !amount || !features) return res.status(400).json({ ok: false, error: 'title, amount, features required' });
+    const maxOrder = db.prepare('SELECT COALESCE(MAX(display_order),0)+1 AS n FROM pricing_plans').get();
+    const order = display_order != null ? Number(display_order) : maxOrder.n;
+    const info = db.prepare(`INSERT INTO pricing_plans (label, title, amount, note, features, is_featured, display_order) VALUES (?, ?, ?, ?, ?, ?, ?)`).run(
+      trimStr(label), trimStr(title), trimStr(amount), trimStr(note)||null, trimStr(features), is_featured ? 1 : 0, order
+    );
+    const row = db.prepare('SELECT * FROM pricing_plans WHERE id = ?').get(info.lastInsertRowid);
+    res.status(201).json({ ok: true, data: row });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.put('/api/admin/pricing/:id', requireAdmin, (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const { label, title, amount, note, features, is_featured, display_order, active } = req.body;
+    db.prepare(`UPDATE pricing_plans SET label=?, title=?, amount=?, note=?, features=?, is_featured=?, display_order=?, active=?, updated_at=datetime('now') WHERE id=?`).run(
+      trimStr(label), trimStr(title), trimStr(amount), trimStr(note)||null, trimStr(features),
+      is_featured ? 1 : 0, Number(display_order)||0, active != null ? (active ? 1 : 0) : 1, id
+    );
+    res.json({ ok: true, data: db.prepare('SELECT * FROM pricing_plans WHERE id=?').get(id) });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.delete('/api/admin/pricing/:id', requireAdmin, (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    db.prepare('DELETE FROM pricing_plans WHERE id=?').run(id);
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+
+// ── FAQ ITEMS ──
+app.get('/api/faq', (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM faq_items WHERE active = 1 ORDER BY display_order ASC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.get('/api/admin/faq', requireAdmin, (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM faq_items ORDER BY display_order ASC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.post('/api/admin/faq', requireAdmin, (req, res) => {
+  try {
+    const { question, answer, display_order } = req.body;
+    if (!question || !answer) return res.status(400).json({ ok: false, error: 'question and answer required' });
+    const maxOrder = db.prepare('SELECT COALESCE(MAX(display_order),0)+1 AS n FROM faq_items').get();
+    const order = display_order != null ? Number(display_order) : maxOrder.n;
+    const info = db.prepare('INSERT INTO faq_items (question, answer, display_order) VALUES (?, ?, ?)').run(trimStr(question), trimStr(answer), order);
+    res.status(201).json({ ok: true, data: db.prepare('SELECT * FROM faq_items WHERE id=?').get(info.lastInsertRowid) });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.put('/api/admin/faq/:id', requireAdmin, (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const { question, answer, display_order, active } = req.body;
+    db.prepare(`UPDATE faq_items SET question=?, answer=?, display_order=?, active=?, updated_at=datetime('now') WHERE id=?`).run(
+      trimStr(question), trimStr(answer), Number(display_order)||0, active != null ? (active ? 1 : 0) : 1, id
+    );
+    res.json({ ok: true, data: db.prepare('SELECT * FROM faq_items WHERE id=?').get(id) });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.delete('/api/admin/faq/:id', requireAdmin, (req, res) => {
+  try {
+    db.prepare('DELETE FROM faq_items WHERE id=?').run(parseInt(req.params.id, 10));
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+
+// ── SERVICES ──
+app.get('/api/services', (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM services WHERE active = 1 ORDER BY display_order ASC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.get('/api/admin/services', requireAdmin, (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM services ORDER BY display_order ASC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.post('/api/admin/services', requireAdmin, (req, res) => {
+  try {
+    const { icon, title, description, features, display_order } = req.body;
+    if (!title || !description || !features) return res.status(400).json({ ok: false, error: 'title, description, features required' });
+    const maxOrder = db.prepare('SELECT COALESCE(MAX(display_order),0)+1 AS n FROM services').get();
+    const info = db.prepare('INSERT INTO services (icon, title, description, features, display_order) VALUES (?, ?, ?, ?, ?)').run(
+      trimStr(icon)||'🧬', trimStr(title), trimStr(description), trimStr(features), display_order != null ? Number(display_order) : maxOrder.n
+    );
+    res.status(201).json({ ok: true, data: db.prepare('SELECT * FROM services WHERE id=?').get(info.lastInsertRowid) });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.put('/api/admin/services/:id', requireAdmin, (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const { icon, title, description, features, display_order, active } = req.body;
+    db.prepare(`UPDATE services SET icon=?, title=?, description=?, features=?, display_order=?, active=?, updated_at=datetime('now') WHERE id=?`).run(
+      trimStr(icon)||'🧬', trimStr(title), trimStr(description), trimStr(features), Number(display_order)||0, active != null ? (active ? 1 : 0) : 1, id
+    );
+    res.json({ ok: true, data: db.prepare('SELECT * FROM services WHERE id=?').get(id) });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.delete('/api/admin/services/:id', requireAdmin, (req, res) => {
+  try {
+    db.prepare('DELETE FROM services WHERE id=?').run(parseInt(req.params.id, 10));
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+
+// ── TESTIMONIALS ──
+app.get('/api/testimonials', (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM testimonials WHERE active = 1 ORDER BY display_order ASC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.get('/api/admin/testimonials', requireAdmin, (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM testimonials ORDER BY display_order ASC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.post('/api/admin/testimonials', requireAdmin, (req, res) => {
+  try {
+    const { quote, author_name, author_meta, rating, avatar_initials, display_order } = req.body;
+    if (!quote || !author_name) return res.status(400).json({ ok: false, error: 'quote and author_name required' });
+    const maxOrder = db.prepare('SELECT COALESCE(MAX(display_order),0)+1 AS n FROM testimonials').get();
+    const info = db.prepare('INSERT INTO testimonials (quote, author_name, author_meta, rating, avatar_initials, display_order) VALUES (?, ?, ?, ?, ?, ?)').run(
+      trimStr(quote), trimStr(author_name), trimStr(author_meta)||null, Number(rating)||5,
+      trimStr(avatar_initials)||author_name.slice(0,2).toUpperCase(), display_order != null ? Number(display_order) : maxOrder.n
+    );
+    res.status(201).json({ ok: true, data: db.prepare('SELECT * FROM testimonials WHERE id=?').get(info.lastInsertRowid) });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.put('/api/admin/testimonials/:id', requireAdmin, (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    const { quote, author_name, author_meta, rating, avatar_initials, display_order, active } = req.body;
+    db.prepare('UPDATE testimonials SET quote=?, author_name=?, author_meta=?, rating=?, avatar_initials=?, display_order=?, active=? WHERE id=?').run(
+      trimStr(quote), trimStr(author_name), trimStr(author_meta)||null, Number(rating)||5,
+      trimStr(avatar_initials)||trimStr(author_name).slice(0,2).toUpperCase(), Number(display_order)||0,
+      active != null ? (active ? 1 : 0) : 1, id
+    );
+    res.json({ ok: true, data: db.prepare('SELECT * FROM testimonials WHERE id=?').get(id) });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.delete('/api/admin/testimonials/:id', requireAdmin, (req, res) => {
+  try {
+    db.prepare('DELETE FROM testimonials WHERE id=?').run(parseInt(req.params.id, 10));
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+
+// ── SITE SETTINGS ──
+app.get('/api/settings', (req, res) => {
+  try {
+    const rows = db.prepare('SELECT key, value FROM site_settings').all();
+    const settings = {};
+    rows.forEach(r => { settings[r.key] = r.value; });
+    res.json({ ok: true, data: settings });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.get('/api/admin/settings', requireAdmin, (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM site_settings ORDER BY key ASC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.post('/api/admin/settings', requireAdmin, (req, res) => {
+  try {
+    const updates = req.body; // { key: value, key2: value2 }
+    if (!updates || typeof updates !== 'object') return res.status(400).json({ ok: false, error: 'Object of key:value pairs required' });
+    const upsert = db.prepare(`INSERT INTO site_settings (key, value, updated_at) VALUES (?, ?, datetime('now')) ON CONFLICT(key) DO UPDATE SET value=excluded.value, updated_at=excluded.updated_at`);
+    const tx = db.transaction(() => {
+      Object.entries(updates).forEach(([key, value]) => {
+        upsert.run(String(key).slice(0,100), String(value).slice(0,5000));
+      });
+    });
+    tx();
+    const rows = db.prepare('SELECT * FROM site_settings ORDER BY key ASC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+
+// ── SPECIALIST FULL EDIT ──
+app.put('/api/admin/specialists/:id', requireAdmin, (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isFinite(id)) return res.status(400).json({ ok: false, error: 'Invalid id' });
+    const { name, title, bio, qualifications, experience_years, languages, photo_url, available, display_order } = req.body;
+    if (!name) return res.status(400).json({ ok: false, error: 'name required' });
+    db.prepare(`UPDATE specialists SET name=?, title=?, bio=?, qualifications=?, experience_years=?, languages=?, photo_url=?, available=?, display_order=? WHERE id=?`).run(
+      trimStr(name), trimStr(title)||null, trimStr(bio)||null, trimStr(qualifications)||null,
+      Number(experience_years)||0, trimStr(languages)||'English',
+      trimStr(photo_url)||null, available != null ? (available ? 1 : 0) : 1,
+      Number(display_order)||0, id
+    );
+    res.json({ ok: true, specialist: db.prepare('SELECT * FROM specialists WHERE id=?').get(id) });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+
+// ── REVIEWS admin ──
+app.get('/api/admin/reviews', requireAdmin, (req, res) => {
+  try {
+    const rows = db.prepare('SELECT * FROM reviews ORDER BY created_at DESC').all();
+    res.json({ ok: true, data: rows });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+app.delete('/api/admin/reviews/:id', requireAdmin, (req, res) => {
+  try {
+    db.prepare('DELETE FROM reviews WHERE id=?').run(parseInt(req.params.id, 10));
+    res.json({ ok: true });
+  } catch (err) { res.status(500).json({ ok: false, error: err.message }); }
+});
+
 // 404 fallback: serve 404.html for missing frontend routes (not API)
 app.get('*', (req, res, next) => {
   if (req.method !== 'GET' || req.path.startsWith('/api')) return next();

@@ -119,49 +119,13 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 </section>
 
 <section class="section-pricing">
-  <div class="pricing-grid">
-    <div class="price-card reveal">
-      <div class="price-label">Single session</div>
-      <h2>First consultation</h2>
-      <div class="price-amount">₹1,500</div>
-      <div class="price-note">One-time · 45–60 min</div>
-      <ul class="price-features">
-        <li>Video or audio session</li>
-        <li>Assessment and treatment plan</li>
-        <li>Prescription if needed</li>
-        <li>Follow-up summary by email</li>
-      </ul>
-      <a href="book.html" class="btn-price">Book now</a>
-    </div>
-    <div class="price-card featured reveal">
-      <div class="price-label">Most popular</div>
-      <h2>Follow-up session</h2>
-      <div class="price-amount">₹1,200</div>
-      <div class="price-note">Per session · 30–45 min</div>
-      <ul class="price-features">
-        <li>Video or audio</li>
-        <li>Ongoing care with same doctor</li>
-        <li>Medication review</li>
-        <li>Best value for regular care</li>
-      </ul>
-      <a href="book.html" class="btn-price">Book now</a>
-    </div>
-    <div class="price-card reveal">
-      <div class="price-label">Package</div>
-      <h2>4-session pack</h2>
-      <div class="price-amount">₹4,200</div>
-      <div class="price-note">₹1,050 per session · Save ₹300</div>
-      <ul class="price-features">
-        <li>4 follow-up sessions</li>
-        <li>Use within 3 months</li>
-        <li>Same specialist preferred</li>
-        <li>Ideal for therapy or maintenance</li>
-      </ul>
-      <a href="book.html" class="btn-price">Book now</a>
-    </div>
+  <div id="pricingLoading" style="text-align:center;padding:60px 0;color:var(--text-light);">
+    <div style="display:inline-block;width:40px;height:40px;border:3px solid rgba(30,111,171,0.2);border-top-color:#1E6FAB;border-radius:50%;animation:spin 0.8s linear infinite;margin-bottom:12px;"></div>
+    <p>Loading pricing…</p>
   </div>
-  <div class="section-note reveal">
-    <p>All prices are in INR and inclusive of GST where applicable. Cancellation and refund policy applies as per our <a href="terms.html">Terms of Use</a>. If you have financial constraints, mention it when you book — we may be able to offer limited subsidised slots.</p>
+  <div class="pricing-grid" id="pricingGrid" style="display:none;"></div>
+  <div class="section-note reveal" id="pricingNote" style="display:none;">
+    <p id="pricingNoteText"></p>
   </div>
 </section>
 
@@ -178,6 +142,53 @@ footer{background:var(--dark);padding:48px 60px 36px;}
   </div>
 </footer>
 
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<script src="config.js"></script>
+<script>
+(function(){
+  var grid = document.getElementById('pricingGrid');
+  var loading = document.getElementById('pricingLoading');
+  var noteEl = document.getElementById('pricingNote');
+  var noteText = document.getElementById('pricingNoteText');
+
+  function escHtml(s){ if(!s)return''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  // Load pricing note from settings
+  fetch((window.API_BASE||'')+'/api/settings').then(function(r){return r.json();}).then(function(d){
+    if(d&&d.ok&&d.data&&d.data.pricing_note){
+      noteText.textContent = d.data.pricing_note;
+      noteEl.style.display = '';
+    }
+  }).catch(function(){});
+
+  fetch((window.API_BASE||'')+'/api/pricing')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      loading.style.display = 'none';
+      if(!d||!d.ok||!d.data||!d.data.length){ grid.style.display='grid'; grid.innerHTML='<p style="color:var(--text-light);grid-column:1/-1;text-align:center">Pricing information coming soon. <a href="contact.html">Contact us</a> for details.</p>'; return; }
+      grid.innerHTML = d.data.map(function(plan){
+        var features = (plan.features||'').split('|').filter(Boolean);
+        var featHtml = features.map(function(f){ return '<li>'+escHtml(f.trim())+'</li>'; }).join('');
+        return '<div class="price-card'+(plan.is_featured?' featured':'')+' reveal">' +
+          '<div class="price-label">'+escHtml(plan.label||'')+'</div>' +
+          '<h2>'+escHtml(plan.title)+'</h2>' +
+          '<div class="price-amount">'+escHtml(plan.amount)+'</div>' +
+          '<div class="price-note">'+escHtml(plan.note||'')+'</div>' +
+          '<ul class="price-features">'+featHtml+'</ul>' +
+          '<a href="book.html" class="btn-price">Book now</a>' +
+          '</div>';
+      }).join('');
+      grid.style.display = 'grid';
+      // Reveal observer
+      var obs = new IntersectionObserver(function(entries){ entries.forEach(function(el){ if(el.isIntersecting) el.target.classList.add('visible'); }); },{threshold:0.1});
+      document.querySelectorAll('#pricingGrid .reveal').forEach(function(el){ obs.observe(el); });
+    })
+    .catch(function(){
+      loading.style.display = 'none';
+      grid.style.display = 'grid';
+      grid.innerHTML = '<p style="color:var(--text-light);grid-column:1/-1;text-align:center">Could not load pricing. Please refresh.</p>';
+    });
+})();
 <script>
 (function(){ var observer=new IntersectionObserver(function(entries){ entries.forEach(function(el){ if(el.isIntersecting) el.target.classList.add('visible'); }); },{threshold:0.1}); document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); }); })();
 </script>

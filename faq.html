@@ -112,36 +112,10 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 </section>
 
 <section class="section-faq">
-  <div class="faq-inner">
-    <div class="faq-item reveal">
-      <button type="button" class="faq-q" aria-expanded="false">How do I book a consultation?</button>
-      <div class="faq-a"><div class="faq-a-inner">Go to the Book a Consultation page, choose your specialist type and session type (video/audio), pick a date and time slot, and fill in your details. We’ll confirm your appointment by email. You can join the session from the link we send or from your Serenest account.</div></div>
-    </div>
-    <div class="faq-item reveal">
-      <button type="button" class="faq-q" aria-expanded="false">Is my information kept private?</button>
-      <div class="faq-a"><div class="faq-a-inner">Yes. All sessions and personal data are confidential. We follow Indian data protection norms and our clinicians adhere to medical confidentiality. We do not share your information with third parties for marketing. For full details, see our <a href="privacy.html">Privacy Policy</a>.</div></div>
-    </div>
-    <div class="faq-item reveal">
-      <button type="button" class="faq-q" aria-expanded="false">What happens in my first session?</button>
-      <div class="faq-a"><div class="faq-a-inner">The first session is usually an assessment: the psychiatrist or therapist will ask about your concerns, history, and goals. You can ask questions and discuss what to expect from treatment. There’s no pressure — it’s a chance to see if the approach and the specialist feel right for you.</div></div>
-    </div>
-    <div class="faq-item reveal">
-      <button type="button" class="faq-q" aria-expanded="false">Can I cancel or reschedule?</button>
-      <div class="faq-a"><div class="faq-a-inner">Yes. Please cancel or reschedule at least 24 hours before your appointment. You can do this by replying to your confirmation email or by contacting us. Late cancellations may be subject to our cancellation policy as stated at the time of booking.</div></div>
-    </div>
-    <div class="faq-item reveal">
-      <button type="button" class="faq-q" aria-expanded="false">How do I pay for sessions?</button>
-      <div class="faq-a"><div class="faq-a-inner">Payment is collected at or before the time of booking, depending on the option you choose. We accept major cards, UPI, and other methods as shown on the booking page. You’ll receive a receipt by email. For pricing, see our <a href="pricing.html">Pricing</a> page.</div></div>
-    </div>
-    <div class="faq-item reveal">
-      <button type="button" class="faq-q" aria-expanded="false">Do you prescribe medication?</button>
-      <div class="faq-a"><div class="faq-a-inner">Our psychiatrists can prescribe medication when clinically appropriate, in line with Indian telemedicine guidelines. Prescriptions are shared electronically and can be used at your local pharmacy. Therapists (non‑psychiatrists) do not prescribe; they provide therapy and may work alongside your psychiatrist if you’re on medication.</div></div>
-    </div>
-    <div class="faq-item reveal">
-      <button type="button" class="faq-q" aria-expanded="false">Is Serenest only for people in India?</button>
-      <div class="faq-a"><div class="faq-a-inner">Our specialists are licensed to practise in India and our services are designed for patients based in India. If you’re travelling or living abroad, please contact us to check if we can support you.</div></div>
-    </div>
+  <div id="faqLoading" style="text-align:center;padding:40px 0;color:var(--text-light);">
+    <div style="display:inline-block;width:36px;height:36px;border:3px solid rgba(30,111,171,0.2);border-top-color:#1E6FAB;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
   </div>
+  <div class="faq-list" id="faqList" style="display:none;"></div>
 </section>
 
 <section class="section-cta">
@@ -158,14 +132,7 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 </footer>
 
 <script>
-document.querySelectorAll('.faq-q').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const item = btn.closest('.faq-item');
-    const isOpen = item.classList.toggle('open');
-    btn.setAttribute('aria-expanded', isOpen);
-    document.querySelectorAll('.faq-item').forEach(other => {
-      if (other !== item) { other.classList.remove('open'); other.querySelector('.faq-q').setAttribute('aria-expanded', 'false'); }
-    });
+
   });
 });
 (function(){ var observer=new IntersectionObserver(function(entries){ entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); }); },{threshold:0.1}); document.querySelectorAll('.reveal').forEach(function(el){ observer.observe(el); }); })();
@@ -176,5 +143,40 @@ document.querySelectorAll('.faq-q').forEach(btn => {
 <script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/visit-notify.js"></script>
 <script src="premium.js"></script>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<script src="config.js"></script>
+<script>
+(function(){
+  var list = document.getElementById('faqList');
+  var loading = document.getElementById('faqLoading');
+  function escHtml(s){ if(!s)return''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  fetch((window.API_BASE||'')+'/api/faq')
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      loading.style.display = 'none';
+      if(!d||!d.ok||!d.data||!d.data.length){ list.innerHTML='<p style="color:var(--text-light);text-align:center">No FAQ items yet.</p>'; list.style.display=''; return; }
+      list.innerHTML = d.data.map(function(item){
+        return '<div class="faq-item reveal">' +
+          '<button type="button" class="faq-q" aria-expanded="false">'+escHtml(item.question)+'</button>' +
+          '<div class="faq-a"><div class="faq-a-inner">'+escHtml(item.answer)+'</div></div>' +
+          '</div>';
+      }).join('');
+      list.style.display = '';
+      // Attach accordion behaviour
+      list.querySelectorAll('.faq-q').forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var item = btn.closest('.faq-item');
+          var isOpen = item.classList.contains('open');
+          list.querySelectorAll('.faq-item').forEach(function(other){ other.classList.remove('open'); other.querySelector('.faq-q').setAttribute('aria-expanded','false'); });
+          if(!isOpen){ item.classList.add('open'); btn.setAttribute('aria-expanded','true'); }
+        });
+      });
+      // Reveal
+      var obs = new IntersectionObserver(function(entries){ entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); }); },{threshold:0.1});
+      list.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+    })
+    .catch(function(){ loading.innerHTML='<p style="color:var(--text-light)">Could not load FAQ. Please refresh.</p>'; });
+})();
+
 </body>
 </html>

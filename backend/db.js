@@ -151,6 +151,61 @@ function initDb() {
     );
   `);
 
+
+    CREATE TABLE IF NOT EXISTS pricing_plans (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      label TEXT NOT NULL,
+      title TEXT NOT NULL,
+      amount TEXT NOT NULL,
+      note TEXT,
+      features TEXT NOT NULL,
+      is_featured INTEGER DEFAULT 0,
+      display_order INTEGER DEFAULT 0,
+      active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS faq_items (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      question TEXT NOT NULL,
+      answer TEXT NOT NULL,
+      display_order INTEGER DEFAULT 0,
+      active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS services (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      icon TEXT DEFAULT '🧬',
+      title TEXT NOT NULL,
+      description TEXT NOT NULL,
+      features TEXT NOT NULL,
+      display_order INTEGER DEFAULT 0,
+      active INTEGER DEFAULT 1,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS testimonials (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      quote TEXT NOT NULL,
+      author_name TEXT NOT NULL,
+      author_meta TEXT,
+      rating INTEGER DEFAULT 5,
+      avatar_initials TEXT,
+      active INTEGER DEFAULT 1,
+      display_order INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
+    CREATE TABLE IF NOT EXISTS site_settings (
+      key TEXT PRIMARY KEY,
+      value TEXT NOT NULL,
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+
   // ── Migrations: add columns if they don't exist ──
   const migrations = [
     "ALTER TABLE bookings ADD COLUMN payment_id TEXT",
@@ -170,6 +225,15 @@ function initDb() {
     "ALTER TABLE specialists ADD COLUMN languages TEXT DEFAULT 'English, Hindi'",
     "ALTER TABLE specialists ADD COLUMN photo_url TEXT",
     "ALTER TABLE specialists ADD COLUMN available INTEGER DEFAULT 1",
+    // pricing_plans migrations
+    "ALTER TABLE pricing_plans ADD COLUMN active INTEGER DEFAULT 1",
+    // faq_items migrations
+    "ALTER TABLE faq_items ADD COLUMN active INTEGER DEFAULT 1",
+    // services migrations
+    "ALTER TABLE services ADD COLUMN active INTEGER DEFAULT 1",
+    // testimonials migrations
+    "ALTER TABLE testimonials ADD COLUMN active INTEGER DEFAULT 1",
+
   ];
   for (const sql of migrations) {
     try { db.exec(sql); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
@@ -237,6 +301,75 @@ function initDb() {
       ],
     ];
     posts.forEach(p => ins.run(...p));
+  }
+
+  // ── Seed pricing plans if empty ──
+  const pricingCount = db.prepare('SELECT COUNT(*) as n FROM pricing_plans').get();
+  if (pricingCount && pricingCount.n === 0) {
+    const ins = db.prepare(`INSERT INTO pricing_plans (label, title, amount, note, features, is_featured, display_order) VALUES (?, ?, ?, ?, ?, ?, ?)`);
+    ins.run('Single session', 'First Consultation', '₹1,500', 'One-time · 45–60 min', 'Video or audio session|Assessment and treatment plan|Prescription if needed|Follow-up summary by email', 0, 0);
+    ins.run('Most popular', 'Follow-up Session', '₹1,200', 'Per session · 30–45 min', 'Video or audio|Ongoing care with same doctor|Medication review|Best value for regular care', 1, 1);
+    ins.run('Package', '4-Session Pack', '₹4,200', '₹1,050 per session · Save ₹300', '4 follow-up sessions|Use within 3 months|Same specialist preferred|Ideal for therapy or maintenance', 0, 2);
+  }
+
+  // ── Seed FAQ items if empty ──
+  const faqCount = db.prepare('SELECT COUNT(*) as n FROM faq_items').get();
+  if (faqCount && faqCount.n === 0) {
+    const ins = db.prepare(`INSERT INTO faq_items (question, answer, display_order) VALUES (?, ?, ?)`);
+    const faqs = [
+      ['How do I book a consultation?', 'Go to the Book a Consultation page, choose your specialist type and session type (video/audio), pick a date and time slot, and fill in your details. We will confirm your appointment by email.', 0],
+      ['Is my information kept private?', 'Yes. All sessions and personal data are confidential. We follow Indian data protection norms and our clinicians adhere to medical confidentiality. We do not share your information with third parties for marketing.', 1],
+      ['What happens in my first session?', 'The first session is usually an assessment: the psychiatrist or therapist will ask about your concerns, history, and goals. There is no pressure — it is a chance to see if the approach and the specialist feel right for you.', 2],
+      ['Can I cancel or reschedule?', 'Yes. Please cancel or reschedule at least 24 hours before your appointment. You can do this by replying to your confirmation email or by contacting us. Late cancellations may be subject to our cancellation policy.', 3],
+      ['How do I pay for sessions?', 'Payment is collected at or before the time of booking. We accept major cards, UPI, and other methods. You will receive a receipt by email.', 4],
+      ['Do you prescribe medication?', 'Our psychiatrists can prescribe medication when clinically appropriate, in line with Indian telemedicine guidelines. Prescriptions are shared electronically. Therapists do not prescribe; they provide therapy.', 5],
+      ['Is Serenest only for people in India?', 'Our specialists are licensed to practise in India and our services are designed for patients based in India. If you are travelling or living abroad, please contact us to check if we can support you.', 6],
+    ];
+    faqs.forEach(([q, a, o]) => ins.run(q, a, o));
+  }
+
+  // ── Seed services if empty ──
+  const servicesCount = db.prepare('SELECT COUNT(*) as n FROM services').get();
+  if (servicesCount && servicesCount.n === 0) {
+    const ins = db.prepare(`INSERT INTO services (icon, title, description, features, display_order) VALUES (?, ?, ?, ?, ?)`);
+    ins.run('🧬', 'Psychiatry Consultation', 'Evidence-based psychiatric assessment, diagnosis, and medication management from board-certified psychiatrists via secure video call.', 'Diagnostic assessment & formulation|Medication management & prescriptions|Mood disorders, anxiety, OCD, ADHD|Follow-up care & monitoring', 0);
+    ins.run('💬', 'Therapy & Counselling', 'Individual therapy sessions with licensed clinical psychologists and counsellors. Evidence-based modalities including CBT, DBT, EMDR, and more.', 'Cognitive Behavioural Therapy (CBT)|Trauma-focused therapy (EMDR)|Relationship & family counselling|Life transitions & grief', 1);
+    ins.run('🌿', 'De-addiction Support', 'Specialist support for alcohol, substance use, and behavioural addictions. Combining psychiatric care with counselling for lasting recovery.', 'Alcohol & substance use disorders|Behavioural addiction support|Motivational interviewing|Relapse prevention planning', 2);
+  }
+
+  // ── Seed testimonials if empty ──
+  const testimonialsCount = db.prepare('SELECT COUNT(*) as n FROM testimonials').get();
+  if (testimonialsCount && testimonialsCount.n === 0) {
+    const ins = db.prepare(`INSERT INTO testimonials (quote, author_name, author_meta, rating, avatar_initials, display_order) VALUES (?, ?, ?, ?, ?, ?)`);
+    const items = [
+      ['I was sceptical about online therapy but Serenest changed my mind completely. Dr. Sharma was warm, thorough, and really listened. I felt better after just the first session.', 'Meera R.', 'Patient · Mumbai', 5, 'MR', 0],
+      ['As someone with bad social anxiety, even calling a clinic felt impossible. With Serenest I could book online and join from my bedroom. It made all the difference.', 'Rohan K.', 'Patient · Bengaluru', 5, 'RK', 1],
+      ['My therapist Ms. Nair helped me understand patterns I had been stuck in for years. The CBT tools she gave me actually work. Grateful every day.', 'Priya A.', 'Patient · Delhi', 5, 'PA', 2],
+      ['I was struggling with burnout but did not know what to call it. The assessment was very thorough and I finally felt heard. Highly recommend.', 'Ankit S.', 'Patient · Pune', 5, 'AS', 3],
+      ['Getting help for my son was difficult — he refused to see anyone in person. The online format worked perfectly for him and the psychiatrist was excellent.', 'Sunita V.', 'Parent · Ahmedabad', 5, 'SV', 4],
+      ['Quality of care is outstanding. Very professional, private, and easy to use. I have recommended Serenest to three friends already.', 'Dr. Vishal M.', 'Patient · Hyderabad', 5, 'VM', 5],
+    ];
+    items.forEach(r => ins.run(...r));
+  }
+
+  // ── Seed site settings if empty ──
+  const settingsCount = db.prepare('SELECT COUNT(*) as n FROM site_settings').get();
+  if (settingsCount && settingsCount.n === 0) {
+    const ins = db.prepare(`INSERT OR IGNORE INTO site_settings (key, value) VALUES (?, ?)`);
+    ins.run('site_name', 'Serenest');
+    ins.run('tagline', 'Premium Mental Health Care');
+    ins.run('hero_headline', "India's most trusted telepsychiatry platform");
+    ins.run('hero_subtext', 'Confidential video consultations with verified psychiatrists and therapists. Book in under 2 minutes.');
+    ins.run('contact_email', 'hello@serenest.in');
+    ins.run('contact_phone', '+91 98765 43210');
+    ins.run('whatsapp_number', '919876543210');
+    ins.run('instagram_url', 'https://instagram.com/serenest_in');
+    ins.run('linkedin_url', 'https://linkedin.com/company/serenest');
+    ins.run('pricing_note', 'All prices in INR, inclusive of GST where applicable. If you have financial constraints, mention it when you book — we may offer subsidised slots.');
+    ins.run('booking_note', 'Sessions confirmed within 2 hours. Cancel or reschedule 24 hours before your appointment.');
+    ins.run('footer_copyright', '© 2026 Serenest. All rights reserved.');
+    ins.run('announcement_bar', '');
+    ins.run('announcement_bar_active', '0');
   }
 
   console.log('Database initialized at', dbPath);

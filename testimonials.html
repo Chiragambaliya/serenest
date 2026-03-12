@@ -146,74 +146,8 @@ footer{background:var(--dark);padding:48px 60px 36px;}
   </form>
   <h2 style="font-size:1.2rem;margin-bottom:20px;color:var(--dark);">Patient stories</h2>
   <div id="apiReviews" class="testimonials-grid"></div>
-  <div class="testimonials-grid">
-    <div class="testimonial-card reveal">
-      <div class="testimonial-stars">★ ★ ★ ★ ★</div>
-      <blockquote>I was nervous about online therapy. But my first session felt more personal than I expected. I finally felt heard.</blockquote>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">R</div>
-        <div>
-          <div class="testimonial-name">Riya, Mumbai</div>
-          <div class="testimonial-meta">Anxiety & stress · 6 sessions</div>
-        </div>
-      </div>
-    </div>
-    <div class="testimonial-card reveal">
-      <div class="testimonial-stars">★ ★ ★ ★ ★</div>
-      <blockquote>As someone who travels for work, having my psychiatrist available on video has genuinely changed my life. No more missing sessions.</blockquote>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">K</div>
-        <div>
-          <div class="testimonial-name">Karan, Bangalore</div>
-          <div class="testimonial-meta">Ongoing care · 12+ sessions</div>
-        </div>
-      </div>
-    </div>
-    <div class="testimonial-card reveal">
-      <div class="testimonial-stars">★ ★ ★ ★ ★</div>
-      <blockquote>The structured approach here is different. It's not just talking — there's a real treatment plan. That gave me confidence to continue.</blockquote>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">S</div>
-        <div>
-          <div class="testimonial-name">Priya S., Delhi</div>
-          <div class="testimonial-meta">Depression · 8 sessions</div>
-        </div>
-      </div>
-    </div>
-    <div class="testimonial-card reveal">
-      <div class="testimonial-stars">★ ★ ★ ★ ★</div>
-      <blockquote>Booking was so simple. I had my first consultation within a week. The doctor was calm and explained everything clearly.</blockquote>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">A</div>
-        <div>
-          <div class="testimonial-name">Amit, Pune</div>
-          <div class="testimonial-meta">First-time seeker · 3 sessions</div>
-        </div>
-      </div>
-    </div>
-    <div class="testimonial-card reveal">
-      <div class="testimonial-stars">★ ★ ★ ★ ★</div>
-      <blockquote>I was skeptical about video calls for something so personal. But the privacy and convenience won me over. I recommend Serenest to friends now.</blockquote>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">M</div>
-        <div>
-          <div class="testimonial-name">Meera, Chennai</div>
-          <div class="testimonial-meta">Sleep & anxiety · 5 sessions</div>
-        </div>
-      </div>
-    </div>
-    <div class="testimonial-card reveal">
-      <div class="testimonial-stars">★ ★ ★ ★ ★</div>
-      <blockquote>Finally, mental health care that fits my schedule. Evening slots and no commute. This is what healthcare should feel like.</blockquote>
-      <div class="testimonial-author">
-        <div class="testimonial-avatar">V</div>
-        <div>
-          <div class="testimonial-name">Vikram, Hyderabad</div>
-          <div class="testimonial-meta">Work stress · 4 sessions</div>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div id="testiLoading" style="text-align:center;padding:40px 0;"><div style="display:inline-block;width:36px;height:36px;border:3px solid rgba(30,111,171,0.2);border-top-color:#1E6FAB;border-radius:50%;animation:spin 0.8s linear infinite;"></div></div>
+  <div class="testimonials-grid" id="testiGrid" style="display:none;"></div>
 </section>
 
 <section class="section-cta">
@@ -265,5 +199,35 @@ footer{background:var(--dark);padding:48px 60px 36px;}
 <script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/visit-notify.js"></script>
 <script src="premium.js"></script>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<script src="config.js"></script>
+<script>
+(function(){
+  var grid = document.getElementById('testiGrid');
+  var loading = document.getElementById('testiLoading');
+  function escHtml(s){ if(!s)return''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function stars(n){ var s=''; for(var i=0;i<5;i++) s+= i<n?'★':'☆'; return s; }
+  fetch((window.API_BASE||'')+'/api/testimonials')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      loading.style.display = 'none';
+      if(!d||!d.ok||!d.data||!d.data.length){ grid.innerHTML='<p style="color:var(--text-light);text-align:center;grid-column:1/-1">No testimonials yet.</p>'; grid.style.display='grid'; return; }
+      grid.innerHTML = d.data.map(function(t){
+        var initials = t.avatar_initials || (t.author_name||'?').slice(0,2).toUpperCase();
+        return '<div class="testimonial-card reveal">' +
+          '<div class="testimonial-stars">'+stars(t.rating||5)+'</div>' +
+          '<blockquote>"'+escHtml(t.quote)+'"</blockquote>' +
+          '<div class="testimonial-author">' +
+            '<div class="testimonial-avatar">'+escHtml(initials)+'</div>' +
+            '<div><div class="testimonial-name">'+escHtml(t.author_name)+'</div><div class="testimonial-meta">'+escHtml(t.author_meta||'Serenest Patient')+'</div></div>' +
+          '</div></div>';
+      }).join('');
+      grid.style.display = 'grid';
+      var obs = new IntersectionObserver(function(entries){ entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); }); },{threshold:0.1});
+      grid.querySelectorAll('.reveal').forEach(function(el){ obs.observe(el); });
+    })
+    .catch(function(){ loading.innerHTML='<p style="color:var(--text-light);text-align:center">Could not load testimonials.</p>'; });
+})();
+
 </body>
 </html>

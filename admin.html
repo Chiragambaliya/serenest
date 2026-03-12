@@ -163,6 +163,16 @@
 
     .panel { display: none; }
     .panel.visible { display: block; }
+    .field-label { display:block; font-size:0.73rem; font-weight:600; color:var(--text-light); text-transform:uppercase; letter-spacing:0.05em; margin-bottom:5px; }
+    .form-btn-primary { padding:11px 24px; background:var(--sage); color:var(--white); border:none; border-radius:10px; font-family:inherit; font-weight:600; font-size:0.87rem; cursor:pointer; transition:background 0.2s; }
+    .form-btn-primary:hover { background:var(--sage-dark); }
+    .form-btn-cancel { padding:11px 18px; background:transparent; color:var(--text-light); border:1px solid var(--cream-dark); border-radius:10px; font-family:inherit; font-weight:500; font-size:0.87rem; cursor:pointer; }
+    .toggle-active { display:inline-block; padding:2px 9px; border-radius:40px; font-size:0.7rem; font-weight:700; cursor:pointer; }
+    .toggle-active.on { background:rgba(46,160,67,0.12); color:#1a7f37; }
+    .toggle-active.off { background:rgba(210,153,34,0.12); color:#9a6700; }
+    .settings-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+    @media(max-width:700px){ .settings-grid{ grid-template-columns:1fr; } }
+    
     .panel h2 {
       font-size: 1.1rem;
       font-weight: 600;
@@ -243,6 +253,12 @@
         <button type="button" class="tab" data-tab="slots">Availability</button>
         <button type="button" class="tab" data-tab="specialists">Specialists</button>
         <button type="button" class="tab" data-tab="patients">Patients</button>
+        <button type="button" class="tab" data-tab="services">Services</button>
+        <button type="button" class="tab" data-tab="pricing">Pricing</button>
+        <button type="button" class="tab" data-tab="faq">FAQ</button>
+        <button type="button" class="tab" data-tab="testimonials">Testimonials</button>
+        <button type="button" class="tab" data-tab="reviews">Reviews</button>
+        <button type="button" class="tab" data-tab="settings">Site Settings</button>
         <button type="button" class="tab" data-tab="analytics">Analytics</button>
       </div>
 
@@ -462,7 +478,7 @@
         <div id="specialistsError" class="err-msg" style="display:none;"></div>
         <div class="table-wrap" id="specialistsTableWrap" style="margin-top:16px;">
           <table>
-            <thead><tr><th>Name</th><th></th></tr></thead>
+            <thead><tr><th>Name</th><th>Title</th><th>Exp</th><th>Available</th><th>Actions</th></tr></thead>
             <tbody id="specialistsBody"></tbody>
           </table>
         </div>
@@ -503,6 +519,137 @@
             <tbody id="patientsBody"></tbody>
           </table>
         </div>
+      </div>
+
+
+      <!-- ── SERVICES PANEL ── -->
+      <div id="panelServices" class="panel">
+        <h2>Services</h2>
+        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Manage the services shown on the Services page. Changes go live immediately.</p>
+        <button type="button" class="load-btn" data-load="services">Refresh</button>
+        <div id="servicesError" class="err-msg" style="display:none;"></div>
+        <p id="servicesEmpty" class="empty" style="display:none;">No services yet.</p>
+        <div class="table-wrap" style="margin-top:16px;">
+          <table><thead><tr><th>Order</th><th>Icon</th><th>Title</th><th>Description</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="servicesBody"></tbody></table>
+        </div>
+        <div style="margin-top:24px;padding:24px;background:var(--white);border-radius:16px;border:1px solid var(--cream-dark);">
+          <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px;" id="serviceFormTitle">Add Service</h3>
+          <form id="serviceForm">
+            <input type="hidden" id="serviceEditId" value="">
+            <div style="display:grid;grid-template-columns:80px 1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div><label class="field-label">Icon</label><input type="text" id="serviceIcon" placeholder="🧬" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;font-size:1.2rem;"></div>
+              <div><label class="field-label">Title *</label><input type="text" id="serviceTitle" required placeholder="Psychiatry Consultation" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+              <div><label class="field-label">Order</label><input type="number" id="serviceOrder" value="0" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+            </div>
+            <div style="margin-bottom:12px;"><label class="field-label">Description *</label><textarea id="serviceDesc" rows="2" required placeholder="Brief description of this service" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;resize:vertical;"></textarea></div>
+            <div style="margin-bottom:16px;"><label class="field-label">Features (one per line) *</label><textarea id="serviceFeatures" rows="4" required placeholder="Video consultations&#10;Prescription management&#10;Follow-up care" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;resize:vertical;"></textarea></div>
+            <div style="display:flex;gap:12px;"><button type="submit" class="form-btn-primary" id="serviceSubmitBtn">Add Service</button><button type="button" class="form-btn-cancel" id="serviceCancelBtn" style="display:none;">Cancel</button></div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── PRICING PANEL ── -->
+      <div id="panelPricing" class="panel">
+        <h2>Pricing Plans</h2>
+        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Edit prices, descriptions, and features. The pricing page loads these from the database.</p>
+        <button type="button" class="load-btn" data-load="pricing">Refresh</button>
+        <div id="pricingError" class="err-msg" style="display:none;"></div>
+        <p id="pricingEmpty" class="empty" style="display:none;">No pricing plans yet.</p>
+        <div class="table-wrap" style="margin-top:16px;">
+          <table><thead><tr><th>Order</th><th>Label</th><th>Title</th><th>Price</th><th>Note</th><th>Featured</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="pricingBody"></tbody></table>
+        </div>
+        <div style="margin-top:24px;padding:24px;background:var(--white);border-radius:16px;border:1px solid var(--cream-dark);">
+          <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px;" id="pricingFormTitle">Add Pricing Plan</h3>
+          <form id="pricingForm">
+            <input type="hidden" id="pricingEditId" value="">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div><label class="field-label">Label</label><input type="text" id="pricingLabel" placeholder="Most popular" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+              <div><label class="field-label">Title *</label><input type="text" id="pricingTitle" required placeholder="Follow-up Session" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+              <div><label class="field-label">Amount *</label><input type="text" id="pricingAmount" required placeholder="₹1,200" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+              <div><label class="field-label">Note</label><input type="text" id="pricingNote" placeholder="Per session · 30-45 min" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+            </div>
+            <div style="margin-bottom:12px;"><label class="field-label">Features (one per line — pipe | separated also OK) *</label><textarea id="pricingFeatures" rows="4" required placeholder="Video or audio|Ongoing care with same doctor|Medication review" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;resize:vertical;"></textarea></div>
+            <div style="display:flex;gap:20px;align-items:center;margin-bottom:16px;">
+              <label style="display:flex;align-items:center;gap:8px;font-size:0.85rem;cursor:pointer;"><input type="checkbox" id="pricingFeatured"> Mark as Featured (highlighted card)</label>
+              <div><label class="field-label" style="display:inline;margin-right:8px;">Order:</label><input type="number" id="pricingOrder" value="0" style="width:70px;padding:8px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+            </div>
+            <div style="display:flex;gap:12px;"><button type="submit" class="form-btn-primary" id="pricingSubmitBtn">Add Plan</button><button type="button" class="form-btn-cancel" id="pricingCancelBtn" style="display:none;">Cancel</button></div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── FAQ PANEL ── -->
+      <div id="panelFaq" class="panel">
+        <h2>FAQ</h2>
+        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Add, edit, or reorder FAQ items. The FAQ page loads from the database.</p>
+        <button type="button" class="load-btn" data-load="faq">Refresh</button>
+        <div id="faqError" class="err-msg" style="display:none;"></div>
+        <p id="faqEmpty" class="empty" style="display:none;">No FAQ items yet.</p>
+        <div class="table-wrap" style="margin-top:16px;">
+          <table><thead><tr><th>Order</th><th>Question</th><th>Answer</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="faqBody"></tbody></table>
+        </div>
+        <div style="margin-top:24px;padding:24px;background:var(--white);border-radius:16px;border:1px solid var(--cream-dark);">
+          <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px;" id="faqFormTitle">Add FAQ Item</h3>
+          <form id="faqForm">
+            <input type="hidden" id="faqEditId" value="">
+            <div style="margin-bottom:12px;"><label class="field-label">Question *</label><input type="text" id="faqQuestion" required placeholder="How do I book a session?" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+            <div style="margin-bottom:12px;"><label class="field-label">Answer *</label><textarea id="faqAnswer" rows="3" required placeholder="Step by step answer..." style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;resize:vertical;"></textarea></div>
+            <div style="display:flex;gap:20px;align-items:center;margin-bottom:16px;"><label class="field-label" style="display:inline;margin-right:8px;">Order:</label><input type="number" id="faqOrder" value="0" style="width:70px;padding:8px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+            <div style="display:flex;gap:12px;"><button type="submit" class="form-btn-primary" id="faqSubmitBtn">Add FAQ</button><button type="button" class="form-btn-cancel" id="faqCancelBtn" style="display:none;">Cancel</button></div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── TESTIMONIALS PANEL ── -->
+      <div id="panelTestimonials" class="panel">
+        <h2>Testimonials</h2>
+        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Manage patient testimonials shown on the testimonials page and homepage.</p>
+        <button type="button" class="load-btn" data-load="testimonials">Refresh</button>
+        <div id="testimonialsError" class="err-msg" style="display:none;"></div>
+        <p id="testimonialsEmpty" class="empty" style="display:none;">No testimonials yet.</p>
+        <div class="table-wrap" style="margin-top:16px;">
+          <table><thead><tr><th>#</th><th>Quote</th><th>Author</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
+          <tbody id="testimonialsBody"></tbody></table>
+        </div>
+        <div style="margin-top:24px;padding:24px;background:var(--white);border-radius:16px;border:1px solid var(--cream-dark);">
+          <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px;" id="testimonialFormTitle">Add Testimonial</h3>
+          <form id="testimonialForm">
+            <input type="hidden" id="testimonialEditId" value="">
+            <div style="margin-bottom:12px;"><label class="field-label">Quote *</label><textarea id="testimonialQuote" rows="3" required placeholder="Patient testimonial text..." style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;resize:vertical;"></textarea></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 80px 80px;gap:12px;margin-bottom:16px;">
+              <div><label class="field-label">Author Name *</label><input type="text" id="testimonialAuthor" required placeholder="Meera R." style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+              <div><label class="field-label">Author Meta</label><input type="text" id="testimonialMeta" placeholder="Patient · Mumbai" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+              <div><label class="field-label">Rating (1-5)</label><input type="number" id="testimonialRating" value="5" min="1" max="5" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+              <div><label class="field-label">Order</label><input type="number" id="testimonialOrder" value="0" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+            </div>
+            <div style="display:flex;gap:12px;"><button type="submit" class="form-btn-primary" id="testimonialSubmitBtn">Add Testimonial</button><button type="button" class="form-btn-cancel" id="testimonialCancelBtn" style="display:none;">Cancel</button></div>
+          </form>
+        </div>
+      </div>
+
+      <!-- ── REVIEWS PANEL ── -->
+      <div id="panelReviews" class="panel">
+        <h2>Patient Reviews</h2>
+        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Reviews submitted by patients via the website. Delete spam or inappropriate entries.</p>
+        <button type="button" class="load-btn" data-load="reviews">Refresh</button>
+        <div id="reviewsError" class="err-msg" style="display:none;"></div>
+        <p id="reviewsEmpty" class="empty" style="display:none;">No reviews yet.</p>
+        <div class="table-wrap" style="margin-top:16px;">
+          <table><thead><tr><th>Date</th><th>Patient</th><th>Specialist</th><th>Rating</th><th>Comment</th><th>Actions</th></tr></thead>
+          <tbody id="reviewsBody"></tbody></table>
+        </div>
+      </div>
+
+      <!-- ── SITE SETTINGS PANEL ── -->
+      <div id="panelSettings" class="panel">
+        <h2>Site Settings</h2>
+        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Control text, contact details, and site-wide messages. All changes are live immediately.</p>
+        <button type="button" class="load-btn" data-load="settings">Refresh</button>
+        <div id="settingsError" class="err-msg" style="display:none;"></div>
+        <div id="settingsFormWrap" style="margin-top:20px;"></div>
       </div>
 
       <div id="panelAnalytics" class="panel">
@@ -615,6 +762,12 @@
             (id === 'panelSlots' && tabId === 'slots') ||
             (id === 'panelSpecialists' && tabId === 'specialists') ||
             (id === 'panelPatients' && tabId === 'patients') ||
+            (id === 'panelServices' && tabId === 'services') ||
+            (id === 'panelPricing' && tabId === 'pricing') ||
+            (id === 'panelFaq' && tabId === 'faq') ||
+            (id === 'panelTestimonials' && tabId === 'testimonials') ||
+            (id === 'panelReviews' && tabId === 'reviews') ||
+            (id === 'panelSettings' && tabId === 'settings') ||
             (id === 'panelAnalytics' && tabId === 'analytics');
           p.classList.toggle('visible', visible);
         });
@@ -627,6 +780,12 @@
         if (tabId === 'specialists') loadSpecialists();
         if (tabId === 'analytics') loadAnalytics();
         if (tabId === 'patients') loadPatients();
+        if (tabId === 'services') loadServices();
+        if (tabId === 'pricing') loadPricing();
+        if (tabId === 'faq') loadFaq();
+        if (tabId === 'testimonials') loadTestimonials();
+        if (tabId === 'reviews') loadReviews();
+        if (tabId === 'settings') loadSettings();
       }
       document.querySelectorAll('.tab').forEach(function(t) {
         t.addEventListener('click', function() {
@@ -867,7 +1026,17 @@
           document.getElementById('specialistsTableWrap').style.display = rows.length ? 'block' : 'none';
           rows.forEach(function(row) {
             var tr = document.createElement('tr');
-            tr.innerHTML = '<td>' + escapeHtml(row.name || '') + '</td><td><button type="button" class="specialist-delete" data-id="' + row.id + '" style="padding:4px 10px;font-size:0.75rem;background:transparent;color:#c0392b;border:1px solid #c0392b;border-radius:6px;cursor:pointer;">Remove</button></td>';
+            var availBadge = row.available !== 0
+              ? '<span style="background:rgba(46,160,67,0.12);color:#1a7f37;padding:2px 8px;border-radius:40px;font-size:0.7rem;font-weight:700;">✓ Available</span>'
+              : '<span style="background:rgba(210,153,34,0.15);color:#9a6700;padding:2px 8px;border-radius:40px;font-size:0.7rem;font-weight:700;">Unavailable</span>';
+            tr.innerHTML = '<td><strong>' + escapeHtml(row.name || '') + '</strong></td>' +
+              '<td style="color:var(--sage-dark);font-size:0.83rem">' + escapeHtml(row.title || '—') + '</td>' +
+              '<td class="muted">' + (row.experience_years > 0 ? row.experience_years + ' yrs' : '—') + '</td>' +
+              '<td>' + availBadge + '</td>' +
+              '<td>' +
+                '<button type="button" onclick="openSpecialistEdit(' + row.id + ')" style="padding:4px 10px;font-size:0.75rem;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:4px;">Edit</button>' +
+                '<button type="button" class="specialist-delete" data-id="' + row.id + '" style="padding:4px 10px;font-size:0.75rem;background:transparent;color:#c0392b;border:1px solid rgba(192,57,43,0.3);border-radius:6px;cursor:pointer;">Remove</button>' +
+              '</td>';
             tbody.appendChild(tr);
           });
           document.querySelectorAll('.specialist-delete').forEach(function(btn) {
@@ -1111,6 +1280,490 @@
           .catch(function() { showErr('analytics', 'Network error'); });
       }
 
+
+      // ═══════════════════════════════════════
+      //  CMS MANAGEMENT FUNCTIONS
+      // ═══════════════════════════════════════
+
+      function activeBadge(v) {
+        return v ? '<span class="toggle-active on">Active</span>' : '<span class="toggle-active off">Hidden</span>';
+      }
+      function starRating(n) {
+        var s = ''; for (var i = 0; i < 5; i++) s += i < n ? '★' : '☆'; return s;
+      }
+
+      // ── SERVICES ──
+      function loadServices() {
+        hideErr('services');
+        fetch(API + '/admin/services', { headers: authHeaders() })
+          .then(function(r){ if(r.status===401){showLogin();return null;} return r.json(); })
+          .then(function(data){
+            if(!data) return;
+            if(!data.ok){ showErr('services', data.error||'Failed'); return; }
+            var rows = data.data||[];
+            document.getElementById('servicesEmpty').style.display = rows.length ? 'none' : 'block';
+            var tb = document.getElementById('servicesBody'); tb.innerHTML = '';
+            rows.forEach(function(r){
+              var tr = document.createElement('tr');
+              var feats = (r.features||'').replace(/\|/g,'\n');
+              tr.innerHTML = '<td>'+r.display_order+'</td><td style="font-size:1.5rem">'+escapeHtml(r.icon||'')+'</td><td><strong>'+escapeHtml(r.title)+'</strong></td><td style="max-width:300px;font-size:0.82rem;color:var(--text-light)">'+escapeHtml(r.description)+'</td><td>'+activeBadge(r.active)+'</td>' +
+                '<td><button onclick="editService('+r.id+')" style="padding:4px 10px;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">Edit</button>' +
+                '<button onclick="toggleItem('services','+r.id+','+r.active+')" style="padding:4px 10px;background:rgba(30,111,171,0.1);color:var(--sage-dark);border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">'+(r.active?'Hide':'Show')+'</button>' +
+                '<button onclick="deleteItem('services','+r.id+',loadServices)" style="padding:4px 10px;background:rgba(207,34,46,0.1);color:#c0392b;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem">Delete</button></td>';
+              tb.appendChild(tr);
+            });
+          }).catch(function(){ showErr('services','Network error'); });
+      }
+      function editService(id) {
+        fetch(API + '/admin/services', { headers: authHeaders() })
+          .then(function(r){return r.json();}).then(function(data){
+            var r = (data.data||[]).find(function(x){return x.id===id;});
+            if(!r) return;
+            document.getElementById('serviceEditId').value = id;
+            document.getElementById('serviceIcon').value = r.icon||'';
+            document.getElementById('serviceTitle').value = r.title||'';
+            document.getElementById('serviceDesc').value = r.description||'';
+            document.getElementById('serviceFeatures').value = (r.features||'').replace(/\|/g,'\n');
+            document.getElementById('serviceOrder').value = r.display_order||0;
+            document.getElementById('serviceFormTitle').textContent = 'Edit Service';
+            document.getElementById('serviceSubmitBtn').textContent = 'Save Changes';
+            document.getElementById('serviceCancelBtn').style.display = '';
+            document.getElementById('serviceFormTitle').scrollIntoView({behavior:'smooth'});
+          });
+      }
+      document.getElementById('serviceCancelBtn').onclick = function(){
+        document.getElementById('serviceForm').reset();
+        document.getElementById('serviceEditId').value = '';
+        document.getElementById('serviceFormTitle').textContent = 'Add Service';
+        document.getElementById('serviceSubmitBtn').textContent = 'Add Service';
+        document.getElementById('serviceCancelBtn').style.display = 'none';
+      };
+      document.getElementById('serviceForm').onsubmit = function(e){
+        e.preventDefault();
+        var id = document.getElementById('serviceEditId').value;
+        var feats = document.getElementById('serviceFeatures').value.trim().replace(/\n+/g,'|');
+        var body = {
+          icon: document.getElementById('serviceIcon').value.trim()||'🧬',
+          title: document.getElementById('serviceTitle').value.trim(),
+          description: document.getElementById('serviceDesc').value.trim(),
+          features: feats,
+          display_order: parseInt(document.getElementById('serviceOrder').value)||0
+        };
+        var url = id ? API+'/admin/services/'+id : API+'/admin/services';
+        var method = id ? 'PUT' : 'POST';
+        fetch(url, { method:method, headers:{...authHeaders(),'Content-Type':'application/json'}, body:JSON.stringify(body) })
+          .then(function(r){return r.json();}).then(function(d){
+            if(!d.ok){ alert(d.error||'Error'); return; }
+            document.getElementById('serviceForm').reset();
+            document.getElementById('serviceEditId').value = '';
+            document.getElementById('serviceFormTitle').textContent = 'Add Service';
+            document.getElementById('serviceSubmitBtn').textContent = 'Add Service';
+            document.getElementById('serviceCancelBtn').style.display = 'none';
+            loadServices();
+          });
+      };
+
+      // ── PRICING ──
+      function loadPricing() {
+        hideErr('pricing');
+        fetch(API + '/admin/pricing', { headers: authHeaders() })
+          .then(function(r){ if(r.status===401){showLogin();return null;} return r.json(); })
+          .then(function(data){
+            if(!data) return;
+            if(!data.ok){ showErr('pricing', data.error||'Failed'); return; }
+            var rows = data.data||[];
+            document.getElementById('pricingEmpty').style.display = rows.length ? 'none' : 'block';
+            var tb = document.getElementById('pricingBody'); tb.innerHTML = '';
+            rows.forEach(function(r){
+              var tr = document.createElement('tr');
+              tr.innerHTML = '<td>'+r.display_order+'</td><td style="color:var(--sage);font-size:0.78rem;font-weight:600">'+escapeHtml(r.label||'')+'</td><td><strong>'+escapeHtml(r.title)+'</strong></td><td style="font-weight:700;color:var(--sage-dark)">'+escapeHtml(r.amount)+'</td><td style="font-size:0.8rem;color:var(--text-light)">'+escapeHtml(r.note||'')+'</td>' +
+                '<td>'+(r.is_featured?'<span style="background:rgba(30,111,171,0.12);color:var(--sage-dark);padding:2px 8px;border-radius:40px;font-size:0.7rem;font-weight:700;">★ Featured</span>':'')+'</td>' +
+                '<td>'+activeBadge(r.active)+'</td>' +
+                '<td><button onclick="editPricing('+r.id+')" style="padding:4px 10px;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">Edit</button>' +
+                '<button onclick="toggleItem('pricing','+r.id+','+r.active+')" style="padding:4px 10px;background:rgba(30,111,171,0.1);color:var(--sage-dark);border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">'+(r.active?'Hide':'Show')+'</button>' +
+                '<button onclick="deleteItem('pricing','+r.id+',loadPricing)" style="padding:4px 10px;background:rgba(207,34,46,0.1);color:#c0392b;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem">Delete</button></td>';
+              tb.appendChild(tr);
+            });
+          }).catch(function(){ showErr('pricing','Network error'); });
+      }
+      function editPricing(id) {
+        fetch(API + '/admin/pricing', { headers: authHeaders() })
+          .then(function(r){return r.json();}).then(function(data){
+            var r = (data.data||[]).find(function(x){return x.id===id;});
+            if(!r) return;
+            document.getElementById('pricingEditId').value = id;
+            document.getElementById('pricingLabel').value = r.label||'';
+            document.getElementById('pricingTitle').value = r.title||'';
+            document.getElementById('pricingAmount').value = r.amount||'';
+            document.getElementById('pricingNote').value = r.note||'';
+            document.getElementById('pricingFeatures').value = (r.features||'').replace(/\|/g,'\n');
+            document.getElementById('pricingFeatured').checked = !!r.is_featured;
+            document.getElementById('pricingOrder').value = r.display_order||0;
+            document.getElementById('pricingFormTitle').textContent = 'Edit Plan';
+            document.getElementById('pricingSubmitBtn').textContent = 'Save Changes';
+            document.getElementById('pricingCancelBtn').style.display = '';
+            document.getElementById('pricingFormTitle').scrollIntoView({behavior:'smooth'});
+          });
+      }
+      document.getElementById('pricingCancelBtn').onclick = function(){
+        document.getElementById('pricingForm').reset();
+        document.getElementById('pricingEditId').value = '';
+        document.getElementById('pricingFormTitle').textContent = 'Add Pricing Plan';
+        document.getElementById('pricingSubmitBtn').textContent = 'Add Plan';
+        document.getElementById('pricingCancelBtn').style.display = 'none';
+      };
+      document.getElementById('pricingForm').onsubmit = function(e){
+        e.preventDefault();
+        var id = document.getElementById('pricingEditId').value;
+        var feats = document.getElementById('pricingFeatures').value.trim().replace(/\n+/g,'|');
+        var body = {
+          label: document.getElementById('pricingLabel').value.trim(),
+          title: document.getElementById('pricingTitle').value.trim(),
+          amount: document.getElementById('pricingAmount').value.trim(),
+          note: document.getElementById('pricingNote').value.trim(),
+          features: feats,
+          is_featured: document.getElementById('pricingFeatured').checked ? 1 : 0,
+          display_order: parseInt(document.getElementById('pricingOrder').value)||0
+        };
+        var url = id ? API+'/admin/pricing/'+id : API+'/admin/pricing';
+        var method = id ? 'PUT' : 'POST';
+        fetch(url, { method:method, headers:{...authHeaders(),'Content-Type':'application/json'}, body:JSON.stringify(body) })
+          .then(function(r){return r.json();}).then(function(d){
+            if(!d.ok){ alert(d.error||'Error'); return; }
+            document.getElementById('pricingForm').reset();
+            document.getElementById('pricingEditId').value = '';
+            document.getElementById('pricingFormTitle').textContent = 'Add Pricing Plan';
+            document.getElementById('pricingSubmitBtn').textContent = 'Add Plan';
+            document.getElementById('pricingCancelBtn').style.display = 'none';
+            loadPricing();
+          });
+      };
+
+      // ── FAQ ──
+      function loadFaq() {
+        hideErr('faq');
+        fetch(API + '/admin/faq', { headers: authHeaders() })
+          .then(function(r){ if(r.status===401){showLogin();return null;} return r.json(); })
+          .then(function(data){
+            if(!data) return;
+            if(!data.ok){ showErr('faq', data.error||'Failed'); return; }
+            var rows = data.data||[];
+            document.getElementById('faqEmpty').style.display = rows.length ? 'none' : 'block';
+            var tb = document.getElementById('faqBody'); tb.innerHTML = '';
+            rows.forEach(function(r){
+              var tr = document.createElement('tr');
+              tr.innerHTML = '<td>'+r.display_order+'</td><td style="max-width:280px;font-weight:500">'+escapeHtml(r.question)+'</td><td style="max-width:350px;font-size:0.82rem;color:var(--text-light)">'+escapeHtml((r.answer||'').slice(0,100))+'…</td>' +
+                '<td>'+activeBadge(r.active)+'</td>' +
+                '<td><button onclick="editFaq('+r.id+')" style="padding:4px 10px;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">Edit</button>' +
+                '<button onclick="toggleItem('faq','+r.id+','+r.active+')" style="padding:4px 10px;background:rgba(30,111,171,0.1);color:var(--sage-dark);border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">'+(r.active?'Hide':'Show')+'</button>' +
+                '<button onclick="deleteItem('faq','+r.id+',loadFaq)" style="padding:4px 10px;background:rgba(207,34,46,0.1);color:#c0392b;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem">Delete</button></td>';
+              tb.appendChild(tr);
+            });
+          }).catch(function(){ showErr('faq','Network error'); });
+      }
+      function editFaq(id) {
+        fetch(API + '/admin/faq', { headers: authHeaders() })
+          .then(function(r){return r.json();}).then(function(data){
+            var r = (data.data||[]).find(function(x){return x.id===id;});
+            if(!r) return;
+            document.getElementById('faqEditId').value = id;
+            document.getElementById('faqQuestion').value = r.question||'';
+            document.getElementById('faqAnswer').value = r.answer||'';
+            document.getElementById('faqOrder').value = r.display_order||0;
+            document.getElementById('faqFormTitle').textContent = 'Edit FAQ Item';
+            document.getElementById('faqSubmitBtn').textContent = 'Save Changes';
+            document.getElementById('faqCancelBtn').style.display = '';
+            document.getElementById('faqFormTitle').scrollIntoView({behavior:'smooth'});
+          });
+      }
+      document.getElementById('faqCancelBtn').onclick = function(){
+        document.getElementById('faqForm').reset();
+        document.getElementById('faqEditId').value = '';
+        document.getElementById('faqFormTitle').textContent = 'Add FAQ Item';
+        document.getElementById('faqSubmitBtn').textContent = 'Add FAQ';
+        document.getElementById('faqCancelBtn').style.display = 'none';
+      };
+      document.getElementById('faqForm').onsubmit = function(e){
+        e.preventDefault();
+        var id = document.getElementById('faqEditId').value;
+        var body = {
+          question: document.getElementById('faqQuestion').value.trim(),
+          answer: document.getElementById('faqAnswer').value.trim(),
+          display_order: parseInt(document.getElementById('faqOrder').value)||0
+        };
+        var url = id ? API+'/admin/faq/'+id : API+'/admin/faq';
+        var method = id ? 'PUT' : 'POST';
+        fetch(url, { method:method, headers:{...authHeaders(),'Content-Type':'application/json'}, body:JSON.stringify(body) })
+          .then(function(r){return r.json();}).then(function(d){
+            if(!d.ok){ alert(d.error||'Error'); return; }
+            document.getElementById('faqForm').reset();
+            document.getElementById('faqEditId').value = '';
+            document.getElementById('faqFormTitle').textContent = 'Add FAQ Item';
+            document.getElementById('faqSubmitBtn').textContent = 'Add FAQ';
+            document.getElementById('faqCancelBtn').style.display = 'none';
+            loadFaq();
+          });
+      };
+
+      // ── TESTIMONIALS ──
+      function loadTestimonials() {
+        hideErr('testimonials');
+        fetch(API + '/admin/testimonials', { headers: authHeaders() })
+          .then(function(r){ if(r.status===401){showLogin();return null;} return r.json(); })
+          .then(function(data){
+            if(!data) return;
+            if(!data.ok){ showErr('testimonials', data.error||'Failed'); return; }
+            var rows = data.data||[];
+            document.getElementById('testimonialsEmpty').style.display = rows.length ? 'none' : 'block';
+            var tb = document.getElementById('testimonialsBody'); tb.innerHTML = '';
+            rows.forEach(function(r, i){
+              var tr = document.createElement('tr');
+              tr.innerHTML = '<td class="muted">'+(i+1)+'</td><td style="max-width:320px;font-style:italic;font-size:0.85rem">'+escapeHtml((r.quote||'').slice(0,80))+'…</td><td><strong>'+escapeHtml(r.author_name||'')+'</strong><br><span class="muted" style="font-size:0.78rem">'+escapeHtml(r.author_meta||'')+'</span></td>' +
+                '<td style="color:#f5a623;letter-spacing:1px">'+starRating(r.rating||5)+'</td><td>'+activeBadge(r.active)+'</td>' +
+                '<td><button onclick="editTestimonial('+r.id+')" style="padding:4px 10px;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">Edit</button>' +
+                '<button onclick="toggleItem('testimonials','+r.id+','+r.active+')" style="padding:4px 10px;background:rgba(30,111,171,0.1);color:var(--sage-dark);border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">'+(r.active?'Hide':'Show')+'</button>' +
+                '<button onclick="deleteItem('testimonials','+r.id+',loadTestimonials)" style="padding:4px 10px;background:rgba(207,34,46,0.1);color:#c0392b;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem">Delete</button></td>';
+              tb.appendChild(tr);
+            });
+          }).catch(function(){ showErr('testimonials','Network error'); });
+      }
+      function editTestimonial(id) {
+        fetch(API + '/admin/testimonials', { headers: authHeaders() })
+          .then(function(r){return r.json();}).then(function(data){
+            var r = (data.data||[]).find(function(x){return x.id===id;});
+            if(!r) return;
+            document.getElementById('testimonialEditId').value = id;
+            document.getElementById('testimonialQuote').value = r.quote||'';
+            document.getElementById('testimonialAuthor').value = r.author_name||'';
+            document.getElementById('testimonialMeta').value = r.author_meta||'';
+            document.getElementById('testimonialRating').value = r.rating||5;
+            document.getElementById('testimonialOrder').value = r.display_order||0;
+            document.getElementById('testimonialFormTitle').textContent = 'Edit Testimonial';
+            document.getElementById('testimonialSubmitBtn').textContent = 'Save Changes';
+            document.getElementById('testimonialCancelBtn').style.display = '';
+            document.getElementById('testimonialFormTitle').scrollIntoView({behavior:'smooth'});
+          });
+      }
+      document.getElementById('testimonialCancelBtn').onclick = function(){
+        document.getElementById('testimonialForm').reset();
+        document.getElementById('testimonialEditId').value = '';
+        document.getElementById('testimonialFormTitle').textContent = 'Add Testimonial';
+        document.getElementById('testimonialSubmitBtn').textContent = 'Add Testimonial';
+        document.getElementById('testimonialCancelBtn').style.display = 'none';
+      };
+      document.getElementById('testimonialForm').onsubmit = function(e){
+        e.preventDefault();
+        var id = document.getElementById('testimonialEditId').value;
+        var body = {
+          quote: document.getElementById('testimonialQuote').value.trim(),
+          author_name: document.getElementById('testimonialAuthor').value.trim(),
+          author_meta: document.getElementById('testimonialMeta').value.trim(),
+          rating: parseInt(document.getElementById('testimonialRating').value)||5,
+          display_order: parseInt(document.getElementById('testimonialOrder').value)||0
+        };
+        var url = id ? API+'/admin/testimonials/'+id : API+'/admin/testimonials';
+        var method = id ? 'PUT' : 'POST';
+        fetch(url, { method:method, headers:{...authHeaders(),'Content-Type':'application/json'}, body:JSON.stringify(body) })
+          .then(function(r){return r.json();}).then(function(d){
+            if(!d.ok){ alert(d.error||'Error'); return; }
+            document.getElementById('testimonialForm').reset();
+            document.getElementById('testimonialEditId').value = '';
+            document.getElementById('testimonialFormTitle').textContent = 'Add Testimonial';
+            document.getElementById('testimonialSubmitBtn').textContent = 'Add Testimonial';
+            document.getElementById('testimonialCancelBtn').style.display = 'none';
+            loadTestimonials();
+          });
+      };
+
+      // ── REVIEWS ──
+      function loadReviews() {
+        hideErr('reviews');
+        fetch(API + '/admin/reviews', { headers: authHeaders() })
+          .then(function(r){ if(r.status===401){showLogin();return null;} return r.json(); })
+          .then(function(data){
+            if(!data) return;
+            if(!data.ok){ showErr('reviews', data.error||'Failed'); return; }
+            var rows = data.data||[];
+            document.getElementById('reviewsEmpty').style.display = rows.length ? 'none' : 'block';
+            var tb = document.getElementById('reviewsBody'); tb.innerHTML = '';
+            rows.forEach(function(r){
+              var tr = document.createElement('tr');
+              tr.innerHTML = '<td class="muted" style="white-space:nowrap">'+escapeHtml((r.created_at||'').slice(0,10))+'</td>' +
+                '<td>'+escapeHtml(r.patient_name||'Anonymous')+'</td>' +
+                '<td>'+escapeHtml(r.specialist_name||'')+'</td>' +
+                '<td style="color:#f5a623">'+starRating(r.rating||5)+'</td>' +
+                '<td style="max-width:300px;font-size:0.83rem">'+escapeHtml(r.comment||'—')+'</td>' +
+                '<td><button onclick="deleteItem('reviews','+r.id+',loadReviews)" style="padding:4px 10px;background:rgba(207,34,46,0.1);color:#c0392b;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem">Delete</button></td>';
+              tb.appendChild(tr);
+            });
+          }).catch(function(){ showErr('reviews','Network error'); });
+      }
+
+      // ── SITE SETTINGS ──
+      var SETTINGS_CONFIG = [
+        { key:'site_name', label:'Site Name', type:'text' },
+        { key:'tagline', label:'Tagline', type:'text' },
+        { key:'hero_headline', label:'Hero Headline (Homepage)', type:'text' },
+        { key:'hero_subtext', label:'Hero Subtext (Homepage)', type:'textarea' },
+        { key:'contact_email', label:'Contact Email', type:'email' },
+        { key:'contact_phone', label:'Contact Phone', type:'text' },
+        { key:'whatsapp_number', label:'WhatsApp Number (digits only)', type:'text' },
+        { key:'instagram_url', label:'Instagram URL', type:'url' },
+        { key:'linkedin_url', label:'LinkedIn URL', type:'url' },
+        { key:'pricing_note', label:'Pricing Page Note', type:'textarea' },
+        { key:'booking_note', label:'Booking Confirmation Note', type:'textarea' },
+        { key:'footer_copyright', label:'Footer Copyright Text', type:'text' },
+        { key:'announcement_bar', label:'Announcement Bar Text (leave blank to disable)', type:'textarea' },
+        { key:'announcement_bar_active', label:'Announcement Bar Enabled', type:'toggle' },
+      ];
+      function loadSettings() {
+        hideErr('settings');
+        fetch(API + '/admin/settings', { headers: authHeaders() })
+          .then(function(r){ if(r.status===401){showLogin();return null;} return r.json(); })
+          .then(function(data){
+            if(!data) return;
+            if(!data.ok){ showErr('settings', data.error||'Failed'); return; }
+            var rows = data.data||[];
+            var vals = {};
+            rows.forEach(function(r){ vals[r.key] = r.value; });
+            var wrap = document.getElementById('settingsFormWrap');
+            var html = '<form id="settingsForm"><div class="settings-grid">';
+            SETTINGS_CONFIG.forEach(function(cfg){
+              var val = vals[cfg.key] != null ? vals[cfg.key] : '';
+              var input = '';
+              if(cfg.type === 'textarea'){
+                input = '<textarea name="'+cfg.key+'" rows="3" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;font-family:inherit;font-size:0.87rem;resize:vertical;">'+escapeHtml(val)+'</textarea>';
+              } else if(cfg.type === 'toggle'){
+                input = '<select name="'+cfg.key+'" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;font-family:inherit;">' +
+                  '<option value="1"'+(val==='1'?' selected':'')+'>Enabled</option>' +
+                  '<option value="0"'+(val!=='1'?' selected':'')+'>Disabled</option>' +
+                  '</select>';
+              } else {
+                input = '<input type="'+cfg.type+'" name="'+cfg.key+'" value="'+escapeHtml(val)+'" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;">';
+              }
+              html += '<div><label class="field-label">'+escapeHtml(cfg.label)+'</label>'+input+'</div>';
+            });
+            html += '</div><div style="margin-top:20px;"><button type="submit" class="form-btn-primary" style="min-width:180px;">Save All Settings</button></div></form>';
+            wrap.innerHTML = html;
+            document.getElementById('settingsForm').onsubmit = function(ev){
+              ev.preventDefault();
+              var btn = this.querySelector('button[type=submit]');
+              btn.textContent = 'Saving…'; btn.disabled = true;
+              var formData = new FormData(this);
+              var updates = {};
+              formData.forEach(function(v,k){ updates[k] = v; });
+              fetch(API + '/admin/settings', {
+                method:'POST',
+                headers:{...authHeaders(),'Content-Type':'application/json'},
+                body: JSON.stringify(updates)
+              }).then(function(r){return r.json();}).then(function(d){
+                btn.textContent = d.ok ? '✓ Saved!' : 'Error';
+                btn.style.background = d.ok ? '#1a7f37' : '#c0392b';
+                setTimeout(function(){ btn.textContent = 'Save All Settings'; btn.disabled = false; btn.style.background = ''; }, 2000);
+                if(!d.ok) alert(d.error||'Error saving settings');
+              }).catch(function(){ btn.textContent = 'Network error'; btn.disabled = false; });
+            };
+          }).catch(function(){ showErr('settings','Network error'); });
+      }
+
+      // ── SHARED helpers: toggle active + delete ──
+      function toggleItem(resource, id, currentActive) {
+        var active = currentActive ? 0 : 1;
+        fetch(API + '/admin/' + resource + '/' + id, {
+          method: 'PUT', headers: {...authHeaders(), 'Content-Type':'application/json'},
+          body: JSON.stringify({ active: active })
+        }).then(function(r){return r.json();}).then(function(d){
+          if(!d.ok){ alert(d.error||'Error'); return; }
+          var loaders = {services:loadServices,pricing:loadPricing,faq:loadFaq,testimonials:loadTestimonials};
+          if(loaders[resource]) loaders[resource]();
+        });
+      }
+      function deleteItem(resource, id, reloadFn) {
+        if(!confirm('Delete this item? This cannot be undone.')) return;
+        fetch(API + '/admin/' + resource + '/' + id, {
+          method: 'DELETE', headers: authHeaders()
+        }).then(function(r){return r.json();}).then(function(d){
+          if(!d.ok){ alert(d.error||'Error'); return; }
+          if(reloadFn) reloadFn();
+        });
+      }
+
+      // ── Enhanced Specialists: full edit modal ──
+      function openSpecialistEdit(id) {
+        fetch(API + '/specialists', { headers: authHeaders() })
+          .then(function(r){return r.json();}).then(function(data){
+            var r = (data.data||[]).find(function(x){return x.id===id;});
+            if(!r){
+              // Fallback: load from admin specialists list
+              alert('Loading specialist data...');
+              return;
+            }
+            var modal = document.getElementById('specialistEditModal');
+            if(!modal){ buildSpecialistModal(); modal = document.getElementById('specialistEditModal'); }
+            document.getElementById('seId').value = id;
+            document.getElementById('seName').value = r.name||'';
+            document.getElementById('seTitle').value = r.title||'';
+            document.getElementById('seQuals').value = r.qualifications||'';
+            document.getElementById('seBio').value = r.bio||'';
+            document.getElementById('seExp').value = r.experience_years||0;
+            document.getElementById('seLangs').value = r.languages||'English';
+            document.getElementById('sePhoto').value = r.photo_url||'';
+            document.getElementById('seAvail').checked = r.available !== 0;
+            document.getElementById('seOrder').value = r.display_order||0;
+            modal.style.display = 'flex';
+          });
+      }
+      function buildSpecialistModal() {
+        var m = document.createElement('div');
+        m.id = 'specialistEditModal';
+        m.style.cssText = 'position:fixed;inset:0;background:rgba(10,22,40,0.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;';
+        m.innerHTML = '<div style="background:var(--white);border-radius:20px;padding:32px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;position:relative;">' +
+          '<button onclick="document.getElementById('specialistEditModal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text-light);">×</button>' +
+          '<h3 style="font-size:1.2rem;font-weight:700;margin-bottom:20px;color:var(--dark);">Edit Specialist</h3>' +
+          '<form id="specialistEditForm">' +
+          '<input type="hidden" id="seId">' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">' +
+          '<div><label class="field-label">Full Name *</label><input type="text" id="seName" required style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
+          '<div><label class="field-label">Title / Role *</label><input type="text" id="seTitle" placeholder="Psychiatrist" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
+          '</div>' +
+          '<div style="margin-bottom:12px;"><label class="field-label">Qualifications</label><input type="text" id="seQuals" placeholder="MBBS, MD (Psychiatry)" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
+          '<div style="margin-bottom:12px;"><label class="field-label">Bio</label><textarea id="seBio" rows="4" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;resize:vertical;"></textarea></div>' +
+          '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;">' +
+          '<div><label class="field-label">Experience (years)</label><input type="number" id="seExp" value="0" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
+          '<div><label class="field-label">Languages</label><input type="text" id="seLangs" placeholder="English, Hindi" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
+          '<div><label class="field-label">Display Order</label><input type="number" id="seOrder" value="0" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
+          '</div>' +
+          '<div style="margin-bottom:16px;"><label class="field-label">Photo URL</label><input type="url" id="sePhoto" placeholder="https://..." style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
+          '<label style="display:flex;align-items:center;gap:8px;margin-bottom:20px;cursor:pointer;"><input type="checkbox" id="seAvail" checked> Available for bookings</label>' +
+          '<div style="display:flex;gap:12px;">' +
+          '<button type="submit" class="form-btn-primary">Save Changes</button>' +
+          '<button type="button" onclick="document.getElementById('specialistEditModal').style.display='none'" class="form-btn-cancel">Cancel</button>' +
+          '</div></form></div>';
+        document.body.appendChild(m);
+        document.getElementById('specialistEditForm').onsubmit = function(e){
+          e.preventDefault();
+          var id = document.getElementById('seId').value;
+          var body = {
+            name: document.getElementById('seName').value.trim(),
+            title: document.getElementById('seTitle').value.trim(),
+            qualifications: document.getElementById('seQuals').value.trim(),
+            bio: document.getElementById('seBio').value.trim(),
+            experience_years: parseInt(document.getElementById('seExp').value)||0,
+            languages: document.getElementById('seLangs').value.trim(),
+            photo_url: document.getElementById('sePhoto').value.trim(),
+            available: document.getElementById('seAvail').checked ? 1 : 0,
+            display_order: parseInt(document.getElementById('seOrder').value)||0
+          };
+          fetch(API + '/admin/specialists/' + id, {
+            method:'PUT', headers:{...authHeaders(),'Content-Type':'application/json'}, body:JSON.stringify(body)
+          }).then(function(r){return r.json();}).then(function(d){
+            if(!d.ok){ alert(d.error||'Error'); return; }
+            document.getElementById('specialistEditModal').style.display = 'none';
+            loadSpecialists();
+          });
+        };
+      }
+
       function escapeHtml(s) {
         if (s == null) return '';
         var div = document.createElement('div');
@@ -1129,6 +1782,12 @@
           else if (which === 'blog') loadPosts();
           else if (which === 'analytics') loadAnalytics();
           else if (which === 'patients') loadPatients();
+          else if (which === 'services') loadServices();
+          else if (which === 'pricing') loadPricing();
+          else if (which === 'faq') loadFaq();
+          else if (which === 'testimonials') loadTestimonials();
+          else if (which === 'reviews') loadReviews();
+          else if (which === 'settings') loadSettings();
           else if (which === 'slots') loadSlots();
         });
       });

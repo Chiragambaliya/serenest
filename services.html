@@ -173,93 +173,10 @@ footer{background:var(--dark);padding:64px 60px 36px;}
 
 <!-- SERVICES -->
 <section class="section-services">
-  <!-- Psychiatry -->
-  <div class="service-card reveal">
-    <div class="service-content">
-      <div class="service-icon-wrap">🧬</div>
-      <h2>Psychiatry Consultation</h2>
-      <p>Our psychiatrists provide comprehensive psychiatric evaluation, diagnosis, and management. Whether you're seeking help for the first time or continuing ongoing care, you'll receive structured, evidence-based treatment.</p>
-      <ul class="service-features">
-        <li>Full psychiatric assessment and diagnosis</li>
-        <li>Personalised treatment plan development</li>
-        <li>Medication management and review</li>
-        <li>Digital prescriptions (where applicable)</li>
-        <li>Follow-up and progress monitoring</li>
-        <li>Crisis support and referral</li>
-      </ul>
-      <a href="book.html" class="btn-primary">Book Psychiatry Session →</a>
-    </div>
-    <div class="service-visual">
-      <div class="visual-pattern"></div>
-      <span>🧬</span>
-    </div>
+  <div id="servicesLoading" style="text-align:center;padding:60px 0;color:var(--text-light);">
+    <div style="display:inline-block;width:40px;height:40px;border:3px solid rgba(30,111,171,0.2);border-top-color:#1E6FAB;border-radius:50%;animation:spin 0.8s linear infinite;"></div>
   </div>
-
-  <!-- Psychology / Therapy -->
-  <div class="service-card reveal">
-    <div class="service-content">
-      <div class="service-icon-wrap">💬</div>
-      <h2>Therapy & Counselling</h2>
-      <p>Our clinical psychologists and therapists provide evidence-based psychological interventions. From CBT to talk therapy, sessions are tailored to your individual needs and goals.</p>
-      <ul class="service-features">
-        <li>Cognitive Behavioural Therapy (CBT)</li>
-        <li>Mindfulness-based therapies</li>
-        <li>Trauma-focused therapy</li>
-        <li>Relationship and family counselling</li>
-        <li>Grief and loss support</li>
-        <li>Career and life stress counselling</li>
-      </ul>
-      <a href="book.html" class="btn-primary">Book Therapy Session →</a>
-    </div>
-    <div class="service-visual" style="background:linear-gradient(135deg,var(--teal),#3d6e6f)">
-      <div class="visual-pattern"></div>
-      <span>💬</span>
-    </div>
-  </div>
-
-  <!-- Deaddiction -->
-  <div class="service-card reveal">
-    <div class="service-content">
-      <div class="service-icon-wrap">🌿</div>
-      <h2>Deaddiction & Recovery</h2>
-      <p>Specialised support for those struggling with alcohol, substance use, or behavioural addictions. Our approach combines psychiatric care, motivational counselling, and relapse prevention planning.</p>
-      <ul class="service-features">
-        <li>Alcohol and substance use assessment</li>
-        <li>Structured detoxification support</li>
-        <li>Motivation enhancement therapy</li>
-        <li>Relapse prevention planning</li>
-        <li>Family psychoeducation</li>
-        <li>Long-term recovery monitoring</li>
-      </ul>
-      <a href="book.html" class="btn-primary">Book Deaddiction Consultation →</a>
-    </div>
-    <div class="service-visual" style="background:linear-gradient(135deg,#5a7a54,#5296C9)">
-      <div class="visual-pattern"></div>
-      <span>🌿</span>
-    </div>
-  </div>
-
-  <!-- Child & Adolescent -->
-  <div class="service-card reveal">
-    <div class="service-content">
-      <div class="service-icon-wrap">🌱</div>
-      <h2>Child & Adolescent Mental Health</h2>
-      <p>Specialised mental health support for children and teenagers. Our specialists are trained to work with young people and their families through developmentally appropriate approaches.</p>
-      <ul class="service-features">
-        <li>ADHD assessment and management</li>
-        <li>Academic stress and performance anxiety</li>
-        <li>Behavioural concerns and conduct issues</li>
-        <li>Autism spectrum support</li>
-        <li>Adolescent depression and anxiety</li>
-        <li>Family and parent counselling</li>
-      </ul>
-      <a href="book.html" class="btn-primary">Book Child Psychiatry Session →</a>
-    </div>
-    <div class="service-visual" style="background:linear-gradient(135deg,#8bb8b9,#5b8a8b)">
-      <div class="visual-pattern"></div>
-      <span>🌱</span>
-    </div>
-  </div>
+  <div id="servicesDynamic"></div>
 </section>
 
 <!-- COMPARISON -->
@@ -396,5 +313,37 @@ footer{background:var(--dark);padding:64px 60px 36px;}
 <script src="scripts/whatsapp-float.js"></script>
 <script src="scripts/visit-notify.js"></script>
 <script src="premium.js"></script>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<script src="config.js"></script>
+<script>
+(function(){
+  var wrap = document.getElementById('servicesDynamic');
+  var loading = document.getElementById('servicesLoading');
+  function escHtml(s){ if(!s)return''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  fetch((window.API_BASE||'')+'/api/services')
+    .then(function(r){return r.json();})
+    .then(function(d){
+      loading.style.display = 'none';
+      if(!d||!d.ok||!d.data||!d.data.length){ wrap.innerHTML='<p style="text-align:center;color:var(--text-light)">Services coming soon.</p>'; return; }
+      wrap.innerHTML = d.data.map(function(s, i){
+        var feats = (s.features||'').split('|').filter(Boolean).map(function(f){ return '<li>'+escHtml(f.trim())+'</li>'; }).join('');
+        var flip = i%2===1 ? 'style="flex-direction:row-reverse"' : '';
+        return '<div class="service-card reveal" '+flip+'>' +
+          '<div class="service-content">' +
+            '<div class="service-icon-wrap">'+escHtml(s.icon||'🧬')+'</div>' +
+            '<h2>'+escHtml(s.title)+'</h2>' +
+            '<p>'+escHtml(s.description)+'</p>' +
+            '<ul class="service-features">'+feats+'</ul>' +
+            '<a href="book.html" class="btn-primary">Book a session →</a>' +
+          '</div>' +
+          '<div class="service-visual" style="background:linear-gradient(135deg,var(--sage),var(--teal))"></div>' +
+          '</div>';
+      }).join('');
+      var obs = new IntersectionObserver(function(entries){ entries.forEach(function(e){ if(e.isIntersecting) e.target.classList.add('visible'); }); },{threshold:0.1});
+      document.querySelectorAll('#servicesDynamic .reveal').forEach(function(el){ obs.observe(el); });
+    })
+    .catch(function(){ loading.innerHTML='<p style="color:var(--text-light);text-align:center">Could not load services.</p>'; });
+})();
+
 </body>
 </html>
