@@ -204,7 +204,7 @@ function sendBookingEmails(booking) {
   sendWhatsAppMessage(adminMsg);
 
   const html = '<!DOCTYPE html><html><body style="font-family:sans-serif;line-height:1.6;color:#333;max-width:560px;margin:0 auto;padding:24px;">' +
-    '<h2 style="color:#4A6B50;">Booking received — Serenest</h2>' +
+    '<h2 style="color:#1E6FAB;">Booking received — Serenest</h2>' +
     '<p>Hi ' + escapeHtml(booking.first_name) + ',</p>' +
     '<p>We have received your booking request.</p>' +
     '<p><strong>Details:</strong></p>' +
@@ -824,10 +824,10 @@ app.post('/api/forgot-password', async (req, res) => {
 
     const resetUrl = `${APP_BASE_URL}/reset-password.html?token=${token}`;
     const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;line-height:1.6;color:#333;max-width:560px;margin:0 auto;padding:24px;">
-      <h2 style="color:#4A6B50;">Reset your password — Serenest</h2>
+      <h2 style="color:#1E6FAB;">Reset your password — Serenest</h2>
       <p>Hi ${escapeHtml(patient.full_name || 'there')},</p>
       <p>Click below to reset your password. This link expires in 1 hour.</p>
-      <p><a href="${resetUrl}" style="display:inline-block;background:#4A6B50;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;">Reset Password</a></p>
+      <p><a href="${resetUrl}" style="display:inline-block;background:#1E6FAB;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;">Reset Password</a></p>
       <p>If you didn't request this, you can safely ignore this email.</p>
       <p>— Serenest</p></body></html>`;
     sendResendEmail(email, 'Reset your Serenest password', html);
@@ -882,10 +882,10 @@ app.patch('/api/admin/bookings/:id/status', requireAdmin, async (req, res) => {
     if (status === 'confirmed' && booking.email) {
       const videoLink = booking.video_link || (process.env.BOOKING_VIDEO_LINK || '');
       const videoHtml = videoLink
-        ? `<p>Join your session: <a href="${videoLink}" style="color:#4A6B50;">${videoLink}</a></p>`
+        ? `<p>Join your session: <a href="${videoLink}" style="color:#1E6FAB;">${videoLink}</a></p>`
         : '<p>Your session link will be shared shortly.</p>';
       const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;line-height:1.6;color:#333;max-width:560px;margin:0 auto;padding:24px;">
-        <h2 style="color:#4A6B50;">Your session is confirmed — Serenest</h2>
+        <h2 style="color:#1E6FAB;">Your session is confirmed — Serenest</h2>
         <p>Hi ${escapeHtml(booking.first_name || 'there')},</p>
         <p>Great news — your session with <strong>${escapeHtml(booking.specialist || '')}</strong> on <strong>${escapeHtml(booking.preferred_date || '')}</strong> at <strong>${escapeHtml(booking.time_slot || '')}</strong> has been confirmed.</p>
         ${videoHtml}
@@ -915,10 +915,10 @@ app.post('/api/admin/bookings/:id/confirm', requireAdmin, async (req, res) => {
     if (booking.email) {
       const finalLink = booking.video_link || (process.env.BOOKING_VIDEO_LINK || '');
       const videoHtml = finalLink
-        ? `<p><a href="${finalLink}" style="display:inline-block;background:#4A6B50;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;">Join Session</a></p><p>Or copy this link: <a href="${finalLink}">${finalLink}</a></p>`
+        ? `<p><a href="${finalLink}" style="display:inline-block;background:#1E6FAB;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;">Join Session</a></p><p>Or copy this link: <a href="${finalLink}">${finalLink}</a></p>`
         : '<p>Your session link will be shared shortly before the session.</p>';
       const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;line-height:1.6;color:#333;max-width:560px;margin:0 auto;padding:24px;">
-        <h2 style="color:#4A6B50;">Session confirmed — here's your link</h2>
+        <h2 style="color:#1E6FAB;">Session confirmed — here's your link</h2>
         <p>Hi ${escapeHtml(booking.first_name || 'there')},</p>
         <p>Your session with <strong>${escapeHtml(booking.specialist || '')}</strong> on <strong>${escapeHtml(booking.preferred_date || '')}</strong> at <strong>${escapeHtml(booking.time_slot || '')}</strong> is confirmed.</p>
         ${videoHtml}
@@ -982,11 +982,11 @@ app.post('/api/admin/bookings/:id/room', requireAdmin, (req, res) => {
 
     if (updated.email) {
       const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;line-height:1.6;color:#333;max-width:560px;margin:0 auto;padding:24px;">
-        <h2 style="color:#4A6B50;">Your session is ready \u2014 Serenest</h2>
+        <h2 style="color:#1E6FAB;">Your session is ready \u2014 Serenest</h2>
         <p>Hi ${escapeHtml(updated.first_name || 'there')},</p>
         <p>Your session with <strong>${escapeHtml(updated.specialist || '')}</strong> on <strong>${escapeHtml(updated.preferred_date || '')}</strong> at <strong>${escapeHtml(updated.time_slot || '')}</strong> is confirmed.</p>
         <p>
-          <a href="${sessionUrl}" style="display:inline-block;background:#4A6B50;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;">Join your video session</a>
+          <a href="${sessionUrl}" style="display:inline-block;background:#1E6FAB;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;">Join your video session</a>
         </p>
         <p style="font-size:0.85rem;color:#666;">Or copy this link: <a href="${sessionUrl}">${sessionUrl}</a></p>
         <p>Please be ready a few minutes before your session time. Allow camera and microphone access when prompted.</p>

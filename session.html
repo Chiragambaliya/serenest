@@ -8,40 +8,40 @@
 <script src="config.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-html,body{height:100%;overflow:hidden;background:#0f1a12;}
+html,body{height:100%;overflow:hidden;background:#091422;}
 
 /* ── Top bar ── */
 .session-bar{
   position:fixed;top:0;left:0;right:0;z-index:100;
   height:52px;
   background:rgba(15,26,18,0.96);
-  border-bottom:1px solid rgba(125,155,118,0.2);
+  border-bottom:1px solid rgba(30,111,171,0.2);
   display:flex;align-items:center;justify-content:space-between;
   padding:0 20px;gap:12px;
 }
 .session-bar .logo{
-  font-family:'Cormorant Garamond',serif;
+  font-family:'Syne',sans-serif;
   font-size:1.25rem;font-weight:600;
-  color:#c8dbc0;text-decoration:none;white-space:nowrap;
+  color:#C8DDEF;text-decoration:none;white-space:nowrap;
 }
-.session-bar .logo span{color:#7d9b76;}
+.session-bar .logo span{color:#5296C9;}
 .session-info{
   display:flex;align-items:center;gap:10px;
   font-size:0.8rem;color:rgba(200,219,192,0.7);
   overflow:hidden;
 }
 .session-info .pill{
-  background:rgba(125,155,118,0.18);
-  border:1px solid rgba(125,155,118,0.3);
+  background:rgba(30,111,171,0.18);
+  border:1px solid rgba(30,111,171,0.3);
   color:#a8c9a0;
   border-radius:40px;padding:3px 11px;
   font-size:0.72rem;font-weight:600;
   white-space:nowrap;
 }
 .session-info .pill.live{
-  background:rgba(46,204,113,0.15);
-  border-color:rgba(46,204,113,0.3);
-  color:#2ecc71;
+  background:rgba(56,189,248,0.15);
+  border-color:rgba(56,189,248,0.3);
+  color:#38bdf8;
   animation:pulse 2s ease-in-out infinite;
 }
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.6}}
@@ -60,19 +60,19 @@ html,body{height:100%;overflow:hidden;background:#0f1a12;}
 #callFrame{
   position:fixed;top:52px;left:0;right:0;bottom:0;
   width:100%;height:calc(100% - 52px);
-  border:none;display:block;background:#0f1a12;
+  border:none;display:block;background:#091422;
 }
 
 /* ── Pre-join screen ── */
 #prejoin{
   position:fixed;top:52px;left:0;right:0;bottom:0;
   display:flex;align-items:center;justify-content:center;
-  background:#0f1a12;z-index:50;
+  background:#091422;z-index:50;
   padding:24px;
 }
 .prejoin-card{
-  background:#162319;
-  border:1.5px solid rgba(125,155,118,0.25);
+  background:#0D1B2E;
+  border:1.5px solid rgba(30,111,171,0.25);
   border-radius:20px;
   padding:40px 36px;
   max-width:400px;width:100%;
@@ -80,14 +80,14 @@ html,body{height:100%;overflow:hidden;background:#0f1a12;}
 }
 .prejoin-icon{
   width:72px;height:72px;border-radius:50%;
-  background:rgba(125,155,118,0.15);
+  background:rgba(30,111,171,0.15);
   display:flex;align-items:center;justify-content:center;
   margin:0 auto 20px;font-size:2rem;
 }
 .prejoin-card h1{
-  font-family:'Cormorant Garamond',serif;
+  font-family:'Syne',sans-serif;
   font-size:1.6rem;font-weight:400;
-  color:#c8dbc0;margin-bottom:8px;
+  color:#C8DDEF;margin-bottom:8px;
 }
 .prejoin-card p{font-size:0.88rem;color:rgba(200,219,192,0.6);margin-bottom:28px;line-height:1.6;}
 .prejoin-card label{
@@ -97,17 +97,17 @@ html,body{height:100%;overflow:hidden;background:#0f1a12;}
 }
 .prejoin-card input{
   width:100%;padding:13px 16px;
-  background:#1e2f23;
-  border:1.5px solid rgba(125,155,118,0.25);
+  background:#0e1e33;
+  border:1.5px solid rgba(30,111,171,0.25);
   border-radius:12px;
-  color:#c8dbc0;font-family:inherit;font-size:0.95rem;
+  color:#C8DDEF;font-family:inherit;font-size:0.95rem;
   margin-bottom:20px;
   outline:none;transition:border-color .2s;
 }
-.prejoin-card input:focus{border-color:#7d9b76;}
+.prejoin-card input:focus{border-color:#5296C9;}
 .btn-join{
   width:100%;padding:14px;
-  background:#4A6B50;color:#fff;
+  background:#1E6FAB;color:#fff;
   border:none;border-radius:12px;
   font-family:inherit;font-size:0.95rem;font-weight:600;
   cursor:pointer;transition:background .2s;
@@ -118,24 +118,24 @@ html,body{height:100%;overflow:hidden;background:#0f1a12;}
   margin-top:16px;font-size:0.78rem;
   color:rgba(200,219,192,0.4);line-height:1.5;
 }
-.prejoin-note a{color:#7d9b76;text-decoration:none;}
+.prejoin-note a{color:#5296C9;text-decoration:none;}
 
 /* ── Post-call screen ── */
 #postcall{
   position:fixed;top:52px;left:0;right:0;bottom:0;
   display:none;align-items:center;justify-content:center;
-  background:#0f1a12;z-index:60;padding:24px;
+  background:#091422;z-index:60;padding:24px;
 }
 .postcall-card{
-  background:#162319;border:1.5px solid rgba(125,155,118,0.25);
+  background:#0D1B2E;border:1.5px solid rgba(30,111,171,0.25);
   border-radius:20px;padding:40px 36px;max-width:380px;width:100%;text-align:center;
 }
 .postcall-card .check{font-size:3rem;margin-bottom:16px;}
-.postcall-card h2{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:400;color:#c8dbc0;margin-bottom:10px;}
+.postcall-card h2{font-family:'Syne',sans-serif;font-size:1.5rem;font-weight:400;color:#C8DDEF;margin-bottom:10px;}
 .postcall-card p{font-size:0.88rem;color:rgba(200,219,192,0.6);margin-bottom:24px;line-height:1.6;}
 .postcall-card a{
   display:inline-block;padding:12px 28px;
-  background:#4A6B50;color:#fff;border-radius:12px;
+  background:#1E6FAB;color:#fff;border-radius:12px;
   text-decoration:none;font-weight:600;font-size:0.9rem;
 }
 .postcall-card a:hover{background:#3a5540;}
@@ -144,13 +144,13 @@ html,body{height:100%;overflow:hidden;background:#0f1a12;}
 #loading{
   position:fixed;top:52px;left:0;right:0;bottom:0;
   display:none;align-items:center;justify-content:center;
-  background:#0f1a12;z-index:40;
+  background:#091422;z-index:40;
   color:rgba(200,219,192,0.5);font-size:0.9rem;
 }
 .spinner{
   width:36px;height:36px;border-radius:50%;
-  border:3px solid rgba(125,155,118,0.15);
-  border-top-color:#7d9b76;
+  border:3px solid rgba(30,111,171,0.15);
+  border-top-color:#5296C9;
   animation:spin .7s linear infinite;margin:0 auto 16px;
 }
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -226,7 +226,7 @@ html,body{height:100%;overflow:hidden;background:#0f1a12;}
     document.getElementById('prejoin').innerHTML =
       '<div class="prejoin-card"><div class="prejoin-icon">❌</div><h1>Invalid session</h1>' +
       '<p>This session link is invalid or has expired. Please check your email for the correct link.</p>' +
-      '<a href="dashboard.html" style="color:#7d9b76;font-size:0.88rem;">Go to my bookings</a></div>';
+      '<a href="dashboard.html" style="color:#5296C9;font-size:0.88rem;">Go to my bookings</a></div>';
     return;
   }
 
