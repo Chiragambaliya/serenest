@@ -108,6 +108,15 @@ function initDb() {
       created_at TEXT DEFAULT (datetime('now'))
     );
 
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      patient_id INTEGER NOT NULL REFERENCES patients(id),
+      token TEXT NOT NULL UNIQUE,
+      expires_at TEXT NOT NULL,
+      used INTEGER DEFAULT 0,
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+
     CREATE TABLE IF NOT EXISTS otp_codes (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       phone TEXT NOT NULL,
@@ -150,6 +159,9 @@ function initDb() {
   try { db.exec('ALTER TABLE patients ADD COLUMN google_id TEXT'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
   try { db.exec('ALTER TABLE patients ADD COLUMN phone TEXT'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
   try { db.exec('ALTER TABLE patients ADD COLUMN avatar_url TEXT'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
+  try { db.exec('ALTER TABLE patients ADD COLUMN email_verified INTEGER DEFAULT 0'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
+  try { db.exec('ALTER TABLE bookings ADD COLUMN status TEXT DEFAULT \'pending\''); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
+  try { db.exec('ALTER TABLE bookings ADD COLUMN confirmed_at TEXT'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
   try { db.exec('ALTER TABLE bookings ADD COLUMN video_link TEXT'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
   try { db.exec('ALTER TABLE bookings ADD COLUMN patient_id INTEGER REFERENCES patients(id)'); } catch (e) { if (!e.message || !e.message.includes('already exists')) throw e; }
   console.log('Database initialized at', dbPath);

@@ -732,7 +732,7 @@ app.post('/api/login', (req, res) => {
 
 app.get('/api/me', requirePatient, (req, res) => {
   try {
-    const p = db.prepare('SELECT id, email, full_name, created_at FROM patients WHERE id = ?').get(req.patientId);
+    const p = db.prepare('SELECT id, email, full_name, phone, avatar_url, email_verified, created_at FROM patients WHERE id = ?').get(req.patientId);
     if (!p) return res.status(404).json({ ok: false, error: 'Not found' });
     res.json({ ok: true, patient: p });
   } catch (err) {
@@ -743,8 +743,9 @@ app.get('/api/me', requirePatient, (req, res) => {
 app.put('/api/me', requirePatient, (req, res) => {
   try {
     const full_name = trimStr(req.body.full_name).slice(0, 200);
-    db.prepare('UPDATE patients SET full_name = ? WHERE id = ?').run(full_name || null, req.patientId);
-    const p = db.prepare('SELECT id, email, full_name, created_at FROM patients WHERE id = ?').get(req.patientId);
+    const phone = trimStr(req.body.phone || '').slice(0, 20);
+    db.prepare('UPDATE patients SET full_name = ?, phone = ? WHERE id = ?').run(full_name || null, phone || null, req.patientId);
+    const p = db.prepare('SELECT id, email, full_name, phone, avatar_url, email_verified, created_at FROM patients WHERE id = ?').get(req.patientId);
     res.json({ ok: true, patient: p });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
@@ -782,9 +783,172 @@ app.post('/api/logout', requirePatient, (req, res) => {
 
 app.get('/api/me/bookings', requirePatient, (req, res) => {
   try {
-    const rows = db.prepare('SELECT id, specialist, session_type, preferred_date, time_slot, video_link, created_at FROM bookings WHERE patient_id = ? ORDER BY created_at DESC').all(req.patientId);
+    const rows = db.prepare('SELECT id, specialist, session_type, preferred_date, time_slot, video_link, status, confirmed_at, created_at FROM bookings WHERE patient_id = ? ORDER BY created_at DESC').all(req.patientId);
     res.json({ ok: true, data: rows });
   } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// Patient: cancel their own booking
+app.delete('/api/me/bookings/:id', requirePatient, (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isFinite(id)) return res.status(400).json({ ok: false, error: 'Invalid id' });
+    const booking = db.prepare('SELECT id, patient_id, status FROM bookings WHERE id = ? AND patient_id = ?').get(id, req.patientId);
+    if (!booking) return res.status(404).json({ ok: false, error: 'Booking not found.' });
+    if (booking.status === 'confirmed') return res.status(400).json({ ok: false, error: 'Confirmed bookings cannot be cancelled. Please contact us.' });
+    db.prepare('UPDATE bookings SET status = ? WHERE id = ?').run('cancelled', id);
+    res.json({ ok: true, message: 'Booking cancelled.' });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// ——— Forgot / Reset password ———
+
+app.post('/api/forgot-password', async (req, res) => {
+  try {
+    const email = (trimStr(req.body.email) || '').toLowerCase().slice(0, 320);
+    if (!email) return res.status(400).json({ ok: false, error: 'Email is required.' });
+    const patient = db.prepare('SELECT id, full_name FROM patients WHERE email = ?').get(email);
+    // Always respond ok to prevent email enumeration
+    if (!patient) return res.json({ ok: true, message: 'If an account exists, a reset link has been sent.' });
+
+    // Invalidate old tokens
+    db.prepare('UPDATE password_reset_tokens SET used = 1 WHERE patient_id = ? AND used = 0').run(patient.id);
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const expiresAt = new Date(Date.now() + 60 * 60 * 1000).toISOString(); // 1 hour
+    db.prepare('INSERT INTO password_reset_tokens (patient_id, token, expires_at) VALUES (?, ?, ?)').run(patient.id, token, expiresAt);
+
+    const resetUrl = `${APP_BASE_URL}/reset-password.html?token=${token}`;
+    const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;line-height:1.6;color:#333;max-width:560px;margin:0 auto;padding:24px;">
+      <h2 style="color:#4A6B50;">Reset your password — Serenest</h2>
+      <p>Hi ${escapeHtml(patient.full_name || 'there')},</p>
+      <p>Click below to reset your password. This link expires in 1 hour.</p>
+      <p><a href="${resetUrl}" style="display:inline-block;background:#4A6B50;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;">Reset Password</a></p>
+      <p>If you didn't request this, you can safely ignore this email.</p>
+      <p>— Serenest</p></body></html>`;
+    sendResendEmail(email, 'Reset your Serenest password', html);
+
+    res.json({ ok: true, message: 'If an account exists, a reset link has been sent.' });
+  } catch (err) {
+    console.error('Forgot password error:', err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+app.post('/api/reset-password', (req, res) => {
+  try {
+    const token = trimStr(req.body.token).slice(0, 100);
+    const newPassword = req.body.new_password;
+    if (!token || !newPassword || typeof newPassword !== 'string' || newPassword.length < 8) {
+      return res.status(400).json({ ok: false, error: 'Token and new password (min 8 characters) required.' });
+    }
+    const row = db.prepare(
+      `SELECT id, patient_id FROM password_reset_tokens WHERE token = ? AND used = 0 AND datetime(expires_at) > datetime('now')`
+    ).get(token);
+    if (!row) return res.status(400).json({ ok: false, error: 'Reset link is invalid or has expired. Please request a new one.' });
+
+    const password_hash = hashPassword(newPassword);
+    db.prepare('UPDATE patients SET password_hash = ? WHERE id = ?').run(password_hash, row.patient_id);
+    db.prepare('UPDATE password_reset_tokens SET used = 1 WHERE id = ?').run(row.id);
+    // Invalidate all sessions for security
+    db.prepare('DELETE FROM sessions WHERE patient_id = ?').run(row.patient_id);
+
+    res.json({ ok: true, message: 'Password updated. Please log in again.' });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// Admin: PATCH booking status (confirm / cancel / reschedule)
+app.patch('/api/admin/bookings/:id/status', requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isFinite(id)) return res.status(400).json({ ok: false, error: 'Invalid id' });
+    const status = trimStr(req.body.status).toLowerCase();
+    const allowed = ['pending', 'confirmed', 'cancelled', 'rescheduled'];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ ok: false, error: `Status must be one of: ${allowed.join(', ')}` });
+    }
+    const confirmedAt = status === 'confirmed' ? new Date().toISOString() : null;
+    const info = db.prepare('UPDATE bookings SET status = ?, confirmed_at = ? WHERE id = ?').run(status, confirmedAt, id);
+    if (info.changes === 0) return res.status(404).json({ ok: false, error: 'Booking not found' });
+    const booking = db.prepare('SELECT * FROM bookings WHERE id = ?').get(id);
+
+    // If confirming and patient has an email, send notification
+    if (status === 'confirmed' && booking.email) {
+      const videoLink = booking.video_link || (process.env.BOOKING_VIDEO_LINK || '');
+      const videoHtml = videoLink
+        ? `<p>Join your session: <a href="${videoLink}" style="color:#4A6B50;">${videoLink}</a></p>`
+        : '<p>Your session link will be shared shortly.</p>';
+      const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;line-height:1.6;color:#333;max-width:560px;margin:0 auto;padding:24px;">
+        <h2 style="color:#4A6B50;">Your session is confirmed — Serenest</h2>
+        <p>Hi ${escapeHtml(booking.first_name || 'there')},</p>
+        <p>Great news — your session with <strong>${escapeHtml(booking.specialist || '')}</strong> on <strong>${escapeHtml(booking.preferred_date || '')}</strong> at <strong>${escapeHtml(booking.time_slot || '')}</strong> has been confirmed.</p>
+        ${videoHtml}
+        <p>If you have any questions, reply to this email or contact us through the website.</p>
+        <p>— The Serenest Team</p></body></html>`;
+      sendResendEmail(booking.email, 'Your Serenest session is confirmed', html);
+    }
+
+    res.json({ ok: true, booking });
+  } catch (err) {
+    console.error('Admin patch booking status error:', err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// Admin: confirm booking + send video link email
+app.post('/api/admin/bookings/:id/confirm', requireAdmin, async (req, res) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+    if (!Number.isFinite(id)) return res.status(400).json({ ok: false, error: 'Invalid id' });
+    const video_link = trimStr(req.body.video_link || '').slice(0, 500);
+    const info = db.prepare('UPDATE bookings SET status = ?, confirmed_at = ?, video_link = ? WHERE id = ?')
+      .run('confirmed', new Date().toISOString(), video_link || null, id);
+    if (info.changes === 0) return res.status(404).json({ ok: false, error: 'Booking not found' });
+    const booking = db.prepare('SELECT * FROM bookings WHERE id = ?').get(id);
+
+    if (booking.email) {
+      const finalLink = booking.video_link || (process.env.BOOKING_VIDEO_LINK || '');
+      const videoHtml = finalLink
+        ? `<p><a href="${finalLink}" style="display:inline-block;background:#4A6B50;color:#fff;padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:600;">Join Session</a></p><p>Or copy this link: <a href="${finalLink}">${finalLink}</a></p>`
+        : '<p>Your session link will be shared shortly before the session.</p>';
+      const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;line-height:1.6;color:#333;max-width:560px;margin:0 auto;padding:24px;">
+        <h2 style="color:#4A6B50;">Session confirmed — here's your link</h2>
+        <p>Hi ${escapeHtml(booking.first_name || 'there')},</p>
+        <p>Your session with <strong>${escapeHtml(booking.specialist || '')}</strong> on <strong>${escapeHtml(booking.preferred_date || '')}</strong> at <strong>${escapeHtml(booking.time_slot || '')}</strong> is confirmed.</p>
+        ${videoHtml}
+        <p>Please be ready a few minutes before your session time.</p>
+        <p>— The Serenest Team</p></body></html>`;
+      sendResendEmail(booking.email, 'Serenest session confirmed — your video link', html);
+    }
+
+    res.json({ ok: true, booking });
+  } catch (err) {
+    console.error('Admin confirm booking error:', err);
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+// Admin: get all patients
+app.get('/api/admin/patients', requireAdmin, (req, res) => {
+  try {
+    const patients = db.prepare(`
+      SELECT p.id, p.full_name, p.email, p.phone, p.email_verified, p.created_at,
+             COUNT(b.id) AS booking_count,
+             MAX(b.preferred_date) AS last_booking_date
+      FROM patients p
+      LEFT JOIN bookings b ON b.patient_id = p.id
+      GROUP BY p.id
+      ORDER BY p.created_at DESC
+    `).all();
+    res.json({ ok: true, data: patients });
+  } catch (err) {
+    console.error('Admin patients error:', err);
     res.status(500).json({ ok: false, error: err.message });
   }
 });

@@ -8,69 +8,285 @@
 <script src="config.js"></script>
 <style>
 .patient-auth{min-height:100vh;padding:120px 24px 80px;display:flex;align-items:center;justify-content:center;}
-.auth-card{background:var(--white);border-radius:24px;padding:48px;max-width:400px;width:100%;border:1.5px solid var(--cream-dark);box-shadow:0 20px 60px rgba(28,36,32,0.08);}
+.auth-card{background:var(--white);border-radius:24px;padding:48px;max-width:420px;width:100%;border:1.5px solid var(--cream-dark);box-shadow:0 20px 60px rgba(28,36,32,0.08);}
 .auth-card h1{font-family:'Cormorant Garamond',serif;font-size:1.8rem;font-weight:300;color:var(--dark);margin-bottom:8px;}
-.auth-card p{margin-bottom:24px;font-size:0.9rem;color:var(--text-light);}
+.auth-card>.sub{margin-bottom:24px;font-size:0.9rem;color:var(--text-light);}
 .auth-card label{display:block;font-size:0.75rem;font-weight:500;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-light);margin-bottom:8px;}
-.auth-card input{width:100%;padding:14px 16px;border:1.5px solid var(--cream-dark);border-radius:12px;font-family:inherit;margin-bottom:20px;}
+.auth-card input{width:100%;padding:14px 16px;border:1.5px solid var(--cream-dark);border-radius:12px;font-family:inherit;font-size:0.95rem;box-sizing:border-box;}
 .auth-card input:focus{outline:none;border-color:var(--sage);}
-.auth-card button{width:100%;padding:14px;background:var(--sage);color:var(--white);border:none;border-radius:12px;font-family:inherit;font-size:0.95rem;font-weight:500;cursor:pointer;}
-.auth-card button:hover{background:var(--sage-dark);}
+.auth-card button.btn-primary{width:100%;padding:14px;background:var(--sage);color:var(--white);border:none;border-radius:12px;font-family:inherit;font-size:0.95rem;font-weight:500;cursor:pointer;margin-top:4px;}
+.auth-card button.btn-primary:hover{background:var(--sage-dark);}
+.auth-card button.btn-primary:disabled{opacity:0.6;cursor:not-allowed;}
 .auth-error{font-size:0.85rem;color:#c0392b;margin-top:12px;display:none;}
-.auth-card a{font-size:0.88rem;color:var(--sage-dark);margin-top:16px;display:inline-block;}
+.auth-success{font-size:0.85rem;color:var(--sage-dark);margin-top:12px;display:none;background:rgba(125,155,118,0.1);padding:10px 14px;border-radius:10px;}
+.auth-card .link-row{font-size:0.88rem;color:var(--text-light);margin-top:16px;}
+.auth-card .link-row a{color:var(--sage-dark);text-decoration:none;}
+/* Tabs */
+.auth-tabs{display:flex;gap:0;border:1.5px solid var(--cream-dark);border-radius:12px;padding:3px;margin-bottom:28px;background:var(--cream);}
+.auth-tab{flex:1;padding:9px 0;font-size:0.82rem;font-weight:500;font-family:inherit;border:none;background:transparent;border-radius:9px;cursor:pointer;color:var(--text-light);transition:all 0.2s;}
+.auth-tab.active{background:var(--white);color:var(--sage-dark);box-shadow:0 2px 8px rgba(28,36,32,0.08);}
+.auth-panel{display:none;}
+.auth-panel.active{display:block;}
+/* Google button */
+.btn-google{width:100%;padding:13px 16px;background:var(--white);color:var(--dark);border:1.5px solid var(--cream-dark);border-radius:12px;font-family:inherit;font-size:0.92rem;font-weight:500;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;transition:border-color 0.2s,box-shadow 0.2s;margin-bottom:20px;}
+.btn-google:hover{border-color:var(--sage-light);box-shadow:0 2px 10px rgba(28,36,32,0.08);}
+.btn-google svg{width:18px;height:18px;flex-shrink:0;}
+.or-divider{display:flex;align-items:center;gap:12px;margin:0 0 20px;color:var(--text-muted);font-size:0.8rem;}
+.or-divider::before,.or-divider::after{content:'';flex:1;height:1px;background:var(--cream-dark);}
+/* OTP step 2 */
+#otpStep2{display:none;}
+.otp-hint{font-size:0.82rem;color:var(--text-light);margin-bottom:20px;}
+.otp-resend{font-size:0.82rem;color:var(--sage-dark);background:none;border:none;font-family:inherit;cursor:pointer;padding:0;margin-top:4px;}
+.otp-resend:disabled{opacity:0.5;cursor:default;}
+/* Signed up banner */
+#signedUpMsg{display:none;margin-bottom:16px;padding:12px;background:rgba(125,155,118,0.12);border-radius:10px;font-size:0.9rem;color:var(--sage-dark);}
+.field-mb{margin-bottom:20px;}
 nav{padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);border-bottom:1px solid rgba(125,155,118,0.15);}
 .logo{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
 </style>
 </head>
 <body>
-<nav><a href="index.html" class="logo">Sere<span>nest</span></a><div><a href="signup.html">Sign up</a> &nbsp; <a href="book.html">Book</a></div></nav>
+<nav><a href="index.html" class="logo">Sere<span>nest</span></a><div><a href="signup.html" style="font-size:0.9rem;color:var(--text-light);text-decoration:none;">Sign up</a> &nbsp; <a href="book.html" style="font-size:0.9rem;color:var(--text-light);text-decoration:none;">Book</a></div></nav>
 <div class="patient-auth">
   <div class="auth-card">
     <h1>Log in</h1>
-    <p id="loginIntro">Access your bookings and session details.</p>
-    <p id="signedUpMsg" style="display:none;margin-bottom:16px;padding:12px;background:rgba(125,155,118,0.12);border-radius:10px;font-size:0.9rem;color:var(--sage-dark);">Account created. Please log in.</p>
-    <form id="loginForm">
+    <p class="sub">Access your bookings and session details.</p>
+    <div id="signedUpMsg">Account created. Please log in.</div>
+
+    <!-- Tabs -->
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="password">Password</button>
+      <button class="auth-tab" data-tab="otp">Phone OTP</button>
+      <button class="auth-tab" data-tab="google">Google</button>
+    </div>
+
+    <!-- Password Panel -->
+    <div class="auth-panel active" id="panel-password">
+      <form id="loginForm" autocomplete="on">
+        <label>Email</label>
+        <div class="field-mb"><input type="email" name="email" required placeholder="your@email.com" autocomplete="email"></div>
+        <label>Password</label>
+        <div class="field-mb"><input type="password" name="password" required autocomplete="current-password"></div>
+        <button type="submit" class="btn-primary">Log in</button>
+      </form>
+      <p id="authError" class="auth-error"></p>
+      <p class="link-row" style="margin-top:14px;"><a href="#" id="forgotLink">Forgot password?</a></p>
+      <p class="link-row"><a href="signup.html">Don't have an account? Sign up</a></p>
+    </div>
+
+    <!-- OTP Panel -->
+    <div class="auth-panel" id="panel-otp">
+      <div id="otpStep1">
+        <label>Mobile number</label>
+        <div class="field-mb"><input type="tel" id="otpPhone" placeholder="+91 98765 43210" autocomplete="tel"></div>
+        <button type="button" class="btn-primary" id="sendOtpBtn">Send OTP</button>
+      </div>
+      <div id="otpStep2">
+        <p class="otp-hint">Enter the 6-digit code sent to <span id="otpPhoneDisplay"></span></p>
+        <label>OTP Code</label>
+        <div class="field-mb"><input type="text" id="otpCode" placeholder="123456" maxlength="6" inputmode="numeric" autocomplete="one-time-code"></div>
+        <button type="button" class="btn-primary" id="verifyOtpBtn">Verify & Log in</button>
+        <br>
+        <button type="button" class="otp-resend" id="resendOtpBtn">Resend OTP</button>
+      </div>
+      <p id="otpError" class="auth-error"></p>
+      <p class="link-row"><a href="signup.html">No account? Sign up</a></p>
+    </div>
+
+    <!-- Google Panel -->
+    <div class="auth-panel" id="panel-google">
+      <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:20px;">Continue with your Google account. A Serenest patient account will be created automatically on first use.</p>
+      <button class="btn-google" id="googleSignInBtn">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+        Continue with Google
+      </button>
+      <p id="googleError" class="auth-error"></p>
+    </div>
+
+    <!-- Forgot password inline -->
+    <div id="forgotPanel" style="display:none;margin-top:20px;padding-top:20px;border-top:1px solid var(--cream-dark);">
+      <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:14px;">Enter your email and we'll send a reset link.</p>
       <label>Email</label>
-      <input type="email" name="email" required placeholder="your@email.com">
-      <label>Password</label>
-      <input type="password" name="password" required>
-      <button type="submit">Log in</button>
-    </form>
-    <p id="authError" class="auth-error"></p>
-    <a href="signup.html">Don't have an account? Sign up</a>
+      <div class="field-mb"><input type="email" id="forgotEmail" placeholder="your@email.com" autocomplete="email"></div>
+      <button type="button" class="btn-primary" id="sendResetBtn">Send reset link</button>
+      <p id="forgotMsg" class="auth-success"></p>
+      <p id="forgotErr" class="auth-error"></p>
+      <p class="link-row"><a href="#" id="backToLoginLink">← Back to log in</a></p>
+    </div>
   </div>
 </div>
+
 <script>
 (function(){
-  if(window.location.search.indexOf('signedup=1')!==-1){
-    document.getElementById('signedUpMsg').style.display='block';
-    document.getElementById('loginIntro').style.display='none';
+  var TOKEN_KEY = 'serenest_patient_token';
+  var API = (window.API_BASE || '') + '/api';
+
+  // Already logged in?
+  if (localStorage.getItem(TOKEN_KEY)) { window.location.href = 'dashboard.html'; return; }
+
+  // Signed up redirect
+  if (window.location.search.indexOf('signedup=1') !== -1) {
+    document.getElementById('signedUpMsg').style.display = 'block';
   }
-  var TOKEN_KEY='serenest_patient_token';
-  var API=(window.API_BASE||'')+'/api';
-  var form=document.getElementById('loginForm');
-  var err=document.getElementById('authError');
-  form.addEventListener('submit',function(e){
+
+  // Handle #token from Google callback
+  var hash = window.location.hash;
+  if (hash && hash.indexOf('token=') !== -1) {
+    var t = hash.replace('#token=', '').replace('#', '');
+    if (t) { localStorage.setItem(TOKEN_KEY, t); window.location.href = 'dashboard.html'; return; }
+  }
+
+  // ── Tabs ──
+  document.querySelectorAll('.auth-tab').forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      document.querySelectorAll('.auth-tab').forEach(function(t){ t.classList.remove('active'); });
+      document.querySelectorAll('.auth-panel').forEach(function(p){ p.classList.remove('active'); });
+      tab.classList.add('active');
+      var target = tab.getAttribute('data-tab');
+      document.getElementById('panel-' + target).classList.add('active');
+      // Hide forgot panel when switching tabs
+      document.getElementById('forgotPanel').style.display = 'none';
+      document.getElementById('loginForm').style.display = 'block';
+    });
+  });
+
+  // ── Password login ──
+  var loginForm = document.getElementById('loginForm');
+  var authError = document.getElementById('authError');
+  loginForm.addEventListener('submit', function(e) {
     e.preventDefault();
-    err.style.display='none';
-    var email=form.email.value.trim();
-    var password=form.password.value;
-    fetch(API+'/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email,password:password})})
-      .then(function(r){return r.json();})
-      .then(function(d){
-        if(d&&d.ok&&d.token){
-          localStorage.setItem(TOKEN_KEY,d.token);
-          window.location.href='dashboard.html';
-        }else{
-          err.textContent=d&&d.error?d.error:'Login failed.';
-          err.style.display='block';
+    authError.style.display = 'none';
+    var email = loginForm.email.value.trim();
+    var password = loginForm.password.value;
+    var btn = loginForm.querySelector('button[type=submit]');
+    btn.disabled = true; btn.textContent = 'Logging in…';
+    fetch(API + '/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email, password: password }) })
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        if (d && d.ok && d.token) {
+          localStorage.setItem(TOKEN_KEY, d.token);
+          window.location.href = 'dashboard.html';
+        } else {
+          authError.textContent = d && d.error ? d.error : 'Login failed.';
+          authError.style.display = 'block';
+          btn.disabled = false; btn.textContent = 'Log in';
         }
       })
-      .catch(function(){
-        err.textContent='Network error. Try again.';
-        err.style.display='block';
+      .catch(function() {
+        authError.textContent = 'Network error. Try again.';
+        authError.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Log in';
       });
   });
+
+  // ── Forgot password ──
+  document.getElementById('forgotLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    loginForm.style.display = 'none';
+    document.getElementById('forgotPanel').style.display = 'block';
+    document.querySelector('[data-tab=password]').click();
+  });
+  document.getElementById('backToLoginLink').addEventListener('click', function(e) {
+    e.preventDefault();
+    document.getElementById('forgotPanel').style.display = 'none';
+    loginForm.style.display = 'block';
+  });
+  document.getElementById('sendResetBtn').addEventListener('click', function() {
+    var email = document.getElementById('forgotEmail').value.trim();
+    var msg = document.getElementById('forgotMsg');
+    var err = document.getElementById('forgotErr');
+    msg.style.display = 'none'; err.style.display = 'none';
+    if (!email) { err.textContent = 'Please enter your email.'; err.style.display = 'block'; return; }
+    var btn = document.getElementById('sendResetBtn');
+    btn.disabled = true; btn.textContent = 'Sending…';
+    fetch(API + '/forgot-password', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: email }) })
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        msg.textContent = d.message || 'Reset link sent if account exists.';
+        msg.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Send reset link';
+      })
+      .catch(function() {
+        err.textContent = 'Network error. Try again.';
+        err.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Send reset link';
+      });
+  });
+
+  // ── OTP login ──
+  var otpPhone = '';
+  document.getElementById('sendOtpBtn').addEventListener('click', function() {
+    var phoneVal = document.getElementById('otpPhone').value.trim();
+    var errEl = document.getElementById('otpError');
+    errEl.style.display = 'none';
+    if (!phoneVal) { errEl.textContent = 'Enter a mobile number.'; errEl.style.display = 'block'; return; }
+    var btn = document.getElementById('sendOtpBtn');
+    btn.disabled = true; btn.textContent = 'Sending…';
+    fetch(API + '/otp/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: phoneVal }) })
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        if (d && d.ok) {
+          otpPhone = phoneVal;
+          document.getElementById('otpStep1').style.display = 'none';
+          document.getElementById('otpStep2').style.display = 'block';
+          document.getElementById('otpPhoneDisplay').textContent = phoneVal;
+        } else {
+          errEl.textContent = d && d.error ? d.error : 'Failed to send OTP.';
+          errEl.style.display = 'block';
+          btn.disabled = false; btn.textContent = 'Send OTP';
+        }
+      })
+      .catch(function() {
+        errEl.textContent = 'Network error. Try again.';
+        errEl.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Send OTP';
+      });
+  });
+  document.getElementById('resendOtpBtn').addEventListener('click', function() {
+    var btn = this;
+    btn.disabled = true; btn.textContent = 'Sending…';
+    fetch(API + '/otp/send', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: otpPhone }) })
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        btn.textContent = d && d.ok ? 'Sent!' : 'Resend OTP';
+        setTimeout(function(){ btn.disabled = false; btn.textContent = 'Resend OTP'; }, 15000);
+      })
+      .catch(function(){ btn.disabled = false; btn.textContent = 'Resend OTP'; });
+  });
+  document.getElementById('verifyOtpBtn').addEventListener('click', function() {
+    var code = document.getElementById('otpCode').value.trim();
+    var errEl = document.getElementById('otpError');
+    errEl.style.display = 'none';
+    if (!code) { errEl.textContent = 'Enter the OTP code.'; errEl.style.display = 'block'; return; }
+    var btn = document.getElementById('verifyOtpBtn');
+    btn.disabled = true; btn.textContent = 'Verifying…';
+    fetch(API + '/otp/verify', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone: otpPhone, code: code }) })
+      .then(function(r){ return r.json(); })
+      .then(function(d) {
+        if (d && d.ok && d.token) {
+          localStorage.setItem(TOKEN_KEY, d.token);
+          window.location.href = 'dashboard.html';
+        } else {
+          errEl.textContent = d && d.error ? d.error : 'Invalid or expired OTP.';
+          errEl.style.display = 'block';
+          btn.disabled = false; btn.textContent = 'Verify & Log in';
+        }
+      })
+      .catch(function() {
+        errEl.textContent = 'Network error. Try again.';
+        errEl.style.display = 'block';
+        btn.disabled = false; btn.textContent = 'Verify & Log in';
+      });
+  });
+
+  // ── Google Sign-In ──
+  document.getElementById('googleSignInBtn').addEventListener('click', function() {
+    var btn = this;
+    btn.disabled = true;
+    var googleAuthUrl = API + '/auth/google';
+    window.location.href = googleAuthUrl;
+  });
+
 })();
 </script>
 <script src="premium.js"></script>
