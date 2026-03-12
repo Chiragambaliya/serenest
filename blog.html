@@ -23,11 +23,11 @@
   <meta name="twitter:site" content="@serenest_in">
   <meta name="twitter:image" content="https://serenest.in/og-image.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--sage:#5296C9;--sage-light:#A8C4A2;--sage-dark:#5A7A54;--teal:#5B8A8B;--cream:#F7F5F0;--cream-dark:#EDE9E1;--dark:#1C2420;--text:#3A4A44;--text-light:#6B7E77;--white:#FFFFFF;}
+:root{--sage:#1E6FAB;--sage-light:#5296C9;--sage-dark:#0F4C7F;--teal:#0891B2;--teal-light:#38BDF8;--cream:#F5F8FF;--cream-dark:#E2EBF5;--cream-warm:#EEF3FB;--dark:#0A1628;--dark-mid:#0F2040;--text:#1A2B45;--text-light:#4A637F;--text-muted:#7A92AA;--white:#FFFFFF;}
 *{margin:0;padding:0;box-sizing:border-box;}html{scroll-behavior:smooth;}
-body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
+body{font-family:'Inter',sans-serif;background:var(--cream);color:var(--text);overflow-x:hidden;}
 nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;background:rgba(247,245,240,0.88);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid rgba(30,111,171,0.15);transition:all 0.3s;}
 .logo{font-family:'Syne',sans-serif;font-size:1.6rem;font-weight:600;color:var(--dark);text-decoration:none;}.logo span{color:var(--sage);}
 nav ul{list-style:none;display:flex;gap:36px;align-items:center;}
@@ -50,7 +50,7 @@ nav ul a:hover{color:var(--sage-dark);}nav ul a.active{color:var(--sage-dark);fo
 /* BLOG CATEGORIES */
 .category-bar{padding:28px 60px;background:var(--white);border-bottom:1px solid var(--cream-dark);}
 .cat-inner{display:flex;gap:10px;flex-wrap:wrap;}
-.cat-btn{padding:8px 18px;border-radius:40px;border:1.5px solid var(--cream-dark);background:var(--cream);font-family:'DM Sans',sans-serif;font-size:0.82rem;color:var(--text-light);cursor:pointer;transition:all 0.2s;}
+.cat-btn{padding:8px 18px;border-radius:40px;border:1.5px solid var(--cream-dark);background:var(--cream);font-family:'Inter',sans-serif;font-size:0.82rem;color:var(--text-light);cursor:pointer;transition:all 0.2s;}
 .cat-btn:hover,.cat-btn.active{background:var(--sage);border-color:var(--sage);color:var(--white);}
 
 /* FEATURED POST */
@@ -96,10 +96,10 @@ nav ul a:hover{color:var(--sage-dark);}nav ul a.active{color:var(--sage-dark);fo
 .section-newsletter h2{font-family:'Syne',sans-serif;font-size:clamp(1.8rem,3vw,2.8rem);font-weight:300;color:var(--cream);margin-bottom:12px;position:relative;z-index:1;}
 .section-newsletter p{font-size:0.9rem;color:rgba(247,245,240,0.55);margin-bottom:32px;font-weight:300;position:relative;z-index:1;}
 .newsletter-form{display:flex;gap:12px;max-width:440px;margin:0 auto;position:relative;z-index:1;}
-.newsletter-form input{flex:1;padding:14px 20px;border:1px solid rgba(255,255,255,0.12);border-radius:50px;background:rgba(255,255,255,0.06);font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--cream);outline:none;}
+.newsletter-form input{flex:1;padding:14px 20px;border:1px solid rgba(255,255,255,0.12);border-radius:50px;background:rgba(255,255,255,0.06);font-family:'Inter',sans-serif;font-size:0.88rem;color:var(--cream);outline:none;}
 .newsletter-form input::placeholder{color:rgba(247,245,240,0.35);}
 .newsletter-form input:focus{border-color:var(--sage-light);}
-.newsletter-form button{background:var(--sage);color:white;border:none;border-radius:50px;padding:14px 24px;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.newsletter-form button{background:var(--sage);color:white;border:none;border-radius:50px;padding:14px 24px;font-family:'Inter',sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
 .newsletter-form button:hover{background:var(--sage-dark);}
 
 footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(255,255,255,0.05);}
@@ -145,7 +145,7 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
     <li><a href="book.html" class="nav-cta">Book Now</a></li>
     <li><a href="account.html">Account</a></li>
   </ul>
-  <div class="nav-actions"><a href="patients.html" class="nav-audience-pill">For Patients</a><a href="doctors.html" class="nav-audience-pill nav-audience-doctor">For Doctors</a><button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button></div>
+  <div class="nav-actions"><a href="doctors.html" class="nav-audience-doctor-btn">For Doctors</a><button class="hamburger" id="hamburger" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button></div>
   </div>
 </nav>
 
@@ -174,7 +174,7 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
 <!-- FEATURED (static fallback; replaced by API if available) -->
 <section class="section-featured" id="blogFeaturedSection">
   <a href="post.html" class="featured-post reveal" id="blogFeaturedLink">
-    <div class="featured-visual" style="background:linear-gradient(135deg,#5A7A54,#5296C9)">
+    <div class="featured-visual" style="background:linear-gradient(135deg,#1E6FAB,#38BDF8)">
       <div style="position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,0.08) 1px,transparent 1px);background-size:28px 28px;"></div>
       <span style="position:relative;z-index:1;font-size:6rem">🧠</span>
     </div>
@@ -202,7 +202,7 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
   <div class="posts-grid" id="blogGrid">
 
     <a href="#" class="post-card reveal">
-      <div class="post-thumbnail" style="background:linear-gradient(135deg,#8BB8B9,#5B8A8B)"><span>😴</span></div>
+      <div class="post-thumbnail" style="background:linear-gradient(135deg,#38BDF8,#0891B2)"><span>😴</span></div>
       <div class="post-content">
         <div class="post-meta"><span class="post-category">Sleep</span><span class="post-date" style="margin-left:8px">Feb 14</span></div>
         <h3>Why anxiety destroys sleep — and 5 things that actually help</h3>
@@ -215,7 +215,7 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
     </a>
 
     <a href="#" class="post-card reveal" style="transition-delay:0.1s">
-      <div class="post-thumbnail" style="background:linear-gradient(135deg,#5296C9,#A8C4A2)"><span>💊</span></div>
+      <div class="post-thumbnail" style="background:linear-gradient(135deg,#5296C9,#5296C9)"><span>💊</span></div>
       <div class="post-content">
         <div class="post-meta"><span class="post-category">Psychiatry Explained</span><span class="post-date" style="margin-left:8px">Feb 10</span></div>
         <h3>Antidepressants: what they do, how they work, and what no one tells you</h3>
@@ -228,7 +228,7 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
     </a>
 
     <a href="#" class="post-card reveal" style="transition-delay:0.2s">
-      <div class="post-thumbnail" style="background:linear-gradient(135deg,#5B8A8B,#5296C9)"><span>❤️</span></div>
+      <div class="post-thumbnail" style="background:linear-gradient(135deg,#0891B2,#5296C9)"><span>❤️</span></div>
       <div class="post-content">
         <div class="post-meta"><span class="post-category">Relationships</span><span class="post-date" style="margin-left:8px">Feb 6</span></div>
         <h3>How to support a partner with depression without burning yourself out</h3>
@@ -241,7 +241,7 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
     </a>
 
     <a href="#" class="post-card reveal">
-      <div class="post-thumbnail" style="background:linear-gradient(135deg,#5A7A54,#5B8A8B)"><span>🍷</span></div>
+      <div class="post-thumbnail" style="background:linear-gradient(135deg,#0F4C7F,#1E6FAB)"><span>🍷</span></div>
       <div class="post-content">
         <div class="post-meta"><span class="post-category">Deaddiction</span><span class="post-date" style="margin-left:8px">Feb 2</span></div>
         <h3>Is it stress drinking or alcohol use disorder? How to tell the difference</h3>
@@ -254,7 +254,7 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
     </a>
 
     <a href="#" class="post-card reveal" style="transition-delay:0.1s">
-      <div class="post-thumbnail" style="background:linear-gradient(135deg,#A8C4A2,#5296C9)"><span>🌿</span></div>
+      <div class="post-thumbnail" style="background:linear-gradient(135deg,#5296C9,#5296C9)"><span>🌿</span></div>
       <div class="post-content">
         <div class="post-meta"><span class="post-category">Anxiety & Stress</span><span class="post-date" style="margin-left:8px">Jan 28</span></div>
         <h3>The neuroscience of worry — and why your brain can't stop</h3>
@@ -267,7 +267,7 @@ footer{background:var(--dark);padding:48px 60px 36px;border-top:1px solid rgba(2
     </a>
 
     <a href="#" class="post-card reveal" style="transition-delay:0.2s">
-      <div class="post-thumbnail" style="background:linear-gradient(135deg,#8BB8B9,#A8C4A2)"><span>👦</span></div>
+      <div class="post-thumbnail" style="background:linear-gradient(135deg,#38BDF8,#5296C9)"><span>👦</span></div>
       <div class="post-content">
         <div class="post-meta"><span class="post-category">Parenting & Children</span><span class="post-date" style="margin-left:8px">Jan 22</span></div>
         <h3>ADHD in children: signs every parent should know, and what to do next</h3>
@@ -325,7 +325,7 @@ document.querySelectorAll('.cat-btn').forEach(function(btn){
     var grid=document.getElementById('blogGrid');
     if(!grid||posts.length<=1) return;
     var rest=posts.slice(1);
-    var gradients=['linear-gradient(135deg,#8BB8B9,#5B8A8B)','linear-gradient(135deg,#5296C9,#A8C4A2)','linear-gradient(135deg,#5B8A8B,#5296C9)','linear-gradient(135deg,#5A7A54,#5B8A8B)','linear-gradient(135deg,#A8C4A2,#5296C9)','linear-gradient(135deg,#8BB8B9,#A8C4A2)'];
+    var gradients=['linear-gradient(135deg,#38BDF8,#0891B2)','linear-gradient(135deg,#1E6FAB,#38BDF8)','linear-gradient(135deg,#0891B2,#1E6FAB)','linear-gradient(135deg,#0F4C7F,#1E6FAB)','linear-gradient(135deg,#5296C9,#1E6FAB)','linear-gradient(135deg,#38BDF8,#5296C9)'];
     var emojis=['\uD83D\uDE34','\uD83D\uDC8A','\u2764\uFE0F','\uD83C\uDF77','\uD83C\uDF3F','\uD83D\uDC66'];
     grid.innerHTML=rest.map(function(p,i){
       var slug=encodeURIComponent(p.slug||'');
