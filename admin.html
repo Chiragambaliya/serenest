@@ -592,12 +592,12 @@
           <tbody id="faqBody"></tbody></table>
         </div>
         <div style="margin-top:24px;padding:24px;background:var(--white);border-radius:16px;border:1px solid var(--cream-dark);">
-          <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px;" id="faqFormTitle">Add FAQ Item</h3>
+          <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px;" id="faqFormTitle">Add FAQ</h3>
           <form id="faqForm">
             <input type="hidden" id="faqEditId" value="">
-            <div style="margin-bottom:12px;"><label class="field-label">Question *</label><input type="text" id="faqQuestion" required placeholder="How do I book a session?" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
-            <div style="margin-bottom:12px;"><label class="field-label">Answer *</label><textarea id="faqAnswer" rows="3" required placeholder="Step by step answer..." style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;resize:vertical;"></textarea></div>
-            <div style="display:flex;gap:20px;align-items:center;margin-bottom:16px;"><label class="field-label" style="display:inline;margin-right:8px;">Order:</label><input type="number" id="faqOrder" value="0" style="width:70px;padding:8px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+            <div style="margin-bottom:12px;"><label class="field-label">Question *</label><input type="text" id="faqQuestion" required style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+            <div style="margin-bottom:12px;"><label class="field-label">Answer *</label><textarea id="faqAnswer" rows="3" required style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;resize:vertical;"></textarea></div>
+            <div style="margin-bottom:16px;"><label class="field-label" style="display:inline;margin-right:8px;">Order:</label><input type="number" id="faqOrder" value="0" style="width:70px;padding:8px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
             <div style="display:flex;gap:12px;"><button type="submit" class="form-btn-primary" id="faqSubmitBtn">Add FAQ</button><button type="button" class="form-btn-cancel" id="faqCancelBtn" style="display:none;">Cancel</button></div>
           </form>
         </div>
@@ -606,23 +606,25 @@
       <!-- ── TESTIMONIALS PANEL ── -->
       <div id="panelTestimonials" class="panel">
         <h2>Testimonials</h2>
-        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Manage patient testimonials shown on the testimonials page and homepage.</p>
+        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Manage testimonials shown on the homepage and testimonials page.</p>
         <button type="button" class="load-btn" data-load="testimonials">Refresh</button>
         <div id="testimonialsError" class="err-msg" style="display:none;"></div>
         <p id="testimonialsEmpty" class="empty" style="display:none;">No testimonials yet.</p>
         <div class="table-wrap" style="margin-top:16px;">
-          <table><thead><tr><th>#</th><th>Quote</th><th>Author</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
+          <table><thead><tr><th>Order</th><th>Name</th><th>Role</th><th>Quote</th><th>Rating</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="testimonialsBody"></tbody></table>
         </div>
         <div style="margin-top:24px;padding:24px;background:var(--white);border-radius:16px;border:1px solid var(--cream-dark);">
           <h3 style="font-size:1rem;font-weight:600;margin-bottom:16px;" id="testimonialFormTitle">Add Testimonial</h3>
           <form id="testimonialForm">
             <input type="hidden" id="testimonialEditId" value="">
-            <div style="margin-bottom:12px;"><label class="field-label">Quote *</label><textarea id="testimonialQuote" rows="3" required placeholder="Patient testimonial text..." style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;resize:vertical;"></textarea></div>
-            <div style="display:grid;grid-template-columns:1fr 1fr 80px 80px;gap:12px;margin-bottom:16px;">
-              <div><label class="field-label">Author Name *</label><input type="text" id="testimonialAuthor" required placeholder="Meera R." style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
-              <div><label class="field-label">Author Meta</label><input type="text" id="testimonialMeta" placeholder="Patient · Mumbai" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
-              <div><label class="field-label">Rating (1-5)</label><input type="number" id="testimonialRating" value="5" min="1" max="5" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+              <div><label class="field-label">Name *</label><input type="text" id="testimonialName" required style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+              <div><label class="field-label">Role/Title</label><input type="text" id="testimonialRole" placeholder="Patient · Anxiety" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
+            </div>
+            <div style="margin-bottom:12px;"><label class="field-label">Quote *</label><textarea id="testimonialQuote" rows="3" required style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;resize:vertical;"></textarea></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+              <div><label class="field-label">Rating (1–5)</label><input type="number" id="testimonialRating" value="5" min="1" max="5" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
               <div><label class="field-label">Order</label><input type="number" id="testimonialOrder" value="0" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>
             </div>
             <div style="display:flex;gap:12px;"><button type="submit" class="form-btn-primary" id="testimonialSubmitBtn">Add Testimonial</button><button type="button" class="form-btn-cancel" id="testimonialCancelBtn" style="display:none;">Cancel</button></div>
@@ -632,1279 +634,978 @@
 
       <!-- ── REVIEWS PANEL ── -->
       <div id="panelReviews" class="panel">
-        <h2>Patient Reviews</h2>
-        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Reviews submitted by patients via the website. Delete spam or inappropriate entries.</p>
+        <h2>Reviews (from patients)</h2>
+        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Patient reviews submitted after sessions. Moderate and publish here.</p>
         <button type="button" class="load-btn" data-load="reviews">Refresh</button>
         <div id="reviewsError" class="err-msg" style="display:none;"></div>
         <p id="reviewsEmpty" class="empty" style="display:none;">No reviews yet.</p>
         <div class="table-wrap" style="margin-top:16px;">
-          <table><thead><tr><th>Date</th><th>Patient</th><th>Specialist</th><th>Rating</th><th>Comment</th><th>Actions</th></tr></thead>
+          <table><thead><tr><th>Date</th><th>Patient</th><th>Doctor</th><th>Rating</th><th>Review</th><th>Status</th><th>Actions</th></tr></thead>
           <tbody id="reviewsBody"></tbody></table>
         </div>
       </div>
 
-      <!-- ── SITE SETTINGS PANEL ── -->
+      <!-- ── SETTINGS PANEL ── -->
       <div id="panelSettings" class="panel">
         <h2>Site Settings</h2>
-        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Control text, contact details, and site-wide messages. All changes are live immediately.</p>
+        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:20px;">These settings control global behaviour across the site.</p>
         <button type="button" class="load-btn" data-load="settings">Refresh</button>
         <div id="settingsError" class="err-msg" style="display:none;"></div>
-        <div id="settingsFormWrap" style="margin-top:20px;"></div>
+        <form id="settingsForm" style="margin-top:4px;">
+          <div class="settings-grid" id="settingsGrid"></div>
+          <button type="submit" class="form-btn-primary" style="margin-top:20px;">Save settings</button>
+        </form>
       </div>
 
+      <!-- ── ANALYTICS PANEL ── -->
       <div id="panelAnalytics" class="panel">
         <h2>Analytics</h2>
+        <p style="font-size:0.88rem;color:var(--text-light);margin-bottom:16px;">Real-time snapshot of key site metrics.</p>
         <button type="button" class="load-btn" data-load="analytics">Refresh</button>
         <div id="analyticsError" class="err-msg" style="display:none;"></div>
-        <div id="analyticsContent" style="display:none;margin-top:20px;">
-          <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:20px;margin-bottom:28px;">
-            <div style="background:var(--white);border:1px solid var(--cream-dark);border-radius:16px;padding:24px;">
-              <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-light);margin-bottom:8px;">Total visits</div>
-              <div id="analyticsVisitsTotal" style="font-size:2rem;font-weight:600;color:var(--dark);">—</div>
-            </div>
-            <div style="background:var(--white);border:1px solid var(--cream-dark);border-radius:16px;padding:24px;">
-              <div style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-light);margin-bottom:8px;">Bookings this month</div>
-              <div id="analyticsBookingsMonth" style="font-size:2rem;font-weight:600;color:var(--dark);">—</div>
-            </div>
-          </div>
-          <h3 style="font-size:1rem;margin-bottom:12px;color:var(--dark);">Top pages (by visits)</h3>
-          <div class="table-wrap">
-            <table>
-              <thead><tr><th>Page</th><th>Visits</th></tr></thead>
-              <tbody id="analyticsTopPages"></tbody>
-            </table>
-          </div>
-        </div>
+        <div id="analyticsGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:16px;margin-top:8px;"></div>
       </div>
+
     </div>
   </div>
 
-  <script src="config.js"></script>
-  <script>
-    (function() {
-      var STORAGE_KEY = 'serenest_admin_key';
-      var API = (window.API_BASE || '') + '/api';
+<script>
+const API = 'https://api.serenest.in';
+const ADMIN_KEY_STORE = 'srn_admin_key';
 
-      function getKey() {
-        return sessionStorage.getItem(STORAGE_KEY) || '';
-      }
-      function setKey(key) {
-        sessionStorage.setItem(STORAGE_KEY, key);
-      }
-      function clearKey() {
-        sessionStorage.removeItem(STORAGE_KEY);
-      }
+const $ = id => document.getElementById(id);
 
-      function authHeaders() {
-        return { 'X-Admin-Key': getKey(), 'Content-Type': 'application/json' };
-      }
+// ── AUTH ─────────────────────────────────────────────────────────────────────
+$('loginForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const key = $('adminKey').value.trim();
+  try {
+    const r = await fetch(`${API}/admin/verify`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ key })
+    });
+    if (r.ok) {
+      sessionStorage.setItem(ADMIN_KEY_STORE, key);
+      showDashboard();
+    } else {
+      $('loginError').style.display = 'block';
+    }
+  } catch {
+    $('loginError').style.display = 'block';
+  }
+});
 
-      function showLogin() {
-        document.getElementById('loginView').style.display = 'flex';
-        document.getElementById('dashboardView').classList.remove('visible');
-        document.getElementById('adminKey').value = '';
-        document.getElementById('loginError').style.display = 'none';
-      }
-      function showDashboard() {
-        document.getElementById('loginView').style.display = 'none';
-        document.getElementById('dashboardView').classList.add('visible');
-        loadBookings();
-      }
+function showDashboard() {
+  $('loginView').style.display = 'none';
+  $('dashboardView').classList.add('visible');
+  loadTab('bookings');
+}
 
-      document.getElementById('loginForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var key = document.getElementById('adminKey').value.trim();
-        var errEl = document.getElementById('loginError');
-        errEl.style.display = 'none';
-        if (!key) return;
-        setKey(key);
-        fetch(API + '/admin/bookings', { headers: authHeaders() })
-          .then(function(r) {
-            if (r.status === 401) {
-              clearKey();
-              errEl.style.display = 'block';
-              return;
-            }
-            return r.json();
-          })
-          .then(function(data) {
-            if (data && data.ok) {
-              showDashboard();
-            } else if (data && !data.ok) {
-              clearKey();
-              errEl.style.display = 'block';
-            }
-          })
-          .catch(function() {
-            clearKey();
-            errEl.textContent = 'Network error. Try again.';
-            errEl.style.display = 'block';
-          });
-      });
+$('logoutBtn').addEventListener('click', () => {
+  sessionStorage.removeItem(ADMIN_KEY_STORE);
+  location.reload();
+});
 
-      document.getElementById('logoutBtn').addEventListener('click', function() {
-        clearKey();
-        showLogin();
-      });
+// ── TABS ─────────────────────────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('visible'));
+    const panelMap = {
+      bookings:'panelBookings', contact:'panelContact', applications:'panelApplications',
+      newsletter:'panelNewsletter', grievances:'panelGrievances', blog:'panelBlog',
+      slots:'panelSlots', specialists:'panelSpecialists', patients:'panelPatients',
+      services:'panelServices', pricing:'panelPricing', faq:'panelFaq',
+      testimonials:'panelTestimonials', reviews:'panelReviews',
+      settings:'panelSettings', analytics:'panelAnalytics'
+    };
+    $(panelMap[tab]).classList.add('visible');
+    loadTab(tab);
+  });
+});
 
-      function switchTab(tabId) {
-        document.querySelectorAll('.tab').forEach(function(t) {
-          t.classList.toggle('active', t.getAttribute('data-tab') === tabId);
-        });
-        document.querySelectorAll('.panel').forEach(function(p) {
-          var id = p.id;
-          var visible = (id === 'panelBookings' && tabId === 'bookings') ||
-            (id === 'panelContact' && tabId === 'contact') ||
-            (id === 'panelApplications' && tabId === 'applications') ||
-            (id === 'panelNewsletter' && tabId === 'newsletter') ||
-            (id === 'panelGrievances' && tabId === 'grievances') ||
-            (id === 'panelBlog' && tabId === 'blog') ||
-            (id === 'panelSlots' && tabId === 'slots') ||
-            (id === 'panelSpecialists' && tabId === 'specialists') ||
-            (id === 'panelPatients' && tabId === 'patients') ||
-            (id === 'panelServices' && tabId === 'services') ||
-            (id === 'panelPricing' && tabId === 'pricing') ||
-            (id === 'panelFaq' && tabId === 'faq') ||
-            (id === 'panelTestimonials' && tabId === 'testimonials') ||
-            (id === 'panelReviews' && tabId === 'reviews') ||
-            (id === 'panelSettings' && tabId === 'settings') ||
-            (id === 'panelAnalytics' && tabId === 'analytics');
-          p.classList.toggle('visible', visible);
-        });
-        if (tabId === 'contact' && !document.getElementById('contactBody').innerHTML) loadContact();
-        if (tabId === 'applications' && !document.getElementById('applicationsBody').innerHTML) loadApplications();
-        if (tabId === 'newsletter' && !document.getElementById('newsletterBody').innerHTML) loadNewsletter();
-        if (tabId === 'grievances' && !document.getElementById('grievancesBody').innerHTML) loadGrievances();
-        if (tabId === 'blog') loadPosts();
-        if (tabId === 'slots') { loadSlots(); populateSlotSpecialistDropdown(); }
-        if (tabId === 'specialists') loadSpecialists();
-        if (tabId === 'analytics') loadAnalytics();
-        if (tabId === 'patients') loadPatients();
-        if (tabId === 'services') loadServices();
-        if (tabId === 'pricing') loadPricing();
-        if (tabId === 'faq') loadFaq();
-        if (tabId === 'testimonials') loadTestimonials();
-        if (tabId === 'reviews') loadReviews();
-        if (tabId === 'settings') loadSettings();
-      }
-      document.querySelectorAll('.tab').forEach(function(t) {
-        t.addEventListener('click', function() {
-          switchTab(this.getAttribute('data-tab'));
-        });
-      });
+document.querySelectorAll('.load-btn').forEach(btn => {
+  btn.addEventListener('click', () => loadTab(btn.dataset.load));
+});
 
-      function showErr(panel, msg) {
-        var el = document.getElementById(panel + 'Error');
-        if (el) {
-          el.textContent = msg || 'Failed to load.';
-          el.style.display = 'block';
-        }
-      }
-      function hideErr(panel) {
-        var el = document.getElementById(panel + 'Error');
-        if (el) el.style.display = 'none';
-      }
+function getKey() { return sessionStorage.getItem(ADMIN_KEY_STORE); }
 
-      // ── Status badge helper ──
-      function statusBadge(status) {
-        var colors = {
-          confirmed: 'background:rgba(46,160,67,0.15);color:#1a7f37;',
-          pending:   'background:rgba(210,153,34,0.15);color:#9a6700;',
-          cancelled: 'background:rgba(207,34,46,0.12);color:#c0392b;',
-          rescheduled:'background:rgba(52,152,219,0.15);color:#1a5276;'
-        };
-        var s = status || 'pending';
-        var label = s.charAt(0).toUpperCase() + s.slice(1);
-        return '<span style="display:inline-block;padding:2px 9px;border-radius:40px;font-size:0.72rem;font-weight:700;letter-spacing:.04em;' + (colors[s] || colors.pending) + '">' + label + '</span>';
-      }
+async function loadTab(tab) {
+  switch(tab) {
+    case 'bookings':      loadBookings(); break;
+    case 'contact':       loadContact(); break;
+    case 'applications':  loadApplications(); break;
+    case 'newsletter':    loadNewsletter(); break;
+    case 'grievances':    loadGrievances(); break;
+    case 'blog':          loadBlog(); break;
+    case 'slots':         loadSlots(); break;
+    case 'specialists':   loadSpecialists(); break;
+    case 'patients':      loadPatients(); break;
+    case 'services':      loadServices(); break;
+    case 'pricing':       loadPricing(); break;
+    case 'faq':           loadFaq(); break;
+    case 'testimonials':  loadTestimonials(); break;
+    case 'reviews':       loadReviews(); break;
+    case 'settings':      loadSettings(); break;
+    case 'analytics':     loadAnalytics(); break;
+  }
+}
 
-      function loadBookings() {
-        hideErr('bookings');
-        fetch(API + '/admin/bookings', { headers: authHeaders() })
-          .then(function(r) {
-            if (r.status === 401) { showLogin(); return null; }
-            return r.json();
-          })
-          .then(function(data) {
-            if (!data) return;
-            if (!data.ok) { showErr('bookings', data.error || 'Failed to load'); return; }
-            var rows = data.data || [];
-            var tbody = document.getElementById('bookingsBody');
-            tbody.innerHTML = '';
-            document.getElementById('bookingsEmpty').style.display = rows.length ? 'none' : 'block';
-            rows.forEach(function(row) {
-              var tr = document.createElement('tr');
-              var vid = (row.video_link || '');
-              var isSession = vid.indexOf('session.html') !== -1;
-              var hasRoom = vid.length > 0;
-              var status = row.status || 'pending';
+// ── BOOKINGS ──────────────────────────────────────────────────────────────────
+async function loadBookings() {
+  $('bookingsError').style.display='none';
+  $('bookingsEmpty').style.display='none';
+  $('bookingsBody').innerHTML = '<tr><td colspan="10" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/bookings`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('bookingsBody').innerHTML=''; $('bookingsEmpty').style.display='block'; return; }
+    $('bookingsBody').innerHTML = data.map(b => `
+      <tr>
+        <td class="muted">${fmtDate(b.created_at)}</td>
+        <td>${esc(b.name)}</td>
+        <td>${esc(b.email)}</td>
+        <td>${esc(b.phone||'')}</td>
+        <td>${esc(b.specialist||'')}</td>
+        <td>${esc(b.session_type||'')}</td>
+        <td>${esc(b.preferred_date||'')} ${esc(b.preferred_time||'')}</td>
+        <td>${statusBadge(b.status)}</td>
+        <td>${b.video_room ? `<a href="${esc(b.video_room)}" target="_blank" style="color:var(--sage);">Join</a>` : '—'}</td>
+        <td class="muted">${esc(b.notes||'')}</td>
+      </tr>`).join('');
+  } catch(e) {
+    $('bookingsBody').innerHTML='';
+    $('bookingsError').textContent = e.message;
+    $('bookingsError').style.display='block';
+  }
+}
 
-              // Video cell: show room link + generate button
-              var videoCell = '';
-              if (hasRoom) {
-                var displayUrl = isSession ? '✅ Room ready' : escapeHtml(vid.slice(0,28)) + (vid.length>28?'…':'');
-                var linkStyle = 'font-size:0.78rem;color:var(--sage-dark);text-decoration:none;display:block;margin-bottom:4px;';
-                videoCell = '<a href="' + escapeHtml(vid) + '" target="_blank" style="' + linkStyle + '">' + displayUrl + '</a>';
-              }
-              // Generate Room button (always available for non-cancelled)
-              if (status !== 'cancelled') {
-                var btnLabel = hasRoom ? '↺ New room' : '▶ Generate room';
-                var btnStyle = 'padding:4px 10px;font-size:0.73rem;font-weight:600;border:none;border-radius:6px;cursor:pointer;margin-right:4px;' +
-                  (hasRoom ? 'background:rgba(30,111,171,0.2);color:var(--sage-dark);' : 'background:var(--sage);color:white;');
-                videoCell += '<button type="button" class="booking-gen-room" data-id="' + row.id + '" style="' + btnStyle + '">' + btnLabel + '</button>';
-              }
-              // Copy link button if room exists
-              if (hasRoom) {
-                videoCell += '<button type="button" class="booking-copy-link" data-url="' + escapeHtml(vid) + '" style="padding:4px 8px;font-size:0.72rem;background:transparent;border:1px solid var(--cream-dark);border-radius:6px;cursor:pointer;">📋</button>';
-              }
-              // Admin join button
-              if (hasRoom && status !== 'cancelled') {
-                videoCell += '<br><a href="' + escapeHtml(vid) + '" target="_blank" style="display:inline-block;margin-top:4px;padding:4px 10px;font-size:0.72rem;font-weight:600;background:#1E6FAB;color:white;border-radius:6px;text-decoration:none;">Join as specialist</a>';
-              }
+// ── CONTACT ───────────────────────────────────────────────────────────────────
+async function loadContact() {
+  $('contactError').style.display='none';
+  $('contactEmpty').style.display='none';
+  $('contactBody').innerHTML = '<tr><td colspan="7" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/contact`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('contactBody').innerHTML=''; $('contactEmpty').style.display='block'; return; }
+    $('contactBody').innerHTML = data.map(m => `
+      <tr>
+        <td class="muted">${fmtDate(m.created_at)}</td>
+        <td>${esc(m.name)}</td>
+        <td>${esc(m.email)}</td>
+        <td>${esc(m.phone||'')}</td>
+        <td>${esc(m.as_type||'')}</td>
+        <td>${esc(m.subject||'')}</td>
+        <td>${esc(m.message||'')}</td>
+      </tr>`).join('');
+  } catch(e) {
+    $('contactBody').innerHTML='';
+    $('contactError').textContent = e.message;
+    $('contactError').style.display='block';
+  }
+}
 
-              // Status change select
-              var statusCell = statusBadge(status) +
-                '<br><select class="booking-status-sel" data-id="' + row.id + '" style="margin-top:5px;font-size:0.72rem;padding:3px 6px;border:1px solid var(--cream-dark);border-radius:6px;font-family:inherit;background:var(--white);">' +
-                ['pending','confirmed','cancelled','rescheduled'].map(function(s){
-                  return '<option value="'+s+'"'+(s===status?' selected':'')+'>'+s.charAt(0).toUpperCase()+s.slice(1)+'</option>';
-                }).join('') + '</select>';
+// ── APPLICATIONS ──────────────────────────────────────────────────────────────
+async function loadApplications() {
+  $('applicationsError').style.display='none';
+  $('applicationsEmpty').style.display='none';
+  $('applicationsBody').innerHTML = '<tr><td colspan="7" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/applications`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('applicationsBody').innerHTML=''; $('applicationsEmpty').style.display='block'; return; }
+    $('applicationsBody').innerHTML = data.map(a => `
+      <tr>
+        <td class="muted">${fmtDate(a.created_at)}</td>
+        <td>${esc(a.name)}</td>
+        <td>${esc(a.email)}</td>
+        <td>${esc(a.phone||'')}</td>
+        <td>${esc(a.specialty||'')}</td>
+        <td>${esc(a.experience||'')}</td>
+        <td>${esc(a.introduction||'')}</td>
+      </tr>`).join('');
+  } catch(e) {
+    $('applicationsBody').innerHTML='';
+    $('applicationsError').textContent = e.message;
+    $('applicationsError').style.display='block';
+  }
+}
 
-              tr.innerHTML =
-                '<td class="muted" style="font-size:0.78rem;white-space:nowrap;">' + escapeHtml((row.created_at||'').slice(0,10)) + '</td>' +
-                '<td style="white-space:nowrap;">' + escapeHtml(row.first_name + ' ' + row.last_name) + '</td>' +
-                '<td style="font-size:0.82rem;">' + escapeHtml(row.email) + '</td>' +
-                '<td>' + escapeHtml(row.phone || '') + '</td>' +
-                '<td style="white-space:nowrap;">' + escapeHtml(row.specialist || '') + '</td>' +
-                '<td>' + escapeHtml(row.session_type || '') + '</td>' +
-                '<td style="white-space:nowrap;">' + escapeHtml(row.preferred_date || '') + '<br><span class="muted">' + escapeHtml(row.time_slot || '') + '</span></td>' +
-                '<td>' + statusCell + '</td>' +
-                '<td style="min-width:160px;">' + videoCell + '</td>' +
-                '<td class="muted" style="font-size:0.82rem;">' + escapeHtml(row.notes || '—') + '</td>';
-              tbody.appendChild(tr);
-            });
+// ── NEWSLETTER ────────────────────────────────────────────────────────────────
+async function loadNewsletter() {
+  $('newsletterError').style.display='none';
+  $('newsletterEmpty').style.display='none';
+  $('newsletterBody').innerHTML = '<tr><td colspan="2" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/newsletter`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('newsletterBody').innerHTML=''; $('newsletterEmpty').style.display='block'; return; }
+    $('newsletterBody').innerHTML = data.map(s => `
+      <tr>
+        <td class="muted">${fmtDate(s.created_at)}</td>
+        <td>${esc(s.email)}</td>
+      </tr>`).join('');
+  } catch(e) {
+    $('newsletterBody').innerHTML='';
+    $('newsletterError').textContent = e.message;
+    $('newsletterError').style.display='block';
+  }
+}
 
-            // Generate room handler
-            tbody.querySelectorAll('.booking-gen-room').forEach(function(btn) {
-              btn.addEventListener('click', function() {
-                var id = btn.getAttribute('data-id');
-                if (!confirm('Generate a new Jitsi video room for this booking? The patient will receive a confirmation email with the session link.')) return;
-                btn.disabled = true; btn.textContent = 'Generating…';
-                fetch(API + '/admin/bookings/' + id + '/room', { method: 'POST', headers: authHeaders() })
-                  .then(function(r) { return r.json(); })
-                  .then(function(d) {
-                    if (d && d.ok) {
-                      loadBookings();
-                    } else {
-                      alert((d && d.error) || 'Failed to generate room.');
-                      btn.disabled = false; btn.textContent = btn.textContent.indexOf('New') !== -1 ? '↺ New room' : '▶ Generate room';
-                    }
-                  })
-                  .catch(function() { alert('Network error'); btn.disabled = false; });
-              });
-            });
+// ── GRIEVANCES ────────────────────────────────────────────────────────────────
+async function loadGrievances() {
+  $('grievancesError').style.display='none';
+  $('grievancesEmpty').style.display='none';
+  $('grievancesBody').innerHTML = '<tr><td colspan="6" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/grievances`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('grievancesBody').innerHTML=''; $('grievancesEmpty').style.display='block'; return; }
+    $('grievancesBody').innerHTML = data.map(g => `
+      <tr>
+        <td class="muted">${fmtDate(g.created_at)}</td>
+        <td>${esc(g.name)}</td>
+        <td>${esc(g.email)}</td>
+        <td>${esc(g.phone||'')}</td>
+        <td>${esc(g.subject||'')}</td>
+        <td>${esc(g.message||'')}</td>
+      </tr>`).join('');
+  } catch(e) {
+    $('grievancesBody').innerHTML='';
+    $('grievancesError').textContent = e.message;
+    $('grievancesError').style.display='block';
+  }
+}
 
-            // Copy link handler
-            tbody.querySelectorAll('.booking-copy-link').forEach(function(btn) {
-              btn.addEventListener('click', function() {
-                var url = btn.getAttribute('data-url');
-                if (navigator.clipboard) {
-                  navigator.clipboard.writeText(url).then(function() { btn.textContent = '✓'; setTimeout(function(){ btn.textContent = '📋'; }, 1500); });
-                } else {
-                  var ta = document.createElement('textarea');
-                  ta.value = url; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-                  btn.textContent = '✓'; setTimeout(function(){ btn.textContent = '📋'; }, 1500);
-                }
-              });
-            });
+// ── BLOG ──────────────────────────────────────────────────────────────────────
+async function loadBlog() {
+  $('blogError').style.display='none';
+  $('blogEmpty').style.display='none';
+  $('blogBody').innerHTML='<tr><td colspan="5" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/blog`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('blogBody').innerHTML=''; $('blogEmpty').style.display='block'; return; }
+    $('blogBody').innerHTML = data.map(p => `
+      <tr>
+        <td class="muted">${fmtDate(p.created_at)}</td>
+        <td>${esc(p.title)}</td>
+        <td>${esc(p.category||'')}</td>
+        <td>${esc(p.author_name||'')}</td>
+        <td style="white-space:nowrap;">
+          <button onclick="editBlogPost('${p.id}','${escQ(p.title)}','${escQ(p.slug||'')}','${escQ(p.excerpt||'')}','${escQ(p.body||'')}','${escQ(p.category||'')}','${escQ(p.author_name||'')}')" style="padding:5px 12px;font-size:0.8rem;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:4px;">Edit</button>
+          <button onclick="deleteBlogPost('${p.id}')" style="padding:5px 12px;font-size:0.8rem;background:#c0392b;color:#fff;border:none;border-radius:6px;cursor:pointer;">Delete</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) {
+    $('blogBody').innerHTML='';
+    $('blogError').textContent=e.message;
+    $('blogError').style.display='block';
+  }
+}
 
-            // Status change handler
-            tbody.querySelectorAll('.booking-status-sel').forEach(function(sel) {
-              sel.addEventListener('change', function() {
-                var id = sel.getAttribute('data-id');
-                var newStatus = sel.value;
-                fetch(API + '/admin/bookings/' + id + '/status', {
-                  method: 'PATCH', headers: authHeaders(),
-                  body: JSON.stringify({ status: newStatus })
-                })
-                .then(function(r) { return r.json(); })
-                .then(function(d) { if (d && d.ok) loadBookings(); else { alert((d && d.error) || 'Failed'); } })
-                .catch(function() { alert('Network error'); });
-              });
-            });
+$('blogAddBtn').addEventListener('click', () => {
+  $('blogFormTitle').textContent='Add post';
+  $('blogPostId').value='';
+  $('blogTitle').value='';
+  $('blogSlug').value='';
+  $('blogExcerpt').value='';
+  $('blogBodyField').value='';
+  $('blogCategory').value='';
+  $('blogAuthor').value='';
+  $('blogFormWrap').style.display='block';
+  $('blogFormWrap').scrollIntoView({behavior:'smooth'});
+});
 
-          })
-          .catch(function() { showErr('bookings', 'Network error'); });
-      }
+function editBlogPost(id,title,slug,excerpt,body,category,author) {
+  $('blogFormTitle').textContent='Edit post';
+  $('blogPostId').value=id;
+  $('blogTitle').value=title;
+  $('blogSlug').value=slug;
+  $('blogExcerpt').value=excerpt;
+  $('blogBodyField').value=body;
+  $('blogCategory').value=category;
+  $('blogAuthor').value=author;
+  $('blogFormWrap').style.display='block';
+  $('blogFormWrap').scrollIntoView({behavior:'smooth'});
+}
 
-      function loadSlots() {
-        hideErr('slots');
-        fetch(API + '/admin/slots', { headers: authHeaders() })
-          .then(function(r) {
-            if (r.status === 401) { showLogin(); return null; }
-            return r.json();
-          })
-          .then(function(data) {
-            if (!data) return;
-            if (!data.ok) {
-              showErr('slots', data.error || 'Failed to load');
-              return;
-            }
-            var rows = data.data || [];
-            var tbody = document.getElementById('slotsBody');
-            tbody.innerHTML = '';
-            document.getElementById('slotsEmpty').style.display = rows.length ? 'none' : 'block';
-            document.getElementById('slotsTableWrap').style.display = rows.length ? 'block' : 'none';
-            rows.forEach(function(row) {
-              var tr = document.createElement('tr');
-              tr.innerHTML = '<td>' + escapeHtml(row.slot_date || '') + '</td><td>' + escapeHtml(row.slot_time || '') + '</td><td>' + escapeHtml(row.specialist || '') + '</td><td><button type="button" class="slot-delete" data-id="' + row.id + '" style="padding:4px 10px;font-size:0.75rem;background:transparent;color:#c0392b;border:1px solid #c0392b;border-radius:6px;cursor:pointer;">Delete</button></td>';
-              tbody.appendChild(tr);
-            });
-            document.querySelectorAll('.slot-delete').forEach(function(btn) {
-              btn.addEventListener('click', function() {
-                if (!confirm('Delete this slot?')) return;
-                var id = btn.getAttribute('data-id');
-                fetch(API + '/admin/slots/' + id, { method: 'DELETE', headers: authHeaders() })
-                  .then(function(r) { return r.json(); })
-                  .then(function(d) { if (d && d.ok) loadSlots(); else alert(d && d.error || 'Failed'); })
-                  .catch(function() { alert('Network error'); });
-              });
-            });
-          })
-          .catch(function() { showErr('slots', 'Network error'); });
-      }
-      function populateSlotSpecialistDropdown() {
-        var sel = document.getElementById('slotSpecialist');
-        if (!sel) return;
-        fetch(API + '/specialists').then(function(r) { return r.json(); }).then(function(d) {
-          sel.innerHTML = '<option value="">Select specialist</option>';
-          if (d && d.ok && d.data && d.data.length) {
-            d.data.forEach(function(s) {
-              var opt = document.createElement('option');
-              opt.value = s.name;
-              opt.textContent = s.name;
-              sel.appendChild(opt);
-            });
-          }
-        }).catch(function() { sel.innerHTML = '<option value="">Failed to load</option>'; });
-      }
-      document.getElementById('slotAddBtn').addEventListener('click', function() {
-        document.getElementById('slotFormWrap').style.display = 'block';
-        document.getElementById('slotDate').value = new Date().toISOString().slice(0, 10);
-        populateSlotSpecialistDropdown();
-      });
-      document.getElementById('slotFormCancel').addEventListener('click', function() {
-        document.getElementById('slotFormWrap').style.display = 'none';
-      });
-      document.getElementById('slotForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var payload = { specialist: document.getElementById('slotSpecialist').value, slot_date: document.getElementById('slotDate').value, slot_time: document.getElementById('slotTime').value.trim() };
-        fetch(API + '/admin/slots', { method: 'POST', headers: authHeaders(), body: JSON.stringify(payload) })
-          .then(function(r) { return r.json(); })
-          .then(function(d) {
-            if (d && d.ok) {
-              document.getElementById('slotFormWrap').style.display = 'none';
-              document.getElementById('slotTime').value = '';
-              loadSlots();
-            } else { alert(d && d.error || 'Failed'); }
-          })
-          .catch(function() { alert('Network error'); });
-      });
+$('blogFormCancel').addEventListener('click', () => { $('blogFormWrap').style.display='none'; });
 
-      function loadSpecialists() {
-        hideErr('specialists');
-        fetch(API + '/specialists').then(function(r) {
-          return r.json().then(function(data) { return { ok: r.ok, data: data }; }).catch(function() { return { ok: false, data: null }; });
-        }).then(function(result) {
-          if (!result.ok || !result.data || !result.data.ok) {
-            showErr('specialists', (result.data && result.data.error) || 'Cannot reach server. If site and API are on different domains, set API_BASE in config.js.');
-            return;
-          }
-          var rows = result.data.data || [];
-          var tbody = document.getElementById('specialistsBody');
-          tbody.innerHTML = '';
-          document.getElementById('specialistsEmpty').style.display = rows.length ? 'none' : 'block';
-          document.getElementById('specialistsTableWrap').style.display = rows.length ? 'block' : 'none';
-          rows.forEach(function(row) {
-            var tr = document.createElement('tr');
-            var availBadge = row.available !== 0
-              ? '<span style="background:rgba(46,160,67,0.12);color:#1a7f37;padding:2px 8px;border-radius:40px;font-size:0.7rem;font-weight:700;">✓ Available</span>'
-              : '<span style="background:rgba(210,153,34,0.15);color:#9a6700;padding:2px 8px;border-radius:40px;font-size:0.7rem;font-weight:700;">Unavailable</span>';
-            tr.innerHTML = '<td><strong>' + escapeHtml(row.name || '') + '</strong></td>' +
-              '<td style="color:var(--sage-dark);font-size:0.83rem">' + escapeHtml(row.title || '—') + '</td>' +
-              '<td class="muted">' + (row.experience_years > 0 ? row.experience_years + ' yrs' : '—') + '</td>' +
-              '<td>' + availBadge + '</td>' +
-              '<td>' +
-                '<button type="button" onclick="openSpecialistEdit(' + row.id + ')" style="padding:4px 10px;font-size:0.75rem;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:4px;">Edit</button>' +
-                '<button type="button" class="specialist-delete" data-id="' + row.id + '" style="padding:4px 10px;font-size:0.75rem;background:transparent;color:#c0392b;border:1px solid rgba(192,57,43,0.3);border-radius:6px;cursor:pointer;">Remove</button>' +
-              '</td>';
-            tbody.appendChild(tr);
-          });
-          document.querySelectorAll('.specialist-delete').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-              if (!confirm('Remove this specialist? They will no longer appear in the booking list. Existing bookings are unchanged.')) return;
-              var id = btn.getAttribute('data-id');
-                fetch(API + '/admin/specialists/' + id, { method: 'DELETE', headers: authHeaders() })
-                  .then(function(r) { return r.json().catch(function() { return {}; }); })
-                  .then(function(d) {
-                    if (d && d.ok) { loadSpecialists(); populateSlotSpecialistDropdown(); }
-                    else { showErr('specialists', (d && d.error) || 'Could not remove. If you see network errors, set API_BASE in config.js to your backend URL.'); }
-                  })
-                  .catch(function() { showErr('specialists', 'Network error. Check connection. If site and API are on different domains, set API_BASE in config.js to your backend URL.'); });
-            });
-          });
-        }).catch(function() {
-          showErr('specialists', 'Network error. Check connection. If site and API are on different domains, set API_BASE in config.js.');
-        });
-      }
-      document.getElementById('specialistForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var name = document.getElementById('specialistName').value.trim();
-        if (!name) return;
-        hideErr('specialists');
-        var btn = document.querySelector('#specialistForm button[type="submit"]');
-        if (btn) { btn.disabled = true; btn.textContent = 'Adding…'; }
-        fetch(API + '/admin/specialists', { method: 'POST', headers: authHeaders(), body: JSON.stringify({ name: name }) })
-          .then(function(r) {
-            return r.json().then(function(d) { return { ok: r.ok, status: r.status, data: d }; });
-          })
-          .catch(function() {
-            return { ok: false, status: 0, data: null };
-          })
-          .then(function(result) {
-            if (btn) { btn.disabled = false; btn.textContent = 'Add specialist'; }
-            if (result.ok && result.data && result.data.ok) {
-              document.getElementById('specialistName').value = '';
-              loadSpecialists();
-              populateSlotSpecialistDropdown();
-            } else {
-              var msg = 'Could not add specialist. ';
-              if (result.status === 0) {
-                msg += 'Cannot reach the server. Check your connection. If the site and API are on different domains, set API_BASE in config.js to your backend URL (e.g. https://your-app.onrender.com).';
-              } else if (result.data && result.data.error) {
-                msg += result.data.error;
-              } else if (result.status === 401) {
-                msg += 'Admin key invalid or expired. Log in again.';
-              } else {
-                msg += 'Server error (status ' + result.status + ').';
-              }
-              showErr('specialists', msg);
-            }
-          });
-      });
+$('blogForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const id = $('blogPostId').value;
+  const payload = {
+    title: $('blogTitle').value,
+    slug: $('blogSlug').value,
+    excerpt: $('blogExcerpt').value,
+    body: $('blogBodyField').value,
+    category: $('blogCategory').value,
+    author_name: $('blogAuthor').value
+  };
+  const url = id ? `${API}/admin/blog/${id}` : `${API}/admin/blog`;
+  const method = id ? 'PUT' : 'POST';
+  try {
+    const r = await fetch(url, { method, headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify(payload) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    $('blogFormWrap').style.display='none';
+    loadBlog();
+  } catch(e) {
+    alert('Error: ' + e.message);
+  }
+});
 
-      function loadContact() {
-        hideErr('contact');
-        fetch(API + '/admin/contact', { headers: authHeaders() })
-          .then(function(r) {
-            if (r.status === 401) { showLogin(); return null; }
-            return r.json();
-          })
-          .then(function(data) {
-            if (!data) return;
-            if (!data.ok) {
-              showErr('contact', data.error || 'Failed to load');
-              return;
-            }
-            var rows = data.data || [];
-            var tbody = document.getElementById('contactBody');
-            tbody.innerHTML = '';
-            document.getElementById('contactEmpty').style.display = rows.length ? 'none' : 'block';
-            rows.forEach(function(row) {
-              var tr = document.createElement('tr');
-              tr.innerHTML =
-                '<td class="muted">' + escapeHtml(row.created_at || '') + '</td>' +
-                '<td>' + escapeHtml(row.first_name + ' ' + row.last_name) + '</td>' +
-                '<td>' + escapeHtml(row.email) + '</td>' +
-                '<td>' + escapeHtml(row.phone || '—') + '</td>' +
-                '<td>' + escapeHtml(row.reaching_out_as || '—') + '</td>' +
-                '<td>' + escapeHtml(row.subject || '—') + '</td>' +
-                '<td>' + escapeHtml(row.message || '') + '</td>';
-              tbody.appendChild(tr);
-            });
-          })
-          .catch(function() { showErr('contact', 'Network error'); });
-      }
+async function deleteBlogPost(id) {
+  if (!confirm('Delete this post?')) return;
+  try {
+    const r = await fetch(`${API}/admin/blog/${id}`, { method:'DELETE', headers:{ 'x-admin-key':getKey() } });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadBlog();
+  } catch(e) { alert('Error: ' + e.message); }
+}
 
-      function loadApplications() {
-        hideErr('applications');
-        fetch(API + '/admin/applications', { headers: authHeaders() })
-          .then(function(r) {
-            if (r.status === 401) { showLogin(); return null; }
-            return r.json();
-          })
-          .then(function(data) {
-            if (!data) return;
-            if (!data.ok) {
-              showErr('applications', data.error || 'Failed to load');
-              return;
-            }
-            var rows = data.data || [];
-            var tbody = document.getElementById('applicationsBody');
-            tbody.innerHTML = '';
-            document.getElementById('applicationsEmpty').style.display = rows.length ? 'none' : 'block';
-            rows.forEach(function(row) {
-              var tr = document.createElement('tr');
-              tr.innerHTML =
-                '<td class="muted">' + escapeHtml(row.created_at || '') + '</td>' +
-                '<td>' + escapeHtml(row.first_name + ' ' + row.last_name) + '</td>' +
-                '<td>' + escapeHtml(row.email) + '</td>' +
-                '<td>' + escapeHtml(row.phone || '') + '</td>' +
-                '<td>' + escapeHtml(row.specialty || '') + '</td>' +
-                '<td>' + escapeHtml(row.years_experience || '') + '</td>' +
-                '<td>' + escapeHtml(row.introduction || '—') + '</td>';
-              tbody.appendChild(tr);
-            });
-          })
-          .catch(function() { showErr('applications', 'Network error'); });
-      }
+// ── SLOTS ─────────────────────────────────────────────────────────────────────
+async function loadSlots() {
+  $('slotsError').style.display='none';
+  $('slotsEmpty').style.display='none';
+  $('slotsBody').innerHTML='<tr><td colspan="4" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/slots`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('slotsBody').innerHTML=''; $('slotsEmpty').style.display='block'; return; }
+    $('slotsBody').innerHTML = data.map(s => `
+      <tr>
+        <td>${esc(s.slot_date)}</td>
+        <td>${esc(s.slot_time)}</td>
+        <td>${esc(s.specialist_name||'Any')}</td>
+        <td><button onclick="deleteSlot('${s.id}')" style="padding:4px 10px;font-size:0.8rem;background:#c0392b;color:#fff;border:none;border-radius:6px;cursor:pointer;">Delete</button></td>
+      </tr>`).join('');
+  } catch(e) {
+    $('slotsBody').innerHTML='';
+    $('slotsError').textContent=e.message;
+    $('slotsError').style.display='block';
+  }
+}
 
-      function loadNewsletter() {
-        hideErr('newsletter');
-        fetch(API + '/admin/newsletter', { headers: authHeaders() })
-          .then(function(r) {
-            if (r.status === 401) { showLogin(); return null; }
-            return r.json();
-          })
-          .then(function(data) {
-            if (!data) return;
-            if (!data.ok) {
-              showErr('newsletter', data.error || 'Failed to load');
-              return;
-            }
-            var rows = data.data || [];
-            var tbody = document.getElementById('newsletterBody');
-            tbody.innerHTML = '';
-            document.getElementById('newsletterEmpty').style.display = rows.length ? 'none' : 'block';
-            rows.forEach(function(row) {
-              var tr = document.createElement('tr');
-              tr.innerHTML =
-                '<td class="muted">' + escapeHtml(row.created_at || '') + '</td>' +
-                '<td>' + escapeHtml(row.email || '') + '</td>';
-              tbody.appendChild(tr);
-            });
-          })
-          .catch(function() { showErr('newsletter', 'Network error'); });
-      }
+$('slotAddBtn').addEventListener('click', () => {
+  $('slotFormWrap').style.display='block';
+  $('slotFormWrap').scrollIntoView({behavior:'smooth'});
+  populateSlotSpecialists();
+});
 
-      function loadGrievances() {
-        hideErr('grievances');
-        fetch(API + '/admin/grievances', { headers: authHeaders() })
-          .then(function(r) {
-            if (r.status === 401) { showLogin(); return null; }
-            return r.json();
-          })
-          .then(function(data) {
-            if (!data) return;
-            if (!data.ok) {
-              showErr('grievances', data.error || 'Failed to load');
-              return;
-            }
-            var rows = data.data || [];
-            var tbody = document.getElementById('grievancesBody');
-            tbody.innerHTML = '';
-            document.getElementById('grievancesEmpty').style.display = rows.length ? 'none' : 'block';
-            rows.forEach(function(row) {
-              var tr = document.createElement('tr');
-              tr.innerHTML =
-                '<td class="muted">' + escapeHtml(row.created_at || '') + '</td>' +
-                '<td>' + escapeHtml(row.first_name || '') + ' ' + escapeHtml(row.last_name || '') + '</td>' +
-                '<td>' + escapeHtml(row.email || '') + '</td>' +
-                '<td>' + escapeHtml(row.phone || '') + '</td>' +
-                '<td>' + escapeHtml(row.subject || '') + '</td>' +
-                '<td>' + escapeHtml(row.message || '') + '</td>';
-              tbody.appendChild(tr);
-            });
-          })
-          .catch(function() { showErr('grievances', 'Network error'); });
-      }
+$('slotFormCancel').addEventListener('click', () => { $('slotFormWrap').style.display='none'; });
 
-      function loadPatients() {
-        hideErr('patients');
-        fetch(API + '/admin/patients', { headers: authHeaders() })
-          .then(function(r) {
-            if (r.status === 401) { showLogin(); return null; }
-            return r.json();
-          })
-          .then(function(data) {
-            if (!data) return;
-            if (!data.ok) { showErr('patients', data.error || 'Failed to load'); return; }
-            var rows = data.data || [];
-            var tbody = document.getElementById('patientsBody');
-            tbody.innerHTML = '';
-            document.getElementById('patientsEmpty').style.display = rows.length ? 'none' : 'block';
-            rows.forEach(function(row, i) {
-              var tr = document.createElement('tr');
-              var verifiedBadge = row.email_verified
-                ? '<span style="background:rgba(46,160,67,0.15);color:#1a7f37;padding:2px 8px;border-radius:40px;font-size:0.7rem;font-weight:700;">✓ Verified</span>'
-                : '<span style="background:rgba(210,153,34,0.15);color:#9a6700;padding:2px 8px;border-radius:40px;font-size:0.7rem;font-weight:700;">Unverified</span>';
-              tr.innerHTML =
-                '<td class="muted">' + (i + 1) + '</td>' +
-                '<td><strong>' + escapeHtml(row.full_name || '—') + '</strong></td>' +
-                '<td>' + escapeHtml(row.email || '') + '</td>' +
-                '<td>' + escapeHtml(row.phone || '—') + '</td>' +
-                '<td>' + verifiedBadge + '</td>' +
-                '<td style="text-align:center;">' + (row.booking_count || 0) + '</td>' +
-                '<td class="muted">' + escapeHtml(row.last_booking_date || '—') + '</td>' +
-                '<td class="muted">' + escapeHtml((row.created_at || '').slice(0, 10)) + '</td>';
-              tbody.appendChild(tr);
-            });
-          })
-          .catch(function() { showErr('patients', 'Network error'); });
-      }
+async function populateSlotSpecialists() {
+  try {
+    const r = await fetch(`${API}/admin/specialists`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    $('slotSpecialist').innerHTML = data.map(s => `<option value="${esc(s.name)}">${esc(s.name)}</option>`).join('');
+  } catch { $('slotSpecialist').innerHTML = '<option value="">Error loading</option>'; }
+}
 
-      function loadAnalytics() {
-        hideErr('analytics');
-        fetch(API + '/admin/analytics', { headers: authHeaders() })
-          .then(function(r) {
-            if (r.status === 401) { showLogin(); return null; }
-            return r.json();
-          })
-          .then(function(data) {
-            if (!data) return;
-            if (!data.ok) {
-              showErr('analytics', data.error || 'Failed to load');
-              return;
-            }
-            var d = data.data || {};
-            document.getElementById('analyticsVisitsTotal').textContent = d.visitsTotal != null ? d.visitsTotal : '—';
-            document.getElementById('analyticsBookingsMonth').textContent = d.bookingsThisMonth != null ? d.bookingsThisMonth : '—';
-            var tbody = document.getElementById('analyticsTopPages');
-            tbody.innerHTML = '';
-            (d.topPages || []).forEach(function(row) {
-              var tr = document.createElement('tr');
-              tr.innerHTML = '<td>' + escapeHtml(row.page || '/') + '</td><td>' + (row.count != null ? row.count : '') + '</td>';
-              tbody.appendChild(tr);
-            });
-            document.getElementById('analyticsContent').style.display = 'block';
-          })
-          .catch(function() { showErr('analytics', 'Network error'); });
-      }
+$('slotForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const payload = {
+    specialist_name: $('slotSpecialist').value,
+    slot_date: $('slotDate').value,
+    slot_time: $('slotTime').value
+  };
+  try {
+    const r = await fetch(`${API}/admin/slots`, { method:'POST', headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify(payload) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    $('slotFormWrap').style.display='none';
+    loadSlots();
+  } catch(e) { alert('Error: ' + e.message); }
+});
 
+async function deleteSlot(id) {
+  if (!confirm('Delete this slot?')) return;
+  try {
+    const r = await fetch(`${API}/admin/slots/${id}`, { method:'DELETE', headers:{ 'x-admin-key':getKey() } });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadSlots();
+  } catch(e) { alert('Error: ' + e.message); }
+}
 
-      // ═══════════════════════════════════════
-      //  CMS MANAGEMENT FUNCTIONS
-      // ═══════════════════════════════════════
+// ── SPECIALISTS ───────────────────────────────────────────────────────────────
+async function loadSpecialists() {
+  $('specialistsError').style.display='none';
+  $('specialistsEmpty').style.display='none';
+  $('specialistsBody').innerHTML='<tr><td colspan="5" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/specialists`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('specialistsBody').innerHTML=''; $('specialistsEmpty').style.display='block'; return; }
+    $('specialistsBody').innerHTML = data.map(s => `
+      <tr>
+        <td>${esc(s.name)}</td>
+        <td>${esc(s.title||'')}</td>
+        <td>${esc(s.experience||'')}</td>
+        <td><span class="toggle-active ${s.available?'on':'off'}" onclick="toggleSpecialist('${s.id}',${s.available})">${s.available?'Active':'Inactive'}</span></td>
+        <td><button onclick="deleteSpecialist('${s.id}')" style="padding:4px 10px;font-size:0.8rem;background:#c0392b;color:#fff;border:none;border-radius:6px;cursor:pointer;">Remove</button></td>
+      </tr>`).join('');
+  } catch(e) {
+    $('specialistsBody').innerHTML='';
+    $('specialistsError').textContent=e.message;
+    $('specialistsError').style.display='block';
+  }
+}
 
-      function activeBadge(v) {
-        return v ? '<span class="toggle-active on">Active</span>' : '<span class="toggle-active off">Hidden</span>';
-      }
-      function starRating(n) {
-        var s = ''; for (var i = 0; i < 5; i++) s += i < n ? '★' : '☆'; return s;
-      }
+$('specialistForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const payload = { name: $('specialistName').value };
+  try {
+    const r = await fetch(`${API}/admin/specialists`, { method:'POST', headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify(payload) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    $('specialistName').value='';
+    loadSpecialists();
+  } catch(e) { alert('Error: ' + e.message); }
+});
 
-      // ── SERVICES ──
-      function loadServices() {
-        hideErr('services');
-        fetch(API + '/admin/services', { headers: authHeaders() })
-          .then(function(r){ if(r.status===401){showLogin();return null;} return r.json(); })
-          .then(function(data){
-            if(!data) return;
-            if(!data.ok){ showErr('services', data.error||'Failed'); return; }
-            var rows = data.data||[];
-            document.getElementById('servicesEmpty').style.display = rows.length ? 'none' : 'block';
-            var tb = document.getElementById('servicesBody'); tb.innerHTML = '';
-            rows.forEach(function(r){
-              var tr = document.createElement('tr');
-              var feats = (r.features||'').replace(/\|/g,'\n');
-              tr.innerHTML = '<td>'+r.display_order+'</td><td style="font-size:1.5rem">'+escapeHtml(r.icon||'')+'</td><td><strong>'+escapeHtml(r.title)+'</strong></td><td style="max-width:300px;font-size:0.82rem;color:var(--text-light)">'+escapeHtml(r.description)+'</td><td>'+activeBadge(r.active)+'</td>' +
-                '<td><button onclick="editService('+r.id+')" style="padding:4px 10px;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">Edit</button>' +
-                '<button onclick="toggleItem('services','+r.id+','+r.active+')" style="padding:4px 10px;background:rgba(30,111,171,0.1);color:var(--sage-dark);border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">'+(r.active?'Hide':'Show')+'</button>' +
-                '<button onclick="deleteItem('services','+r.id+',loadServices)" style="padding:4px 10px;background:rgba(207,34,46,0.1);color:#c0392b;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem">Delete</button></td>';
-              tb.appendChild(tr);
-            });
-          }).catch(function(){ showErr('services','Network error'); });
-      }
-      function editService(id) {
-        fetch(API + '/admin/services', { headers: authHeaders() })
-          .then(function(r){return r.json();}).then(function(data){
-            var r = (data.data||[]).find(function(x){return x.id===id;});
-            if(!r) return;
-            document.getElementById('serviceEditId').value = id;
-            document.getElementById('serviceIcon').value = r.icon||'';
-            document.getElementById('serviceTitle').value = r.title||'';
-            document.getElementById('serviceDesc').value = r.description||'';
-            document.getElementById('serviceFeatures').value = (r.features||'').replace(/\|/g,'\n');
-            document.getElementById('serviceOrder').value = r.display_order||0;
-            document.getElementById('serviceFormTitle').textContent = 'Edit Service';
-            document.getElementById('serviceSubmitBtn').textContent = 'Save Changes';
-            document.getElementById('serviceCancelBtn').style.display = '';
-            document.getElementById('serviceFormTitle').scrollIntoView({behavior:'smooth'});
-          });
-      }
-      document.getElementById('serviceCancelBtn').onclick = function(){
-        document.getElementById('serviceForm').reset();
-        document.getElementById('serviceEditId').value = '';
-        document.getElementById('serviceFormTitle').textContent = 'Add Service';
-        document.getElementById('serviceSubmitBtn').textContent = 'Add Service';
-        document.getElementById('serviceCancelBtn').style.display = 'none';
-      };
-      document.getElementById('serviceForm').onsubmit = function(e){
-        e.preventDefault();
-        var id = document.getElementById('serviceEditId').value;
-        var feats = document.getElementById('serviceFeatures').value.trim().replace(/\n+/g,'|');
-        var body = {
-          icon: document.getElementById('serviceIcon').value.trim()||'🧬',
-          title: document.getElementById('serviceTitle').value.trim(),
-          description: document.getElementById('serviceDesc').value.trim(),
-          features: feats,
-          display_order: parseInt(document.getElementById('serviceOrder').value)||0
-        };
-        var url = id ? API+'/admin/services/'+id : API+'/admin/services';
-        var method = id ? 'PUT' : 'POST';
-        fetch(url, { method:method, headers:{...authHeaders(),'Content-Type':'application/json'}, body:JSON.stringify(body) })
-          .then(function(r){return r.json();}).then(function(d){
-            if(!d.ok){ alert(d.error||'Error'); return; }
-            document.getElementById('serviceForm').reset();
-            document.getElementById('serviceEditId').value = '';
-            document.getElementById('serviceFormTitle').textContent = 'Add Service';
-            document.getElementById('serviceSubmitBtn').textContent = 'Add Service';
-            document.getElementById('serviceCancelBtn').style.display = 'none';
-            loadServices();
-          });
-      };
+async function toggleSpecialist(id, cur) {
+  try {
+    const r = await fetch(`${API}/admin/specialists/${id}`, { method:'PATCH', headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify({ available: !cur }) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadSpecialists();
+  } catch(e) { alert('Error: ' + e.message); }
+}
 
-      // ── PRICING ──
-      function loadPricing() {
-        hideErr('pricing');
-        fetch(API + '/admin/pricing', { headers: authHeaders() })
-          .then(function(r){ if(r.status===401){showLogin();return null;} return r.json(); })
-          .then(function(data){
-            if(!data) return;
-            if(!data.ok){ showErr('pricing', data.error||'Failed'); return; }
-            var rows = data.data||[];
-            document.getElementById('pricingEmpty').style.display = rows.length ? 'none' : 'block';
-            var tb = document.getElementById('pricingBody'); tb.innerHTML = '';
-            rows.forEach(function(r){
-              var tr = document.createElement('tr');
-              tr.innerHTML = '<td>'+r.display_order+'</td><td style="color:var(--sage);font-size:0.78rem;font-weight:600">'+escapeHtml(r.label||'')+'</td><td><strong>'+escapeHtml(r.title)+'</strong></td><td style="font-weight:700;color:var(--sage-dark)">'+escapeHtml(r.amount)+'</td><td style="font-size:0.8rem;color:var(--text-light)">'+escapeHtml(r.note||'')+'</td>' +
-                '<td>'+(r.is_featured?'<span style="background:rgba(30,111,171,0.12);color:var(--sage-dark);padding:2px 8px;border-radius:40px;font-size:0.7rem;font-weight:700;">★ Featured</span>':'')+'</td>' +
-                '<td>'+activeBadge(r.active)+'</td>' +
-                '<td><button onclick="editPricing('+r.id+')" style="padding:4px 10px;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">Edit</button>' +
-                '<button onclick="toggleItem('pricing','+r.id+','+r.active+')" style="padding:4px 10px;background:rgba(30,111,171,0.1);color:var(--sage-dark);border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">'+(r.active?'Hide':'Show')+'</button>' +
-                '<button onclick="deleteItem('pricing','+r.id+',loadPricing)" style="padding:4px 10px;background:rgba(207,34,46,0.1);color:#c0392b;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem">Delete</button></td>';
-              tb.appendChild(tr);
-            });
-          }).catch(function(){ showErr('pricing','Network error'); });
-      }
-      function editPricing(id) {
-        fetch(API + '/admin/pricing', { headers: authHeaders() })
-          .then(function(r){return r.json();}).then(function(data){
-            var r = (data.data||[]).find(function(x){return x.id===id;});
-            if(!r) return;
-            document.getElementById('pricingEditId').value = id;
-            document.getElementById('pricingLabel').value = r.label||'';
-            document.getElementById('pricingTitle').value = r.title||'';
-            document.getElementById('pricingAmount').value = r.amount||'';
-            document.getElementById('pricingNote').value = r.note||'';
-            document.getElementById('pricingFeatures').value = (r.features||'').replace(/\|/g,'\n');
-            document.getElementById('pricingFeatured').checked = !!r.is_featured;
-            document.getElementById('pricingOrder').value = r.display_order||0;
-            document.getElementById('pricingFormTitle').textContent = 'Edit Plan';
-            document.getElementById('pricingSubmitBtn').textContent = 'Save Changes';
-            document.getElementById('pricingCancelBtn').style.display = '';
-            document.getElementById('pricingFormTitle').scrollIntoView({behavior:'smooth'});
-          });
-      }
-      document.getElementById('pricingCancelBtn').onclick = function(){
-        document.getElementById('pricingForm').reset();
-        document.getElementById('pricingEditId').value = '';
-        document.getElementById('pricingFormTitle').textContent = 'Add Pricing Plan';
-        document.getElementById('pricingSubmitBtn').textContent = 'Add Plan';
-        document.getElementById('pricingCancelBtn').style.display = 'none';
-      };
-      document.getElementById('pricingForm').onsubmit = function(e){
-        e.preventDefault();
-        var id = document.getElementById('pricingEditId').value;
-        var feats = document.getElementById('pricingFeatures').value.trim().replace(/\n+/g,'|');
-        var body = {
-          label: document.getElementById('pricingLabel').value.trim(),
-          title: document.getElementById('pricingTitle').value.trim(),
-          amount: document.getElementById('pricingAmount').value.trim(),
-          note: document.getElementById('pricingNote').value.trim(),
-          features: feats,
-          is_featured: document.getElementById('pricingFeatured').checked ? 1 : 0,
-          display_order: parseInt(document.getElementById('pricingOrder').value)||0
-        };
-        var url = id ? API+'/admin/pricing/'+id : API+'/admin/pricing';
-        var method = id ? 'PUT' : 'POST';
-        fetch(url, { method:method, headers:{...authHeaders(),'Content-Type':'application/json'}, body:JSON.stringify(body) })
-          .then(function(r){return r.json();}).then(function(d){
-            if(!d.ok){ alert(d.error||'Error'); return; }
-            document.getElementById('pricingForm').reset();
-            document.getElementById('pricingEditId').value = '';
-            document.getElementById('pricingFormTitle').textContent = 'Add Pricing Plan';
-            document.getElementById('pricingSubmitBtn').textContent = 'Add Plan';
-            document.getElementById('pricingCancelBtn').style.display = 'none';
-            loadPricing();
-          });
-      };
+async function deleteSpecialist(id) {
+  if (!confirm('Remove this specialist?')) return;
+  try {
+    const r = await fetch(`${API}/admin/specialists/${id}`, { method:'DELETE', headers:{ 'x-admin-key':getKey() } });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadSpecialists();
+  } catch(e) { alert('Error: ' + e.message); }
+}
 
-      // ── FAQ ──
-      function loadFaq() {
-        hideErr('faq');
-        fetch(API + '/admin/faq', { headers: authHeaders() })
-          .then(function(r){ if(r.status===401){showLogin();return null;} return r.json(); })
-          .then(function(data){
-            if(!data) return;
-            if(!data.ok){ showErr('faq', data.error||'Failed'); return; }
-            var rows = data.data||[];
-            document.getElementById('faqEmpty').style.display = rows.length ? 'none' : 'block';
-            var tb = document.getElementById('faqBody'); tb.innerHTML = '';
-            rows.forEach(function(r){
-              var tr = document.createElement('tr');
-              tr.innerHTML = '<td>'+r.display_order+'</td><td style="max-width:280px;font-weight:500">'+escapeHtml(r.question)+'</td><td style="max-width:350px;font-size:0.82rem;color:var(--text-light)">'+escapeHtml((r.answer||'').slice(0,100))+'…</td>' +
-                '<td>'+activeBadge(r.active)+'</td>' +
-                '<td><button onclick="editFaq('+r.id+')" style="padding:4px 10px;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">Edit</button>' +
-                '<button onclick="toggleItem('faq','+r.id+','+r.active+')" style="padding:4px 10px;background:rgba(30,111,171,0.1);color:var(--sage-dark);border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">'+(r.active?'Hide':'Show')+'</button>' +
-                '<button onclick="deleteItem('faq','+r.id+',loadFaq)" style="padding:4px 10px;background:rgba(207,34,46,0.1);color:#c0392b;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem">Delete</button></td>';
-              tb.appendChild(tr);
-            });
-          }).catch(function(){ showErr('faq','Network error'); });
-      }
-      function editFaq(id) {
-        fetch(API + '/admin/faq', { headers: authHeaders() })
-          .then(function(r){return r.json();}).then(function(data){
-            var r = (data.data||[]).find(function(x){return x.id===id;});
-            if(!r) return;
-            document.getElementById('faqEditId').value = id;
-            document.getElementById('faqQuestion').value = r.question||'';
-            document.getElementById('faqAnswer').value = r.answer||'';
-            document.getElementById('faqOrder').value = r.display_order||0;
-            document.getElementById('faqFormTitle').textContent = 'Edit FAQ Item';
-            document.getElementById('faqSubmitBtn').textContent = 'Save Changes';
-            document.getElementById('faqCancelBtn').style.display = '';
-            document.getElementById('faqFormTitle').scrollIntoView({behavior:'smooth'});
-          });
-      }
-      document.getElementById('faqCancelBtn').onclick = function(){
-        document.getElementById('faqForm').reset();
-        document.getElementById('faqEditId').value = '';
-        document.getElementById('faqFormTitle').textContent = 'Add FAQ Item';
-        document.getElementById('faqSubmitBtn').textContent = 'Add FAQ';
-        document.getElementById('faqCancelBtn').style.display = 'none';
-      };
-      document.getElementById('faqForm').onsubmit = function(e){
-        e.preventDefault();
-        var id = document.getElementById('faqEditId').value;
-        var body = {
-          question: document.getElementById('faqQuestion').value.trim(),
-          answer: document.getElementById('faqAnswer').value.trim(),
-          display_order: parseInt(document.getElementById('faqOrder').value)||0
-        };
-        var url = id ? API+'/admin/faq/'+id : API+'/admin/faq';
-        var method = id ? 'PUT' : 'POST';
-        fetch(url, { method:method, headers:{...authHeaders(),'Content-Type':'application/json'}, body:JSON.stringify(body) })
-          .then(function(r){return r.json();}).then(function(d){
-            if(!d.ok){ alert(d.error||'Error'); return; }
-            document.getElementById('faqForm').reset();
-            document.getElementById('faqEditId').value = '';
-            document.getElementById('faqFormTitle').textContent = 'Add FAQ Item';
-            document.getElementById('faqSubmitBtn').textContent = 'Add FAQ';
-            document.getElementById('faqCancelBtn').style.display = 'none';
-            loadFaq();
-          });
-      };
+// ── PATIENTS ──────────────────────────────────────────────────────────────────
+async function loadPatients() {
+  $('patientsError').style.display='none';
+  $('patientsEmpty').style.display='none';
+  $('patientsBody').innerHTML='<tr><td colspan="8" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/patients`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('patientsBody').innerHTML=''; $('patientsEmpty').style.display='block'; return; }
+    $('patientsBody').innerHTML = data.map((p, i) => `
+      <tr>
+        <td class="muted">${i+1}</td>
+        <td>${esc(p.name||'')}</td>
+        <td>${esc(p.email||'')}</td>
+        <td>${esc(p.phone||'')}</td>
+        <td>${p.is_verified ? '✓ Yes' : 'No'}</td>
+        <td>${p.booking_count||0}</td>
+        <td class="muted">${p.last_booking ? fmtDate(p.last_booking) : '—'}</td>
+        <td class="muted">${fmtDate(p.created_at)}</td>
+      </tr>`).join('');
+  } catch(e) {
+    $('patientsBody').innerHTML='';
+    $('patientsError').textContent=e.message;
+    $('patientsError').style.display='block';
+  }
+}
 
-      // ── TESTIMONIALS ──
-      function loadTestimonials() {
-        hideErr('testimonials');
-        fetch(API + '/admin/testimonials', { headers: authHeaders() })
-          .then(function(r){ if(r.status===401){showLogin();return null;} return r.json(); })
-          .then(function(data){
-            if(!data) return;
-            if(!data.ok){ showErr('testimonials', data.error||'Failed'); return; }
-            var rows = data.data||[];
-            document.getElementById('testimonialsEmpty').style.display = rows.length ? 'none' : 'block';
-            var tb = document.getElementById('testimonialsBody'); tb.innerHTML = '';
-            rows.forEach(function(r, i){
-              var tr = document.createElement('tr');
-              tr.innerHTML = '<td class="muted">'+(i+1)+'</td><td style="max-width:320px;font-style:italic;font-size:0.85rem">'+escapeHtml((r.quote||'').slice(0,80))+'…</td><td><strong>'+escapeHtml(r.author_name||'')+'</strong><br><span class="muted" style="font-size:0.78rem">'+escapeHtml(r.author_meta||'')+'</span></td>' +
-                '<td style="color:#f5a623;letter-spacing:1px">'+starRating(r.rating||5)+'</td><td>'+activeBadge(r.active)+'</td>' +
-                '<td><button onclick="editTestimonial('+r.id+')" style="padding:4px 10px;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">Edit</button>' +
-                '<button onclick="toggleItem('testimonials','+r.id+','+r.active+')" style="padding:4px 10px;background:rgba(30,111,171,0.1);color:var(--sage-dark);border:none;border-radius:6px;cursor:pointer;font-size:0.78rem;margin-right:4px">'+(r.active?'Hide':'Show')+'</button>' +
-                '<button onclick="deleteItem('testimonials','+r.id+',loadTestimonials)" style="padding:4px 10px;background:rgba(207,34,46,0.1);color:#c0392b;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem">Delete</button></td>';
-              tb.appendChild(tr);
-            });
-          }).catch(function(){ showErr('testimonials','Network error'); });
-      }
-      function editTestimonial(id) {
-        fetch(API + '/admin/testimonials', { headers: authHeaders() })
-          .then(function(r){return r.json();}).then(function(data){
-            var r = (data.data||[]).find(function(x){return x.id===id;});
-            if(!r) return;
-            document.getElementById('testimonialEditId').value = id;
-            document.getElementById('testimonialQuote').value = r.quote||'';
-            document.getElementById('testimonialAuthor').value = r.author_name||'';
-            document.getElementById('testimonialMeta').value = r.author_meta||'';
-            document.getElementById('testimonialRating').value = r.rating||5;
-            document.getElementById('testimonialOrder').value = r.display_order||0;
-            document.getElementById('testimonialFormTitle').textContent = 'Edit Testimonial';
-            document.getElementById('testimonialSubmitBtn').textContent = 'Save Changes';
-            document.getElementById('testimonialCancelBtn').style.display = '';
-            document.getElementById('testimonialFormTitle').scrollIntoView({behavior:'smooth'});
-          });
-      }
-      document.getElementById('testimonialCancelBtn').onclick = function(){
-        document.getElementById('testimonialForm').reset();
-        document.getElementById('testimonialEditId').value = '';
-        document.getElementById('testimonialFormTitle').textContent = 'Add Testimonial';
-        document.getElementById('testimonialSubmitBtn').textContent = 'Add Testimonial';
-        document.getElementById('testimonialCancelBtn').style.display = 'none';
-      };
-      document.getElementById('testimonialForm').onsubmit = function(e){
-        e.preventDefault();
-        var id = document.getElementById('testimonialEditId').value;
-        var body = {
-          quote: document.getElementById('testimonialQuote').value.trim(),
-          author_name: document.getElementById('testimonialAuthor').value.trim(),
-          author_meta: document.getElementById('testimonialMeta').value.trim(),
-          rating: parseInt(document.getElementById('testimonialRating').value)||5,
-          display_order: parseInt(document.getElementById('testimonialOrder').value)||0
-        };
-        var url = id ? API+'/admin/testimonials/'+id : API+'/admin/testimonials';
-        var method = id ? 'PUT' : 'POST';
-        fetch(url, { method:method, headers:{...authHeaders(),'Content-Type':'application/json'}, body:JSON.stringify(body) })
-          .then(function(r){return r.json();}).then(function(d){
-            if(!d.ok){ alert(d.error||'Error'); return; }
-            document.getElementById('testimonialForm').reset();
-            document.getElementById('testimonialEditId').value = '';
-            document.getElementById('testimonialFormTitle').textContent = 'Add Testimonial';
-            document.getElementById('testimonialSubmitBtn').textContent = 'Add Testimonial';
-            document.getElementById('testimonialCancelBtn').style.display = 'none';
-            loadTestimonials();
-          });
-      };
+// ── SERVICES ──────────────────────────────────────────────────────────────────
+async function loadServices() {
+  $('servicesError').style.display='none';
+  $('servicesEmpty').style.display='none';
+  $('servicesBody').innerHTML='<tr><td colspan="6" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/services`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('servicesBody').innerHTML=''; $('servicesEmpty').style.display='block'; return; }
+    $('servicesBody').innerHTML = data.map(s => `
+      <tr>
+        <td>${s.display_order||0}</td>
+        <td style="font-size:1.3rem;">${s.icon||''}</td>
+        <td>${esc(s.title)}</td>
+        <td class="muted">${esc((s.description||'').substring(0,60))}${s.description&&s.description.length>60?'…':''}</td>
+        <td><span class="toggle-active ${s.active?'on':'off'}" onclick="toggleService('${s.id}',${s.active})">${s.active?'Active':'Inactive'}</span></td>
+        <td style="white-space:nowrap;">
+          <button onclick="editService('${s.id}','${escQ(s.title)}','${escQ(s.description||'')}','${escQ(s.icon||'')}',${s.display_order||0},'${escQ((s.features||[]).join('\n'))}')" style="padding:5px 12px;font-size:0.8rem;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:4px;">Edit</button>
+          <button onclick="deleteService('${s.id}')" style="padding:5px 12px;font-size:0.8rem;background:#c0392b;color:#fff;border:none;border-radius:6px;cursor:pointer;">Delete</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) {
+    $('servicesBody').innerHTML='';
+    $('servicesError').textContent=e.message;
+    $('servicesError').style.display='block';
+  }
+}
 
-      // ── REVIEWS ──
-      function loadReviews() {
-        hideErr('reviews');
-        fetch(API + '/admin/reviews', { headers: authHeaders() })
-          .then(function(r){ if(r.status===401){showLogin();return null;} return r.json(); })
-          .then(function(data){
-            if(!data) return;
-            if(!data.ok){ showErr('reviews', data.error||'Failed'); return; }
-            var rows = data.data||[];
-            document.getElementById('reviewsEmpty').style.display = rows.length ? 'none' : 'block';
-            var tb = document.getElementById('reviewsBody'); tb.innerHTML = '';
-            rows.forEach(function(r){
-              var tr = document.createElement('tr');
-              tr.innerHTML = '<td class="muted" style="white-space:nowrap">'+escapeHtml((r.created_at||'').slice(0,10))+'</td>' +
-                '<td>'+escapeHtml(r.patient_name||'Anonymous')+'</td>' +
-                '<td>'+escapeHtml(r.specialist_name||'')+'</td>' +
-                '<td style="color:#f5a623">'+starRating(r.rating||5)+'</td>' +
-                '<td style="max-width:300px;font-size:0.83rem">'+escapeHtml(r.comment||'—')+'</td>' +
-                '<td><button onclick="deleteItem('reviews','+r.id+',loadReviews)" style="padding:4px 10px;background:rgba(207,34,46,0.1);color:#c0392b;border:none;border-radius:6px;cursor:pointer;font-size:0.78rem">Delete</button></td>';
-              tb.appendChild(tr);
-            });
-          }).catch(function(){ showErr('reviews','Network error'); });
-      }
+function editService(id, title, desc, icon, order, features) {
+  $('serviceEditId').value=id;
+  $('serviceTitle').value=title;
+  $('serviceDesc').value=desc;
+  $('serviceIcon').value=icon;
+  $('serviceOrder').value=order;
+  $('serviceFeatures').value=features;
+  $('serviceFormTitle').textContent='Edit Service';
+  $('serviceCancelBtn').style.display='inline-block';
+  $('serviceSubmitBtn').textContent='Update Service';
+  $('serviceForm').scrollIntoView({behavior:'smooth'});
+}
 
-      // ── SITE SETTINGS ──
-      var SETTINGS_CONFIG = [
-        { key:'site_name', label:'Site Name', type:'text' },
-        { key:'tagline', label:'Tagline', type:'text' },
-        { key:'hero_headline', label:'Hero Headline (Homepage)', type:'text' },
-        { key:'hero_subtext', label:'Hero Subtext (Homepage)', type:'textarea' },
-        { key:'contact_email', label:'Contact Email', type:'email' },
-        { key:'contact_phone', label:'Contact Phone', type:'text' },
-        { key:'whatsapp_number', label:'WhatsApp Number (digits only)', type:'text' },
-        { key:'instagram_url', label:'Instagram URL', type:'url' },
-        { key:'linkedin_url', label:'LinkedIn URL', type:'url' },
-        { key:'pricing_note', label:'Pricing Page Note', type:'textarea' },
-        { key:'booking_note', label:'Booking Confirmation Note', type:'textarea' },
-        { key:'footer_copyright', label:'Footer Copyright Text', type:'text' },
-        { key:'announcement_bar', label:'Announcement Bar Text (leave blank to disable)', type:'textarea' },
-        { key:'announcement_bar_active', label:'Announcement Bar Enabled', type:'toggle' },
-      ];
-      function loadSettings() {
-        hideErr('settings');
-        fetch(API + '/admin/settings', { headers: authHeaders() })
-          .then(function(r){ if(r.status===401){showLogin();return null;} return r.json(); })
-          .then(function(data){
-            if(!data) return;
-            if(!data.ok){ showErr('settings', data.error||'Failed'); return; }
-            var rows = data.data||[];
-            var vals = {};
-            rows.forEach(function(r){ vals[r.key] = r.value; });
-            var wrap = document.getElementById('settingsFormWrap');
-            var html = '<form id="settingsForm"><div class="settings-grid">';
-            SETTINGS_CONFIG.forEach(function(cfg){
-              var val = vals[cfg.key] != null ? vals[cfg.key] : '';
-              var input = '';
-              if(cfg.type === 'textarea'){
-                input = '<textarea name="'+cfg.key+'" rows="3" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;font-family:inherit;font-size:0.87rem;resize:vertical;">'+escapeHtml(val)+'</textarea>';
-              } else if(cfg.type === 'toggle'){
-                input = '<select name="'+cfg.key+'" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;font-family:inherit;">' +
-                  '<option value="1"'+(val==='1'?' selected':'')+'>Enabled</option>' +
-                  '<option value="0"'+(val!=='1'?' selected':'')+'>Disabled</option>' +
-                  '</select>';
-              } else {
-                input = '<input type="'+cfg.type+'" name="'+cfg.key+'" value="'+escapeHtml(val)+'" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;">';
-              }
-              html += '<div><label class="field-label">'+escapeHtml(cfg.label)+'</label>'+input+'</div>';
-            });
-            html += '</div><div style="margin-top:20px;"><button type="submit" class="form-btn-primary" style="min-width:180px;">Save All Settings</button></div></form>';
-            wrap.innerHTML = html;
-            document.getElementById('settingsForm').onsubmit = function(ev){
-              ev.preventDefault();
-              var btn = this.querySelector('button[type=submit]');
-              btn.textContent = 'Saving…'; btn.disabled = true;
-              var formData = new FormData(this);
-              var updates = {};
-              formData.forEach(function(v,k){ updates[k] = v; });
-              fetch(API + '/admin/settings', {
-                method:'POST',
-                headers:{...authHeaders(),'Content-Type':'application/json'},
-                body: JSON.stringify(updates)
-              }).then(function(r){return r.json();}).then(function(d){
-                btn.textContent = d.ok ? '✓ Saved!' : 'Error';
-                btn.style.background = d.ok ? '#1a7f37' : '#c0392b';
-                setTimeout(function(){ btn.textContent = 'Save All Settings'; btn.disabled = false; btn.style.background = ''; }, 2000);
-                if(!d.ok) alert(d.error||'Error saving settings');
-              }).catch(function(){ btn.textContent = 'Network error'; btn.disabled = false; });
-            };
-          }).catch(function(){ showErr('settings','Network error'); });
-      }
+$('serviceCancelBtn').addEventListener('click', () => {
+  $('serviceEditId').value='';
+  $('serviceForm').reset();
+  $('serviceFormTitle').textContent='Add Service';
+  $('serviceCancelBtn').style.display='none';
+  $('serviceSubmitBtn').textContent='Add Service';
+});
 
-      // ── SHARED helpers: toggle active + delete ──
-      function toggleItem(resource, id, currentActive) {
-        var active = currentActive ? 0 : 1;
-        fetch(API + '/admin/' + resource + '/' + id, {
-          method: 'PUT', headers: {...authHeaders(), 'Content-Type':'application/json'},
-          body: JSON.stringify({ active: active })
-        }).then(function(r){return r.json();}).then(function(d){
-          if(!d.ok){ alert(d.error||'Error'); return; }
-          var loaders = {services:loadServices,pricing:loadPricing,faq:loadFaq,testimonials:loadTestimonials};
-          if(loaders[resource]) loaders[resource]();
-        });
-      }
-      function deleteItem(resource, id, reloadFn) {
-        if(!confirm('Delete this item? This cannot be undone.')) return;
-        fetch(API + '/admin/' + resource + '/' + id, {
-          method: 'DELETE', headers: authHeaders()
-        }).then(function(r){return r.json();}).then(function(d){
-          if(!d.ok){ alert(d.error||'Error'); return; }
-          if(reloadFn) reloadFn();
-        });
-      }
+$('serviceForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const id = $('serviceEditId').value;
+  const features = $('serviceFeatures').value.split('\n').map(f=>f.trim()).filter(Boolean);
+  const payload = {
+    title: $('serviceTitle').value,
+    description: $('serviceDesc').value,
+    icon: $('serviceIcon').value,
+    display_order: parseInt($('serviceOrder').value)||0,
+    features
+  };
+  const url = id ? `${API}/admin/services/${id}` : `${API}/admin/services`;
+  const method = id ? 'PUT' : 'POST';
+  try {
+    const r = await fetch(url, { method, headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify(payload) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    $('serviceEditId').value='';
+    $('serviceForm').reset();
+    $('serviceFormTitle').textContent='Add Service';
+    $('serviceCancelBtn').style.display='none';
+    $('serviceSubmitBtn').textContent='Add Service';
+    loadServices();
+  } catch(e) { alert('Error: '+e.message); }
+});
 
-      // ── Enhanced Specialists: full edit modal ──
-      function openSpecialistEdit(id) {
-        fetch(API + '/specialists', { headers: authHeaders() })
-          .then(function(r){return r.json();}).then(function(data){
-            var r = (data.data||[]).find(function(x){return x.id===id;});
-            if(!r){
-              // Fallback: load from admin specialists list
-              alert('Loading specialist data...');
-              return;
-            }
-            var modal = document.getElementById('specialistEditModal');
-            if(!modal){ buildSpecialistModal(); modal = document.getElementById('specialistEditModal'); }
-            document.getElementById('seId').value = id;
-            document.getElementById('seName').value = r.name||'';
-            document.getElementById('seTitle').value = r.title||'';
-            document.getElementById('seQuals').value = r.qualifications||'';
-            document.getElementById('seBio').value = r.bio||'';
-            document.getElementById('seExp').value = r.experience_years||0;
-            document.getElementById('seLangs').value = r.languages||'English';
-            document.getElementById('sePhoto').value = r.photo_url||'';
-            document.getElementById('seAvail').checked = r.available !== 0;
-            document.getElementById('seOrder').value = r.display_order||0;
-            modal.style.display = 'flex';
-          });
-      }
-      function buildSpecialistModal() {
-        var m = document.createElement('div');
-        m.id = 'specialistEditModal';
-        m.style.cssText = 'position:fixed;inset:0;background:rgba(10,22,40,0.7);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;';
-        m.innerHTML = '<div style="background:var(--white);border-radius:20px;padding:32px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;position:relative;">' +
-          '<button onclick="document.getElementById('specialistEditModal').style.display='none'" style="position:absolute;top:16px;right:16px;background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--text-light);">×</button>' +
-          '<h3 style="font-size:1.2rem;font-weight:700;margin-bottom:20px;color:var(--dark);">Edit Specialist</h3>' +
-          '<form id="specialistEditForm">' +
-          '<input type="hidden" id="seId">' +
-          '<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">' +
-          '<div><label class="field-label">Full Name *</label><input type="text" id="seName" required style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
-          '<div><label class="field-label">Title / Role *</label><input type="text" id="seTitle" placeholder="Psychiatrist" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
-          '</div>' +
-          '<div style="margin-bottom:12px;"><label class="field-label">Qualifications</label><input type="text" id="seQuals" placeholder="MBBS, MD (Psychiatry)" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
-          '<div style="margin-bottom:12px;"><label class="field-label">Bio</label><textarea id="seBio" rows="4" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;resize:vertical;"></textarea></div>' +
-          '<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;">' +
-          '<div><label class="field-label">Experience (years)</label><input type="number" id="seExp" value="0" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
-          '<div><label class="field-label">Languages</label><input type="text" id="seLangs" placeholder="English, Hindi" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
-          '<div><label class="field-label">Display Order</label><input type="number" id="seOrder" value="0" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
-          '</div>' +
-          '<div style="margin-bottom:16px;"><label class="field-label">Photo URL</label><input type="url" id="sePhoto" placeholder="https://..." style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;"></div>' +
-          '<label style="display:flex;align-items:center;gap:8px;margin-bottom:20px;cursor:pointer;"><input type="checkbox" id="seAvail" checked> Available for bookings</label>' +
-          '<div style="display:flex;gap:12px;">' +
-          '<button type="submit" class="form-btn-primary">Save Changes</button>' +
-          '<button type="button" onclick="document.getElementById('specialistEditModal').style.display='none'" class="form-btn-cancel">Cancel</button>' +
-          '</div></form></div>';
-        document.body.appendChild(m);
-        document.getElementById('specialistEditForm').onsubmit = function(e){
-          e.preventDefault();
-          var id = document.getElementById('seId').value;
-          var body = {
-            name: document.getElementById('seName').value.trim(),
-            title: document.getElementById('seTitle').value.trim(),
-            qualifications: document.getElementById('seQuals').value.trim(),
-            bio: document.getElementById('seBio').value.trim(),
-            experience_years: parseInt(document.getElementById('seExp').value)||0,
-            languages: document.getElementById('seLangs').value.trim(),
-            photo_url: document.getElementById('sePhoto').value.trim(),
-            available: document.getElementById('seAvail').checked ? 1 : 0,
-            display_order: parseInt(document.getElementById('seOrder').value)||0
-          };
-          fetch(API + '/admin/specialists/' + id, {
-            method:'PUT', headers:{...authHeaders(),'Content-Type':'application/json'}, body:JSON.stringify(body)
-          }).then(function(r){return r.json();}).then(function(d){
-            if(!d.ok){ alert(d.error||'Error'); return; }
-            document.getElementById('specialistEditModal').style.display = 'none';
-            loadSpecialists();
-          });
-        };
-      }
+async function toggleService(id, cur) {
+  try {
+    const r = await fetch(`${API}/admin/services/${id}`, { method:'PATCH', headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify({ active: !cur }) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadServices();
+  } catch(e) { alert('Error: '+e.message); }
+}
 
-      function escapeHtml(s) {
-        if (s == null) return '';
-        var div = document.createElement('div');
-        div.textContent = s;
-        return div.innerHTML;
-      }
+async function deleteService(id) {
+  if (!confirm('Delete this service?')) return;
+  try {
+    const r = await fetch(`${API}/admin/services/${id}`, { method:'DELETE', headers:{ 'x-admin-key':getKey() } });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadServices();
+  } catch(e) { alert('Error: '+e.message); }
+}
 
-      document.querySelectorAll('.load-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-          var which = this.getAttribute('data-load');
-          if (which === 'bookings') loadBookings();
-          else if (which === 'contact') loadContact();
-          else if (which === 'applications') loadApplications();
-          else if (which === 'newsletter') loadNewsletter();
-          else if (which === 'grievances') loadGrievances();
-          else if (which === 'blog') loadPosts();
-          else if (which === 'analytics') loadAnalytics();
-          else if (which === 'patients') loadPatients();
-          else if (which === 'services') loadServices();
-          else if (which === 'pricing') loadPricing();
-          else if (which === 'faq') loadFaq();
-          else if (which === 'testimonials') loadTestimonials();
-          else if (which === 'reviews') loadReviews();
-          else if (which === 'settings') loadSettings();
-          else if (which === 'slots') loadSlots();
-        });
-      });
+// ── PRICING ───────────────────────────────────────────────────────────────────
+async function loadPricing() {
+  $('pricingError').style.display='none';
+  $('pricingEmpty').style.display='none';
+  $('pricingBody').innerHTML='<tr><td colspan="8" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/pricing`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('pricingBody').innerHTML=''; $('pricingEmpty').style.display='block'; return; }
+    $('pricingBody').innerHTML = data.map(p => `
+      <tr>
+        <td>${p.display_order||0}</td>
+        <td>${esc(p.label||'')}</td>
+        <td>${esc(p.title)}</td>
+        <td>${esc(p.amount)}</td>
+        <td class="muted">${esc(p.note||'')}</td>
+        <td>${p.featured?'★':''}</td>
+        <td><span class="toggle-active ${p.active?'on':'off'}" onclick="togglePricing('${p.id}',${p.active})">${p.active?'Active':'Inactive'}</span></td>
+        <td style="white-space:nowrap;">
+          <button onclick="editPricing('${p.id}','${escQ(p.title)}','${escQ(p.label||'')}','${escQ(p.amount)}','${escQ(p.note||'')}',${p.featured||false},'${escQ((p.features||[]).join('|'))}',${p.display_order||0})" style="padding:5px 12px;font-size:0.8rem;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:4px;">Edit</button>
+          <button onclick="deletePricing('${p.id}')" style="padding:5px 12px;font-size:0.8rem;background:#c0392b;color:#fff;border:none;border-radius:6px;cursor:pointer;">Delete</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) {
+    $('pricingBody').innerHTML='';
+    $('pricingError').textContent=e.message;
+    $('pricingError').style.display='block';
+  }
+}
 
-      function loadPosts() {
-        hideErr('blog');
-        fetch(API + '/posts', { headers: authHeaders() })
-          .then(function(r) {
-            if (r.status === 401) { showLogin(); return null; }
-            return r.json();
-          })
-          .then(function(data) {
-            if (!data) return;
-            if (!data.ok) {
-              showErr('blog', data.error || 'Failed to load');
-              return;
-            }
-            var rows = data.data || [];
-            var tbody = document.getElementById('blogBody');
-            tbody.innerHTML = '';
-            document.getElementById('blogEmpty').style.display = rows.length ? 'none' : 'block';
-            document.getElementById('blogTableWrap').style.display = rows.length ? 'block' : 'none';
-            rows.forEach(function(row) {
-              var tr = document.createElement('tr');
-              var actions = '<button type="button" class="blog-edit" data-id="' + row.id + '" style="padding:6px 12px;margin-right:6px;background:var(--sage);color:white;border:none;border-radius:8px;font-size:0.8rem;cursor:pointer;">Edit</button>' +
-                '<button type="button" class="blog-delete" data-id="' + row.id + '" style="padding:6px 12px;background:transparent;color:#c0392b;border:1px solid #c0392b;border-radius:8px;font-size:0.8rem;cursor:pointer;">Delete</button>';
-              tr.innerHTML = '<td class="muted">' + escapeHtml(row.created_at || '') + '</td><td>' + escapeHtml(row.title || '') + '</td><td>' + escapeHtml(row.category || '') + '</td><td>' + escapeHtml(row.author_name || '') + '</td><td>' + actions + '</td>';
-              tbody.appendChild(tr);
-            });
-            document.querySelectorAll('.blog-edit').forEach(function(btn) {
-              btn.addEventListener('click', function() { openBlogForm(parseInt(btn.getAttribute('data-id'), 10)); });
-            });
-            document.querySelectorAll('.blog-delete').forEach(function(btn) {
-              btn.addEventListener('click', function() {
-                if (!confirm('Delete this post?')) return;
-                var id = parseInt(btn.getAttribute('data-id'), 10);
-                fetch(API + '/admin/posts/' + id, { method: 'DELETE', headers: authHeaders() })
-                  .then(function(r) { return r.json(); })
-                  .then(function(d) { if (d && d.ok) loadPosts(); else alert(d && d.error || 'Delete failed'); })
-                  .catch(function() { alert('Network error'); });
-              });
-            });
-          })
-          .catch(function() { showErr('blog', 'Network error'); });
-      }
+function editPricing(id,title,label,amount,note,featured,features,order) {
+  $('pricingEditId').value=id;
+  $('pricingTitle').value=title;
+  $('pricingLabel').value=label;
+  $('pricingAmount').value=amount;
+  $('pricingNote').value=note;
+  $('pricingFeatured').checked=featured;
+  $('pricingFeatures').value=features;
+  $('pricingOrder').value=order;
+  $('pricingFormTitle').textContent='Edit Pricing Plan';
+  $('pricingCancelBtn').style.display='inline-block';
+  $('pricingSubmitBtn').textContent='Update Plan';
+  $('pricingForm').scrollIntoView({behavior:'smooth'});
+}
 
-      function openBlogForm(id) {
-        var wrap = document.getElementById('blogFormWrap');
-        var formTitle = document.getElementById('blogFormTitle');
-        document.getElementById('blogPostId').value = id ? id : '';
-        formTitle.textContent = id ? 'Edit post' : 'Add post';
-        if (id) {
-          fetch(API + '/posts/' + id, { headers: authHeaders() })
-            .then(function(r) { return r.json(); })
-            .then(function(d) {
-              if (d && d.ok && d.post) {
-                var p = d.post;
-                document.getElementById('blogTitle').value = p.title || '';
-                document.getElementById('blogSlug').value = p.slug || '';
-                document.getElementById('blogExcerpt').value = p.excerpt || '';
-                document.getElementById('blogBodyField').value = p.body || '';
-                document.getElementById('blogCategory').value = p.category || '';
-                document.getElementById('blogAuthor').value = p.author_name || '';
-              }
-            });
-        } else {
-          document.getElementById('blogTitle').value = '';
-          document.getElementById('blogSlug').value = '';
-          document.getElementById('blogExcerpt').value = '';
-          document.getElementById('blogBodyField').value = '';
-          document.getElementById('blogCategory').value = '';
-          document.getElementById('blogAuthor').value = '';
-        }
-        wrap.style.display = 'block';
-      }
+$('pricingCancelBtn').addEventListener('click', () => {
+  $('pricingEditId').value='';
+  $('pricingForm').reset();
+  $('pricingFormTitle').textContent='Add Pricing Plan';
+  $('pricingCancelBtn').style.display='none';
+  $('pricingSubmitBtn').textContent='Add Plan';
+});
 
-      document.getElementById('blogAddBtn').addEventListener('click', function() { openBlogForm(null); });
-      document.getElementById('blogFormCancel').addEventListener('click', function() {
-        document.getElementById('blogFormWrap').style.display = 'none';
-      });
-      document.getElementById('blogForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        var id = document.getElementById('blogPostId').value;
-        var payload = {
-          title: document.getElementById('blogTitle').value.trim(),
-          slug: document.getElementById('blogSlug').value.trim(),
-          excerpt: document.getElementById('blogExcerpt').value.trim(),
-          body: document.getElementById('blogBodyField').value,
-          category: document.getElementById('blogCategory').value.trim(),
-          author_name: document.getElementById('blogAuthor').value.trim()
-        };
-        var url = id ? API + '/admin/posts/' + id : API + '/admin/posts';
-        var method = id ? 'PUT' : 'POST';
-        fetch(url, { method: method, headers: authHeaders(), body: JSON.stringify(payload) })
-          .then(function(r) { return r.json(); })
-          .then(function(d) {
-            if (d && d.ok) {
-              document.getElementById('blogFormWrap').style.display = 'none';
-              loadPosts();
-            } else {
-              alert(d && d.error || 'Save failed');
-            }
-          })
-          .catch(function() { alert('Network error'); });
-      });
+$('pricingForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const id = $('pricingEditId').value;
+  const rawFeatures = $('pricingFeatures').value;
+  const features = rawFeatures.includes('|') ? rawFeatures.split('|').map(f=>f.trim()).filter(Boolean) : rawFeatures.split('\n').map(f=>f.trim()).filter(Boolean);
+  const payload = {
+    title: $('pricingTitle').value,
+    label: $('pricingLabel').value,
+    amount: $('pricingAmount').value,
+    note: $('pricingNote').value,
+    featured: $('pricingFeatured').checked,
+    display_order: parseInt($('pricingOrder').value)||0,
+    features
+  };
+  const url = id ? `${API}/admin/pricing/${id}` : `${API}/admin/pricing`;
+  const method = id ? 'PUT' : 'POST';
+  try {
+    const r = await fetch(url, { method, headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify(payload) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    $('pricingEditId').value='';
+    $('pricingForm').reset();
+    $('pricingFormTitle').textContent='Add Pricing Plan';
+    $('pricingCancelBtn').style.display='none';
+    $('pricingSubmitBtn').textContent='Add Plan';
+    loadPricing();
+  } catch(e) { alert('Error: '+e.message); }
+});
 
-      if (getKey()) {
-        fetch(API + '/admin/bookings', { headers: authHeaders() })
-          .then(function(r) {
-            if (r.status === 401) { clearKey(); showLogin(); }
-            else { showDashboard(); }
-          })
-          .catch(function() { showLogin(); });
-      }
-    })();
-  </script>
-  <script src="premium.js"></script>
+async function togglePricing(id, cur) {
+  try {
+    const r = await fetch(`${API}/admin/pricing/${id}`, { method:'PATCH', headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify({ active: !cur }) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadPricing();
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+async function deletePricing(id) {
+  if (!confirm('Delete this plan?')) return;
+  try {
+    const r = await fetch(`${API}/admin/pricing/${id}`, { method:'DELETE', headers:{ 'x-admin-key':getKey() } });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadPricing();
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+// ── FAQ ───────────────────────────────────────────────────────────────────────
+async function loadFaq() {
+  $('faqError').style.display='none';
+  $('faqEmpty').style.display='none';
+  $('faqBody').innerHTML='<tr><td colspan="5" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/faq`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('faqBody').innerHTML=''; $('faqEmpty').style.display='block'; return; }
+    $('faqBody').innerHTML = data.map(f => `
+      <tr>
+        <td>${f.display_order||0}</td>
+        <td>${esc(f.question)}</td>
+        <td class="muted">${esc((f.answer||'').substring(0,80))}${f.answer&&f.answer.length>80?'…':''}</td>
+        <td><span class="toggle-active ${f.active?'on':'off'}" onclick="toggleFaq('${f.id}',${f.active})">${f.active?'Active':'Inactive'}</span></td>
+        <td style="white-space:nowrap;">
+          <button onclick="editFaq('${f.id}','${escQ(f.question)}','${escQ(f.answer||'')}',${f.display_order||0})" style="padding:5px 12px;font-size:0.8rem;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:4px;">Edit</button>
+          <button onclick="deleteFaq('${f.id}')" style="padding:5px 12px;font-size:0.8rem;background:#c0392b;color:#fff;border:none;border-radius:6px;cursor:pointer;">Delete</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) {
+    $('faqBody').innerHTML='';
+    $('faqError').textContent=e.message;
+    $('faqError').style.display='block';
+  }
+}
+
+function editFaq(id, question, answer, order) {
+  $('faqEditId').value=id;
+  $('faqQuestion').value=question;
+  $('faqAnswer').value=answer;
+  $('faqOrder').value=order;
+  $('faqFormTitle').textContent='Edit FAQ';
+  $('faqCancelBtn').style.display='inline-block';
+  $('faqSubmitBtn').textContent='Update FAQ';
+  $('faqForm').scrollIntoView({behavior:'smooth'});
+}
+
+$('faqCancelBtn').addEventListener('click', () => {
+  $('faqEditId').value='';
+  $('faqForm').reset();
+  $('faqFormTitle').textContent='Add FAQ';
+  $('faqCancelBtn').style.display='none';
+  $('faqSubmitBtn').textContent='Add FAQ';
+});
+
+$('faqForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const id = $('faqEditId').value;
+  const payload = {
+    question: $('faqQuestion').value,
+    answer: $('faqAnswer').value,
+    display_order: parseInt($('faqOrder').value)||0
+  };
+  const url = id ? `${API}/admin/faq/${id}` : `${API}/admin/faq`;
+  const method = id ? 'PUT' : 'POST';
+  try {
+    const r = await fetch(url, { method, headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify(payload) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    $('faqEditId').value='';
+    $('faqForm').reset();
+    $('faqFormTitle').textContent='Add FAQ';
+    $('faqCancelBtn').style.display='none';
+    $('faqSubmitBtn').textContent='Add FAQ';
+    loadFaq();
+  } catch(e) { alert('Error: '+e.message); }
+});
+
+async function toggleFaq(id, cur) {
+  try {
+    const r = await fetch(`${API}/admin/faq/${id}`, { method:'PATCH', headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify({ active: !cur }) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadFaq();
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+async function deleteFaq(id) {
+  if (!confirm('Delete this FAQ?')) return;
+  try {
+    const r = await fetch(`${API}/admin/faq/${id}`, { method:'DELETE', headers:{ 'x-admin-key':getKey() } });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadFaq();
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+// ── TESTIMONIALS ──────────────────────────────────────────────────────────────
+async function loadTestimonials() {
+  $('testimonialsError').style.display='none';
+  $('testimonialsEmpty').style.display='none';
+  $('testimonialsBody').innerHTML='<tr><td colspan="7" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/testimonials`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('testimonialsBody').innerHTML=''; $('testimonialsEmpty').style.display='block'; return; }
+    $('testimonialsBody').innerHTML = data.map(t => `
+      <tr>
+        <td>${t.display_order||0}</td>
+        <td>${esc(t.name)}</td>
+        <td class="muted">${esc(t.role||'')}</td>
+        <td class="muted">${esc((t.quote||'').substring(0,60))}${t.quote&&t.quote.length>60?'…':''}</td>
+        <td>${'★'.repeat(t.rating||5)}</td>
+        <td><span class="toggle-active ${t.active?'on':'off'}" onclick="toggleTestimonial('${t.id}',${t.active})">${t.active?'Active':'Inactive'}</span></td>
+        <td style="white-space:nowrap;">
+          <button onclick="editTestimonial('${t.id}','${escQ(t.name)}','${escQ(t.role||'')}','${escQ(t.quote||'')}',${t.rating||5},${t.display_order||0})" style="padding:5px 12px;font-size:0.8rem;background:var(--sage);color:#fff;border:none;border-radius:6px;cursor:pointer;margin-right:4px;">Edit</button>
+          <button onclick="deleteTestimonial('${t.id}')" style="padding:5px 12px;font-size:0.8rem;background:#c0392b;color:#fff;border:none;border-radius:6px;cursor:pointer;">Delete</button>
+        </td>
+      </tr>`).join('');
+  } catch(e) {
+    $('testimonialsBody').innerHTML='';
+    $('testimonialsError').textContent=e.message;
+    $('testimonialsError').style.display='block';
+  }
+}
+
+function editTestimonial(id, name, role, quote, rating, order) {
+  $('testimonialEditId').value=id;
+  $('testimonialName').value=name;
+  $('testimonialRole').value=role;
+  $('testimonialQuote').value=quote;
+  $('testimonialRating').value=rating;
+  $('testimonialOrder').value=order;
+  $('testimonialFormTitle').textContent='Edit Testimonial';
+  $('testimonialCancelBtn').style.display='inline-block';
+  $('testimonialSubmitBtn').textContent='Update Testimonial';
+  $('testimonialForm').scrollIntoView({behavior:'smooth'});
+}
+
+$('testimonialCancelBtn').addEventListener('click', () => {
+  $('testimonialEditId').value='';
+  $('testimonialForm').reset();
+  $('testimonialFormTitle').textContent='Add Testimonial';
+  $('testimonialCancelBtn').style.display='none';
+  $('testimonialSubmitBtn').textContent='Add Testimonial';
+});
+
+$('testimonialForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const id = $('testimonialEditId').value;
+  const payload = {
+    name: $('testimonialName').value,
+    role: $('testimonialRole').value,
+    quote: $('testimonialQuote').value,
+    rating: parseInt($('testimonialRating').value)||5,
+    display_order: parseInt($('testimonialOrder').value)||0
+  };
+  const url = id ? `${API}/admin/testimonials/${id}` : `${API}/admin/testimonials`;
+  const method = id ? 'PUT' : 'POST';
+  try {
+    const r = await fetch(url, { method, headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify(payload) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    $('testimonialEditId').value='';
+    $('testimonialForm').reset();
+    $('testimonialFormTitle').textContent='Add Testimonial';
+    $('testimonialCancelBtn').style.display='none';
+    $('testimonialSubmitBtn').textContent='Add Testimonial';
+    loadTestimonials();
+  } catch(e) { alert('Error: '+e.message); }
+});
+
+async function toggleTestimonial(id, cur) {
+  try {
+    const r = await fetch(`${API}/admin/testimonials/${id}`, { method:'PATCH', headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify({ active: !cur }) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadTestimonials();
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+async function deleteTestimonial(id) {
+  if (!confirm('Delete this testimonial?')) return;
+  try {
+    const r = await fetch(`${API}/admin/testimonials/${id}`, { method:'DELETE', headers:{ 'x-admin-key':getKey() } });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadTestimonials();
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+// ── REVIEWS ───────────────────────────────────────────────────────────────────
+async function loadReviews() {
+  $('reviewsError').style.display='none';
+  $('reviewsEmpty').style.display='none';
+  $('reviewsBody').innerHTML='<tr><td colspan="7" class="empty">Loading…</td></tr>';
+  try {
+    const r = await fetch(`${API}/admin/reviews`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    if (!data.length) { $('reviewsBody').innerHTML=''; $('reviewsEmpty').style.display='block'; return; }
+    $('reviewsBody').innerHTML = data.map(rv => `
+      <tr>
+        <td class="muted">${fmtDate(rv.created_at)}</td>
+        <td>${esc(rv.patient_name||'')}</td>
+        <td>${esc(rv.doctor_name||'')}</td>
+        <td>${'★'.repeat(rv.rating||5)}</td>
+        <td class="muted">${esc((rv.review_text||'').substring(0,80))}${rv.review_text&&rv.review_text.length>80?'…':''}</td>
+        <td><span class="toggle-active ${rv.published?'on':'off'}" onclick="toggleReview('${rv.id}',${rv.published})">${rv.published?'Published':'Hidden'}</span></td>
+        <td><button onclick="deleteReview('${rv.id}')" style="padding:4px 10px;font-size:0.8rem;background:#c0392b;color:#fff;border:none;border-radius:6px;cursor:pointer;">Delete</button></td>
+      </tr>`).join('');
+  } catch(e) {
+    $('reviewsBody').innerHTML='';
+    $('reviewsError').textContent=e.message;
+    $('reviewsError').style.display='block';
+  }
+}
+
+async function toggleReview(id, cur) {
+  try {
+    const r = await fetch(`${API}/admin/reviews/${id}`, { method:'PATCH', headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify({ published: !cur }) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadReviews();
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+async function deleteReview(id) {
+  if (!confirm('Delete this review?')) return;
+  try {
+    const r = await fetch(`${API}/admin/reviews/${id}`, { method:'DELETE', headers:{ 'x-admin-key':getKey() } });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    loadReviews();
+  } catch(e) { alert('Error: '+e.message); }
+}
+
+// ── SETTINGS ──────────────────────────────────────────────────────────────────
+async function loadSettings() {
+  $('settingsError').style.display='none';
+  $('settingsGrid').innerHTML='<p style="color:var(--text-light);">Loading…</p>';
+  try {
+    const r = await fetch(`${API}/admin/settings`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    $('settingsGrid').innerHTML = data.map(s => `
+      <div>
+        <label class="field-label">${esc(s.key)}</label>
+        <input type="text" name="${esc(s.key)}" value="${esc(s.value||'')}" style="width:100%;padding:10px;border:1px solid var(--cream-dark);border-radius:8px;">
+      </div>`).join('');
+  } catch(e) {
+    $('settingsError').textContent=e.message;
+    $('settingsError').style.display='block';
+  }
+}
+
+$('settingsForm').addEventListener('submit', async e => {
+  e.preventDefault();
+  const inputs = $('settingsGrid').querySelectorAll('input');
+  const settings = {};
+  inputs.forEach(inp => { settings[inp.name]=inp.value; });
+  try {
+    const r = await fetch(`${API}/admin/settings`, { method:'PUT', headers:{ 'Content-Type':'application/json','x-admin-key':getKey() }, body: JSON.stringify({ settings }) });
+    if (!r.ok) throw new Error((await r.json()).error||'Failed');
+    alert('Settings saved!');
+  } catch(e) { alert('Error: '+e.message); }
+});
+
+// ── ANALYTICS ─────────────────────────────────────────────────────────────────
+async function loadAnalytics() {
+  $('analyticsError').style.display='none';
+  $('analyticsGrid').innerHTML='<p style="color:var(--text-light);">Loading…</p>';
+  try {
+    const r = await fetch(`${API}/admin/analytics`, { headers:{ 'x-admin-key': getKey() } });
+    const data = await r.json();
+    if (!r.ok) throw new Error(data.error||'Failed');
+    $('analyticsGrid').innerHTML = Object.entries(data).map(([k,v]) => `
+      <div style="background:var(--white);padding:20px;border-radius:12px;border:1px solid var(--cream-dark);">
+        <div style="font-size:0.75rem;font-weight:600;color:var(--text-light);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:8px;">${esc(k.replace(/_/g,' '))}</div>
+        <div style="font-size:1.6rem;font-weight:700;color:var(--dark);">${esc(String(v))}</div>
+      </div>`).join('');
+  } catch(e) {
+    $('analyticsError').textContent=e.message;
+    $('analyticsError').style.display='block';
+  }
+}
+
+// ── HELPERS ───────────────────────────────────────────────────────────────────
+function esc(s) {
+  if (s==null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function escQ(s) {
+  if (s==null) return '';
+  return String(s).replace(/\\/g,'\\\\').replace(/'/g,'\\'').replace(/"/g,'\\"').replace(/\n/g,'\\n').replace(/\r/g,'\\r');
+}
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'});
+}
+function statusBadge(s) {
+  const map = { pending:'#f39c12', confirmed:'#27ae60', cancelled:'#c0392b', completed:'#2980b9' };
+  const col = map[s]||'#999';
+  return `<span style="display:inline-block;padding:2px 10px;border-radius:20px;font-size:0.75rem;font-weight:600;background:${col}22;color:${col};">${esc(s||'pending')}</span>`;
+}
+
+// Auto-login if key exists
+if (sessionStorage.getItem(ADMIN_KEY_STORE)) showDashboard();
+</script>
+<script src="premium.js"></script>
 <script src="scripts/whatsapp-float.js"></script>
 </body>
 </html>
