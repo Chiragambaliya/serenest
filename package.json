@@ -1,0 +1,9 @@
+{
+  "name": "serenest-website",
+  "version": "1.0.0",
+  "description": "Serenest — a place for calm",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/write-config.js"
+  }
+}

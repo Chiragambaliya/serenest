@@ -1,0 +1,5 @@
+# Supabase keys (copy from config.example.js and add your keys)
+js/config.js
+
+# Dependencies
+node_modules/

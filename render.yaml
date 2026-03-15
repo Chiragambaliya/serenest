@@ -1,0 +1,13 @@
+# Render Blueprint: Static Site
+# Deploy at https://dashboard.render.com → New → Static Site, or use this file with Blueprint.
+services:
+  - type: web
+    name: serenest
+    runtime: static
+    buildCommand: npm run build
+    staticPublishPath: .
+    envVars:
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false

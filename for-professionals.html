@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For mental health professionals — Serenest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="index.html" class="logo">
+        <img src="assets/logo.png" alt="Serenest — Aligning minds, enhancing lives" class="logo-img">
+        <span class="logo-text">Serenest</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html#about">About</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="screening.html">Screening</a></li>
+        <li><a href="index.html#practice">Practice</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="index.html#signup">Sign up</a></li>
+        <li><a href="for-professionals.html">For professionals</a></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </nav>
+  </header>
+
+  <main class="professionals-page">
+    <section class="professionals-hero">
+      <div class="container">
+        <p class="professionals-tag">For mental health professionals</p>
+        <h1 class="professionals-title">Join Serenest</h1>
+        <p class="professionals-lead">We’re building a space where clinicians, therapists, and counselors can access tools, training, and a community aligned with evidence-based practices for mental clarity and wellbeing. Join us and help more people thrive.</p>
+        <a href="#benefits" class="btn btn-primary">See benefits</a>
+      </div>
+    </section>
+
+    <section id="benefits" class="section benefits-section">
+      <div class="container">
+        <h2 class="section-title">Why join?</h2>
+        <p class="section-lead">Serenest supports you as a professional so you can support your clients and your own wellbeing.</p>
+        <ul class="benefits-list">
+          <li class="benefit-card">
+            <span class="benefit-icon">◆</span>
+            <h3>Evidence-based resources</h3>
+            <p>Access frameworks, exercises, and materials grounded in research — so you can integrate clarity and wellbeing practices into your work with confidence.</p>
+          </li>
+          <li class="benefit-card">
+            <span class="benefit-icon">◆</span>
+            <h3>Training & development</h3>
+            <p>Learn and stay current with workshops, modules, and peer learning — designed for busy professionals who want to grow their practice.</p>
+          </li>
+          <li class="benefit-card">
+            <span class="benefit-icon">◆</span>
+            <h3>Tools for your clients</h3>
+            <p>Share structured practices and self-guided content with clients between sessions — to reinforce progress and extend care beyond the room.</p>
+          </li>
+          <li class="benefit-card">
+            <span class="benefit-icon">◆</span>
+            <h3>Community of peers</h3>
+            <p>Connect with other mental health professionals, exchange ideas, and reduce isolation — so you feel supported as you support others.</p>
+          </li>
+          <li class="benefit-card">
+            <span class="benefit-icon">◆</span>
+            <h3>Your own wellbeing</h3>
+            <p>Use the same practices you recommend — prevent burnout, stay grounded, and model what you teach so you can show up fully for your clients.</p>
+          </li>
+          <li class="benefit-card">
+            <span class="benefit-icon">◆</span>
+            <h3>Simple integration</h3>
+            <p>Fit Serenest into your existing workflow — flexible formats, clear materials, and options that work for different settings and populations.</p>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section what-you-get">
+      <div class="container">
+        <h2 class="section-title">What you get</h2>
+        <ul class="get-list">
+          <li><strong>Resource library</strong> — Worksheets, scripts, and guides you can use in sessions or assign as between-session work.</li>
+          <li><strong>Professional training</strong> — Short modules and deeper workshops on integrating clarity and wellbeing into your practice.</li>
+          <li><strong>Client-facing content</strong> — Practices and reflections you can share so clients can continue their work outside the session.</li>
+          <li><strong>Community access</strong> — Forums, optional peer groups, and events so you can learn from and connect with other professionals.</li>
+          <li><strong>Updates & support</strong> — New materials and practices as we grow, plus a direct line for questions and feedback.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="section professionals-cta">
+      <div class="container container-narrow">
+        <h2 class="section-title">Get in touch</h2>
+        <p class="section-lead">We’re onboarding professionals in phases. Leave your details and we’ll reach out with next steps and early-access options.</p>
+        <form class="signup-form professionals-form" action="#" method="post">
+          <input type="text" name="name" placeholder="Your name" required aria-label="Your name">
+          <input type="email" name="email" placeholder="your@email.com" required aria-label="Email address">
+          <input type="tel" name="mobile" placeholder="Mobile number" required aria-label="Mobile number">
+          <input type="text" name="role" placeholder="Role (e.g. therapist, counselor)" aria-label="Your role">
+          <button type="submit" class="btn btn-primary">Join as a professional</button>
+        </form>
+        <p class="professionals-back"><a href="index.html" class="profile-back-link">← Back to home</a></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p class="footer-brand">Serenest</p>
+      <p class="footer-copy">&copy; 2025 Serenest. Aligning minds, enhancing lives.</p>
+    </div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/supabase-loader.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
