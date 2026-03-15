@@ -51,29 +51,36 @@ If `js/config.js` is missing or the values are empty, forms still show “Thank 
 
 View and export data in **Supabase Dashboard → Table Editor**.
 
-## Deploy to Render
+## Deploy to Render (e.g. serenest.fit)
 
-1. **Push your repo to GitHub/GitLab** (if you haven’t already).
-
-2. **Create a Static Site on Render**
+1. **Create a Static Site on Render**
    - Go to [dashboard.render.com](https://dashboard.render.com) → **New** → **Static Site**.
-   - Connect your repository.
-   - Use:
-     - **Build command:** `npm run build`
-     - **Publish directory:** `.` (root)
+   - Connect the repo: **https://github.com/Chiragambaliya/serenest**.
+   - **Name:** `serenest` (or any name).
+   - **Build command:** `npm run build`
+   - **Publish directory:** `.`
    - Click **Create Static Site**.
 
-3. **Add environment variables** (so the build can write Supabase config)
-   - In your static site → **Environment**.
-   - Add:
-     - `SUPABASE_URL` = your Supabase Project URL  
-     - `SUPABASE_ANON_KEY` = your Supabase anon public key  
-   - Save. Render will redeploy and run `npm run build`, which generates `js/config.js` from these.
+2. **Environment variables** (optional, for Supabase)
+   - In the new static site → **Environment** → **Add Environment Variable**.
+   - Add `SUPABASE_URL` and `SUPABASE_ANON_KEY` (your Supabase project URL and anon key).
+   - Save. A new deploy will run.
 
-4. **Deploy**
-   - Render will build and publish the site. Your site will be at `https://your-service-name.onrender.com`.
+3. **Add custom domain serenest.fit**
+   - In your static site → **Settings** → **Custom Domains** → **Add Custom Domain**.
+   - Enter: `serenest.fit`
+   - Optionally add: `www.serenest.fit`
+   - Render will show the DNS records you need (e.g. CNAME `serenest.fit` → your Render host, or A record).
 
-If you don’t set `SUPABASE_URL` and `SUPABASE_ANON_KEY`, the site still deploys; forms will show “Thank you” but won’t save to Supabase.
+4. **Point your domain to Render**
+   - In the DNS panel where you bought **serenest.fit** (Registrar / Cloudflare / etc.):
+   - Add the record Render shows (usually):
+     - **CNAME** `serenest.fit` → `your-service-name.onrender.com`  
+       or **A** record if Render gives an IP.
+     - For `www`: **CNAME** `www` → `your-service-name.onrender.com`
+   - Save. SSL is automatic once DNS propagates (can take a few minutes to 48 hours).
+
+Your site will be live at **https://serenest.fit** (and https://www.serenest.fit if you added it).
 
 ## Structure
 
