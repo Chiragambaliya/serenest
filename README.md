@@ -1,6 +1,6 @@
 # Serenest
 
-Aligning minds, enhancing lives — website with screening, services, and backend storage.
+Aligning minds, enhancing lives — website with screening, services, backend storage, and Supabase Auth.
 
 ## Run locally
 
@@ -12,9 +12,11 @@ npx serve .
 
 Then visit **http://localhost:3000** (or the URL shown).
 
+---
+
 ## Backend (Supabase)
 
-Form submissions (sign up, professionals, screening) are stored in Supabase when configured.
+Form submissions (sign up, professionals, screening) are stored in Supabase. Auth (email + password) is also handled by Supabase.
 
 ### 1. Create a Supabase project
 
@@ -23,13 +25,19 @@ Form submissions (sign up, professionals, screening) are stored in Supabase when
    - **Project URL**
    - **anon public** key (safe to use in the browser).
 
-### 2. Create the database tables
+### 2. Create the database tables + policies + auth trigger
 
 1. In the Supabase dashboard, open **SQL Editor**.
 2. Paste and run the contents of **`supabase/schema.sql`**.
-3. This creates `signups`, `professionals`, and `screening_responses` and allows anonymous inserts.
+3. This creates `signups`, `professionals`, and `screening_responses`, enables RLS, adds read policies for authenticated users, and sets up a trigger that mirrors new patient sign-ups into the `signups` table automatically.
 
-### 3. Connect the site to Supabase
+### 3. Enable email auth
+
+1. In Supabase Dashboard → **Authentication → Providers → Email**, enable email logins.
+2. In **Authentication → URL Configuration**, set **Site URL** to your deployed domain (e.g. `https://serenest.fit`).
+3. Optionally disable email confirmation during testing (Authentication → Settings → "Enable email confirmations").
+
+### 4. Connect the site to Supabase
 
 1. Copy the example config:
    ```bash
@@ -39,60 +47,53 @@ Form submissions (sign up, professionals, screening) are stored in Supabase when
    - `SERENEST_SUPABASE_URL` — your Project URL
    - `SERENEST_SUPABASE_ANON_KEY` — your anon public key
 
-If `js/config.js` is missing or the values are empty, forms still show “Thank you” but data is not saved.
+If `js/config.js` is missing or the values are empty, forms still show “Thank you” but data is not saved and auth will not work.
 
-### What gets stored
+---
 
-| Form              | Table                | Data                                      |
-|-------------------|----------------------|-------------------------------------------|
-| Sign up (email + mobile) | `signups`       | email, mobile, created_at                 |
-| Join as a professional   | `professionals` | name, email, mobile, role, created_at     |
-| Screening questionnaire  | `screening_responses` | reason, conditions[], format, frequency, created_at |
+## Auth flow
 
-View and export data in **Supabase Dashboard → Table Editor**.
+| Page | What happens |
+|------|--------------|
+| `index.html #signup` | Patient can **create account** (email + password) or **sign in**. After sign-in they are redirected to `profile.html`. |
+| `for-professionals.html` | Professional can **create account** or **log in**. After log-in they are redirected to `professionals-dashboard.html`. When already logged in, the form is replaced by a dashboard link. |
+| `professionals-dashboard.html` | Auth-gated. Non-authenticated visitors are redirected to `for-professionals.html`. Shows stat cards (patient count, professional count, screening count) and recent data tables. |
+| All pages | `js/auth.js` checks session on every page and updates the nav — “Sign up” becomes “My account” and “For professionals” becomes “My dashboard” when logged in. |
 
-## Deploy to Render (e.g. serenest.fit)
+---
 
-1. **Create a Static Site on Render**
-   - Go to [dashboard.render.com](https://dashboard.render.com) → **New** → **Static Site**.
-   - Connect the repo: **https://github.com/Chiragambaliya/serenest**.
-   - **Name:** `serenest` (or any name).
-   - **Build command:** `npm run build`
-   - **Publish directory:** `.`
-   - Click **Create Static Site**.
+## Deploying on Render
 
-2. **Environment variables** (optional, for Supabase)
-   - In the new static site → **Environment** → **Add Environment Variable**.
-   - Add `SUPABASE_URL` and `SUPABASE_ANON_KEY` (your Supabase project URL and anon key).
-   - Save. A new deploy will run.
+See `DEPLOY.md` for full instructions. Key environment variables to set in Render:
 
-3. **Add custom domain serenest.fit**
-   - In your static site → **Settings** → **Custom Domains** → **Add Custom Domain**.
-   - Enter: `serenest.fit`
-   - Optionally add: `www.serenest.fit`
-   - Render will show the DNS records you need (e.g. CNAME `serenest.fit` → your Render host, or A record).
+| Variable | Value |
+|----------|-------|
+| `SUPABASE_URL` | Your Supabase project URL |
+| `SUPABASE_ANON_KEY` | Your Supabase anon key |
 
-4. **Point your domain to Render**
-   - In the DNS panel where you bought **serenest.fit** (Registrar / Cloudflare / etc.):
-   - Add the record Render shows (usually):
-     - **CNAME** `serenest.fit` → `your-service-name.onrender.com`  
-       or **A** record if Render gives an IP.
-     - For `www`: **CNAME** `www` → `your-service-name.onrender.com`
-   - Save. SSL is automatic once DNS propagates (can take a few minutes to 48 hours).
+If you use a build step to inject `js/config.js`, add it to your build script. Otherwise commit a `js/config.js` with real keys (only do this on private repos).
 
-Your site will be live at **https://serenest.fit** (and https://www.serenest.fit if you added it).
+---
 
-## Structure
+## File structure
 
-- **`index.html`** — Home (hero, about, services teaser, screening CTA, practice, professionals, sign up)
-- **`screening.html`** — Full screening questionnaire
-- **`services.html`** — Services and conditions
-- **`profile.html`** — Profile and sign-in/sign-up
-- **`for-professionals.html`** — Professionals sign-up and benefits
-- **`styles.css`** — Layout and theme
-- **`main.js`** — Nav, form handling, screening flow, Supabase save
-- **`js/config.js`** — Supabase URL and anon key (copy from `config.example.js`)
-- **`js/supabase-loader.js`** — Loads Supabase client when config is set
-- **`supabase/schema.sql`** — Database schema for Supabase
-
-No build step required.
+```
+serenest/
+├── index.html                  Homepage + patient signup/login
+├── for-professionals.html      Professionals landing + account auth
+├── professionals-dashboard.html  Auth-gated professional dashboard
+├── screening.html              Mental health screening questionnaire
+├── services.html               Services overview
+├── profile.html                User profile page
+├── styles.css                  Global styles
+├── main.js                     Form submission + nav + screening logic
+├── js/
+│   ├── config.example.js        Copy to config.js and fill in keys
+│   ├── config.js                (git-ignored) Your real Supabase keys
+│   ├── supabase-loader.js       Dynamically loads Supabase JS client
+│   └── auth.js                  Email auth helpers (signup, login, logout, guard)
+├── supabase/
+│   └── schema.sql               Run this in Supabase SQL Editor once
+├── assets/                     Images and icons
+└── DEPLOY.md                   Render deployment instructions
+```
