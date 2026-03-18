@@ -41,12 +41,12 @@ export default function SiteLayout() {
           </Link>
 
           <nav className="header-links" aria-label="Header">
+            <Link to="/about">About us</Link>
+            <Link to="/services">Services</Link>
+            <Link to="/professionals">Professionals</Link>
             <Link className="header-cta" to="/book">
               Book
             </Link>
-            <Link to="/services">Services</Link>
-            <Link to="/professionals">Professionals</Link>
-            <Link to="/about">About us</Link>
           </nav>
 
           <button
@@ -75,11 +75,11 @@ export default function SiteLayout() {
                 </button>
               </div>
               <nav className="menu-links" aria-label="Mobile header">
-                <Link to="/book" onClick={() => setMenuOpen(false)}>
-                  Book an appointment
-                </Link>
                 <Link to="/patient/find-professional" onClick={() => setMenuOpen(false)}>
                   Find a professional
+                </Link>
+                <Link to="/about" onClick={() => setMenuOpen(false)}>
+                  About us
                 </Link>
                 <Link to="/services" onClick={() => setMenuOpen(false)}>
                   Services
@@ -87,8 +87,8 @@ export default function SiteLayout() {
                 <Link to="/professionals" onClick={() => setMenuOpen(false)}>
                   Professionals
                 </Link>
-                <Link to="/about" onClick={() => setMenuOpen(false)}>
-                  About us
+                <Link to="/book" onClick={() => setMenuOpen(false)}>
+                  Book an appointment
                 </Link>
               </nav>
             </div>
