@@ -3,6 +3,7 @@ import { Link, Outlet } from 'react-router-dom';
 
 export default function SiteLayout() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [logoOk, setLogoOk] = useState(true);
 
   useEffect(() => {
     if (!menuOpen) return undefined;
@@ -22,7 +23,20 @@ export default function SiteLayout() {
       <header className="header">
         <div className="container header-inner">
           <Link to="/" className="brand">
-            <img src="/assets/logo.png" alt="Serenest" className="brand-mark" />
+            {logoOk ? (
+              <img
+                src="/assets/logo.png"
+                alt="Serenest"
+                className="brand-mark"
+                loading="eager"
+                decoding="async"
+                onError={() => setLogoOk(false)}
+              />
+            ) : (
+              <span className="brand-badge" aria-hidden="true">
+                S
+              </span>
+            )}
             <span className="brand-text">Serenest</span>
           </Link>
 
@@ -91,7 +105,13 @@ export default function SiteLayout() {
           <div className="footer-shell">
             <div className="footer-top">
               <div className="footer-brandline">
-                <img src="/assets/logo.png" alt="Serenest" className="footer-mark" />
+                {logoOk ? (
+                  <img src="/assets/logo.png" alt="Serenest" className="footer-mark" loading="lazy" decoding="async" />
+                ) : (
+                  <span className="footer-badge" aria-hidden="true">
+                    S
+                  </span>
+                )}
                 <div className="footer-brandstack">
                   <div className="footer-name">Serenest</div>
                   <div className="footer-tagline">
