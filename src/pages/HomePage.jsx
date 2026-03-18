@@ -31,28 +31,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section" aria-label="Social proof">
-        <div className="container">
-          <div className="pill-row" aria-label="Highlights">
-            <span className="pill">Video · Audio · Chat</span>
-            <span className="pill">Privacy-first</span>
-            <span className="pill">Assessments + tracking</span>
-            <span className="pill">Doctor review: 24–48 hrs</span>
-          </div>
-          <div className="marquee">
-            <span className="marquee-label">Built for:</span>
-            <div className="logo-strip" aria-hidden="true">
-              <span className="logo-chip">Psychiatrists</span>
-              <span className="logo-chip">Patients</span>
-              <span className="logo-chip">Clinics</span>
-              <span className="logo-chip">Telemedicine</span>
-              <span className="logo-chip">Privacy</span>
-              <span className="logo-chip">Continuity</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="section" id="services">
         <div className="container">
           <div className="section-head">
