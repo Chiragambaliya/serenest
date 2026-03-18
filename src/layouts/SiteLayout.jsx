@@ -1,7 +1,18 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
 export default function SiteLayout() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!menuOpen) return undefined;
+    const onKeyDown = (e) => {
+      if (e.key === 'Escape') setMenuOpen(false);
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [menuOpen]);
+
   return (
     <div>
       <a className="skip-link" href="#main">
@@ -23,7 +34,52 @@ export default function SiteLayout() {
             <Link to="/professionals">Professionals</Link>
             <Link to="/about">About us</Link>
           </nav>
+
+          <button
+            type="button"
+            className={`menu-btn ${menuOpen ? 'is-open' : ''}`}
+            aria-label="Open menu"
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+          >
+            <span className="menu-bars" aria-hidden="true" />
+          </button>
         </div>
+
+        {menuOpen && (
+          <div
+            className="menu-overlay"
+            role="presentation"
+            onClick={() => setMenuOpen(false)}
+            onKeyDown={() => {}}
+          >
+            <div className="menu-sheet tile" role="dialog" aria-label="Mobile navigation" onClick={(e) => e.stopPropagation()}>
+              <div className="menu-head">
+                <div className="menu-title">Menu</div>
+                <button type="button" className="btn btn-ghost" onClick={() => setMenuOpen(false)}>
+                  Close
+                </button>
+              </div>
+              <nav className="menu-links" aria-label="Mobile header">
+                <Link to="/book" onClick={() => setMenuOpen(false)}>
+                  Book an appointment
+                </Link>
+                <Link to="/patient/find-professional" onClick={() => setMenuOpen(false)}>
+                  Find a professional
+                </Link>
+                <Link to="/services" onClick={() => setMenuOpen(false)}>
+                  Services
+                </Link>
+                <Link to="/professionals" onClick={() => setMenuOpen(false)}>
+                  Professionals
+                </Link>
+                <Link to="/about" onClick={() => setMenuOpen(false)}>
+                  About us
+                </Link>
+              </nav>
+            </div>
+          </div>
+        )}
       </header>
 
       <main id="main">

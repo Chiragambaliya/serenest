@@ -14,6 +14,7 @@ import BlogIndexPage from './pages/BlogIndexPage';
 import BlogPostPage from './pages/BlogPostPage';
 import ProfessionalOnboardingPage from './pages/ProfessionalOnboardingPage';
 import AdminPage from './pages/AdminPage';
+import PatientFindProfessionalPage from './pages/PatientFindProfessionalPage';
 
 export default function App() {
   return (
@@ -31,6 +32,7 @@ export default function App() {
         <Route path="/blog/:slug" element={<BlogPostPage />} />
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/patient/find-professional" element={<PatientFindProfessionalPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
