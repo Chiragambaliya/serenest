@@ -573,6 +573,50 @@ p {
   flex-wrap: wrap;
 }
 
+/* Screening (quick questionnaire) */
+.screening-shell {
+  max-width: 860px;
+  margin: 0 auto;
+}
+
+.screening-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.screening-block h2 {
+  font-size: 26px;
+  letter-spacing: -0.01em;
+}
+
+.screening-result h2 {
+  font-size: 28px;
+}
+
+.screening-summary {
+  margin-top: 12px;
+  padding: 14px 14px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-soft);
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow: inset 0 1px 0 var(--border-highlight), var(--shadow-sm);
+}
+
+.screening-summary-line {
+  margin-top: 8px;
+  color: rgba(11, 43, 34, 0.78);
+  font-weight: 650;
+  line-height: 1.6;
+}
+
+@media (max-width: 920px) {
+  .screening-options {
+    grid-template-columns: 1fr;
+  }
+}
+
 .form-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));

@@ -121,6 +121,22 @@ export default function ServicesPage() {
             </article>
 
             <article className="tile service-card">
+              <h3>Quick Screening</h3>
+              <p className="service-lead">Answer a few questions to get directed support.</p>
+              <p className="muted">
+                Choose your reason, relevant conditions, and preferred engagement style. This helps you get matched to the right care path.
+              </p>
+              <div className="booking-actions" style={{ marginTop: 12 }}>
+                <Link className="btn btn-primary" to="/screening">
+                  Start screening →
+                </Link>
+                <Link className="btn btn-ghost" to="/book">
+                  Book directly →
+                </Link>
+              </div>
+            </article>
+
+            <article className="tile service-card">
               <h3>Medication Management</h3>
               <p className="service-lead">Your medications, tracked and managed.</p>
               <p className="muted">
