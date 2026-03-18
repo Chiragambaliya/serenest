@@ -31,7 +31,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section" id="services">
+      <section className="section home-services" id="services">
         <div className="container">
           <div className="section-head">
             <h2>Services</h2>
