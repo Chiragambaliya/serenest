@@ -12,8 +12,8 @@
   --sage-1: #a3c3ac;
   --sage-2: #7ea894;
   --sage-3: #3f6b55;
-  --accent-1: #ff6b6b;
-  --accent-2: #ffb86b;
+  --accent-1: #3b82f6;
+  --accent-2: #60a5fa;
   --paper: #fbfdfb;
   --paper-2: rgba(255, 255, 255, 0.86);
   --border: rgba(11, 43, 34, 0.14);
@@ -820,9 +820,9 @@ p {
 }
 
 .admin-link.is-active {
-  border-color: rgba(255, 107, 107, 0.30);
+  border-color: rgba(59, 130, 246, 0.30);
   background:
-    radial-gradient(600px 220px at 12% 0%, rgba(255, 107, 107, 0.18), transparent 62%),
+    radial-gradient(600px 220px at 12% 0%, rgba(59, 130, 246, 0.16), transparent 62%),
     rgba(255, 255, 255, 0.92);
   color: rgba(11, 43, 34, 0.86);
 }
@@ -1011,9 +1011,9 @@ p {
 }
 
 .pro-tab.is-active {
-  border-color: rgba(255, 107, 107, 0.30);
+  border-color: rgba(59, 130, 246, 0.30);
   background:
-    radial-gradient(600px 220px at 12% 0%, rgba(255, 107, 107, 0.18), transparent 62%),
+    radial-gradient(600px 220px at 12% 0%, rgba(59, 130, 246, 0.16), transparent 62%),
     rgba(255, 255, 255, 0.92);
   color: rgba(11, 43, 34, 0.86);
 }
@@ -1215,7 +1215,7 @@ p {
 }
 
 .btn-primary:hover {
-  box-shadow: 0 24px 70px rgba(255, 107, 107, 0.26);
+  box-shadow: 0 24px 70px rgba(59, 130, 246, 0.26);
 }
 
 .btn-ghost {
@@ -2043,8 +2043,8 @@ p {
 
 .footer-pill:hover {
   transform: translateY(-2px);
-  border-color: rgba(255, 107, 107, 0.28);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.90), 0 22px 60px rgba(255, 107, 107, 0.14);
+  border-color: rgba(59, 130, 246, 0.28);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.90), 0 22px 60px rgba(59, 130, 246, 0.14);
 }
 
 .footer-note {
