@@ -8,12 +8,18 @@ export default function ProfessionalsPage() {
         <div className="container">
           <div className="section-head about-hero-head">
             <p className="kicker">For Professionals</p>
-            <h1 className="page-title">A clinical platform for psychiatrists — not a generic telehealth app.</h1>
+            <h1 className="page-title">
+              A clinical platform for mental health practitioners — not a generic telehealth app.
+            </h1>
             <p className="about-subtext">
-              Serenest helps psychiatrists deliver structured, compliant telepsychiatry: scheduling, intake,
-              assessments, SOAP notes, prescriptions, and continuity — in one calm workflow.
+              Serenest helps psychiatrists, psychologists, therapists, and counsellors deliver structured,
+              compliant telepsychiatry: scheduling, intake, assessments, SOAP notes, prescriptions, and
+              continuity — in one calm workflow.
             </p>
-            <div className="hero-actions" style={{ marginTop: 14 }}>
+            <p className="muted" style={{ marginTop: 12 }}>
+              Psychiatrist · Psychologist · Therapist · Counsellor
+            </p>
+            <div className="hero-actions" style={{ marginTop: 20 }}>
               <Link className="btn btn-primary" to="/professionals/apply">
                 Apply to join →
               </Link>
@@ -92,16 +98,24 @@ export default function ProfessionalsPage() {
 
           <ol className="steps">
             <li className="step">
-              <strong>Apply</strong> — submit your credentials (MBBS + MD Psychiatry) and registration number.
+              <div>
+                <strong>Apply</strong> — Submit your credentials and registration number. Psychiatrists need MCI/SMC; psychologists, therapists, and counsellors need RCI or equivalent.
+              </div>
             </li>
             <li className="step">
-              <strong>Set consultation</strong> — fee, duration, and languages (English/Hindi/Gujarati).
+              <div>
+                <strong>Set consultation</strong> — Fee, duration, and languages (English/Hindi/Gujarati).
+              </div>
             </li>
             <li className="step">
-              <strong>Schedule</strong> — weekly availability and slots.
+              <div>
+                <strong>Schedule</strong> — Weekly availability and slots.
+              </div>
             </li>
             <li className="step">
-              <strong>Verification</strong> — credentials reviewed before you go live.
+              <div>
+                <strong>Verification</strong> — Credentials reviewed before you go live.
+              </div>
             </li>
           </ol>
         </div>
@@ -140,27 +154,35 @@ export default function ProfessionalsPage() {
         </div>
       </section>
 
-      <section className="section alt" aria-label="CTA">
+      <section className="section alt" aria-label="Quote">
+        <div className="container">
+          <blockquote className="callout" style={{ margin: 0 }}>
+            <p>
+              &ldquo;The experience is calm. Less friction, more clarity. That matters for mental health.&rdquo;
+            </p>
+            <cite>— Psychiatrist · India</cite>
+          </blockquote>
+        </div>
+      </section>
+
+      <section className="section" aria-label="CTA">
         <div className="container">
           <div className="cta about-cta">
             <div>
               <h2 className="h2" style={{ margin: 0 }}>
-                Interested in joining Serenest?
+                Ready to join Serenest?
               </h2>
               <p className="muted" style={{ margin: '6px 0 0' }}>
-                Tell us your city, languages, and consultation setup — we’ll share the next steps.
+                Apply in minutes. We verify credentials and get you live with a structured, clinical workflow.
               </p>
               <p className="fineprint" style={{ marginBottom: 0 }}>
                 Verified onboarding · Clinical-first workflows · Privacy-first
               </p>
             </div>
             <div className="stack about-cta-actions">
-              <a
-                className="btn btn-primary btn-full"
-                href="mailto:support@serenest.fit?subject=Doctor%20Onboarding%20Request"
-              >
-                Join as a Doctor →
-              </a>
+              <Link className="btn btn-primary btn-full" to="/professionals/apply">
+                Apply now →
+              </Link>
               <a
                 className="btn btn-ghost btn-full"
                 href="mailto:support@serenest.fit?subject=Clinic%20Partnership%20Request"
@@ -177,4 +199,3 @@ export default function ProfessionalsPage() {
     </div>
   );
 }
-

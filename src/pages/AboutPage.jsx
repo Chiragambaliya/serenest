@@ -308,12 +308,12 @@ export default function AboutPage() {
               >
                 Book a Consultation →
               </a>
-              <a
+              <Link
                 className="btn btn-ghost btn-full"
-                href="mailto:support@serenest.fit?subject=Join%20as%20a%20Doctor"
+                to="/professionals/apply"
               >
                 Join as a Doctor
-              </a>
+              </Link>
               <Link className="btn btn-ghost btn-full" to="/">
                 Back to home
               </Link>
