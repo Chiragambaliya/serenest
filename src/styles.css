@@ -1268,13 +1268,14 @@ p {
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--sage-1), var(--sage-2) 45%, var(--accent-1));
+  background: var(--sage-3);
   color: #fff;
   box-shadow: 0 18px 55px rgba(63, 107, 85, 0.22);
 }
 
 .btn-primary:hover {
-  box-shadow: 0 24px 70px rgba(59, 130, 246, 0.26);
+  background: #355a47;
+  box-shadow: 0 24px 70px rgba(63, 107, 85, 0.28);
 }
 
 .btn-ghost {
@@ -1295,7 +1296,7 @@ p {
 
 .hero {
   position: relative;
-  padding: 86px 0 42px;
+  padding: 110px 0 72px;
   overflow: hidden;
 }
 
@@ -1319,7 +1320,7 @@ p {
 }
 
 .hero-copy {
-  padding-top: 4px;
+  padding-top: 8px;
 }
 
 .kicker {
@@ -1333,13 +1334,13 @@ p {
   border: 1px solid rgba(11, 43, 34, 0.10);
   padding: 8px 12px;
   border-radius: 999px;
-  margin: 0 0 14px;
+  margin: 0 0 24px;
 }
 
 .hero-title {
-  margin: 0 0 10px;
+  margin: 0 0 22px;
   font-size: clamp(36px, 5.4vw, 64px);
-  line-height: 1.05;
+  line-height: 1.12;
   letter-spacing: -0.02em;
 }
 
@@ -1348,20 +1349,19 @@ p {
 }
 
 .hero-lead {
-  margin: 0 0 16px;
+  margin: 0 0 32px;
   color: rgba(11, 43, 34, 0.72);
-  font-size: 17px;
-  max-width: 62ch;
-}
-
-.hero-lead {
   font-size: 18px;
+  line-height: 1.65;
+  letter-spacing: 0.01em;
+  max-width: 62ch;
 }
 
 .hero-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   flex-wrap: wrap;
+  margin-top: 4px;
   margin-bottom: 14px;
 }
 
@@ -1832,6 +1832,29 @@ p {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
+}
+
+.pricing-grid-therapies {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.payment-methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.payment-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-soft);
+  background: rgba(255, 255, 255, 0.92);
+  font-weight: 800;
+  font-size: 14px;
+  color: rgba(11, 43, 34, 0.82);
 }
 
 .pricing-card {
@@ -2697,6 +2720,9 @@ p {
   .pricing-grid {
     grid-template-columns: 1fr;
   }
+  .pricing-grid-therapies {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .blog-grid {
     grid-template-columns: 1fr;
   }
@@ -2715,6 +2741,12 @@ p {
 
   .logo-strip {
     justify-content: flex-start;
+  }
+}
+
+@media (max-width: 520px) {
+  .pricing-grid-therapies {
+    grid-template-columns: 1fr;
   }
 }
 

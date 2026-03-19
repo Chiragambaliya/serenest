@@ -81,12 +81,9 @@ export default function ProfessionalOnboardingPage() {
 
   async function persistApplication() {
     if (supabase) {
-      const { error } = await supabase
-        .from('professionals')
-        .insert([record]);
+      const { error } = await supabase.from('professional_applications').insert([record]);
       if (error) throw error;
     } else {
-      // Fallback: localStorage
       const now = new Date();
       const lsRecord = { id: `${now.getTime()}`, created_at: now.toISOString(), ...record };
       const existing = safeJsonParse(localStorage.getItem(LS_KEY) ?? '[]', []);
@@ -115,8 +112,12 @@ export default function ProfessionalOnboardingPage() {
       <div className="page">
         <main className="container" style={{ maxWidth: 560, paddingBlock: '4rem', textAlign: 'center' }}>
           <h1>Application submitted!</h1>
-          <p>Thank you, {fullName.trim()}. We will verify your credentials and get back to you at {email || phone}.</p>
-          <Link to="/" className="btn">Back to home</Link>
+          <p>
+            Thank you, {fullName.trim()}. We will verify your credentials and get back to you at {email || phone}.
+          </p>
+          <Link to="/" className="btn">
+            Back to home
+          </Link>
         </main>
       </div>
     );
@@ -131,7 +132,9 @@ export default function ProfessionalOnboardingPage() {
 
         <div className="steps-nav">
           {['Personal', 'Credentials', 'Practice', 'Setup'].map((s, i) => (
-            <span key={s} className={`step-tab${step === i + 1 ? ' active' : ''}`}>{s}</span>
+            <span key={s} className={`step-tab${step === i + 1 ? ' active' : ''}`}>
+              {s}
+            </span>
           ))}
         </div>
 
@@ -139,28 +142,66 @@ export default function ProfessionalOnboardingPage() {
           <section className="card">
             <p className="label">Step 1</p>
             <h2>Personal details</h2>
-            <label>Role
+            <label>
+              Role
               <div className="role-grid">
                 {ROLES.map((r) => (
-                  <button key={r.id} type="button" className={`chip${role === r.id ? ' active' : ''}`} onClick={() => setRole(r.id)}>{r.label}</button>
+                  <button
+                    key={r.id}
+                    type="button"
+                    className={`chip${role === r.id ? ' active' : ''}`}
+                    onClick={() => setRole(r.id)}
+                  >
+                    {r.label}
+                  </button>
                 ))}
               </div>
             </label>
-            <label>Full name
-              <input className="input" value={fullName} onChange={(e) => setFullName(e.target.value)} placeholder="Your full name" autoComplete="name" />
+            <label>
+              Full name
+              <input
+                className="input"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                placeholder="Your full name"
+                autoComplete="name"
+              />
             </label>
-            <label>Phone (India)
-              <div className="phone-row"><span className="phone-prefix">+91</span>
-                <input className="input" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="10-digit number" inputMode="numeric" autoComplete="tel" aria-invalid={phone.length > 0 && !isPhoneValid} />
+            <label>
+              Phone (India)
+              <div className="phone-row">
+                <span className="phone-prefix">+91</span>
+                <input
+                  className="input"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="10-digit number"
+                  inputMode="numeric"
+                  autoComplete="tel"
+                  aria-invalid={phone.length > 0 && !isPhoneValid}
+                />
               </div>
-              {phone.length > 0 && !isPhoneValid && <p className="error">Enter a valid 10-digit number starting with 6-9.</p>}
+              {phone.length > 0 && !isPhoneValid && (
+                <p className="error">Enter a valid 10-digit number starting with 6-9.</p>
+              )}
             </label>
-            <label>Email (optional)
-              <input className="input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" autoComplete="email" />
+            <label>
+              Email (optional)
+              <input
+                className="input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                autoComplete="email"
+              />
             </label>
             <div className="btn-row">
-              <Link to="/professionals" className="btn btn-ghost">Back</Link>
-              <button className="btn" onClick={() => setStep(2)} disabled={!isStep1Valid}>Continue</button>
+              <Link to="/professionals" className="btn btn-ghost">
+                Back
+              </Link>
+              <button className="btn" onClick={() => setStep(2)} disabled={!isStep1Valid}>
+                Continue
+              </button>
             </div>
           </section>
         )}
@@ -169,22 +210,51 @@ export default function ProfessionalOnboardingPage() {
           <section className="card">
             <p className="label">Step 2</p>
             <h2>Credentials</h2>
-            <label>Registration / License number
-              <input className="input" value={registration} onChange={(e) => setRegistration(e.target.value)} placeholder="MCI/SMC/RCI/etc." />
+            <label>
+              Registration / License number
+              <input
+                className="input"
+                value={registration}
+                onChange={(e) => setRegistration(e.target.value)}
+                placeholder="MCI/SMC/RCI/etc."
+              />
               {role === 'psychiatrist' && <p className="hint">Required for psychiatrists.</p>}
             </label>
-            <label>Highest degree
-              <input className="input" value={degree} onChange={(e) => setDegree(e.target.value)} placeholder="MBBS, MD, M.Phil, PsyD..." />
+            <label>
+              Highest degree
+              <input
+                className="input"
+                value={degree}
+                onChange={(e) => setDegree(e.target.value)}
+                placeholder="MBBS, MD, M.Phil, PsyD..."
+              />
             </label>
-            <label>Year of passing
-              <input className="input" value={year} onChange={(e) => setYear(e.target.value)} placeholder="e.g. 2018" inputMode="numeric" />
+            <label>
+              Year of passing
+              <input
+                className="input"
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                placeholder="e.g. 2018"
+                inputMode="numeric"
+              />
             </label>
-            <label>Council / Authority
-              <input className="input" value={council} onChange={(e) => setCouncil(e.target.value)} placeholder="State Medical Council / RCI / etc." />
+            <label>
+              Council / Authority
+              <input
+                className="input"
+                value={council}
+                onChange={(e) => setCouncil(e.target.value)}
+                placeholder="State Medical Council / RCI / etc."
+              />
             </label>
             <div className="btn-row">
-              <button className="btn btn-ghost" onClick={() => setStep(1)}>Back</button>
-              <button className="btn" onClick={() => setStep(3)} disabled={!isStep2Valid}>Continue</button>
+              <button className="btn btn-ghost" onClick={() => setStep(1)}>
+                Back
+              </button>
+              <button className="btn" onClick={() => setStep(3)} disabled={!isStep2Valid}>
+                Continue
+              </button>
             </div>
           </section>
         )}
@@ -193,21 +263,44 @@ export default function ProfessionalOnboardingPage() {
           <section className="card">
             <p className="label">Step 3</p>
             <h2>Practice details</h2>
-            <label>Clinic / organisation
-              <input className="input" value={clinic} onChange={(e) => setClinic(e.target.value)} placeholder="Clinic / hospital / private practice" />
+            <label>
+              Clinic / organisation
+              <input
+                className="input"
+                value={clinic}
+                onChange={(e) => setClinic(e.target.value)}
+                placeholder="Clinic / hospital / private practice"
+              />
             </label>
-            <label>City
+            <label>
+              City
               <input className="input" value={city} onChange={(e) => setCity(e.target.value)} placeholder="City" />
             </label>
-            <label>Languages
-              <input className="input" value={languages} onChange={(e) => setLanguages(e.target.value)} placeholder="English, Hindi, Gujarati" />
+            <label>
+              Languages
+              <input
+                className="input"
+                value={languages}
+                onChange={(e) => setLanguages(e.target.value)}
+                placeholder="English, Hindi, Gujarati"
+              />
             </label>
-            <label>Specialities (optional)
-              <input className="input" value={specialities} onChange={(e) => setSpecialities(e.target.value)} placeholder="Anxiety, CBT, de-addiction, etc." />
+            <label>
+              Specialities (optional)
+              <input
+                className="input"
+                value={specialities}
+                onChange={(e) => setSpecialities(e.target.value)}
+                placeholder="Anxiety, CBT, de-addiction, etc."
+              />
             </label>
             <div className="btn-row">
-              <button className="btn btn-ghost" onClick={() => setStep(2)}>Back</button>
-              <button className="btn" onClick={() => setStep(4)}>Continue</button>
+              <button className="btn btn-ghost" onClick={() => setStep(2)}>
+                Back
+              </button>
+              <button className="btn" onClick={() => setStep(4)}>
+                Continue
+              </button>
             </div>
           </section>
         )}
@@ -216,19 +309,43 @@ export default function ProfessionalOnboardingPage() {
           <section className="card">
             <p className="label">Step 4</p>
             <h2>Consultation setup</h2>
-            <label>Fee (Rs.)
-              <input className="input" value={fee} onChange={(e) => setFee(e.target.value)} placeholder="e.g. 799" inputMode="numeric" />
+            <label>
+              Fee (Rs.)
+              <input
+                className="input"
+                value={fee}
+                onChange={(e) => setFee(e.target.value)}
+                placeholder="e.g. 799"
+                inputMode="numeric"
+              />
             </label>
-            <label>Session duration
+            <label>
+              Session duration
               <select className="input" value={duration} onChange={(e) => setDuration(e.target.value)}>
-                {DURATIONS.map((d) => <option key={d} value={d}>{d} min</option>)}
+                {DURATIONS.map((d) => (
+                  <option key={d} value={d}>
+                    {d} min
+                  </option>
+                ))}
               </select>
             </label>
-            <label>Modes offered
-              <input className="input" value={mode} onChange={(e) => setMode(e.target.value)} placeholder="Video / Audio / Chat" />
+            <label>
+              Modes offered
+              <input
+                className="input"
+                value={mode}
+                onChange={(e) => setMode(e.target.value)}
+                placeholder="Video / Audio / Chat"
+              />
             </label>
-            <label>Availability
-              <input className="input" value={availability} onChange={(e) => setAvailability(e.target.value)} placeholder="Mon-Sat, 6pm-9pm" />
+            <label>
+              Availability
+              <input
+                className="input"
+                value={availability}
+                onChange={(e) => setAvailability(e.target.value)}
+                placeholder="Mon-Sat, 6pm-9pm"
+              />
             </label>
             <label className="checkbox-row">
               <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
@@ -236,7 +353,9 @@ export default function ProfessionalOnboardingPage() {
             </label>
             {submitError && <p className="error">{submitError}</p>}
             <div className="btn-row">
-              <button className="btn btn-ghost" onClick={() => setStep(3)}>Back</button>
+              <button className="btn btn-ghost" onClick={() => setStep(3)}>
+                Back
+              </button>
               <button className="btn" onClick={handleSubmit} disabled={!isStep4Valid || submitting}>
                 {submitting ? 'Submitting...' : 'Submit application'}
               </button>

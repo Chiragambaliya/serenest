@@ -1,39 +1,58 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const TIERS = [
+const THERAPIES = [
   {
-    name: 'Single Consult',
-    price: '₹499–999',
-    note: 'One session',
-    features: [
-      'Video / audio / chat (as available)',
-      'Structured intake + assessment context',
-      'Clinical documentation',
-      'Digital Rx (where applicable)',
-    ],
-  },
-  {
-    name: '3-Session Pack',
-    price: 'Best value',
-    note: 'Care continuity',
+    name: 'Psychiatrist',
+    price: '₹699–1,499',
+    note: 'Per session',
+    duration: '45–60 min',
     popular: true,
     features: [
-      '3 sessions (flexible scheduling)',
-      'Progress tracking (PHQ-9 / GAD-7)',
-      'Session history + locked records',
-      'Follow-up recommendations',
+      'Video / audio / chat (as available)',
+      'Clinical assessment & diagnosis',
+      'Digital prescription (where applicable)',
+      'SOAP notes & clinical documentation',
+      'Medication management support',
     ],
   },
   {
-    name: 'Monthly Care Plan',
-    price: 'Custom',
-    note: 'Ongoing support',
+    name: 'Psychologist',
+    price: '₹599–999',
+    note: 'Per session',
+    duration: '45–60 min',
     features: [
-      'Monthly follow-ups',
-      'Medication management support',
-      'Reminders + continuity features',
-      'Priority scheduling (where available)',
+      'Video / audio / chat (as available)',
+      'Psychological assessment',
+      'Evidence-based therapy (CBT, etc.)',
+      'SOAP notes & clinical documentation',
+      'No prescriptions (referral if needed)',
+    ],
+  },
+  {
+    name: 'Therapist',
+    price: '₹499–899',
+    note: 'Per session',
+    duration: '45–60 min',
+    features: [
+      'Video / audio / chat (as available)',
+      'Structured therapy sessions',
+      'CBT, DBT, trauma-informed care',
+      'SOAP notes & clinical documentation',
+      'Progress tracking',
+    ],
+  },
+  {
+    name: 'Counsellor',
+    price: '₹399–699',
+    note: 'Per session',
+    duration: '45–60 min',
+    features: [
+      'Video / audio / chat (as available)',
+      'Supportive counselling',
+      'Crisis support & coping strategies',
+      'Clinical documentation',
+      'Referral to specialist if needed',
     ],
   },
 ];
@@ -62,7 +81,7 @@ export default function PricingPage() {
             <p className="kicker">Pricing</p>
             <h1 className="page-title">Affordable mental health care. No surprises.</h1>
             <p className="about-subtext">
-              Choose a plan that fits your needs — from a single consult to ongoing continuity-focused care.
+              Transparent pricing by therapy type — choose the right professional for your needs.
             </p>
           </div>
         </div>
@@ -70,15 +89,19 @@ export default function PricingPage() {
 
       <section className="section">
         <div className="container">
-          <div className="pricing-grid">
-            {TIERS.map((t) => (
+          <div className="section-head" style={{ marginBottom: 20 }}>
+            <p className="section-label">By therapy type</p>
+            <h2>Pricing per session</h2>
+          </div>
+          <div className="pricing-grid pricing-grid-therapies">
+            {THERAPIES.map((t) => (
               <article key={t.name} className={`tile pricing-card ${t.popular ? 'is-popular' : ''}`}>
                 <div className="pricing-head">
                   <h3>{t.name}</h3>
                   {t.popular && <span className="service-badge">Most popular</span>}
                 </div>
                 <div className="pricing-price">{t.price}</div>
-                <div className="pricing-note">{t.note}</div>
+                <div className="pricing-note">{t.note} · {t.duration}</div>
                 <ul className="list" style={{ marginTop: 12 }}>
                   {t.features.map((f) => (
                     <li key={f}>{f}</li>
@@ -103,6 +126,25 @@ export default function PricingPage() {
       </section>
 
       <section className="section alt">
+        <div className="container">
+          <div className="section-head">
+            <p className="section-label">Payment</p>
+            <h2>Secure payment methods</h2>
+            <p className="muted" style={{ marginTop: 8, maxWidth: 520 }}>
+              Pay safely with Razorpay. We accept UPI, credit/debit cards, net banking, and wallets.
+            </p>
+          </div>
+          <div className="payment-methods">
+            <span className="payment-badge">Razorpay</span>
+            <span className="payment-badge">UPI</span>
+            <span className="payment-badge">Cards</span>
+            <span className="payment-badge">Net Banking</span>
+            <span className="payment-badge">Wallets</span>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
         <div className="container">
           <div className="section-head">
             <p className="section-label">FAQ</p>
@@ -141,4 +183,3 @@ export default function PricingPage() {
     </div>
   );
 }
-

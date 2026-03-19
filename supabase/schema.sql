@@ -5,6 +5,30 @@
 -- TABLES
 -- ============================================================
 
+-- Professional applications (from onboarding flow, managed in admin)
+create table if not exists public.professional_applications (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  role text not null,
+  role_label text,
+  full_name text not null,
+  phone text not null,
+  email text,
+  registration text,
+  degree text,
+  year text,
+  council text,
+  clinic text,
+  city text,
+  languages text,
+  specialities text,
+  fee_inr text,
+  duration_min int,
+  modes text,
+  availability text
+);
+
 -- Sign-ups (email + mobile from homepage and profile)
 create table if not exists public.signups (
   id uuid primary key default gen_random_uuid(),
@@ -36,9 +60,25 @@ create table if not exists public.screening_responses (
 -- ============================================================
 -- ROW LEVEL SECURITY
 -- ============================================================
+alter table public.professional_applications enable row level security;
 alter table public.signups enable row level security;
 alter table public.professionals enable row level security;
 alter table public.screening_responses enable row level security;
+
+-- Professional applications: anon can insert, select all, update (for admin flow)
+-- For production: restrict update to authenticated admin users
+create policy "Allow anonymous insert on professional_applications"
+  on public.professional_applications for insert
+  with check (true);
+
+create policy "Allow anonymous select on professional_applications"
+  on public.professional_applications for select
+  using (true);
+
+create policy "Allow anonymous update on professional_applications"
+  on public.professional_applications for update
+  using (true)
+  with check (true);
 
 -- Allow anyone to insert (anonymous signups from the website)
 create policy "Allow anonymous insert on signups"
@@ -52,6 +92,11 @@ create policy "Allow anonymous insert on professionals"
 create policy "Allow anonymous insert on screening_responses"
   on public.screening_responses for insert
   with check (true);
+
+-- Allow anonymous select on screening_responses (for analytics; restrict in production if needed)
+create policy "Allow anonymous select on screening_responses"
+  on public.screening_responses for select
+  using (true);
 
 -- Authenticated users can read all data (professionals dashboard)
 create policy "Authenticated users can read signups"

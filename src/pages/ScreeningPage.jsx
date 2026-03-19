@@ -51,17 +51,15 @@ function safeJsonParse(value, fallback) {
 
 async function persistScreening(record) {
   if (supabase) {
-    const { error } = await supabase
-      .from('screening_responses')
-      .insert([{
-        reason: record.reason,
-        conditions: record.conditions,
-        engagement: record.engagement,
-        frequency: record.frequency,
-      }]);
+    const payload = {
+      reason: record.reason ?? null,
+      conditions: record.conditions ?? [],
+      format: record.engagement ?? null,
+      frequency: record.frequency ?? null,
+    };
+    const { error } = await supabase.from('screening_responses').insert([payload]);
     if (error) throw error;
   } else {
-    // Fallback: localStorage
     const existing = safeJsonParse(localStorage.getItem(LS_KEY) ?? '[]', []);
     localStorage.setItem(LS_KEY, JSON.stringify([record, ...(Array.isArray(existing) ? existing : [])]));
   }
@@ -129,7 +127,9 @@ export default function ScreeningPage() {
 
         <div className="steps-nav">
           {[1, 2, 3, 4].map((s) => (
-            <span key={s} className={`step-tab${step === s ? ' active' : ''}`}>Step {s}</span>
+            <span key={s} className={`step-tab${step === s ? ' active' : ''}`}>
+              Step {s}
+            </span>
           ))}
         </div>
 
@@ -141,7 +141,14 @@ export default function ScreeningPage() {
                 <h2>What brings you here today?</h2>
                 <div className="chip-grid">
                   {REASONS.map((r) => (
-                    <button key={r.id} type="button" className={`chip${reason === r.id ? ' active' : ''}`} onClick={() => setReason(r.id)}>{r.label}</button>
+                    <button
+                      key={r.id}
+                      type="button"
+                      className={`chip${reason === r.id ? ' active' : ''}`}
+                      onClick={() => setReason(r.id)}
+                    >
+                      {r.label}
+                    </button>
                   ))}
                 </div>
               </section>
@@ -155,7 +162,14 @@ export default function ScreeningPage() {
                   {CONDITIONS.map((c) => {
                     const selected = conditions.has(c.id);
                     return (
-                      <button key={c.id} type="button" className={`chip${selected ? ' active' : ''}`} onClick={() => toggleCondition(c.id)}>{c.label}</button>
+                      <button
+                        key={c.id}
+                        type="button"
+                        className={`chip${selected ? ' active' : ''}`}
+                        onClick={() => toggleCondition(c.id)}
+                      >
+                        {c.label}
+                      </button>
                     );
                   })}
                 </div>
@@ -167,7 +181,14 @@ export default function ScreeningPage() {
                 <h2>How would you like to engage?</h2>
                 <div className="chip-grid">
                   {ENGAGEMENT.map((x) => (
-                    <button key={x.id} type="button" className={`chip${engagement === x.id ? ' active' : ''}`} onClick={() => setEngagement(x.id)}>{x.label}</button>
+                    <button
+                      key={x.id}
+                      type="button"
+                      className={`chip${engagement === x.id ? ' active' : ''}`}
+                      onClick={() => setEngagement(x.id)}
+                    >
+                      {x.label}
+                    </button>
                   ))}
                 </div>
               </section>
@@ -178,19 +199,34 @@ export default function ScreeningPage() {
                 <h2>How often do you want to practice?</h2>
                 <div className="chip-grid">
                   {FREQUENCY.map((x) => (
-                    <button key={x.id} type="button" className={`chip${frequency === x.id ? ' active' : ''}`} onClick={() => setFrequency(x.id)}>{x.label}</button>
+                    <button
+                      key={x.id}
+                      type="button"
+                      className={`chip${frequency === x.id ? ' active' : ''}`}
+                      onClick={() => setFrequency(x.id)}
+                    >
+                      {x.label}
+                    </button>
                   ))}
                 </div>
               </section>
             )}
             <div className="btn-row">
               {step > 1 ? (
-                <button type="button" className="btn btn-ghost" onClick={() => setStep((s) => Math.max(1, s - 1))}>Back</button>
-              ) : (<span />)}
-              {step < totalSteps - 1 ? (
-                <button type="button" className="btn" onClick={() => setStep((s) => s + 1)} disabled={!canGoNext}>Continue</button>
+                <button type="button" className="btn btn-ghost" onClick={() => setStep((s) => Math.max(1, s - 1))}>
+                  Back
+                </button>
               ) : (
-                <button type="submit" className="btn" disabled={!canGoNext}>Submit screening</button>
+                <span />
+              )}
+              {step < totalSteps - 1 ? (
+                <button type="button" className="btn" onClick={() => setStep((s) => s + 1)} disabled={!canGoNext}>
+                  Continue
+                </button>
+              ) : (
+                <button type="submit" className="btn" disabled={!canGoNext}>
+                  Submit screening
+                </button>
               )}
             </div>
           </form>
@@ -203,17 +239,32 @@ export default function ScreeningPage() {
             {submitError ? (
               <p className="error">Your answers could not be saved: {submitError}</p>
             ) : (
-              <p>We noted your answers. When we launch real screening matching, we'll tailor suggestions to what you shared.</p>
+              <p>
+                We noted your answers. When we launch real screening matching, we'll tailor suggestions to what you
+                shared.
+              </p>
             )}
             <div className="summary">
-              <p><strong>Reason:</strong> {reasonLabel ?? '-'}</p>
-              <p><strong>Conditions:</strong> {selectedConditionLabels.length ? selectedConditionLabels.join(', ') : '-'}</p>
-              <p><strong>Engagement:</strong> {ENGAGEMENT.find((x) => x.id === engagement)?.label ?? '-'}</p>
-              <p><strong>Frequency:</strong> {FREQUENCY.find((x) => x.id === frequency)?.label ?? '-'}</p>
+              <p>
+                <strong>Reason:</strong> {reasonLabel ?? '-'}
+              </p>
+              <p>
+                <strong>Conditions:</strong> {selectedConditionLabels.length ? selectedConditionLabels.join(', ') : '-'}
+              </p>
+              <p>
+                <strong>Engagement:</strong> {ENGAGEMENT.find((x) => x.id === engagement)?.label ?? '-'}
+              </p>
+              <p>
+                <strong>Frequency:</strong> {FREQUENCY.find((x) => x.id === frequency)?.label ?? '-'}
+              </p>
             </div>
             <div className="btn-row">
-              <Link to="/services" className="btn btn-ghost">Back to services</Link>
-              <Link to="/booking" className="btn">Book a consultation</Link>
+              <Link to="/services" className="btn btn-ghost">
+                Back to services
+              </Link>
+              <Link to="/book" className="btn">
+                Book a consultation
+              </Link>
             </div>
           </section>
         )}

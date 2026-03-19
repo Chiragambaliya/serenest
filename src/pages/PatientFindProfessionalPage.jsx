@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const LS_APPS = 'serenest_professional_applications_v1';
 
@@ -26,24 +27,20 @@ function normalizeList(value) {
     .filter(Boolean);
 }
 
-function loadApprovedProfessionals() {
-  const data = safeJsonParse(localStorage.getItem(LS_APPS) ?? '[]', []);
-  const apps = Array.isArray(data) ? data : [];
-  return apps
-    .filter((a) => a && a.status === 'approved')
-    .map((a) => ({
-      id: a.id,
-      name: a.full_name || 'Professional',
-      role: a.role || 'counsellor',
-      roleLabel: a.role_label || a.role || 'Professional',
-      city: a.city || '',
-      fee: a.fee_inr ? Number(a.fee_inr) : null,
-      duration: a.duration_min ? Number(a.duration_min) : null,
-      languages: normalizeList(a.languages),
-      specialities: normalizeList(a.specialities),
-      modes: a.modes || 'Video / Audio / Chat',
-      availability: a.availability || '',
-    }));
+function mapToProfessional(a) {
+  return {
+    id: a.id,
+    name: a.full_name || 'Professional',
+    role: a.role || 'counsellor',
+    roleLabel: a.role_label || a.role || 'Professional',
+    city: a.city || '',
+    fee: a.fee_inr ? Number(a.fee_inr) : null,
+    duration: a.duration_min ? Number(a.duration_min) : null,
+    languages: normalizeList(a.languages),
+    specialities: normalizeList(a.specialities),
+    modes: a.modes || 'Video / Audio / Chat',
+    availability: a.availability || '',
+  };
 }
 
 export default function PatientFindProfessionalPage() {
@@ -51,8 +48,24 @@ export default function PatientFindProfessionalPage() {
   const [language, setLanguage] = useState('Any');
   const [city, setCity] = useState('');
   const [maxFee, setMaxFee] = useState(2000);
+  const [professionals, setProfessionals] = useState(() => {
+    if (supabase) return [];
+    const data = safeJsonParse(localStorage.getItem(LS_APPS) ?? '[]', []);
+    const apps = Array.isArray(data) ? data : [];
+    return apps.filter((a) => a && a.status === 'approved').map(mapToProfessional);
+  });
 
-  const professionals = useMemo(() => loadApprovedProfessionals(), []);
+  useEffect(() => {
+    if (!supabase) return;
+    supabase
+      .from('professional_applications')
+      .select('*')
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false })
+      .then(({ data, error }) => {
+        if (!error && data) setProfessionals(data.map(mapToProfessional));
+      });
+  }, []);
 
   const languages = useMemo(() => {
     const set = new Set();

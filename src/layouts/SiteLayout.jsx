@@ -124,14 +124,6 @@ export default function SiteLayout() {
                 </div>
               </div>
 
-              <div className="footer-ctas" aria-label="Quick actions">
-                <Link className="btn btn-primary" to="/book">
-                  Book
-                </Link>
-                <Link className="btn btn-ghost" to="/professionals">
-                  Join as a professional
-                </Link>
-              </div>
             </div>
 
             <div className="footer-divider" aria-hidden="true" />
