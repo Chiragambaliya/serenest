@@ -16,6 +16,7 @@ import ProfessionalOnboardingPage from './pages/ProfessionalOnboardingPage';
 import AdminPage from './pages/AdminPage';
 import PatientFindProfessionalPage from './pages/PatientFindProfessionalPage';
 import ScreeningPage from './pages/ScreeningPage';
+import ConsultationPage from './pages/ConsultationPage';
 
 export default function App() {
   return (
@@ -35,6 +36,7 @@ export default function App() {
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/patient/find-professional" element={<PatientFindProfessionalPage />} />
         <Route path="/screening" element={<ScreeningPage />} />
+                <Route path="/consultation/:appointmentId" element={<ConsultationPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>
