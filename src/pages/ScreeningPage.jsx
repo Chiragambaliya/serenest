@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { supabase } from '../lib/supabase';
 
 const LS_KEY = 'serenest_screening_responses_v1';
 
@@ -31,7 +32,7 @@ const CONDITIONS = [
 const ENGAGEMENT = [
   { id: 'self', label: 'Self-paced, on my own' },
   { id: 'guided', label: 'With a guide or facilitator' },
-  { id: 'both', label: 'Both — mix of both' },
+  { id: 'both', label: 'Both - mix of both' },
 ];
 
 const FREQUENCY = [
@@ -48,23 +49,31 @@ function safeJsonParse(value, fallback) {
   }
 }
 
-function loadAll() {
-  const data = safeJsonParse(localStorage.getItem(LS_KEY) ?? '[]', []);
-  return Array.isArray(data) ? data : [];
-}
-
-function persist(record) {
-  const existing = loadAll();
-  localStorage.setItem(LS_KEY, JSON.stringify([record, ...existing]));
+async function persistScreening(record) {
+  if (supabase) {
+    const { error } = await supabase
+      .from('screening_responses')
+      .insert([{
+        reason: record.reason,
+        conditions: record.conditions,
+        engagement: record.engagement,
+        frequency: record.frequency,
+      }]);
+    if (error) throw error;
+  } else {
+    // Fallback: localStorage
+    const existing = safeJsonParse(localStorage.getItem(LS_KEY) ?? '[]', []);
+    localStorage.setItem(LS_KEY, JSON.stringify([record, ...(Array.isArray(existing) ? existing : [])]));
+  }
 }
 
 export default function ScreeningPage() {
-  // Steps: 1 reason, 2 conditions, 3 engagement, 4 frequency, 5 result
   const [step, setStep] = useState(1);
   const [reason, setReason] = useState(null);
   const [conditions, setConditions] = useState(() => new Set());
   const [engagement, setEngagement] = useState(null);
   const [frequency, setFrequency] = useState(null);
+  const [submitError, setSubmitError] = useState(null);
 
   const reasonLabel = useMemo(() => REASONS.find((r) => r.id === reason)?.label ?? null, [reason]);
   const selectedConditionLabels = useMemo(
@@ -89,9 +98,8 @@ export default function ScreeningPage() {
     });
   }
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
-
     const record = {
       id: `${Date.now()}`,
       created_at: new Date().toISOString(),
@@ -101,8 +109,12 @@ export default function ScreeningPage() {
       frequency: frequency ?? null,
       status: 'submitted',
     };
-
-    persist(record);
+    try {
+      await persistScreening(record);
+      setSubmitError(null);
+    } catch (err) {
+      setSubmitError(err.message ?? 'Could not save response.');
+    }
     setStep(5);
   }
 
@@ -110,198 +122,102 @@ export default function ScreeningPage() {
 
   return (
     <div className="page">
-      <section className="section about-hero">
-        <div className="container">
-          <div className="section-head about-hero-head">
-            <p className="kicker">Quick screening</p>
-            <h1 className="page-title">Answer a few questions to get directed support.</h1>
-            <p className="about-subtext">Takes about 2 minutes. Your answers will be saved on this device.</p>
-          </div>
+      <main className="container" style={{ maxWidth: 560, paddingBlock: '3rem' }}>
+        <p className="label">Quick screening</p>
+        <h1>Answer a few questions to get directed support.</h1>
+        <p>Takes about 2 minutes. Your answers are saved securely.</p>
+
+        <div className="steps-nav">
+          {[1, 2, 3, 4].map((s) => (
+            <span key={s} className={`step-tab${step === s ? ' active' : ''}`}>Step {s}</span>
+          ))}
         </div>
-      </section>
 
-      <section className="section">
-        <div className="container">
-          <div className="booking-shell tile screening-shell">
-            <div className="booking-top">
-              <div className="booking-steps" aria-label="Screening steps">
-                {[1, 2, 3, 4].map((s) => (
-                  <div key={s} className={`step-chip ${step === s ? 'is-active' : ''}`}>
-                    <span className="step-dot" aria-hidden="true" />
-                    Step {s}
-                  </div>
-                ))}
-              </div>
-
-              <div className="booking-summary" aria-label="Summary">
-                <div className="summary-pill">{reasonLabel ?? 'Quick screening'}</div>
-                <div className="summary-pill">{conditions.size ? `${conditions.size} selected` : 'Pick conditions'}</div>
-              </div>
-            </div>
-
-            <div className="booking-body">
-              {step !== 5 && (
-                <form onSubmit={onSubmit}>
-                  {step === 1 && (
-                    <div className="screening-block">
-                      <p className="section-label" style={{ marginBottom: 8 }}>
-                        Step 1
-                      </p>
-                      <h2 style={{ marginBottom: 10 }}>What brings you here today?</h2>
-                      <div className="choice-grid" role="group" aria-label="Reason">
-                        {REASONS.map((r) => (
-                          <button
-                            key={r.id}
-                            type="button"
-                            className={`choice-card ${reason === r.id ? 'is-selected' : ''}`}
-                            aria-pressed={reason === r.id}
-                            onClick={() => setReason(r.id)}
-                          >
-                            {r.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {step === 2 && (
-                    <div className="screening-block">
-                      <p className="section-label" style={{ marginBottom: 8 }}>
-                        Step 2
-                      </p>
-                      <h2 style={{ marginBottom: 10 }}>Which conditions or areas are relevant to you?</h2>
-                      <p className="muted" style={{ margin: 0, fontWeight: 700, marginBottom: 10 }}>
-                        Select all that apply.
-                      </p>
-                      <div className="screening-options" role="group" aria-label="Conditions">
-                        {CONDITIONS.map((c) => {
-                          const selected = conditions.has(c.id);
-                          return (
-                            <button
-                              key={c.id}
-                              type="button"
-                              className={`choice-card ${selected ? 'is-selected' : ''}`}
-                              aria-pressed={selected}
-                              onClick={() => toggleCondition(c.id)}
-                            >
-                              {c.label}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-
-                  {step === 3 && (
-                    <div className="screening-block">
-                      <p className="section-label" style={{ marginBottom: 8 }}>
-                        Step 3
-                      </p>
-                      <h2 style={{ marginBottom: 10 }}>How would you like to engage?</h2>
-                      <div className="choice-grid" role="group" aria-label="Engagement">
-                        {ENGAGEMENT.map((x) => (
-                          <button
-                            key={x.id}
-                            type="button"
-                            className={`choice-card ${engagement === x.id ? 'is-selected' : ''}`}
-                            aria-pressed={engagement === x.id}
-                            onClick={() => setEngagement(x.id)}
-                          >
-                            {x.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {step === 4 && (
-                    <div className="screening-block">
-                      <p className="section-label" style={{ marginBottom: 8 }}>
-                        Step 4
-                      </p>
-                      <h2 style={{ marginBottom: 10 }}>How often do you want to practice?</h2>
-                      <div className="choice-grid" role="group" aria-label="Frequency">
-                        {FREQUENCY.map((x) => (
-                          <button
-                            key={x.id}
-                            type="button"
-                            className={`choice-card ${frequency === x.id ? 'is-selected' : ''}`}
-                            aria-pressed={frequency === x.id}
-                            onClick={() => setFrequency(x.id)}
-                          >
-                            {x.label}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="booking-actions">
-                    {step > 1 ? (
-                      <button className="btn btn-ghost" type="button" onClick={() => setStep((s) => Math.max(1, s - 1))}>
-                        ← Back
-                      </button>
-                    ) : (
-                      <span />
-                    )}
-
-                    {step < totalSteps - 1 ? (
-                      <button className="btn btn-primary" type="button" disabled={!canGoNext} onClick={() => setStep((s) => s + 1)}>
-                        Continue →
-                      </button>
-                    ) : (
-                      <button className="btn btn-primary" type="submit" disabled={!canGoNext}>
-                        Submit screening →
-                      </button>
-                    )}
-                  </div>
-                </form>
-              )}
-
-              {step === 5 && (
-                <div className="screening-result">
-                  <p className="section-label" style={{ marginBottom: 8 }}>
-                    Result
-                  </p>
-                  <h2 style={{ marginBottom: 10 }}>Thank you</h2>
-                  <p className="muted" style={{ marginBottom: 14, fontWeight: 700 }}>
-                    We noted your answers. When we launch real screening matching, we’ll tailor suggestions to what you shared.
-                  </p>
-
-                  <div className="screening-summary">
-                    <div className="muted" style={{ fontWeight: 900, marginBottom: 6 }}>Summary</div>
-                    <div className="screening-summary-line">
-                      <span className="muted" style={{ fontWeight: 800 }}>Reason:</span> {reasonLabel ?? '—'}
-                    </div>
-                    <div className="screening-summary-line">
-                      <span className="muted" style={{ fontWeight: 800 }}>Conditions:</span>{' '}
-                      {selectedConditionLabels.length ? selectedConditionLabels.join(', ') : '—'}
-                    </div>
-                    <div className="screening-summary-line">
-                      <span className="muted" style={{ fontWeight: 800 }}>Engagement:</span>{' '}
-                      {ENGAGEMENT.find((x) => x.id === engagement)?.label ?? '—'}
-                    </div>
-                    <div className="screening-summary-line">
-                      <span className="muted" style={{ fontWeight: 800 }}>Frequency:</span>{' '}
-                      {FREQUENCY.find((x) => x.id === frequency)?.label ?? '—'}
-                    </div>
-                  </div>
-
-                  <div className="booking-actions" style={{ marginTop: 16 }}>
-                    <Link className="btn btn-ghost" to="/services">
-                      ← Back to services
-                    </Link>
-                    <Link className="btn btn-primary" to="/book">
-                      Book a consultation →
-                    </Link>
-                  </div>
+        {step !== 5 && (
+          <form onSubmit={onSubmit}>
+            {step === 1 && (
+              <section className="card">
+                <p className="label">Step 1</p>
+                <h2>What brings you here today?</h2>
+                <div className="chip-grid">
+                  {REASONS.map((r) => (
+                    <button key={r.id} type="button" className={`chip${reason === r.id ? ' active' : ''}`} onClick={() => setReason(r.id)}>{r.label}</button>
+                  ))}
                 </div>
+              </section>
+            )}
+            {step === 2 && (
+              <section className="card">
+                <p className="label">Step 2</p>
+                <h2>Which conditions or areas are relevant to you?</h2>
+                <p>Select all that apply.</p>
+                <div className="chip-grid">
+                  {CONDITIONS.map((c) => {
+                    const selected = conditions.has(c.id);
+                    return (
+                      <button key={c.id} type="button" className={`chip${selected ? ' active' : ''}`} onClick={() => toggleCondition(c.id)}>{c.label}</button>
+                    );
+                  })}
+                </div>
+              </section>
+            )}
+            {step === 3 && (
+              <section className="card">
+                <p className="label">Step 3</p>
+                <h2>How would you like to engage?</h2>
+                <div className="chip-grid">
+                  {ENGAGEMENT.map((x) => (
+                    <button key={x.id} type="button" className={`chip${engagement === x.id ? ' active' : ''}`} onClick={() => setEngagement(x.id)}>{x.label}</button>
+                  ))}
+                </div>
+              </section>
+            )}
+            {step === 4 && (
+              <section className="card">
+                <p className="label">Step 4</p>
+                <h2>How often do you want to practice?</h2>
+                <div className="chip-grid">
+                  {FREQUENCY.map((x) => (
+                    <button key={x.id} type="button" className={`chip${frequency === x.id ? ' active' : ''}`} onClick={() => setFrequency(x.id)}>{x.label}</button>
+                  ))}
+                </div>
+              </section>
+            )}
+            <div className="btn-row">
+              {step > 1 ? (
+                <button type="button" className="btn btn-ghost" onClick={() => setStep((s) => Math.max(1, s - 1))}>Back</button>
+              ) : (<span />)}
+              {step < totalSteps - 1 ? (
+                <button type="button" className="btn" onClick={() => setStep((s) => s + 1)} disabled={!canGoNext}>Continue</button>
+              ) : (
+                <button type="submit" className="btn" disabled={!canGoNext}>Submit screening</button>
               )}
             </div>
-          </div>
-        </div>
-      </section>
+          </form>
+        )}
+
+        {step === 5 && (
+          <section className="card">
+            <p className="label">Result</p>
+            <h2>Thank you</h2>
+            {submitError ? (
+              <p className="error">Your answers could not be saved: {submitError}</p>
+            ) : (
+              <p>We noted your answers. When we launch real screening matching, we'll tailor suggestions to what you shared.</p>
+            )}
+            <div className="summary">
+              <p><strong>Reason:</strong> {reasonLabel ?? '-'}</p>
+              <p><strong>Conditions:</strong> {selectedConditionLabels.length ? selectedConditionLabels.join(', ') : '-'}</p>
+              <p><strong>Engagement:</strong> {ENGAGEMENT.find((x) => x.id === engagement)?.label ?? '-'}</p>
+              <p><strong>Frequency:</strong> {FREQUENCY.find((x) => x.id === frequency)?.label ?? '-'}</p>
+            </div>
+            <div className="btn-row">
+              <Link to="/services" className="btn btn-ghost">Back to services</Link>
+              <Link to="/booking" className="btn">Book a consultation</Link>
+            </div>
+          </section>
+        )}
+      </main>
     </div>
   );
 }
-
