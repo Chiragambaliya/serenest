@@ -43,6 +43,7 @@ export default function SiteLayout() {
           <nav className="header-links" aria-label="Header">
             <Link to="/about">About us</Link>
             <Link to="/services">Services</Link>
+            <Link to="/pricing">Pricing</Link>
             <Link to="/professionals">Professionals</Link>
             <Link className="header-cta" to="/book">
               Book
@@ -83,6 +84,9 @@ export default function SiteLayout() {
                 </Link>
                 <Link to="/services" onClick={() => setMenuOpen(false)}>
                   Services
+                </Link>
+                <Link to="/pricing" onClick={() => setMenuOpen(false)}>
+                  Pricing
                 </Link>
                 <Link to="/professionals" onClick={() => setMenuOpen(false)}>
                   Professionals
