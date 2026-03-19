@@ -13,7 +13,7 @@ Follow these steps to deploy the site and use the domain **serenest.fit**.
    - **Name:** `serenest`
    - **Branch:** `main`
    - **Build command:** `npm run build`
-   - **Publish directory:** `.`
+   - **Publish directory:** `dist`
 5. Click **Create Static Site**. Wait for the first deploy to finish. Your site will be at `https://serenest.onrender.com` (or similar).
 
 ---
