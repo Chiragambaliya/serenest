@@ -9,11 +9,13 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom', 'react-router-dom'],
-          daily: ['@daily-co/daily-js'],
+          // FIX Bug 6: removed '@daily-co/daily-js' from manualChunks — it is not
+          // confirmed as an installed dependency. If you add daily-co to package.json
+          // and use it in src/, uncomment the line below:
+          // daily: ['@daily-co/daily-js'],
         },
       },
     },
     chunkSizeWarningLimit: 600,
   },
 });
-
