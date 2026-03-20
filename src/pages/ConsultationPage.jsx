@@ -26,7 +26,17 @@ export default function ConsultationPage() {
     async function setupRoom() {
       setLoading(true);
       try {
-        // Check if appointment already has a room
+        if (!supabase) {
+          const room = await createDailyRoom(appointmentId);
+          if (room?.url) {
+            setRoomUrl(room.url);
+          } else {
+            setError('Could not create video room. Please configure Supabase and Daily.co API keys.');
+          }
+          setLoading(false);
+          return;
+        }
+
         const { data: appt } = await supabase
           .from('appointments')
           .select('*')
@@ -36,11 +46,9 @@ export default function ConsultationPage() {
         if (appt?.daily_room_url) {
           setRoomUrl(appt.daily_room_url);
         } else {
-          // Create new Daily room
           const room = await createDailyRoom(appointmentId);
           if (room?.url) {
             setRoomUrl(room.url);
-            // Save to appointments table
             await supabase.from('appointments').upsert({
               appointment_id: appointmentId,
               patient_name: 'Patient',
@@ -61,7 +69,7 @@ export default function ConsultationPage() {
 
   // Load chat messages + subscribe to realtime
   useEffect(() => {
-    if (!appointmentId || !joined) return;
+    if (!appointmentId || !joined || !supabase) return;
     const fetchMessages = async () => {
       const { data } = await supabase
         .from('chat_messages')
@@ -118,7 +126,7 @@ export default function ConsultationPage() {
 
   const sendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || !userName) return;
+    if (!newMessage.trim() || !userName || !supabase) return;
     await supabase.from('chat_messages').insert({
       appointment_id: appointmentId,
       sender_name: userName,
