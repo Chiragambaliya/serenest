@@ -30,12 +30,13 @@
     });
   }
 
-  // Signup form (prevent default, show feedback) — sign-in/sign-up is by email + mobile
+  // Signup form (prevent default, show feedback)
   document.querySelectorAll('.signup-form').forEach(function (form) {
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       var btn = form.querySelector('button[type="submit"]');
       if (!btn) return;
+
       if (form.classList.contains('professionals-form')) {
         var inputs = form.querySelectorAll('input');
         var nameInput = form.querySelector('input[name="name"]');
@@ -47,33 +48,41 @@
         var emailVal = email.value.trim();
         var mobileVal = mobile.value.trim();
         var roleVal = roleInput ? roleInput.value.trim() : null;
-        if (window.__supabase) {
-          window.__supabase.from('professionals').insert({ name: nameVal, email: emailVal, mobile: mobileVal, role: roleVal || null }).then(function () {
-            done();
-          }).catch(function () { done(); });
-        } else { done(); }
-        function done() {
-          btn.textContent = 'Thank you — we\'ll be in touch';
+
+        // FIX Bug 1: use function expression (var done = function) instead of
+        // function declaration inside a block — illegal in strict mode
+        var done = function () {
+          btn.textContent = "Thank you — we'll be in touch";
           btn.disabled = true;
           inputs.forEach(function (input) { input.value = ''; });
-        }
+        };
+
+        if (window.__supabase) {
+          window.__supabase.from('professionals').insert({
+            name: nameVal, email: emailVal, mobile: mobileVal, role: roleVal || null
+          }).then(done).catch(done);
+        } else { done(); }
+
       } else if (form.classList.contains('signup-email-mobile')) {
         var emailInput = form.querySelector('input[name="email"]');
         var mobileInput = form.querySelector('input[name="mobile"]');
         if (!emailInput || !emailInput.value.trim() || !mobileInput || !mobileInput.value.trim()) return;
-        var emailVal = emailInput.value.trim();
-        var mobileVal = mobileInput.value.trim();
-        if (window.__supabase) {
-          window.__supabase.from('signups').insert({ email: emailVal, mobile: mobileVal }).then(function () {
-            done();
-          }).catch(function () { done(); });
-        } else { done(); }
-        function done() {
+        var emailVal2 = emailInput.value.trim();
+        var mobileVal2 = mobileInput.value.trim();
+
+        // FIX Bug 1 (continued): function expression, not declaration
+        var done = function () {
           btn.textContent = 'Thank you';
           btn.disabled = true;
           emailInput.value = '';
           mobileInput.value = '';
-        }
+        };
+
+        if (window.__supabase) {
+          window.__supabase.from('signups').insert({
+            email: emailVal2, mobile: mobileVal2
+          }).then(done).catch(done);
+        } else { done(); }
       }
     });
   });
@@ -91,6 +100,7 @@
     const totalSteps = steps.length + 1; // steps + result
     let currentStep = 1;
 
+    // FIX Bug 2: consolidated actionsEl display logic — single clear write per call
     function updateStep(step) {
       currentStep = step;
       steps.forEach(function (el, i) {
@@ -99,22 +109,19 @@
       if (resultStep) {
         resultStep.classList.toggle('screening-step-active', step === totalSteps);
       }
+
+      var isResult = step === totalSteps;
+
       if (prevBtn) {
         prevBtn.disabled = step <= 1;
+        prevBtn.style.display = isResult ? 'none' : '';
       }
-      if (step < totalSteps - 1) {
-        if (nextBtn) nextBtn.style.display = '';
-        if (submitBtn) submitBtn.style.display = 'none';
-      } else if (step === totalSteps - 1) {
-        if (nextBtn) nextBtn.style.display = 'none';
-        if (submitBtn) submitBtn.style.display = '';
-      } else {
-        if (nextBtn) nextBtn.style.display = 'none';
-        if (submitBtn) submitBtn.style.display = 'none';
-        if (prevBtn) prevBtn.style.display = 'none';
-        if (actionsEl) actionsEl.style.display = 'none';
-      }
-      if (step < totalSteps && actionsEl) actionsEl.style.display = 'flex';
+      if (nextBtn) nextBtn.style.display = (!isResult && step < totalSteps - 1) ? '' : 'none';
+      if (submitBtn) submitBtn.style.display = (!isResult && step === totalSteps - 1) ? '' : 'none';
+
+      // Single authoritative write — no double-set
+      if (actionsEl) actionsEl.style.display = isResult ? 'none' : 'flex';
+
       if (progressBar) {
         progressBar.style.width = (step / totalSteps) * 100 + '%';
       }
@@ -139,6 +146,7 @@
         }
       });
     }
+
     if (prevBtn) {
       prevBtn.addEventListener('click', function () {
         if (currentStep > 1) {
@@ -146,6 +154,7 @@
         }
       });
     }
+
     screeningForm.addEventListener('submit', function (e) {
       e.preventDefault();
       var reasonEl = screeningForm.querySelector('input[name="reason"]:checked');
@@ -167,6 +176,7 @@
       }
       updateStep(totalSteps);
     });
+
     updateStep(1);
   }
 })();
