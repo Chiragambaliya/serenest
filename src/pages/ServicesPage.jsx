@@ -435,37 +435,6 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="section alt" aria-label="CTA">
-        <div className="container">
-          <div className="cta about-cta">
-            <div>
-              <h2 className="h2" style={{ margin: 0 }}>
-                Ready to start your care?
-              </h2>
-              <p className="muted" style={{ margin: '6px 0 0' }}>
-                Choose the service that&apos;s right for you. No referral needed.
-              </p>
-              <p className="fineprint" style={{ marginBottom: 0 }}>
-                Consultations from ₹499 · MCI compliant · Fully confidential · Available across India
-              </p>
-            </div>
-            <div className="stack about-cta-actions">
-              <a
-                className="btn btn-primary btn-full"
-                href="mailto:support@serenest.fit?subject=Book%20a%20Consultation"
-              >
-                Book a Consultation →
-              </a>
-              <a className="btn btn-ghost btn-full" href="mailto:support@serenest.fit?subject=Pricing%20Query">
-                View Pricing
-              </a>
-              <Link className="btn btn-ghost btn-full" to="/">
-                Back to home
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 }
