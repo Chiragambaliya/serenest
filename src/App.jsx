@@ -19,6 +19,8 @@ const PatientFindProfessionalPage = lazy(() => import('./pages/PatientFindProfes
 const ScreeningPage = lazy(() => import('./pages/ScreeningPage'));
 const ConsultationPage = lazy(() => import('./pages/ConsultationPage'));
 
+// FIX Bug 5: PageFallback is used per-route so only the content area spins,
+// not the entire app (navbar + footer stay visible during lazy-load transitions)
 function PageFallback() {
   return (
     <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
@@ -27,30 +29,36 @@ function PageFallback() {
   );
 }
 
+// Helper: wrap a lazy component so Suspense is scoped to the route, not the whole app
+function S({ children }) {
+  return <Suspense fallback={<PageFallback />}>{children}</Suspense>;
+}
+
 export default function App() {
   return (
+    // Outer Suspense catches SiteLayout itself if it were lazy (it isn't, but kept as safety net)
     <Suspense fallback={<PageFallback />}>
       <Routes>
         <Route element={<SiteLayout />}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/professionals" element={<ProfessionalsPage />} />
-          <Route path="/professionals/apply" element={<ProfessionalOnboardingPage />} />
-          <Route path="/book" element={<BookingPage />} />
-          <Route path="/pricing" element={<PricingPage />} />
-          <Route path="/faq" element={<FAQPage />} />
-          <Route path="/blog" element={<BlogIndexPage />} />
-          <Route path="/blog/:slug" element={<BlogPostPage />} />
-          <Route path="/privacy" element={<PrivacyPolicyPage />} />
-          <Route path="/admin" element={<AdminPage />} />
-          <Route path="/patient/find-professional" element={<PatientFindProfessionalPage />} />
-          <Route path="/screening" element={<ScreeningPage />} />
-          <Route path="/consultation/:appointmentId" element={<ConsultationPage />} />
-          <Route path="*" element={<NotFoundPage />} />
+          {/* FIX Bug 5: each route wrapped in its own <S> so layout never unmounts */}
+          <Route path="/" element={<S><HomePage /></S>} />
+          <Route path="/about" element={<S><AboutPage /></S>} />
+          <Route path="/services" element={<S><ServicesPage /></S>} />
+          <Route path="/professionals" element={<S><ProfessionalsPage /></S>} />
+          <Route path="/professionals/apply" element={<S><ProfessionalOnboardingPage /></S>} />
+          <Route path="/book" element={<S><BookingPage /></S>} />
+          <Route path="/pricing" element={<S><PricingPage /></S>} />
+          <Route path="/faq" element={<S><FAQPage /></S>} />
+          <Route path="/blog" element={<S><BlogIndexPage /></S>} />
+          <Route path="/blog/:slug" element={<S><BlogPostPage /></S>} />
+          <Route path="/privacy" element={<S><PrivacyPolicyPage /></S>} />
+          <Route path="/admin" element={<S><AdminPage /></S>} />
+          <Route path="/patient/find-professional" element={<S><PatientFindProfessionalPage /></S>} />
+          <Route path="/screening" element={<S><ScreeningPage /></S>} />
+          <Route path="/consultation/:appointmentId" element={<S><ConsultationPage /></S>} />
+          <Route path="*" element={<S><NotFoundPage /></S>} />
         </Route>
       </Routes>
     </Suspense>
   );
 }
-
