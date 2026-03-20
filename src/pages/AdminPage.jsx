@@ -22,7 +22,7 @@ export default function AdminPage() {
   const [authed, setAuthed] = useState(() => localStorage.getItem(LS_ADMIN) === 'true');
   const [pin, setPin] = useState('');
   const [tab, setTab] = useState('applications');
-  const [apps, setApps] = useState(() => (supabase ? [] : loadAppsFromLS()));
+  const [apps, setApps] = useState(() => loadAppsFromLS());
   const [loading, setLoading] = useState(false);
   const [actionError, setActionError] = useState(null);
 
@@ -39,7 +39,9 @@ export default function AdminPage() {
         .from('professional_applications')
         .select('*')
         .order('created_at', { ascending: false });
-      if (!error && data) setApps(data);
+      const fromSupabase = !error && data ? data : [];
+      const fromLS = loadAppsFromLS();
+      setApps(fromSupabase.length > 0 ? fromSupabase : fromLS);
     } else {
       setApps(loadAppsFromLS());
     }

@@ -5,9 +5,9 @@ services:
     name: serenest
     runtime: static
     buildCommand: npm run build
-    staticPublishPath: .
+    staticPublishPath: dist
     envVars:
-      - key: SUPABASE_URL
+      - key: VITE_SUPABASE_URL
         sync: false
-      - key: SUPABASE_ANON_KEY
+      - key: VITE_SUPABASE_ANON_KEY
         sync: false
