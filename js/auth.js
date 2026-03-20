@@ -25,12 +25,12 @@
     e.preventDefault();
     var sb = getClient();
     var emailEl = document.getElementById('patient-auth-email');
-    var passEl  = document.getElementById('patient-auth-password');
-    var nameEl  = document.getElementById('patient-auth-name');
+    var passEl = document.getElementById('patient-auth-password');
+    var nameEl = document.getElementById('patient-auth-name');
     if (!emailEl || !passEl) return;
-    var email    = emailEl.value.trim();
+    var email = emailEl.value.trim();
     var password = passEl.value;
-    var name     = nameEl ? nameEl.value.trim() : '';
+    var name = nameEl ? nameEl.value.trim() : '';
     if (!email || !password) { showMsg('patient-auth-msg', 'Please fill in all fields.', true); return; }
     if (!sb) { showMsg('patient-auth-msg', 'Backend not configured.', true); return; }
     sb.auth.signUp({
@@ -41,6 +41,10 @@
       if (res.error) { showMsg('patient-auth-msg', res.error.message, true); return; }
       showMsg('patient-auth-msg', 'Account created! Check your email to confirm.');
       emailEl.value = ''; passEl.value = ''; if (nameEl) nameEl.value = '';
+    // FIX Bug 4: added .catch() to handle network/unexpected errors
+    }).catch(function (err) {
+      showMsg('patient-auth-msg', 'Something went wrong. Please try again.', true);
+      console.error(err);
     });
   };
 
@@ -49,9 +53,9 @@
     e.preventDefault();
     var sb = getClient();
     var emailEl = document.getElementById('patient-login-email');
-    var passEl  = document.getElementById('patient-login-password');
+    var passEl = document.getElementById('patient-login-password');
     if (!emailEl || !passEl) return;
-    var email    = emailEl.value.trim();
+    var email = emailEl.value.trim();
     var password = passEl.value;
     if (!email || !password) { showMsg('patient-login-msg', 'Please fill in all fields.', true); return; }
     if (!sb) { showMsg('patient-login-msg', 'Backend not configured.', true); return; }
@@ -59,6 +63,10 @@
       if (res.error) { showMsg('patient-login-msg', res.error.message, true); return; }
       showMsg('patient-login-msg', 'Welcome back!');
       setTimeout(function () { window.location.href = 'profile.html'; }, 800);
+    // FIX Bug 4: added .catch()
+    }).catch(function (err) {
+      showMsg('patient-login-msg', 'Login failed. Please try again.', true);
+      console.error(err);
     });
   };
 
@@ -67,14 +75,14 @@
     e.preventDefault();
     var sb = getClient();
     var emailEl = document.getElementById('pro-auth-email');
-    var passEl  = document.getElementById('pro-auth-password');
-    var nameEl  = document.getElementById('pro-auth-name');
-    var roleEl  = document.getElementById('pro-auth-role');
+    var passEl = document.getElementById('pro-auth-password');
+    var nameEl = document.getElementById('pro-auth-name');
+    var roleEl = document.getElementById('pro-auth-role');
     if (!emailEl || !passEl) return;
-    var email    = emailEl.value.trim();
+    var email = emailEl.value.trim();
     var password = passEl.value;
-    var name     = nameEl ? nameEl.value.trim() : '';
-    var role     = roleEl ? roleEl.value.trim() : '';
+    var name = nameEl ? nameEl.value.trim() : '';
+    var role = roleEl ? roleEl.value.trim() : '';
     if (!email || !password) { showMsg('pro-auth-msg', 'Email and password are required.', true); return; }
     if (!sb) { showMsg('pro-auth-msg', 'Backend not configured.', true); return; }
     sb.auth.signUp({
@@ -88,13 +96,18 @@
         sb.from('professionals').insert({
           name: name || null,
           email: email,
-          mobile: '',
+          // FIX Bug 3: use null instead of '' — empty string can fail NOT NULL / format constraints
+          mobile: null,
           role: role || null
         }).catch(function () {});
       }
       showMsg('pro-auth-msg', 'Account created! Check your email to confirm, then log in.');
       emailEl.value = ''; passEl.value = '';
       if (nameEl) nameEl.value = ''; if (roleEl) roleEl.value = '';
+    // FIX Bug 4: added .catch()
+    }).catch(function (err) {
+      showMsg('pro-auth-msg', 'Something went wrong. Please try again.', true);
+      console.error(err);
     });
   };
 
@@ -103,9 +116,9 @@
     e.preventDefault();
     var sb = getClient();
     var emailEl = document.getElementById('pro-login-email');
-    var passEl  = document.getElementById('pro-login-password');
+    var passEl = document.getElementById('pro-login-password');
     if (!emailEl || !passEl) return;
-    var email    = emailEl.value.trim();
+    var email = emailEl.value.trim();
     var password = passEl.value;
     if (!email || !password) { showMsg('pro-login-msg', 'Please fill in all fields.', true); return; }
     if (!sb) { showMsg('pro-login-msg', 'Backend not configured.', true); return; }
@@ -113,6 +126,10 @@
       if (res.error) { showMsg('pro-login-msg', res.error.message, true); return; }
       showMsg('pro-login-msg', 'Logged in!');
       setTimeout(function () { window.location.href = 'professionals-dashboard.html'; }, 800);
+    // FIX Bug 4: added .catch()
+    }).catch(function (err) {
+      showMsg('pro-login-msg', 'Login failed. Please try again.', true);
+      console.error(err);
     });
   };
 
@@ -147,7 +164,7 @@
     sb.auth.getSession().then(function (res) {
       var session = res.data && res.data.session;
       var signupLinks = document.querySelectorAll('a[href="#signup"], a[href="index.html#signup"]');
-      var proLinks    = document.querySelectorAll('a[href="for-professionals.html"]');
+      var proLinks = document.querySelectorAll('a[href="for-professionals.html"]');
       if (session) {
         // replace "Sign up" with "My account" link
         signupLinks.forEach(function (a) {
@@ -165,5 +182,4 @@
       }
     });
   });
-
 })();
