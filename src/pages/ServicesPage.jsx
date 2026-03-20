@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom';
 export default function ServicesPage() {
   return (
     <div className="page">
-      <section className="section about-hero">
+      <section className="section services-hero">
         <div className="container">
-          <div className="section-head about-hero-head">
-            <p className="kicker">Our Services</p>
-            <h1 className="page-title">Everything you need for mental health care — in one place.</h1>
-            <p className="about-subtext">
+          <div className="services-hero-head">
+            <p className="services-kicker">Our Services</p>
+            <h1 className="services-title">Everything you need for mental health care — in one place.</h1>
+            <p className="services-subtext">
               From your first consultation to ongoing treatment, medication management, and mental health
               tracking — Serenest is a complete clinical platform, not just a booking app.
             </p>
