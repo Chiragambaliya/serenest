@@ -328,7 +328,7 @@ export default function ServicesPage() {
 
       <section className="section" aria-label="Conditions We Address">
         <div className="container">
-          <div className="section-head">
+          <div className="section-head" style={{ textAlign: 'center', alignItems: 'center' }}>
             <p className="section-label">Clinical areas</p>
             <h2>What our psychiatrists treat</h2>
           </div>
