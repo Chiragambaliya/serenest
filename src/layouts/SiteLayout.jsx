@@ -122,7 +122,7 @@ export default function SiteLayout() {
             <NavLink to="/services"      className={navClass}>Services</NavLink>
             <NavLink to="/pricing"       className={navClass}>Pricing</NavLink>
             <NavLink to="/professionals" className={navClass}>Professionals</NavLink>
-            <NavLink to="/faq"           className={navClass}>FAQ</NavLink>
+            <NavLink to="/blog"          className={navClass}>Blog</NavLink>
 
             {/* Divider */}
             <span className="nav-divider" aria-hidden="true" />
