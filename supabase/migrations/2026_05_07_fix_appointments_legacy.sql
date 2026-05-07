@@ -11,6 +11,7 @@
 -- ============================================================
 
 alter table public.appointments
+  add column if not exists updated_at       timestamptz not null default now(),
   add column if not exists patient_phone     text,
   add column if not exists practitioner_type text,
   add column if not exists mode              text default 'video',
@@ -38,6 +39,20 @@ drop trigger if exists trg_appointments_set_id on public.appointments;
 create trigger trg_appointments_set_id
   before insert on public.appointments
   for each row execute function public.set_appointment_id_default();
+
+-- Keep updated_at fresh on each update (admin status/action buttons depend on this
+-- because server.js updates `updated_at` in PATCH /api/bookings/:id/status).
+create or replace function public.set_updated_at()
+returns trigger language plpgsql as $$
+begin
+  new.updated_at = now();
+  return new;
+end $$;
+
+drop trigger if exists appointments_set_updated_at on public.appointments;
+create trigger appointments_set_updated_at
+  before update on public.appointments
+  for each row execute procedure public.set_updated_at();
 
 -- Helpful indexes for admin dashboard
 create index if not exists appointments_status_idx         on public.appointments (status);
