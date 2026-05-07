@@ -56,6 +56,20 @@ export default function ProfessionalOnboardingPage() {
     setStep(3);
   }
 
+  const [step4Error, setStep4Error] = useState('');
+  function trySubmit() {
+    if (!String(fee).trim()) {
+      setStep4Error('Please enter your consultation fee.');
+      return;
+    }
+    if (!consent) {
+      setStep4Error('Please tick the consent checkbox to submit.');
+      return;
+    }
+    setStep4Error('');
+    handleSubmit();
+  }
+
   const roleLabel = useMemo(() => ROLES.find((r) => r.id === role)?.label ?? 'Professional', [role]);
 
   const record = {
@@ -99,15 +113,32 @@ export default function ProfessionalOnboardingPage() {
       <div className="page">
         <section className="section about-hero">
           <div className="container">
-            <div className="section-head about-hero-head" style={{ textAlign: 'center', maxWidth: 480, margin: '0 auto' }}>
-              <p className="kicker">Application submitted</p>
-              <h1 className="page-title">Thank you, {fullName.trim()}.</h1>
+            <div className="section-head about-hero-head" style={{ textAlign: 'center', maxWidth: 540, margin: '0 auto', padding: '2rem 1rem' }}>
+              <div style={{
+                width: 80, height: 80, borderRadius: '50%',
+                background: 'linear-gradient(135deg, #2dd4bf, #0f766e)',
+                display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: '2.4rem', color: '#fff', marginBottom: '1.25rem',
+                boxShadow: '0 8px 24px rgba(15, 118, 110, 0.35)',
+              }}>✓</div>
+              <h1 className="page-title">Application received!</h1>
               <p className="about-subtext">
-                We will verify your credentials and get back to you at {email || phone}.
+                Thank you, <strong>{fullName.trim().split(' ')[0]}</strong>. Our team will verify your credentials
+                and reach out to you on <strong>+91 {phoneClean}</strong>{email ? <> or <strong>{email}</strong></> : ''} within 1–2 business days.
               </p>
-              <Link className="btn btn-primary" to="/">
-                Back to home
-              </Link>
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginTop: '1.5rem' }}>
+                <a
+                  className="btn btn-primary"
+                  href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I just submitted my professional application for ${roleLabel} role.`)}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  💬 Chat on WhatsApp
+                </a>
+                <Link className="btn btn-ghost" to="/">
+                  Back to home
+                </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -423,31 +454,30 @@ export default function ProfessionalOnboardingPage() {
                   </label>
                 </div>
 
-                {submitError && (
-                  <p className="field-hint" style={{ marginTop: 14, color: 'rgba(160,60,60,0.9)' }}>
-                    {submitError}
-                  </p>
+                {(step4Error || submitError) && (
+                  <div style={{
+                    background: '#fdecea', border: '1px solid #f5c2c0',
+                    color: '#a02622', borderRadius: 10,
+                    padding: '12px 14px', marginTop: 14,
+                    fontSize: '0.9rem', fontWeight: 500,
+                  }}>
+                    ⚠ {step4Error || submitError}
+                  </div>
                 )}
 
                 <div className="booking-actions">
-                  <button className="btn btn-ghost" type="button" onClick={() => setStep(3)}>
+                  <button className="btn btn-ghost" type="button" onClick={() => { setStep4Error(''); setStep(3); }} disabled={submitting}>
                     ← Back
                   </button>
                   <button
                     className="btn btn-primary"
                     type="button"
-                    onClick={handleSubmit}
-                    disabled={!isStep4Valid || submitting}
+                    onClick={trySubmit}
+                    disabled={submitting}
                   >
                     {submitting ? 'Submitting…' : 'Submit application →'}
                   </button>
                 </div>
-
-                {!isStep4Valid && (
-                  <p className="fineprint" style={{ marginTop: 12 }}>
-                    Please add a fee and confirm consent to submit.
-                  </p>
-                )}
               </div>
             )}
           </div>
