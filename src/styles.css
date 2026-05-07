@@ -324,48 +324,88 @@ button {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 13px 0;
+  padding: 10px 0;
+  min-height: 60px;
 }
 
 /* Brand */
 .brand {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 10px;
-  font-weight: 900;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  font-size: 14px;
+  gap: 11px;
   text-decoration: none;
   color: var(--ink);
   transition: opacity 160ms ease, transform 160ms ease;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .brand:hover {
-  opacity: 0.85;
+  opacity: 0.92;
   transform: translateY(-1px);
 }
 
 .brand-mark {
-  height: 30px;
-  width: auto;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 10px;
+  filter: drop-shadow(0 4px 12px rgba(15, 118, 110, 0.25));
+  transition: filter 220ms ease, transform 220ms ease;
 }
 
+.brand:hover .brand-mark {
+  filter: drop-shadow(0 6px 16px rgba(15, 118, 110, 0.4));
+  transform: rotate(-3deg);
+}
+
+.brand-wordmark {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.05;
+  gap: 2px;
+}
+
+.brand-text {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.018em;
+  color: var(--ink);
+  background: linear-gradient(135deg, var(--ink) 0%, var(--teal-700) 110%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.brand-tagline {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--teal-600);
+  opacity: 0.78;
+}
+
+@media (max-width: 480px) {
+  .brand-tagline { display: none; }
+  .brand-text { font-size: 17px; }
+  .brand-mark { width: 32px; height: 32px; }
+}
+
+/* legacy fallback (kept for safety) */
 .brand-badge {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
   background: linear-gradient(135deg, var(--teal-500), var(--teal-700));
   color: #fff;
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 900;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 3px 10px rgba(14, 116, 110, 0.30);
+  box-shadow: 0 4px 12px rgba(14, 116, 110, 0.3);
 }
-
-.brand-text { color: var(--ink); }
 
 /* Desktop nav */
 .header-links {

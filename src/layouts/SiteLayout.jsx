@@ -1,10 +1,58 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
+// ── Serenest logo (inline SVG — calming leaf + S) ──────────────
+function SerenestLogo({ size = 36 }) {
+  return (
+    <svg
+      className="brand-mark"
+      width={size}
+      height={size}
+      viewBox="0 0 48 48"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+      role="img"
+    >
+      <defs>
+        <linearGradient id="srnGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%"  stopColor="#2dd4bf" />
+          <stop offset="55%" stopColor="#14b8a6" />
+          <stop offset="100%" stopColor="#0f766e" />
+        </linearGradient>
+        <linearGradient id="srnGlow" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.45" />
+          <stop offset="100%" stopColor="#fff" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+
+      {/* rounded square background */}
+      <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#srnGrad)" />
+      {/* subtle top highlight for depth */}
+      <rect x="2" y="2" width="44" height="22" rx="12" fill="url(#srnGlow)" />
+
+      {/* leaf / wave shape (representing calm + growth) */}
+      <path
+        d="M14 32 C14 22 22 14 34 14 C34 24 26 32 14 32 Z"
+        fill="#fff"
+        opacity="0.18"
+      />
+
+      {/* stylised S */}
+      <path
+        d="M30 18.5 C30 16.6 28.5 15.5 26.5 15.5 L21 15.5 C18.8 15.5 17 17.3 17 19.5 C17 21.4 18.5 22.7 20.5 22.9 L26.5 23.6 C28.5 23.8 30 25.1 30 27 C30 29.2 28.2 31 26 31 L20 31"
+        stroke="#fff"
+        strokeWidth="2.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
+
 export default function SiteLayout() {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
-  const [logoOk, setLogoOk]       = useState(true);
   const location                   = useLocation();
 
   // Close mobile menu on route change
@@ -37,19 +85,7 @@ export default function SiteLayout() {
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
-  const Logo = () =>
-    logoOk ? (
-      <img
-        src="/assets/logo.png"
-        alt="Serenest"
-        className="brand-mark"
-        loading="eager"
-        decoding="async"
-        onError={() => setLogoOk(false)}
-      />
-    ) : (
-      <span className="brand-badge" aria-hidden="true">S</span>
-    );
+  const Logo = () => <SerenestLogo />;
 
   // Active nav link helper
   const navClass = ({ isActive }) =>
@@ -72,9 +108,12 @@ export default function SiteLayout() {
       <header className={`header ${scrolled ? 'is-scrolled' : 'is-top'}`}>
         <div className="container header-inner">
           {/* Brand */}
-          <Link to="/" className="brand">
+          <Link to="/" className="brand" aria-label="Serenest — Home">
             <Logo />
-            <span className="brand-text">Serenest</span>
+            <span className="brand-wordmark">
+              <span className="brand-text">Serenest</span>
+              <span className="brand-tagline">Mind care, simplified</span>
+            </span>
           </Link>
 
           {/* Desktop nav */}
