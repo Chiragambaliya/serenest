@@ -30,6 +30,15 @@ services:
       - key: DAILY_API_KEY
         sync: false
 
+      # ── Email notifications via Resend (optional) ────────────
+      # Get an API key at https://resend.com (free 3000/mo).
+      - key: RESEND_API_KEY
+        sync: false
+      - key: NOTIFY_FROM
+        value: Serenest Alerts <onboarding@resend.dev>
+      - key: NOTIFY_EMAIL
+        sync: false
+
       # ── CORS (set to your Render URL after first deploy) ─────
       # - key: CORS_ORIGIN
       #   value: https://serenest-website.onrender.com

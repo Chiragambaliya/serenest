@@ -4,6 +4,7 @@ import cors from 'cors';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
+import { notify } from './src/server/notify.js';
 
 // ── Setup ────────────────────────────────────────────────────
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -46,6 +47,7 @@ app.get('/api/health', (_req, res) => {
     status: 'ok',
     db: supabase ? 'connected' : 'not configured',
     daily: process.env.DAILY_API_KEY ? 'configured' : 'not configured',
+    notifications: notify.isConfigured() ? 'enabled' : 'disabled',
     ts: new Date().toISOString(),
   });
 });
@@ -100,6 +102,7 @@ app.post('/api/bookings', async (req, res) => {
     return err(res, 'Failed to save booking. Please try again.', 500);
   }
 
+  notify.booking(data);
   return ok(res, { booking: data }, 201);
 });
 
@@ -212,6 +215,7 @@ app.post('/api/screening', async (req, res) => {
     return err(res, 'Failed to save screening response', 500);
   }
 
+  notify.screening(data);
   return ok(res, { screening: data }, 201);
 });
 
@@ -272,6 +276,7 @@ app.post('/api/professionals/apply', async (req, res) => {
     return err(res, 'Failed to submit application. Please try again.', 500);
   }
 
+  notify.professionalApplication(data);
   return ok(res, { application: data }, 201);
 });
 
@@ -660,6 +665,12 @@ app.post('/api/jobs/apply', async (req, res) => {
     return err(res, 'Failed to submit application. Please try again.', 500);
   }
 
+  notify.jobApplication({
+    candidate_name:  data.full_name,
+    candidate_phone: data.phone,
+    candidate_email: data.email,
+    position:        `${data.role} (${data.department})`,
+  });
   return ok(res, { application: data }, 201);
 });
 
@@ -861,6 +872,53 @@ app.get('/api/signups', async (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════
+//  VISITOR TRACKING (lightweight — Telegram alert on first visit/day)
+// ══════════════════════════════════════════════════════════════
+
+// Daily-rotating set of visitor fingerprints. Resets at midnight UTC.
+let visitorDay   = new Date().toISOString().slice(0, 10);
+let seenVisitors = new Set();
+
+function rolloverIfNeeded() {
+  const today = new Date().toISOString().slice(0, 10);
+  if (today !== visitorDay) {
+    visitorDay   = today;
+    seenVisitors = new Set();
+  }
+}
+
+/** POST /api/track/visit — quietly records a visit. */
+app.post('/api/track/visit', (req, res) => {
+  rolloverIfNeeded();
+
+  const { vid, path = '/', referrer = '' } = req.body || {};
+  const ip = (req.headers['x-forwarded-for']?.split(',')[0] || req.ip || '').trim();
+  const ua = req.headers['user-agent'] || '';
+
+  // Fingerprint = browser-supplied vid (cookie-less) + IP + UA hash
+  const fp = `${vid || 'anon'}|${ip}`;
+  if (seenVisitors.has(fp)) return ok(res, { unique: false });
+
+  seenVisitors.add(fp);
+  notify.firstVisitToday({
+    count: seenVisitors.size,
+    path, referrer,
+    userAgent: ua,
+  });
+
+  return ok(res, { unique: true, total_today: seenVisitors.size });
+});
+
+/** GET /api/track/today — admin only — quick traffic count. */
+app.get('/api/track/today', (req, res) => {
+  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
+    return err(res, 'Unauthorized', 401);
+  }
+  rolloverIfNeeded();
+  return ok(res, { date: visitorDay, unique_visitors: seenVisitors.size });
+});
+
+// ══════════════════════════════════════════════════════════════
 //  CONTACT
 // ══════════════════════════════════════════════════════════════
 
@@ -889,6 +947,14 @@ app.post('/api/contact', async (req, res) => {
       // Non-fatal — still return success so the user isn't blocked
     }
   }
+
+  notify.contact({
+    name:    name.trim(),
+    email:   email?.trim() || null,
+    phone:   phone?.trim() || null,
+    subject: subject?.trim() || null,
+    message: message.trim(),
+  });
 
   return ok(res, { message: 'Message received. We will get back to you soon.' }, 201);
 });
@@ -919,5 +985,6 @@ app.listen(port, () => {
   console.log(`\n🟢 Serenest server running on http://localhost:${port}`);
   console.log(`   DB:    ${supabase ? '✅ Supabase connected' : '⚠️  Not configured (set SUPABASE_URL + SUPABASE_SERVICE_KEY)'}`);
   console.log(`   Video: ${process.env.DAILY_API_KEY ? '✅ Daily.co configured' : '⚠️  Not configured (set DAILY_API_KEY)'}`);
-  console.log(`   Admin: ${process.env.ADMIN_SECRET ? '✅ Secret set' : '⚠️  Not configured (set ADMIN_SECRET)'}\n`);
+  console.log(`   Admin: ${process.env.ADMIN_SECRET ? '✅ Secret set' : '⚠️  Not configured (set ADMIN_SECRET)'}`);
+  console.log(`   Alert: ${notify.isConfigured() ? '✅ Email notifications enabled (Resend)' : '⚠️  Not configured (set RESEND_API_KEY + NOTIFY_EMAIL)'}\n`);
 });

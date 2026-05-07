@@ -1,6 +1,7 @@
-import React, { lazy, Suspense } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import React, { lazy, Suspense, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import SiteLayout from './layouts/SiteLayout';
+import { trackVisit } from './lib/visitTracker';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
@@ -34,9 +35,21 @@ function S({ children }) {
   return <Suspense fallback={<PageFallback />}>{children}</Suspense>;
 }
 
+function VisitTracker() {
+  const location = useLocation();
+  useEffect(() => {
+    // Don't track admin or consultation pages — those are internal/private routes.
+    if (location.pathname.startsWith('/admin')) return;
+    if (location.pathname.startsWith('/consultation')) return;
+    trackVisit(location.pathname);
+  }, [location.pathname]);
+  return null;
+}
+
 export default function App() {
   return (
     <Suspense fallback={<PageFallback />}>
+      <VisitTracker />
       {/*
         Use an explicit layout route at "/" with relative child paths. Pathless layout + Outlet
         can fail to match in React Router v7 in some setups (blank main content).
