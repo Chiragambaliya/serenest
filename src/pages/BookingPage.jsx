@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { bookings } from '../lib/api';
 
 const PRACTITIONER_TYPES = [
   { id: 'psychiatrist', label: 'Psychiatrist' },
@@ -51,6 +52,33 @@ export default function BookingPage() {
   const [note, setNote] = useState('');
   const [consent, setConsent] = useState(false);
 
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [confirmation, setConfirmation] = useState(null);
+
+  async function handleSubmit() {
+    setSubmitError(null);
+    setSubmitting(true);
+    try {
+      const res = await bookings.create({
+        patient_name: name.trim(),
+        patient_phone: phoneClean,
+        patient_email: email.trim() || undefined,
+        practitioner_type: practitionerType,
+        mode,
+        preferred_date: dayKey,
+        preferred_time: time,
+        language,
+        notes: note.trim(),
+      });
+      setConfirmation(res.booking);
+    } catch (err) {
+      setSubmitError(err.message || 'Could not submit your booking. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
   const dayLabel = useMemo(() => days.find((d) => d.key === dayKey)?.label ?? '', [days, dayKey]);
   const selectedTypeLabel = useMemo(
     () => PRACTITIONER_TYPES.find((t) => t.id === practitionerType)?.label ?? 'Practitioner',
@@ -62,22 +90,6 @@ export default function BookingPage() {
   const isPhoneValid = phoneClean.length === 10 && /^[6-9]/.test(phoneClean);
   const isNameValid = name.trim().length >= 2;
   const canContinueStep3 = isNameValid && isPhoneValid && consent;
-
-  const subject = encodeURIComponent('Appointment Request');
-  const body = encodeURIComponent(
-    [
-      `Name: ${name || '-'}`,
-      `Phone: +91 ${phoneClean || '-'}`,
-      `Email: ${email || '-'}`,
-      `Language: ${language || '-'}`,
-      `Practitioner type: ${selectedTypeLabel}`,
-      `Mode: ${selectedModeLabel}`,
-      `Preferred slot: ${dayLabel} ${time || '-'}`,
-      '',
-      `Notes:`,
-      note || '-',
-    ].join('\n'),
-  );
 
   return (
     <div className="page">
@@ -316,7 +328,7 @@ export default function BookingPage() {
               </div>
             )}
 
-            {step === 4 && (
+            {step === 4 && !confirmation && (
               <div className="booking-body">
                 <div className="section-head" style={{ marginBottom: 10 }}>
                   <p className="section-label">Step 4</p>
@@ -370,20 +382,96 @@ export default function BookingPage() {
                   </div>
                 )}
 
+                {submitError && (
+                  <div style={{
+                    background: '#fdecea', border: '1px solid #f5c2c0',
+                    color: '#a02622', borderRadius: 10,
+                    padding: '12px 14px', margin: '12px 0',
+                    fontSize: '0.9rem', fontWeight: 500,
+                  }}>
+                    ⚠ {submitError}
+                  </div>
+                )}
+
                 <div className="booking-actions">
-                  <button className="btn btn-ghost" type="button" onClick={() => setStep(3)}>
+                  <button
+                    className="btn btn-ghost"
+                    type="button"
+                    onClick={() => setStep(3)}
+                    disabled={submitting}
+                  >
                     ← Back
                   </button>
-                  <a className="btn btn-primary" href={`mailto:support@serenest.fit?subject=${subject}&body=${body}`}>
-                    Submit request →
-                  </a>
+                  <button
+                    className="btn btn-primary"
+                    type="button"
+                    onClick={handleSubmit}
+                    disabled={submitting}
+                  >
+                    {submitting ? 'Submitting…' : 'Confirm booking →'}
+                  </button>
                 </div>
 
                 <p className="fineprint" style={{ marginTop: 12 }}>
-                  We’ll reply with the next available verified practitioner and payment steps.
+                  We'll reach out on WhatsApp / phone with the next available verified practitioner and payment steps.
                   {' '}
                   If urgent or in danger, contact emergency services.
                 </p>
+              </div>
+            )}
+
+            {/* ── Success screen ───────────────────────────── */}
+            {confirmation && (
+              <div className="booking-body" style={{ textAlign: 'center', padding: '2rem 1rem' }}>
+                <div style={{
+                  width: 80, height: 80, borderRadius: '50%',
+                  background: 'linear-gradient(135deg, #2dd4bf, #0f766e)',
+                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '2.4rem', color: '#fff', marginBottom: '1.25rem',
+                  boxShadow: '0 8px 24px rgba(15, 118, 110, 0.35)',
+                }}>✓</div>
+
+                <h2 style={{ fontSize: '1.7rem', fontWeight: 800, marginBottom: 8 }}>
+                  Booking received!
+                </h2>
+                <p style={{ color: 'var(--text-muted)', maxWidth: 460, margin: '0 auto 1.5rem' }}>
+                  Thank you, <strong>{name.split(' ')[0]}</strong>. We've received your request for a{' '}
+                  <strong>{selectedTypeLabel.toLowerCase()}</strong> {selectedModeLabel.toLowerCase()} session
+                  on <strong>{dayLabel}</strong> at <strong>{time}</strong>.
+                </p>
+
+                <div style={{
+                  display: 'inline-block', textAlign: 'left',
+                  background: 'var(--surface)', border: '1px solid var(--border)',
+                  borderRadius: 12, padding: '1rem 1.25rem',
+                  marginBottom: '1.5rem', minWidth: 280,
+                }}>
+                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
+                    Booking reference
+                  </div>
+                  <div style={{ fontFamily: 'monospace', fontSize: '0.95rem', color: 'var(--brand-700)', fontWeight: 700 }}>
+                    {confirmation.id?.slice(0, 8).toUpperCase()}
+                  </div>
+                </div>
+
+                <p style={{ fontSize: '0.92rem', marginBottom: '1.5rem' }}>
+                  Our team will contact you on <strong>+91 {phoneClean}</strong> within a few hours
+                  to confirm your professional and payment.
+                </p>
+
+                <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <a
+                    className="btn btn-primary"
+                    href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I just booked a ${selectedTypeLabel} session (Ref: ${confirmation.id?.slice(0, 8).toUpperCase()})`)}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    💬 Chat on WhatsApp
+                  </a>
+                  <Link className="btn btn-ghost" to="/">
+                    Back to home
+                  </Link>
+                </div>
               </div>
             )}
           </div>
