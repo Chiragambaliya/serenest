@@ -77,7 +77,7 @@ export default function PrivacyPolicyPage() {
             <div className="callout-title">Emergency disclaimer</div>
             <p className="muted" style={{ margin: 0 }}>
               Serenest is not for psychiatric emergencies. If you or someone you know is in immediate danger,
-              call iCall: <a href="tel:9152987821">9152987821</a> or your nearest emergency service.
+              call us: <a href="tel:7777936367">7777936367</a> or your nearest emergency service.
             </p>
           </div>
         </div>

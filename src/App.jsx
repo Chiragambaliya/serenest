@@ -36,26 +36,28 @@ function S({ children }) {
 
 export default function App() {
   return (
-    // Outer Suspense catches SiteLayout itself if it were lazy (it isn't, but kept as safety net)
     <Suspense fallback={<PageFallback />}>
+      {/*
+        Use an explicit layout route at "/" with relative child paths. Pathless layout + Outlet
+        can fail to match in React Router v7 in some setups (blank main content).
+      */}
       <Routes>
-        <Route element={<SiteLayout />}>
-          {/* FIX Bug 5: each route wrapped in its own <S> so layout never unmounts */}
-          <Route path="/" element={<S><HomePage /></S>} />
-          <Route path="/about" element={<S><AboutPage /></S>} />
-          <Route path="/services" element={<S><ServicesPage /></S>} />
-          <Route path="/professionals" element={<S><ProfessionalsPage /></S>} />
-          <Route path="/professionals/apply" element={<S><ProfessionalOnboardingPage /></S>} />
-          <Route path="/book" element={<S><BookingPage /></S>} />
-          <Route path="/pricing" element={<S><PricingPage /></S>} />
-          <Route path="/faq" element={<S><FAQPage /></S>} />
-          <Route path="/blog" element={<S><BlogIndexPage /></S>} />
-          <Route path="/blog/:slug" element={<S><BlogPostPage /></S>} />
-          <Route path="/privacy" element={<S><PrivacyPolicyPage /></S>} />
-          <Route path="/admin" element={<S><AdminPage /></S>} />
-          <Route path="/patient/find-professional" element={<S><PatientFindProfessionalPage /></S>} />
-          <Route path="/screening" element={<S><ScreeningPage /></S>} />
-          <Route path="/consultation/:appointmentId" element={<S><ConsultationPage /></S>} />
+        <Route path="/" element={<SiteLayout />}>
+          <Route index element={<S><HomePage /></S>} />
+          <Route path="about" element={<S><AboutPage /></S>} />
+          <Route path="services" element={<S><ServicesPage /></S>} />
+          <Route path="professionals" element={<S><ProfessionalsPage /></S>} />
+          <Route path="professionals/apply" element={<S><ProfessionalOnboardingPage /></S>} />
+          <Route path="book" element={<S><BookingPage /></S>} />
+          <Route path="pricing" element={<S><PricingPage /></S>} />
+          <Route path="faq" element={<S><FAQPage /></S>} />
+          <Route path="blog" element={<S><BlogIndexPage /></S>} />
+          <Route path="blog/:slug" element={<S><BlogPostPage /></S>} />
+          <Route path="privacy" element={<S><PrivacyPolicyPage /></S>} />
+          <Route path="admin" element={<S><AdminPage /></S>} />
+          <Route path="patient/find-professional" element={<S><PatientFindProfessionalPage /></S>} />
+          <Route path="screening" element={<S><ScreeningPage /></S>} />
+          <Route path="consultation/:appointmentId" element={<S><ConsultationPage /></S>} />
           <Route path="*" element={<S><NotFoundPage /></S>} />
         </Route>
       </Routes>

@@ -1,13 +1,35 @@
-# Render Blueprint: Static Site
-# Deploy at https://dashboard.render.com → New → Static Site, or use this file with Blueprint.
 services:
   - type: web
-    name: serenest
-    runtime: static
-    buildCommand: npm run build
-    staticPublishPath: dist
+    name: serenest-website
+    runtime: node
+    region: singapore   # closest to India
+    plan: free
+
+    buildCommand: npm install && npm run build
+    startCommand: node server.js
+
     envVars:
+      - key: NODE_ENV
+        value: production
+
+      # ── Supabase ─────────────────────────────────────────────
       - key: VITE_SUPABASE_URL
-        sync: false
+        sync: false   # you'll paste this in Render dashboard
       - key: VITE_SUPABASE_ANON_KEY
         sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false
+
+      # ── Security ─────────────────────────────────────────────
+      - key: ADMIN_SECRET
+        sync: false
+
+      # ── Daily.co (optional) ──────────────────────────────────
+      - key: DAILY_API_KEY
+        sync: false
+
+      # ── CORS (set to your Render URL after first deploy) ─────
+      # - key: CORS_ORIGIN
+      #   value: https://serenest-website.onrender.com

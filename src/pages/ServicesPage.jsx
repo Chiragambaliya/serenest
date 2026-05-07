@@ -1,436 +1,400 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+
+const CONDITIONS = [
+  { name: 'Depression',              symptoms: 'Persistent sadness, loss of interest, fatigue, hopelessness' },
+  { name: 'Anxiety Disorders',       symptoms: 'Excessive worry, panic attacks, social anxiety, phobias' },
+  { name: 'OCD',                     symptoms: 'Intrusive thoughts, compulsive behaviours, rituals' },
+  { name: 'Bipolar Disorder',        symptoms: 'Mood swings between mania and depression' },
+  { name: 'Schizophrenia',           symptoms: 'Hallucinations, delusions, disorganised thinking' },
+  { name: 'PTSD',                    symptoms: 'Flashbacks, nightmares, emotional numbness after trauma' },
+  { name: 'ADHD (Adults)',           symptoms: 'Inattention, impulsivity, difficulty organising tasks' },
+  { name: 'Sleep Disorders',         symptoms: 'Insomnia, hypersomnia, disrupted sleep patterns' },
+  { name: 'Addiction / De-addiction',symptoms: 'Alcohol, substance use, behavioural addictions' },
+  { name: 'Stress & Burnout',        symptoms: 'Work stress, emotional exhaustion, caregiver fatigue' },
+];
+
+function ServiceCard({ icon, title, badge, lead, description, included, forWho, price, cta }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <article className="svc-card">
+      <div className="svc-card-top">
+        <div className="svc-icon">{icon}</div>
+        {badge && <span className="svc-badge">{badge}</span>}
+      </div>
+      <h3 className="svc-title">{title}</h3>
+      <p className="svc-lead">{lead}</p>
+      <p className="svc-desc">{description}</p>
+
+      {(included || forWho) && (
+        <button
+          className="svc-toggle"
+          onClick={() => setOpen(v => !v)}
+          aria-expanded={open}
+        >
+          {open ? 'Hide details ↑' : 'See what\'s included ↓'}
+        </button>
+      )}
+
+      {open && (
+        <div className="svc-details">
+          {included && (
+            <div>
+              <div className="svc-subhead">What's included</div>
+              <ul className="svc-list">
+                {included.map(item => <li key={item}>{item}</li>)}
+              </ul>
+            </div>
+          )}
+          {forWho && (
+            <div>
+              <div className="svc-subhead">Who it's for</div>
+              <p className="svc-for-who">{forWho}</p>
+            </div>
+          )}
+        </div>
+      )}
+
+      {price && <div className="svc-price">{price}</div>}
+      {cta && (
+        <div className="svc-cta-row">
+          <Link className="btn btn-primary btn-sm" to="/book">Book now →</Link>
+          {cta}
+        </div>
+      )}
+    </article>
+  );
+}
 
 export default function ServicesPage() {
   return (
-    <div className="page">
-      <section className="section services-hero">
+    <div>
+
+      {/* ── Page Hero ──────────────────────────────────────── */}
+      <section className="page-hero">
+        <div className="page-hero-bg" aria-hidden="true" />
         <div className="container">
-          <div className="services-hero-head">
-            <p className="services-kicker">Our Services</p>
-            <h1 className="services-title">Everything you need for mental health care — in one place.</h1>
-            <p className="services-subtext">
-              From your first consultation to ongoing treatment, medication management, and mental health
-              tracking — Serenest is a complete clinical platform, not just a booking app.
+          <div className="page-hero-inner">
+            <div className="section-kicker">Our Services</div>
+            <h1 className="page-hero-title">
+              Everything you need for mental health care —{' '}
+              <span className="gradient-text">in one place.</span>
+            </h1>
+            <p className="page-hero-lead">
+              From your first consultation to ongoing treatment, medication
+              management, and mental health tracking — Serenest is a complete
+              clinical platform, not just a booking app.
+            </p>
+            <div className="page-hero-actions">
+              <Link className="btn btn-primary btn-lg" to="/book">Book an appointment →</Link>
+              <Link className="btn btn-ghost btn-lg" to="/screening">Self-screening</Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Core Services ──────────────────────────────────── */}
+      <section className="section" id="core-services">
+        <div className="container">
+          <div className="section-head center">
+            <div className="section-kicker">Core services</div>
+            <h2>Six services, built for clinical care</h2>
+            <p>Clinically grounded. Designed for continuity. Available from anywhere in India.</p>
+          </div>
+
+          <div className="svc-grid">
+            <ServiceCard
+              icon="🎥"
+              title="Online Mental Health Consultation"
+              badge="Most Popular"
+              lead="Talk to a verified psychiatrist from home."
+              description="Book a 45-minute video consultation with a verified psychiatrist from anywhere in India. No waiting rooms. No travel. No stigma. Just a private, encrypted session with a qualified professional who listens, assesses, and guides your care."
+              included={[
+                '45-minute encrypted video session',
+                'Clinical assessment (PHQ-9 / GAD-7)',
+                'Clinical SOAP documentation',
+                'Diagnosis and treatment plan',
+                'Follow-up recommendation',
+                'Digital prescription (if required)',
+              ]}
+              forWho="Anxiety, Depression, OCD, PTSD, Bipolar Disorder, Schizophrenia, Sleep disorders, Stress, Burnout, Relationship issues, Medication review"
+              price="Starting at ₹499 per session"
+            />
+
+            <ServiceCard
+              icon="📄"
+              title="Digital Prescription"
+              lead="Valid prescriptions. Delivered digitally."
+              description="Every prescription issued on Serenest is MCI-compliant, digitally signed with the doctor's registration number, and accepted at pharmacies across India. No paper. Just a clean, verifiable PDF you can download instantly."
+              included={[
+                'Digital PDF prescription',
+                "Doctor's MCI registration number",
+                'Drug name, dose, frequency, duration',
+                'Patient details and consultation date',
+                'QR-verifiable digital signature',
+                'Valid under MCI Telemedicine Guidelines 2020',
+              ]}
+            />
+
+            <ServiceCard
+              icon="📊"
+              title="Mental Health Assessments"
+              lead="Know where you stand, clinically."
+              description="Serenest uses validated clinical tools — PHQ-9 for depression and GAD-7 for anxiety — to track your mental health over time. Every score is logged, charted, and visible to your treating doctor, giving objective data to guide your care."
+              included={[
+                'PHQ-9 — Depression screening',
+                'GAD-7 — Generalised Anxiety Disorder scale',
+                'Mood check-ins — Daily emotional wellbeing log',
+                'Trend charts visible to your doctor',
+                'Retake over time to track progress',
+              ]}
+              price="Included free with every consultation"
+            />
+
+            <ServiceCard
+              icon="🧪"
+              title="Quick Self-Screening"
+              lead="Not sure where to start? Answer a few questions."
+              description="Choose your reason, relevant conditions, and preferred engagement style. This helps you get matched to the right care path — and understand your own mental health better before your first session."
+              cta={<Link className="btn btn-ghost btn-sm" to="/screening">Start screening →</Link>}
+            />
+
+            <ServiceCard
+              icon="💊"
+              title="Medication Management"
+              lead="Your medications, tracked and managed."
+              description="Treatment doesn't end when the session does. Serenest helps you stay on track — with your active medications displayed clearly, dosage schedules, and optional reminders so you never miss a dose."
+              included={[
+                'Active prescription dashboard',
+                'Morning / afternoon / night dosage schedule',
+                'WhatsApp or push notification reminders',
+                'Full medication history from all past sessions',
+                'Refill reminder alerts',
+                'Read-only — only your doctor can change prescriptions',
+              ]}
+            />
+
+            <ServiceCard
+              icon="🗂️"
+              title="Session History & Records"
+              lead="Your clinical records. Always available. Always locked."
+              description="Every consultation generates a permanent, locked clinical record. Session summaries, SOAP notes, and prescriptions are stored securely — accessible to you anytime, sharable with other doctors if needed."
+              included={[
+                'Complete session history',
+                "Session summary (doctor's treatment plan)",
+                'All prescriptions — past and current',
+                'PHQ-9 / GAD-7 score history',
+                'Downloadable PDF records',
+                'Permanently locked — no retroactive editing',
+              ]}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── Organisation Services ──────────────────────────── */}
+      <section className="section alt" id="organisations">
+        <div className="container">
+          <div className="section-head center">
+            <div className="section-kicker">Beyond individual care</div>
+            <h2>Mental health programmes for organisations</h2>
+            <p>
+              We partner with corporates, schools, and colleges to bring
+              structured, stigma-free mental health support to entire communities.
             </p>
           </div>
-        </div>
-      </section>
 
-      <section className="section" aria-label="Services Overview">
-        <div className="container">
-          <div className="section-head">
-            <p className="section-label">Services overview</p>
-            <h2>Six core services, built for clinical care.</h2>
+          <div className="org-cards">
+            <div className="org-card org-card-corporate">
+              <div className="org-card-top">
+                <div className="org-icon">🏢</div>
+                <div className="org-tag">Corporate</div>
+              </div>
+              <h3>Workplace Mental Health</h3>
+              <p>Burnout, anxiety, and stress cost organisations billions each year. We offer confidential telepsychiatry, EAP-style counselling, and group wellness workshops tailored to your workforce.</p>
+              <ul className="org-features">
+                <li>Confidential 1-on-1 sessions for employees</li>
+                <li>Manager mental health training</li>
+                <li>Anonymous team wellbeing assessments</li>
+                <li>Dedicated psychiatry hours per month</li>
+              </ul>
+              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.fit?subject=Corporate%20Enquiry">
+                Enquire for your company →
+              </a>
+            </div>
+
+            <div className="org-card org-card-school">
+              <div className="org-card-top">
+                <div className="org-icon">🏫</div>
+                <div className="org-tag">Schools</div>
+              </div>
+              <h3>Student &amp; Staff Wellbeing</h3>
+              <p>Young students face academic pressure, social anxiety, and developmental challenges. Our school programme provides accessible, age-appropriate psychiatric care and counselling for teaching staff.</p>
+              <ul className="org-features">
+                <li>Child &amp; adolescent psychiatry specialists</li>
+                <li>Parental guidance sessions</li>
+                <li>Learning disability &amp; ADHD assessments</li>
+                <li>Staff mental wellness support</li>
+              </ul>
+              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.fit?subject=School%20Enquiry">
+                Enquire for your school →
+              </a>
+            </div>
+
+            <div className="org-card org-card-college">
+              <div className="org-card-top">
+                <div className="org-icon">🎓</div>
+                <div className="org-tag">Colleges &amp; Universities</div>
+              </div>
+              <h3>Campus Mental Health</h3>
+              <p>College is when many mental health conditions first emerge. We embed telepsychiatry into campus life — providing students on-demand consultations and structured follow-ups, without waitlists.</p>
+              <ul className="org-features">
+                <li>On-demand appointments for students</li>
+                <li>Depression, anxiety &amp; substance use support</li>
+                <li>Crisis triage &amp; referral pathways</li>
+                <li>Anonymous mental health pulse surveys</li>
+              </ul>
+              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.fit?subject=College%20Enquiry">
+                Enquire for your institution →
+              </a>
+            </div>
           </div>
 
-          <div className="service-grid">
-            <article className="tile service-card">
-              <div className="service-head">
-                <h3>Online Mental Health Consultation</h3>
-                <span className="service-badge">Most Popular</span>
-              </div>
-              <p className="service-lead">Talk to a verified mental health practitioner from home.</p>
-              <p className="muted">
-                Book a 45-minute video consultation with a verified practitioner — psychiatrist, psychologist,
-                therapist, or counsellor — from anywhere in India. No waiting rooms. No travel. No stigma.
-                Just a private, encrypted video call with a qualified professional who listens, assesses, and
-                guides your care.
-              </p>
-
-              <details className="service-more">
-                <summary className="service-summary">See what&apos;s included &amp; who it&apos;s for</summary>
-                <div className="service-split">
-                  <div>
-                    <div className="service-subhead">What&apos;s included</div>
-                    <ul className="list">
-                      <li>45-minute encrypted video session</li>
-                      <li>Clinical assessment (as appropriate to the practitioner)</li>
-                      <li>Clinical SOAP documentation</li>
-                      <li>Diagnosis and treatment plan</li>
-                      <li>Follow-up recommendation</li>
-                      <li>Digital prescription (if required)</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <div className="service-subhead">Who it&apos;s for</div>
-                    <p className="muted">
-                      Anxiety, Depression, OCD, PTSD, Bipolar Disorder, Schizophrenia, Sleep disorders,
-                      Stress, Burnout, Relationship issues, Medication review
-                    </p>
-                    <div className="price-row">
-                      <span className="price">Starting at: ₹499 per session</span>
-                    </div>
-                  </div>
-                </div>
-              </details>
-            </article>
-
-            <article className="tile service-card">
-              <h3>Digital Prescription</h3>
-              <p className="service-lead">Valid prescriptions. Delivered digitally.</p>
-              <p className="muted">
-                Every prescription issued on Serenest is MCI-compliant, digitally signed with the
-                doctor&apos;s registration number, and accepted at pharmacies across India. No paper. No
-                ambiguity. Just a clean, verifiable PDF you can download instantly.
-              </p>
-              <details className="service-more">
-                <summary className="service-summary">What&apos;s included</summary>
-                <ul className="list">
-                  <li>Digital PDF prescription</li>
-                  <li>Doctor&apos;s MCI registration number</li>
-                  <li>Drug name, dose, frequency, duration</li>
-                  <li>Patient details and consultation date</li>
-                  <li>QR-verifiable digital signature</li>
-                  <li>Valid under MCI Telemedicine Guidelines 2020</li>
-                </ul>
-              </details>
-              <div className="callout">
-                <div className="callout-title">Important note</div>
-                <p className="muted" style={{ margin: 0 }}>
-                  Prescriptions are issued only after a proper video consultation. No prescription without a
-                  session — ever. Schedule H medications follow all regulatory requirements.
-                </p>
-              </div>
-            </article>
-
-            <article className="tile service-card">
-              <h3>Mental Health Assessments</h3>
-              <p className="service-lead">Know where you stand, clinically.</p>
-              <p className="muted">
-                Serenest uses validated clinical tools — PHQ-9 for depression and GAD-7 for anxiety — to
-                track your mental health over time. Every score is logged, charted, and visible to your
-                treating practitioner, giving them objective data to guide your care.
-              </p>
-              <details className="service-more">
-                <summary className="service-summary">Assessments available</summary>
-                <ul className="list">
-                  <li>PHQ-9 — Patient Health Questionnaire (Depression screening)</li>
-                  <li>GAD-7 — Generalised Anxiety Disorder scale</li>
-                  <li>Mood check-ins — Daily emotional wellbeing log</li>
-                </ul>
-                <div className="service-subhead">How it works</div>
-                <p className="muted">
-                  Complete an assessment before your first session. Retake it over time. Your practitioner
-                  sees the trend — not just a snapshot — and adjusts care accordingly.
-                </p>
-              </details>
-              <div className="price-row">
-                <span className="price">Cost: Included free with every consultation</span>
-              </div>
-            </article>
-
-            <article className="tile service-card">
-              <h3>Quick Screening</h3>
-              <p className="service-lead">Answer a few questions to get directed support.</p>
-              <p className="muted">
-                Choose your reason, relevant conditions, and preferred engagement style. This helps you get matched to the right care path.
-              </p>
-              <div className="booking-actions" style={{ marginTop: 12 }}>
-                <Link className="btn btn-primary" to="/screening">
-                  Start screening →
-                </Link>
-                <Link className="btn btn-ghost" to="/book">
-                  Book directly →
-                </Link>
-              </div>
-            </article>
-
-            <article className="tile service-card">
-              <h3>Medication Management</h3>
-              <p className="service-lead">Your medications, tracked and managed.</p>
-              <p className="muted">
-                Treatment doesn&apos;t end when the session does. Serenest helps you stay on track
-                — with your active medications displayed clearly, dosage schedules, and optional reminders so
-                you never miss a dose.
-              </p>
-              <details className="service-more">
-                <summary className="service-summary">What&apos;s included</summary>
-                <ul className="list">
-                  <li>Active prescription dashboard</li>
-                  <li>Morning / afternoon / night dosage schedule</li>
-                  <li>WhatsApp or push notification reminders</li>
-                  <li>Full medication history from all past sessions</li>
-                  <li>Refill reminder alerts</li>
-                  <li>Read-only — only your doctor can change prescriptions</li>
-                </ul>
-              </details>
-            </article>
-
-            <article className="tile service-card">
-              <h3>Session History &amp; Records</h3>
-              <p className="service-lead">Your clinical records. Always available. Always locked.</p>
-              <p className="muted">
-                Every consultation on Serenest generates a permanent, locked clinical record. Session
-                summaries, SOAP notes (Plan section), and prescriptions are stored securely — accessible to
-                you anytime, sharable with other doctors if needed.
-              </p>
-              <details className="service-more">
-                <summary className="service-summary">What&apos;s included</summary>
-                <ul className="list">
-                  <li>Complete session history</li>
-                  <li>Session summary (doctor&apos;s treatment plan)</li>
-                  <li>All prescriptions — past and current</li>
-                  <li>PHQ-9 / GAD-7 score history</li>
-                  <li>Downloadable PDF records</li>
-                  <li>Permanently locked — no retroactive editing</li>
-                </ul>
-              </details>
-              <div className="callout">
-                <div className="callout-title">Why locked records matter</div>
-                <p className="muted" style={{ margin: 0 }}>
-                  Immutable records protect both patient and doctor. Medico-legally sound. Audit-trail
-                  compliant. Built for India&apos;s healthcare documentation standards.
-                </p>
-              </div>
-            </article>
-
-            <article className="tile service-card">
-              <h3>Mental Health Practitioner Network</h3>
-              <p className="service-lead">Verified professionals across India.</p>
-              <p className="muted">
-                Serenest brings together verified psychiatrists, psychologists, therapists, and counsellors.
-                We verify credentials before any professional goes live. Patients can filter by language
-                (English, Hindi, Gujarati), fee, and availability.
-              </p>
-              <details className="service-more">
-                <summary className="service-summary">See details</summary>
-                <div className="service-split">
-                  <div>
-                    <div className="service-subhead">What patients see</div>
-                    <ul className="list">
-                      <li>Practitioner name, photo, credentials</li>
-                      <li>Languages spoken</li>
-                      <li>Years of experience</li>
-                      <li>Consultation fee</li>
-                      <li>Star rating and review count</li>
-                      <li>Next available slot (real-time)</li>
-                    </ul>
-                  </div>
-                  <div>
-                    <div className="service-subhead">For professionals</div>
-                    <p className="muted">
-                      Serenest offers a complete practice management system — appointments, notes,
-                      prescriptions (where applicable), patient history, schedule management, and earnings
-                      dashboard — built for mental health practitioners.
-                    </p>
-                  </div>
-                </div>
-              </details>
-            </article>
+          <div className="org-bottom-cta">
+            <p>Want a custom programme? Every organisation is different — we'll build a plan that fits your size, budget, and goals.</p>
+            <a className="btn btn-primary" href="mailto:support@serenest.fit?subject=Organisation%20Partnership">
+              Talk to our partnerships team →
+            </a>
           </div>
         </div>
       </section>
 
-      <section className="section alt" aria-label="Coming Soon">
+      {/* ── How a Session Works ────────────────────────────── */}
+      <section className="section" id="how">
         <div className="container">
-          <div className="section-head">
-            <p className="section-label">On the roadmap</p>
-            <h2>What&apos;s coming to Serenest</h2>
+          <div className="section-head center">
+            <div className="section-kicker">Step by step</div>
+            <h2>From booking to prescription in under an hour</h2>
           </div>
-
-          <div className="grid-3">
-            <article className="tile">
-              <h3>🤖 AI-Assisted Session Analysis</h3>
-              <p className="muted">
-                Clinical NLP that analyses session patterns, flags risk indicators, and generates draft SOAP
-                notes — helping psychiatrists document faster and focus more on patients.
-              </p>
-            </article>
-            <article className="tile">
-              <h3>👨‍👩‍👧 Family Consultation Mode</h3>
-              <p className="muted">
-                Bring a family member into the session as a support observer — with patient consent. Built
-                for Indian family-centred mental healthcare.
-              </p>
-            </article>
-            <article className="tile">
-              <h3>🗣️ Therapy Integration</h3>
-              <p className="muted">
-                Connect with trained psychologists and therapists for CBT, DBT, and supportive therapy —
-                alongside your psychiatrist for combined care.
-              </p>
-            </article>
+          <div style={{ maxWidth: 680, margin: '0 auto' }}>
+            <ol className="steps">
+              {[
+                ['Create your account', 'Register with your phone number. Complete a quick PHQ-9 intake. 5 minutes.'],
+                ['Find your psychiatrist', 'Browse verified MDs. Filter by language, availability, and fee. Pick your slot.'],
+                ['Pay securely', 'Razorpay-powered payment. UPI, cards, net banking accepted. Instant confirmation.'],
+                ['Join your session', 'Click "Join Consultation" at your appointment time. Encrypted video call. 45 minutes.'],
+                ['Get your prescription', 'Your doctor issues a digital Rx immediately after the session. Download as PDF.'],
+              ].map(([title, desc], i) => (
+                <li key={title} className="step">
+                  <div className="step-num">{i + 1}</div>
+                  <div className="step-body">
+                    <strong>{title}</strong>
+                    <p>{desc}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
           </div>
         </div>
       </section>
 
-      <section className="section" aria-label="Who Serenest Is For">
+      {/* ── Who Uses Serenest ──────────────────────────────── */}
+      <section className="section alt">
         <div className="container">
-          <div className="section-head">
-            <p className="section-label">Made for</p>
+          <div className="section-head center">
+            <div className="section-kicker">Made for</div>
             <h2>Who uses Serenest</h2>
           </div>
-
           <div className="grid-2">
-            <article className="tile">
-              <h3>😟 First-time patients</h3>
-              <p className="muted">
-                Never seen a psychiatrist before? Don&apos;t know where to start? Serenest makes your first
-                step easy — private, judgement-free, and from home.
-              </p>
-            </article>
-            <article className="tile">
-              <h3>💊 Patients on long-term medication</h3>
-              <p className="muted">
-                Need regular follow-ups and prescription refills for ongoing psychiatric conditions? Skip
-                the clinic visit — consult online and get your Rx digitally.
-              </p>
-            </article>
-            <article className="tile">
-              <h3>🏘️ Patients in smaller cities &amp; towns</h3>
-              <p className="muted">
-                No psychiatrist nearby? Serenest gives you access to verified specialists from Deesa to
-                Delhi — without travelling.
-              </p>
-            </article>
-            <article className="tile">
-              <h3>👨‍⚕️ Psychiatrists expanding their practice</h3>
-              <p className="muted">
-                Want to reach patients beyond your clinic&apos;s geography? Serenest gives you a complete
-                digital practice — scheduling, documentation, prescriptions, and payments in one platform.
-              </p>
-            </article>
+            {[
+              ['😟', 'First-time patients', "Never seen a psychiatrist before? Serenest makes your first step easy — private, judgement-free, and from home."],
+              ['💊', 'Patients on long-term medication', "Need regular follow-ups and prescription refills? Skip the clinic visit — consult online and get your Rx digitally."],
+              ['🏘️', 'Patients in smaller cities & towns', "No psychiatrist nearby? Serenest gives you access to verified specialists from Deesa to Delhi — without travelling."],
+              ['👨‍⚕️', 'Psychiatrists expanding their practice', "Want to reach patients beyond your clinic's geography? Get a complete digital practice with scheduling, documentation, and payments."],
+            ].map(([icon, title, desc]) => (
+              <article key={title} className="tile" style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
+                <span style={{ fontSize: 28, flexShrink: 0 }}>{icon}</span>
+                <div>
+                  <h3 style={{ marginBottom: 8 }}>{title}</h3>
+                  <p>{desc}</p>
+                </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section alt" aria-label="How a Session Works">
+      {/* ── Conditions We Treat ────────────────────────────── */}
+      <section className="section" id="conditions">
         <div className="container">
-          <div className="section-head">
-            <p className="section-label">Step by step</p>
-            <h2>From booking to prescription in under an hour.</h2>
-          </div>
-          <ol className="steps">
-            <li className="step">
-              <strong>Create your account</strong> — Register with your phone number. Complete a quick PHQ-9
-              intake. 5 minutes.
-            </li>
-            <li className="step">
-              <strong>Find your psychiatrist</strong> — Browse verified MDs. Filter by language, availability,
-              and fee. Pick your slot.
-            </li>
-            <li className="step">
-              <strong>Pay securely</strong> — Razorpay-powered payment. UPI, cards, net banking accepted.
-              Instant confirmation.
-            </li>
-            <li className="step">
-              <strong>Join your session</strong> — Click &quot;Join Consultation&quot; at your appointment time.
-              Encrypted video call. 45 minutes.
-            </li>
-            <li className="step">
-              <strong>Get your prescription</strong> — Your doctor issues a digital Rx immediately after the
-              session. Download as PDF.
-            </li>
-          </ol>
-        </div>
-      </section>
-
-      <section className="section" aria-label="Conditions We Address">
-        <div className="container">
-          <div className="section-head" style={{ textAlign: 'center', alignItems: 'center' }}>
-            <p className="section-label">Clinical areas</p>
+          <div className="section-head center">
+            <div className="section-kicker">Clinical areas</div>
             <h2>What our psychiatrists treat</h2>
           </div>
 
-          <div className="conditions-table" role="table" aria-label="Conditions grid">
-            <div className="conditions-row conditions-head" role="row">
-              <div className="conditions-cell" role="columnheader">
-                Condition
-              </div>
-              <div className="conditions-cell" role="columnheader">
-                Common symptoms
-              </div>
+          <div className="conditions-table">
+            <div className="conditions-head-row">
+              <span>Condition</span>
+              <span>Common symptoms</span>
             </div>
-
-            <div className="conditions-row" role="row">
-              <div className="conditions-cell" role="cell">
-                Depression
+            {CONDITIONS.map(({ name, symptoms }) => (
+              <div key={name} className="conditions-row">
+                <span className="conditions-name">{name}</span>
+                <span className="conditions-symptoms">{symptoms}</span>
               </div>
-              <div className="conditions-cell" role="cell">
-                Persistent sadness, loss of interest, fatigue, hopelessness
-              </div>
-            </div>
-            <div className="conditions-row" role="row">
-              <div className="conditions-cell" role="cell">
-                Anxiety Disorders
-              </div>
-              <div className="conditions-cell" role="cell">
-                Excessive worry, panic attacks, social anxiety, phobias
-              </div>
-            </div>
-            <div className="conditions-row" role="row">
-              <div className="conditions-cell" role="cell">
-                OCD
-              </div>
-              <div className="conditions-cell" role="cell">
-                Intrusive thoughts, compulsive behaviours, rituals
-              </div>
-            </div>
-            <div className="conditions-row" role="row">
-              <div className="conditions-cell" role="cell">
-                Bipolar Disorder
-              </div>
-              <div className="conditions-cell" role="cell">
-                Mood swings between mania and depression
-              </div>
-            </div>
-            <div className="conditions-row" role="row">
-              <div className="conditions-cell" role="cell">
-                Schizophrenia
-              </div>
-              <div className="conditions-cell" role="cell">
-                Hallucinations, delusions, disorganised thinking
-              </div>
-            </div>
-            <div className="conditions-row" role="row">
-              <div className="conditions-cell" role="cell">
-                PTSD
-              </div>
-              <div className="conditions-cell" role="cell">
-                Flashbacks, nightmares, emotional numbness after trauma
-              </div>
-            </div>
-            <div className="conditions-row" role="row">
-              <div className="conditions-cell" role="cell">
-                ADHD (Adults)
-              </div>
-              <div className="conditions-cell" role="cell">
-                Inattention, impulsivity, difficulty organising tasks
-              </div>
-            </div>
-            <div className="conditions-row" role="row">
-              <div className="conditions-cell" role="cell">
-                Sleep Disorders
-              </div>
-              <div className="conditions-cell" role="cell">
-                Insomnia, hypersomnia, disrupted sleep patterns
-              </div>
-            </div>
-            <div className="conditions-row" role="row">
-              <div className="conditions-cell" role="cell">
-                Addiction / De-addiction
-              </div>
-              <div className="conditions-cell" role="cell">
-                Alcohol, substance use, behavioural addictions
-              </div>
-            </div>
-            <div className="conditions-row" role="row">
-              <div className="conditions-cell" role="cell">
-                Stress &amp; Burnout
-              </div>
-              <div className="conditions-cell" role="cell">
-                Work stress, emotional exhaustion, caregiver fatigue
-              </div>
-            </div>
+            ))}
           </div>
 
-          <div className="callout" style={{ marginTop: 14 }}>
-            <div className="callout-title">Disclaimer</div>
-            <p className="muted" style={{ margin: 0 }}>
-              Serenest is not for psychiatric emergencies. If you or someone you know is in immediate
-              danger, call iCall: <a href="tel:9152987821">9152987821</a> or your nearest emergency service.
-            </p>
+          <div className="callout-box" style={{ marginTop: 20 }}>
+            <span className="callout-box-icon">⚠️</span>
+            <div>
+              <div className="callout-box-title">Disclaimer</div>
+              <p className="callout-box-text">
+                Serenest is not for psychiatric emergencies. If you or someone you know is in
+                immediate danger, call iCall:{' '}
+                <a href="tel:7777936367" style={{ color: 'var(--teal-700)', fontWeight: 700 }}>7777936367</a>
+                {' '}or your nearest emergency service.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Coming Soon ────────────────────────────────────── */}
+      <section className="section alt">
+        <div className="container">
+          <div className="section-head center">
+            <div className="section-kicker">On the roadmap</div>
+            <h2>What's coming to Serenest</h2>
+          </div>
+          <div className="grid-3">
+            {[
+              ['🤖', 'AI-Assisted Session Analysis', 'Clinical NLP that analyses session patterns, flags risk indicators, and generates draft SOAP notes — helping psychiatrists document faster and focus more on patients.'],
+              ['👨‍👩‍👧', 'Family Consultation Mode', 'Bring a family member into the session as a support observer — with patient consent. Built for Indian family-centred mental healthcare.'],
+              ['🗣️', 'Therapy Integration', 'Connect with trained psychologists and therapists for CBT, DBT, and supportive therapy — alongside your psychiatrist for combined care.'],
+            ].map(([icon, title, desc]) => (
+              <article key={title} className="tile">
+                <div className="tile-icon">{icon}</div>
+                <h3>{title}</h3>
+                <p>{desc}</p>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ────────────────────────────────────────────── */}
+      <section className="section">
+        <div className="container">
+          <div className="cta-banner">
+            <div className="cta-banner-body">
+              <h2>Ready to start your care journey?</h2>
+              <p>Same-day appointments are often available. Book in under 2 minutes.</p>
+            </div>
+            <div className="cta-banner-actions">
+              <Link className="btn btn-primary btn-lg" to="/book">Book an appointment →</Link>
+              <a className="btn btn-outline btn-lg" href="mailto:support@serenest.fit">Email us</a>
+            </div>
           </div>
         </div>
       </section>
@@ -438,4 +402,3 @@ export default function ServicesPage() {
     </div>
   );
 }
-
