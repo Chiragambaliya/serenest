@@ -218,18 +218,7 @@ export default function SiteLayout() {
             {/* Top row */}
             <div className="footer-top">
               <div className="footer-brandline">
-                {logoOk ? (
-                  <img
-                    src="/assets/logo.png"
-                    alt="Serenest"
-                    className="footer-mark"
-                    loading="lazy"
-                    decoding="async"
-                    onError={() => setLogoOk(false)}
-                  />
-                ) : (
-                  <span className="footer-badge" aria-hidden="true">S</span>
-                )}
+                <SerenestLogo size={42} />
                 <div className="footer-brandstack">
                   <div className="footer-name">Serenest</div>
                   <div className="footer-tagline">
