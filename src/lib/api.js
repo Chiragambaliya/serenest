@@ -13,7 +13,18 @@ async function request(method, path, body) {
   if (body !== undefined) opts.body = JSON.stringify(body);
 
   const res = await fetch(`${BASE}${path}`, opts);
-  const json = await res.json().catch(() => ({ ok: false, error: 'Invalid response from server' }));
+  const raw = await res.text();
+  let json;
+  try {
+    json = raw ? JSON.parse(raw) : {};
+  } catch {
+    json = {
+      ok: false,
+      error: res.ok
+        ? 'Server returned an unexpected response. Please refresh and try again.'
+        : `Request failed (${res.status}). Please try again in a few moments.`,
+    };
+  }
 
   if (!json.ok) {
     const error = new Error(json.error ?? 'Request failed');
