@@ -41,12 +41,27 @@ export default function ProfessionalOnboardingPage() {
   const phoneClean = phone.replace(/[^\d]/g, '');
   const isPhoneValid = phoneClean.length === 10 && /^[6-9]/.test(phoneClean);
   const isNameValid = fullName.trim().length >= 2;
-
-  const isStep1Valid = isNameValid && isPhoneValid;
-  const isStep2Valid = registration.trim().length >= 4 || role !== 'psychiatrist';
+  const hasPracticeBasics = city.trim().length >= 2 && languages.trim().length >= 2;
   const isStep4Valid = String(fee).trim().length > 0 && consent;
 
+  const [step1Error, setStep1Error] = useState('');
+
   const [step2Error, setStep2Error] = useState('');
+  const [step3Error, setStep3Error] = useState('');
+
+  function tryGoToStep2() {
+    if (!isNameValid) {
+      setStep1Error('Please enter your full name (minimum 2 characters).');
+      return;
+    }
+    if (!isPhoneValid) {
+      setStep1Error('Please enter a valid 10-digit Indian mobile number starting with 6-9.');
+      return;
+    }
+    setStep1Error('');
+    setStep(2);
+  }
+
   function tryGoToStep3() {
     if (role === 'psychiatrist' && registration.trim().length < 4) {
       setStep2Error('Registration / license number is required for psychiatrists (min 4 characters).');
@@ -54,6 +69,15 @@ export default function ProfessionalOnboardingPage() {
     }
     setStep2Error('');
     setStep(3);
+  }
+
+  function tryGoToStep4() {
+    if (!hasPracticeBasics) {
+      setStep3Error('Please enter at least city and languages to continue.');
+      return;
+    }
+    setStep3Error('');
+    setStep(4);
   }
 
   const [step4Error, setStep4Error] = useState('');
@@ -71,6 +95,7 @@ export default function ProfessionalOnboardingPage() {
   }
 
   const roleLabel = useMemo(() => ROLES.find((r) => r.id === role)?.label ?? 'Professional', [role]);
+  const progressPct = Math.round((step / 4) * 100);
 
   const record = {
     role,
@@ -190,6 +215,23 @@ export default function ProfessionalOnboardingPage() {
               </div>
             </div>
 
+            <div style={{ padding: '0 24px 18px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.78rem', color: 'var(--text-muted)', fontWeight: 700, marginBottom: 6 }}>
+                <span>Application progress</span>
+                <span>{progressPct}%</span>
+              </div>
+              <div style={{ background: 'var(--bg-subtle, #eef2f7)', height: 8, borderRadius: 999, overflow: 'hidden' }}>
+                <div
+                  style={{
+                    width: `${progressPct}%`,
+                    height: '100%',
+                    background: 'linear-gradient(90deg, #2dd4bf, #0f766e)',
+                    transition: 'width 0.2s ease',
+                  }}
+                />
+              </div>
+            </div>
+
             {step === 1 && (
               <div className="booking-body">
                 <div className="section-head" style={{ marginBottom: 14 }}>
@@ -232,9 +274,10 @@ export default function ProfessionalOnboardingPage() {
                       <input
                         className="input"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        onChange={(e) => setPhone(e.target.value.replace(/[^\d]/g, '').slice(0, 10))}
                         placeholder="10-digit number"
                         inputMode="numeric"
+                        maxLength={10}
                         autoComplete="tel"
                         aria-invalid={phone.length > 0 && !isPhoneValid}
                       />
@@ -256,11 +299,22 @@ export default function ProfessionalOnboardingPage() {
                   </label>
                 </div>
 
+                {step1Error && (
+                  <div style={{
+                    background: '#fdecea', border: '1px solid #f5c2c0',
+                    color: '#a02622', borderRadius: 10,
+                    padding: '12px 14px', marginTop: 14,
+                    fontSize: '0.9rem', fontWeight: 500,
+                  }}>
+                    ⚠ {step1Error}
+                  </div>
+                )}
+
                 <div className="booking-actions">
                   <Link className="btn btn-ghost" to="/professionals">
                     ← Back
                   </Link>
-                  <button className="btn btn-primary" type="button" onClick={() => setStep(2)} disabled={!isStep1Valid}>
+                  <button className="btn btn-primary" type="button" onClick={tryGoToStep2}>
                     Continue →
                   </button>
                 </div>
@@ -333,7 +387,7 @@ export default function ProfessionalOnboardingPage() {
                 )}
 
                 <div className="booking-actions">
-                  <button className="btn btn-ghost" type="button" onClick={() => { setStep2Error(''); setStep(1); }}>
+                  <button className="btn btn-ghost" type="button" onClick={() => { setStep1Error(''); setStep2Error(''); setStep(1); }}>
                     ← Back
                   </button>
                   <button className="btn btn-primary" type="button" onClick={tryGoToStep3}>
@@ -387,11 +441,22 @@ export default function ProfessionalOnboardingPage() {
                   </label>
                 </div>
 
+                {step3Error && (
+                  <div style={{
+                    background: '#fdecea', border: '1px solid #f5c2c0',
+                    color: '#a02622', borderRadius: 10,
+                    padding: '12px 14px', marginTop: 14,
+                    fontSize: '0.9rem', fontWeight: 500,
+                  }}>
+                    ⚠ {step3Error}
+                  </div>
+                )}
+
                 <div className="booking-actions">
-                  <button className="btn btn-ghost" type="button" onClick={() => setStep(2)}>
+                  <button className="btn btn-ghost" type="button" onClick={() => { setStep3Error(''); setStep(2); }}>
                     ← Back
                   </button>
-                  <button className="btn btn-primary" type="button" onClick={() => setStep(4)}>
+                  <button className="btn btn-primary" type="button" onClick={tryGoToStep4}>
                     Continue →
                   </button>
                 </div>
