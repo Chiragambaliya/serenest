@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { professionals } from '../lib/api';
 
 const ROLES = [
   { id: 'psychiatrist', label: 'Psychiatrist' },
@@ -10,16 +10,6 @@ const ROLES = [
 ];
 
 const DURATIONS = ['30', '45', '60'];
-
-const LS_KEY = 'serenest_professional_applications_v1';
-
-function safeJsonParse(value, fallback) {
-  try {
-    return JSON.parse(value);
-  } catch {
-    return fallback;
-  }
-}
 
 export default function ProfessionalOnboardingPage() {
   const [step, setStep] = useState(1);
@@ -56,6 +46,16 @@ export default function ProfessionalOnboardingPage() {
   const isStep2Valid = registration.trim().length >= 4 || role !== 'psychiatrist';
   const isStep4Valid = String(fee).trim().length > 0 && consent;
 
+  const [step2Error, setStep2Error] = useState('');
+  function tryGoToStep3() {
+    if (role === 'psychiatrist' && registration.trim().length < 4) {
+      setStep2Error('Registration / license number is required for psychiatrists (min 4 characters).');
+      return;
+    }
+    setStep2Error('');
+    setStep(3);
+  }
+
   const roleLabel = useMemo(() => ROLES.find((r) => r.id === role)?.label ?? 'Professional', [role]);
 
   const record = {
@@ -79,26 +79,13 @@ export default function ProfessionalOnboardingPage() {
     status: 'pending',
   };
 
-  async function persistApplication() {
-    if (supabase) {
-      const { error } = await supabase.from('professional_applications').insert([record]);
-      if (error) throw error;
-    } else {
-      const now = new Date();
-      const lsRecord = { id: `${now.getTime()}`, created_at: now.toISOString(), ...record };
-      const existing = safeJsonParse(localStorage.getItem(LS_KEY) ?? '[]', []);
-      const next = Array.isArray(existing) ? [lsRecord, ...existing] : [lsRecord];
-      localStorage.setItem(LS_KEY, JSON.stringify(next));
-    }
-  }
-
   async function handleSubmit(e) {
-    e.preventDefault();
+    if (e?.preventDefault) e.preventDefault();
     if (!isStep4Valid) return;
     setSubmitting(true);
     setSubmitError(null);
     try {
-      await persistApplication();
+      await professionals.apply(record);
       setSubmitted(true);
     } catch (err) {
       setSubmitError(err.message ?? 'Submission failed. Please try again.');
@@ -303,11 +290,22 @@ export default function ProfessionalOnboardingPage() {
                   </label>
                 </div>
 
+                {step2Error && (
+                  <div style={{
+                    background: '#fdecea', border: '1px solid #f5c2c0',
+                    color: '#a02622', borderRadius: 10,
+                    padding: '12px 14px', marginTop: 14,
+                    fontSize: '0.9rem', fontWeight: 500,
+                  }}>
+                    ⚠ {step2Error}
+                  </div>
+                )}
+
                 <div className="booking-actions">
-                  <button className="btn btn-ghost" type="button" onClick={() => setStep(1)}>
+                  <button className="btn btn-ghost" type="button" onClick={() => { setStep2Error(''); setStep(1); }}>
                     ← Back
                   </button>
-                  <button className="btn btn-primary" type="button" onClick={() => setStep(3)} disabled={!isStep2Valid}>
+                  <button className="btn btn-primary" type="button" onClick={tryGoToStep3}>
                     Continue →
                   </button>
                 </div>
