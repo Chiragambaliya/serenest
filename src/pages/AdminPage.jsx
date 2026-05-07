@@ -90,6 +90,7 @@ const TABS = [
   { id: 'applications',  label: 'Applications' },
   { id: 'hr',            label: 'HR / Hiring' },
   { id: 'messages',      label: 'Messages' },
+  { id: 'screenings',    label: 'Screenings' },
   { id: 'signups',       label: 'Signups' },
 ];
 
@@ -120,6 +121,7 @@ export default function AdminPage() {
   const [apps, setApps]               = useState([]);
   const [jobs, setJobs]               = useState([]);
   const [messages, setMessages]       = useState([]);
+  const [screenings, setScreenings]   = useState([]);
   const [signups, setSignups]         = useState([]);
   const [noteEdit, setNoteEdit]       = useState({});
   const [proFilter, setProFilter]     = useState('all');
@@ -185,6 +187,10 @@ export default function AdminPage() {
         const r = await adminFetch('/api/signups', secret);
         setSignups(r.signups ?? []);
       }
+      if (which === 'all' || which === 'screenings') {
+        const r = await adminFetch('/api/screening', secret);
+        setScreenings(r.screenings ?? []);
+      }
     } catch (e) {
       setError(e.message);
     } finally {
@@ -219,6 +225,7 @@ export default function AdminPage() {
     setProfessionals([]);
     setJobs([]);
     setMessages([]);
+    setScreenings([]);
     setSignups([]);
   }
 
@@ -1231,6 +1238,119 @@ export default function AdminPage() {
                     <p style={{ margin: 0, color: 'var(--text)', fontSize: '0.9rem', lineHeight: 1.6 }}>{m.message}</p>
                   </div>
                 ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── SCREENINGS ── */}
+        {tab === 'screenings' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 8 }}>
+              <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>
+                Self-screenings <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({screenings.length})</span>
+              </h2>
+              <button
+                onClick={() => {
+                  const csv = [
+                    'Name,Phone,Email,PHQ-9,PHQ Severity,GAD-7,GAD Severity,Wants Callback,Submitted',
+                    ...screenings.map((s) => [
+                      s.name ?? '',
+                      s.phone ?? '',
+                      s.email ?? '',
+                      s.phq9_score ?? '',
+                      s.phq9_severity ?? '',
+                      s.gad7_score ?? '',
+                      s.gad7_severity ?? '',
+                      s.wants_callback ? 'yes' : 'no',
+                      fmt(s.created_at),
+                    ].map((v) => `"${String(v).replace(/"/g, '""')}"`).join(',')),
+                  ].join('\n');
+                  const a = document.createElement('a');
+                  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+                  a.download = 'serenest-screenings.csv';
+                  a.click();
+                }}
+                className="btn btn-ghost btn-sm"
+              >
+                Export CSV
+              </button>
+            </div>
+
+            {screenings.length === 0 ? (
+              <EmptyState icon="🧠" text="No screenings yet" />
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {screenings.map((s) => {
+                  const sev = (label) => {
+                    const map = {
+                      Minimal:              { bg: '#d1e7dd', color: '#0a3622' },
+                      Mild:                 { bg: '#cfe2ff', color: '#084298' },
+                      Moderate:             { bg: '#ffe5d0', color: '#8a4a00' },
+                      'Moderately Severe':  { bg: '#ffd8c2', color: '#9a3b00' },
+                      Severe:               { bg: '#f8d7da', color: '#842029' },
+                    };
+                    return map[label] ?? { bg: '#e9ecef', color: '#495057' };
+                  };
+                  const phqStyle = sev(s.phq9_severity);
+                  const gadStyle = sev(s.gad7_severity);
+                  const safety = (Array.isArray(s.phq9_answers) ? s.phq9_answers[8] : 0) > 0;
+
+                  return (
+                    <div key={s.id} style={{
+                      background: 'var(--surface)',
+                      border: `1px solid ${safety ? '#dc3545' : 'var(--border)'}`,
+                      borderRadius: 12,
+                      padding: '1rem 1.25rem',
+                      display: 'grid',
+                      gridTemplateColumns: 'minmax(180px, 1.4fr) repeat(2, minmax(160px, 1fr)) auto',
+                      gap: '1rem',
+                      alignItems: 'center',
+                    }}>
+                      <div>
+                        <div style={{ fontWeight: 700, fontSize: '0.95rem', display: 'flex', alignItems: 'center', gap: 6 }}>
+                          {s.name ?? <em style={{ color: 'var(--text-muted)' }}>Anonymous</em>}
+                          {safety && <span title="Safety flag — Q9 indicated self-harm" style={{ background: '#dc3545', color: '#fff', padding: '1px 7px', borderRadius: 99, fontSize: '0.65rem', fontWeight: 800 }}>⚠ SAFETY</span>}
+                          {s.wants_callback && <span style={{ background: '#fff3cd', color: '#856404', padding: '1px 7px', borderRadius: 99, fontSize: '0.65rem', fontWeight: 700 }}>Wants callback</span>}
+                        </div>
+                        <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: 2, display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                          {s.phone && <span>📞 {s.phone}</span>}
+                          {s.email && <span>✉ {s.email}</span>}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: 4 }}>{fmt(s.created_at)}</div>
+                      </div>
+
+                      <div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: 2 }}>PHQ-9 (Depression)</div>
+                        <div style={{ fontSize: '1.4rem', fontWeight: 800, lineHeight: 1 }}>{s.phq9_score ?? '—'}<span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}> / 27</span></div>
+                        {s.phq9_severity && <span style={{ display: 'inline-block', marginTop: 4, background: phqStyle.bg, color: phqStyle.color, padding: '1px 8px', borderRadius: 99, fontSize: '0.72rem', fontWeight: 700 }}>{s.phq9_severity}</span>}
+                      </div>
+
+                      <div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700, marginBottom: 2 }}>GAD-7 (Anxiety)</div>
+                        <div style={{ fontSize: '1.4rem', fontWeight: 800, lineHeight: 1 }}>{s.gad7_score ?? '—'}<span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 500 }}> / 21</span></div>
+                        {s.gad7_severity && <span style={{ display: 'inline-block', marginTop: 4, background: gadStyle.bg, color: gadStyle.color, padding: '1px 8px', borderRadius: 99, fontSize: '0.72rem', fontWeight: 700 }}>{s.gad7_severity}</span>}
+                      </div>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                        {s.phone && (
+                          <a
+                            href={`https://wa.me/91${s.phone}?text=${encodeURIComponent(`Hi ${s.name ? s.name.split(' ')[0] : 'there'}, this is Serenest reaching out about your recent self-screening. Would you like to talk to one of our professionals?`)}`}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="btn btn-sm"
+                            style={{ background: '#25D366', color: '#fff', borderColor: '#25D366', fontSize: '0.8rem' }}
+                          >
+                            💬 WhatsApp
+                          </a>
+                        )}
+                        {s.phone && (
+                          <a href={`tel:${s.phone}`} className="btn btn-sm btn-ghost" style={{ fontSize: '0.8rem' }}>📞 Call</a>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

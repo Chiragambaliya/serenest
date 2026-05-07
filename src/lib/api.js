@@ -47,8 +47,11 @@ export const bookings = {
 // ── Screening ───────────────────────────────────────────────
 export const screening = {
   /**
-   * Save a completed screening response.
-   * @param {{ reason, conditions?, format?, frequency? }} data
+   * Save a completed self-screening (PHQ-9 + GAD-7).
+   * @param {{ name, phone, email?,
+   *           phq9_answers, phq9_score, phq9_severity,
+   *           gad7_answers, gad7_score, gad7_severity,
+   *           wants_callback?, reason? }} data
    */
   submit: (data) => post('/api/screening', data),
 };

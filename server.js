@@ -170,18 +170,40 @@ app.patch('/api/bookings/:id/status', async (req, res) => {
 
 /**
  * POST /api/screening
- * Save a screening response.
+ * Save a self-screening response (PHQ-9 + GAD-7 + contact).
  */
 app.post('/api/screening', async (req, res) => {
   if (!requireDb(res)) return;
 
-  const { reason, conditions = [], format, frequency } = req.body;
+  const {
+    name, phone, email,
+    reason, conditions = [], format, frequency,
+    phq9_answers, phq9_score, phq9_severity,
+    gad7_answers, gad7_score, gad7_severity,
+    wants_callback = false,
+  } = req.body;
 
-  if (!reason?.trim()) return err(res, 'reason is required');
+  const cleanPhone = (phone || '').replace(/[^\d]/g, '');
 
   const { data, error } = await supabase
     .from('screening_responses')
-    .insert({ reason, conditions, format, frequency })
+    .insert({
+      name: name?.trim() || null,
+      phone: cleanPhone || null,
+      email: email?.trim() || null,
+      reason: reason || null,
+      conditions: Array.isArray(conditions) ? conditions : [],
+      format: format || null,
+      frequency: frequency || null,
+      phq9_answers: phq9_answers || null,
+      phq9_score: phq9_score ?? null,
+      phq9_severity: phq9_severity || null,
+      gad7_answers: gad7_answers || null,
+      gad7_score: gad7_score ?? null,
+      gad7_severity: gad7_severity || null,
+      wants_callback,
+      status: 'new',
+    })
     .select()
     .single();
 
@@ -191,6 +213,19 @@ app.post('/api/screening', async (req, res) => {
   }
 
   return ok(res, { screening: data }, 201);
+});
+
+/** GET /api/screening — admin only — list all screening responses */
+app.get('/api/screening', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const { data, error } = await supabase
+    .from('screening_responses')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) return err(res, 'Failed to fetch screenings', 500);
+  return ok(res, { screenings: data });
 });
 
 // ══════════════════════════════════════════════════════════════
