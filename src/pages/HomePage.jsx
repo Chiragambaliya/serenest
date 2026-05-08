@@ -107,7 +107,7 @@ export default function HomePage() {
                   </svg>
                 </Link>
                 <Link className="btn btn-ghost btn-lg" to="/screening">
-                  Self-screening
+                  Self-screening quiz
                 </Link>
               </div>
 
@@ -201,16 +201,16 @@ export default function HomePage() {
 
             <article className="tile">
               <div className="tile-icon">🧪</div>
-              <h3>Self-screening</h3>
+              <h3>Self-Screening</h3>
               <p>
                 Not sure where to start? Take a quick, evidence-based
-                self-screening to find the right path forward.
+                screening to find the right path forward.
               </p>
               <Link
                 to="/screening"
                 style={{ display: 'inline-flex', marginTop: 14, fontSize: 13, fontWeight: 700, color: 'var(--teal-700)' }}
               >
-                Start self-screening →
+                Start screening →
               </Link>
             </article>
           </div>
@@ -344,7 +344,7 @@ export default function HomePage() {
               <li className="step">
                 <div className="step-num" aria-hidden="true">1</div>
                 <div className="step-body">
-                  <strong>Self-screening</strong>
+                  <strong>Screen yourself</strong>
                   <p>
                     Answer a few quick questions to understand your needs and
                     find the right kind of care.

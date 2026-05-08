@@ -165,22 +165,6 @@ export const notify = {
     const sevPill = (score, max, label) =>
       `<strong>${esc(score)}/${max}</strong> · <span style="background:${sevColor(label)}18;color:${sevColor(label)};padding:2px 8px;border-radius:99px;font-size:12px;font-weight:700">${esc(label)}</span>`;
 
-    const extras = s.optional_screenings;
-    const extraRowList = [];
-    if (extras && typeof extras === 'object') {
-      if (extras.isi) extraRowList.push(row('ISI (sleep)', `${esc(extras.isi.score)} · ${esc(extras.isi.severity)}`));
-      if (extras.audit_c) extraRowList.push(row('AUDIT-C', `${esc(extras.audit_c.score)}/12 · ${esc(extras.audit_c.severity)}`));
-      if (extras.scoff) extraRowList.push(row('SCOFF', `${esc(extras.scoff.yes_count)} yes · ${extras.scoff.positive ? 'screen +' : 'screen −'}`));
-      if (extras.ptsd_screen) {
-        const p = extras.ptsd_screen;
-        extraRowList.push(
-          row('Trauma screen', p.event ? `${esc(p.symptom_yes_count)}/5 yes · ${p.positive ? 'further eval +' : 'below cut-off'}` : 'No trauma endorsement'),
-        );
-      }
-      if (extras.who5) extraRowList.push(row('WHO-5 (wellbeing)', `${esc(extras.who5.raw)}/25 · index ${esc(extras.who5.index)}/100 · ${esc(extras.who5.severity)}`));
-      if (extras.stop_bang) extraRowList.push(row('STOP-BANG', `${esc(extras.stop_bang.yes_count)}/8 yes · ${esc(extras.stop_bang.severity)}`));
-    }
-
     const html = `
       ${safety ? `<div style="background:#fee2e2;border:2px solid #dc2626;border-radius:10px;padding:12px 14px;margin-bottom:14px;color:#991b1b"><strong>⚠ Safety alert:</strong> Respondent indicated thoughts of self-harm (PHQ-9 Q9). Please reach out today.</div>` : ''}
       <p style="margin:0 0 8px;font-size:16px"><strong>${esc(s.name || 'Anonymous')}</strong> just completed the self-screening.</p>
@@ -189,26 +173,14 @@ export const notify = {
         row('Email',     esc(s.email)),
         row('PHQ-9 (depression)', sevPill(s.phq9_score, 27, s.phq9_severity)),
         row('GAD-7 (anxiety)',    sevPill(s.gad7_score, 21, s.gad7_severity)),
-        ...extraRowList,
         row('Wants callback?',    s.wants_callback ? '<strong style="color:#0f766e">Yes — please reach out</strong>' : 'No'),
       ])}
       ${callouts({ phone: s.phone, email: s.email })}
     `;
-    let tgExtra = '';
-    if (extraRowList.length) {
-      const parts = [];
-      if (extras.isi) parts.push(`ISI ${esc(extras.isi.score)}`);
-      if (extras.audit_c) parts.push(`AUDIT-C ${esc(extras.audit_c.score)}`);
-      if (extras.scoff) parts.push(`SCOFF ${esc(extras.scoff.yes_count)}y`);
-      if (extras.ptsd_screen?.event) parts.push(`Trauma ${esc(extras.ptsd_screen.symptom_yes_count)}/5`);
-      if (extras.who5) parts.push(`WHO-5 ${esc(extras.who5.index)}`);
-      if (extras.stop_bang) parts.push(`STOP-BANG ${esc(extras.stop_bang.yes_count)}/8`);
-      tgExtra = `\n${parts.join(' · ')}`;
-    }
     fire(sendEmail({ subject: `${safety ? '🚨 SAFETY' : 'New screening'} — ${s.name || 'Anonymous'} (PHQ-9: ${s.phq9_score}, GAD-7: ${s.gad7_score})`, html, urgent: safety }));
     fire(sendTelegram(
       (safety ? `<b>⚠️ SAFETY ALERT</b>\n` : `<b>🧠 New screening</b>\n`) +
-      `<b>${esc(s.name)}</b> · 📞 ${esc(fmtPhone(s.phone))}\nPHQ-9: ${esc(s.phq9_score)} (${esc(s.phq9_severity)}) · GAD-7: ${esc(s.gad7_score)} (${esc(s.gad7_severity)})${tgExtra}`,
+      `<b>${esc(s.name)}</b> · 📞 ${esc(fmtPhone(s.phone))}\nPHQ-9: ${esc(s.phq9_score)} (${esc(s.phq9_severity)}) · GAD-7: ${esc(s.gad7_score)} (${esc(s.gad7_severity)})`,
       { urgent: safety }
     ));
   },

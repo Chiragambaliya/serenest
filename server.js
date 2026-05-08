@@ -184,7 +184,6 @@ app.post('/api/screening', async (req, res) => {
     phq9_answers, phq9_score, phq9_severity,
     gad7_answers, gad7_score, gad7_severity,
     wants_callback = false,
-    optional_screenings = null,
   } = req.body;
 
   const cleanPhone = (phone || '').replace(/[^\d]/g, '');
@@ -206,7 +205,6 @@ app.post('/api/screening', async (req, res) => {
       gad7_score: gad7_score ?? null,
       gad7_severity: gad7_severity || null,
       wants_callback,
-      optional_screenings: optional_screenings || null,
       status: 'new',
     })
     .select()

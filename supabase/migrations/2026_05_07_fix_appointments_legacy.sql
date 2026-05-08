@@ -21,6 +21,25 @@ alter table public.appointments
   add column if not exists notes             text,
   add column if not exists professional_id   uuid;
 
+-- Add the FK needed by PostgREST relationship joins used in
+-- GET /api/professionals/list (appointments(...)).
+do $$
+begin
+  if not exists (
+    select 1
+    from information_schema.table_constraints
+    where table_schema = 'public'
+      and table_name = 'appointments'
+      and constraint_name = 'appointments_professional_id_fkey'
+  ) then
+    alter table public.appointments
+      add constraint appointments_professional_id_fkey
+      foreign key (professional_id)
+      references public.professional_applications(id)
+      on delete set null;
+  end if;
+end $$;
+
 -- Make the legacy NOT NULL column optional so new inserts work
 alter table public.appointments alter column appointment_id drop not null;
 
