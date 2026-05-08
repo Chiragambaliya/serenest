@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { applyPageSeo, seoForPathname } from '../lib/seo';
 
 // ── Serenest logo (inline SVG — calming leaf + S) ──────────────
 function SerenestLogo({ size = 36 }) {
@@ -59,6 +60,19 @@ export default function SiteLayout() {
   useEffect(() => {
     setMenuOpen(false);
   }, [location]);
+
+  useEffect(() => {
+    const { pathname } = location;
+    const cfg = seoForPathname(pathname);
+    applyPageSeo({
+      title: cfg.title,
+      description: cfg.description,
+      path: pathname,
+      noindex: cfg.noindex,
+      ogType: cfg.ogType || 'website',
+      isHome: Boolean(cfg.isHome),
+    });
+  }, [location.pathname]);
 
   // Scroll-aware header
   useEffect(() => {

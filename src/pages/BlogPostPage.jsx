@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { applyPageSeo } from '../lib/seo';
 
 const POSTS = [
   {
@@ -41,6 +42,27 @@ export default function BlogPostPage() {
   const { slug } = useParams();
 
   const post = useMemo(() => POSTS.find((p) => p.slug === slug) ?? null, [slug]);
+
+  useEffect(() => {
+    const path = `/blog/${slug}`;
+    if (!post) {
+      applyPageSeo({
+        title: 'Post not found',
+        description: 'This blog post does not exist. Browse other articles on Serenest.',
+        path,
+        noindex: true,
+      });
+      return;
+    }
+    const full = post.body.join(' ');
+    const excerpt = full.length <= 160 ? full : `${full.slice(0, 157).trim()}…`;
+    applyPageSeo({
+      title: post.title,
+      description: excerpt,
+      path,
+      ogType: 'article',
+    });
+  }, [post, slug]);
 
   if (!post) {
     return (
