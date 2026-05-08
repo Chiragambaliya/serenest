@@ -94,6 +94,17 @@ const TABS = [
   { id: 'signups',       label: 'Signups' },
 ];
 
+const TAB_HELP = {
+  overview: 'Quick KPI view and shortcuts to each workflow.',
+  bookings: 'Search bookings, update status, and manage patient requests.',
+  professionals: 'View approved professionals and update their profiles.',
+  applications: 'Review professional onboarding applications.',
+  hr: 'Manage job applications, postings, interviews, and offers.',
+  messages: 'Read incoming contact/enquiry messages.',
+  screenings: 'Review self-screening submissions and callback leads.',
+  signups: 'View and export waitlist signups.',
+};
+
 const ROLE_LABELS = {
   psychiatrist: 'Psychiatrist',
   psychologist: 'Psychologist',
@@ -125,6 +136,9 @@ export default function AdminPage() {
   const [signups, setSignups]         = useState([]);
   const [noteEdit, setNoteEdit]       = useState({});
   const [proFilter, setProFilter]     = useState('all');
+  const [bookingFilter, setBookingFilter] = useState('all');
+  const [bookingSearch, setBookingSearch] = useState('');
+  const [bookingBusyId, setBookingBusyId] = useState(null);
   const [editPro, setEditPro]         = useState(null);
   const [editProData, setEditProData] = useState({});
   const [assignBooking, setAssignBooking] = useState(null);
@@ -367,6 +381,7 @@ export default function AdminPage() {
 
   // ── booking status update ──────────────────────────────────
   async function updateBookingStatus(id, status) {
+    setBookingBusyId(id);
     try {
       await adminFetch(`/api/bookings/${id}/status`, secret, {
         method: 'PATCH',
@@ -376,6 +391,8 @@ export default function AdminPage() {
       load('stats');
     } catch (e) {
       setError(e.message);
+    } finally {
+      setBookingBusyId(null);
     }
   }
 
@@ -513,6 +530,9 @@ export default function AdminPage() {
             </button>
           ))}
         </div>
+        <p style={{ margin: '-0.8rem 0 1.25rem', fontSize: '0.84rem', color: 'var(--text-muted)' }}>
+          {TAB_HELP[tab]}
+        </p>
 
         {/* ── OVERVIEW ── */}
         {tab === 'overview' && (
@@ -564,12 +584,74 @@ export default function AdminPage() {
         {/* ── BOOKINGS ── */}
         {tab === 'bookings' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem', flexWrap: 'wrap', gap: 8 }}>
               <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>Bookings <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({bookings.length})</span></h2>
               <Link to="/book" className="btn btn-primary btn-sm">+ New booking</Link>
             </div>
 
-            {bookings.length === 0 ? (
+            <div style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 10,
+              padding: '0.75rem',
+              marginBottom: '1rem',
+              display: 'grid',
+              gridTemplateColumns: '1.2fr auto',
+              gap: 10,
+            }}>
+              <input
+                value={bookingSearch}
+                onChange={(e) => setBookingSearch(e.target.value)}
+                placeholder="Search by patient name, phone, email, type, or mode"
+                style={{
+                  width: '100%',
+                  padding: '0.58rem 0.72rem',
+                  borderRadius: 8,
+                  border: '1px solid var(--border)',
+                  fontSize: '0.86rem',
+                  background: 'var(--bg)',
+                  color: 'var(--text)',
+                }}
+              />
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                {['all', 'pending', 'confirmed', 'completed', 'cancelled'].map((s) => (
+                  <button
+                    key={s}
+                    onClick={() => setBookingFilter(s)}
+                    style={{
+                      border: 'none',
+                      borderRadius: 99,
+                      padding: '4px 10px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      background: bookingFilter === s ? 'var(--brand-500)' : 'var(--bg-subtle, #f5f7f9)',
+                      color: bookingFilter === s ? '#fff' : 'var(--text-muted)',
+                    }}
+                  >
+                    {s === 'all' ? 'All statuses' : s}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {(() => {
+              const q = bookingSearch.trim().toLowerCase();
+              const filteredBookings = bookings.filter((b) => {
+                const statusOk = bookingFilter === 'all' ? true : b.status === bookingFilter;
+                if (!statusOk) return false;
+                if (!q) return true;
+                const hay = [
+                  b.patient_name, b.patient_phone, b.patient_email,
+                  b.practitioner_type, b.mode, b.preferred_time,
+                ]
+                  .filter(Boolean)
+                  .join(' ')
+                  .toLowerCase();
+                return hay.includes(q);
+              });
+
+              return filteredBookings.length === 0 ? (
               <EmptyState icon="📅" text="No bookings yet" />
             ) : (
               <div style={{ overflowX: 'auto' }}>
@@ -582,7 +664,7 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {bookings.map((b) => (
+                    {filteredBookings.map((b) => (
                       <tr key={b.id} style={{ borderBottom: '1px solid var(--border)' }}>
                         <td style={tdStyle}>
                           <strong>{b.patient_name}</strong><br />
@@ -595,9 +677,9 @@ export default function AdminPage() {
                         <td style={tdStyle}><Badge status={b.status} /></td>
                         <td style={tdStyle}>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                            {b.status === 'pending'   && <ActionBtn label="Confirm"  onClick={() => updateBookingStatus(b.id, 'confirmed')}  color="#198754" />}
-                            {b.status !== 'completed' && b.status !== 'cancelled' && <ActionBtn label="Complete" onClick={() => updateBookingStatus(b.id, 'completed')} color="#0d6efd" />}
-                            {b.status !== 'cancelled' && <ActionBtn label="Cancel"   onClick={() => updateBookingStatus(b.id, 'cancelled')}  color="#dc3545" />}
+                            {b.status === 'pending'   && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Confirm'}  onClick={() => updateBookingStatus(b.id, 'confirmed')}  color="#198754" disabled={bookingBusyId === b.id} />}
+                            {b.status !== 'completed' && b.status !== 'cancelled' && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Complete'} onClick={() => updateBookingStatus(b.id, 'completed')} color="#0d6efd" disabled={bookingBusyId === b.id} />}
+                            {b.status !== 'cancelled' && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Cancel'}   onClick={() => updateBookingStatus(b.id, 'cancelled')}  color="#dc3545" disabled={bookingBusyId === b.id} />}
                           </div>
                         </td>
                       </tr>
@@ -605,7 +687,8 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               </div>
-            )}
+              );
+            })()}
           </div>
         )}
 
@@ -1348,6 +1431,26 @@ export default function AdminPage() {
                           <a href={`tel:${s.phone}`} className="btn btn-sm btn-ghost" style={{ fontSize: '0.8rem' }}>📞 Call</a>
                         )}
                       </div>
+
+                      {s.optional_screenings && typeof s.optional_screenings === 'object' && (
+                        <div style={{ gridColumn: '1 / -1', paddingTop: 8, borderTop: '1px dashed var(--border)', display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+                          <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Also screened:</span>
+                          {s.optional_screenings.isi && (
+                            <span style={{ background: '#e6fffa', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>Sleep ISI {s.optional_screenings.isi.score}</span>
+                          )}
+                          {s.optional_screenings.audit_c && (
+                            <span style={{ background: '#e6fffa', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>AUDIT-C {s.optional_screenings.audit_c.score}/12</span>
+                          )}
+                          {s.optional_screenings.scoff && (
+                            <span style={{ background: '#e6fffa', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>SCOFF {s.optional_screenings.scoff.yes_count} yes</span>
+                          )}
+                          {s.optional_screenings.ptsd_screen && (
+                            <span style={{ background: '#e6fffa', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>
+                              Trauma {s.optional_screenings.ptsd_screen.event ? `${s.optional_screenings.ptsd_screen.symptom_yes_count}/5` : '—'}
+                            </span>
+                          )}
+                        </div>
+                      )}
                     </div>
                   );
                 })}
@@ -1463,23 +1566,33 @@ function InfoRow({ label, value, style = {} }) {
   );
 }
 
-function ActionBtn({ label, onClick, color }) {
+function ActionBtn({ label, onClick, color, disabled = false }) {
   return (
     <button
       onClick={onClick}
+      disabled={disabled}
       style={{
         padding: '3px 10px',
         borderRadius: 6,
         border: `1px solid ${color}`,
-        background: 'transparent',
+        background: disabled ? '#f2f4f6' : 'transparent',
         color,
         fontSize: '0.75rem',
         fontWeight: 600,
-        cursor: 'pointer',
+        cursor: disabled ? 'not-allowed' : 'pointer',
+        opacity: disabled ? 0.7 : 1,
         transition: 'all 0.15s',
       }}
-      onMouseEnter={(e) => { e.target.style.background = color; e.target.style.color = '#fff'; }}
-      onMouseLeave={(e) => { e.target.style.background = 'transparent'; e.target.style.color = color; }}
+      onMouseEnter={(e) => {
+        if (disabled) return;
+        e.target.style.background = color;
+        e.target.style.color = '#fff';
+      }}
+      onMouseLeave={(e) => {
+        if (disabled) return;
+        e.target.style.background = 'transparent';
+        e.target.style.color = color;
+      }}
     >
       {label}
     </button>
