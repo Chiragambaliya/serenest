@@ -1449,6 +1449,16 @@ export default function AdminPage() {
                               Trauma {s.optional_screenings.ptsd_screen.event ? `${s.optional_screenings.ptsd_screen.symptom_yes_count}/5` : '—'}
                             </span>
                           )}
+                          {s.optional_screenings.who5 && (
+                            <span style={{ background: '#e6fffa', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>
+                              WHO-5 {s.optional_screenings.who5.index}/100
+                            </span>
+                          )}
+                          {s.optional_screenings.stop_bang && (
+                            <span style={{ background: '#e6fffa', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>
+                              STOP-BANG {s.optional_screenings.stop_bang.yes_count}/8
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>

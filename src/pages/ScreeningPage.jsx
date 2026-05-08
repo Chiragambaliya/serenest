@@ -10,6 +10,9 @@ import {
   SCOFF_QUESTIONS,
   PTSD_EVENT_QUESTION,
   PTSD_SYMPTOM_QUESTIONS,
+  WHO5_QUESTIONS,
+  WHO5_OPTIONS,
+  STOPBANG_QUESTIONS,
   FREQ_OPTIONS,
   buildFlow,
   phq9Severity,
@@ -18,18 +21,24 @@ import {
   auditCSeverity,
   scoffResult,
   ptsdScreenResult,
+  who5Severity,
+  stopBangResult,
   flowStepLabel,
 } from '../lib/screeningTools';
 
 export default function ScreeningPage() {
   const [modules, setModules] = useState({
-  sleep: false,
-  alcohol: false,
-  eating: false,
-  trauma: false,
+    sleep: false,
+    osa: false,
+    alcohol: false,
+    eating: false,
+    trauma: false,
+    wellbeing: false,
   });
 
-  const [flow, setFlow] = useState(() => buildFlow({ sleep: false, alcohol: false, eating: false, trauma: false }));
+  const [flow, setFlow] = useState(() =>
+    buildFlow({ sleep: false, osa: false, alcohol: false, eating: false, trauma: false, wellbeing: false }),
+  );
   const [flowIndex, setFlowIndex] = useState(0);
 
   const [phq, setPhq] = useState(Array(9).fill(null));
@@ -39,6 +48,8 @@ export default function ScreeningPage() {
   const [scoff, setScoff] = useState(Array(5).fill(null));
   const [ptsdEvent, setPtsdEvent] = useState(null);
   const [ptsdSymptoms, setPtsdSymptoms] = useState(Array(5).fill(null));
+  const [who5, setWho5] = useState(Array(5).fill(null));
+  const [stopbang, setStopbang] = useState(Array(8).fill(null));
 
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -57,6 +68,9 @@ export default function ScreeningPage() {
   const auditScore = useMemo(() => audit.reduce((s, v) => s + (v ?? 0), 0), [audit]);
   const scoffYes = useMemo(() => scoff.filter((v) => v === true).length, [scoff]);
   const ptsdSymYes = useMemo(() => ptsdSymptoms.filter((v) => v === true).length, [ptsdSymptoms]);
+  const who5Score = useMemo(() => who5.reduce((s, v) => s + (v ?? 0), 0), [who5]);
+  const who5Index = who5Score * 4;
+  const stopbangYes = useMemo(() => stopbang.filter((v) => v === true).length, [stopbang]);
 
   const phqSev = phq9Severity(phqScore);
   const gadSev = gad7Severity(gadScore);
@@ -64,6 +78,8 @@ export default function ScreeningPage() {
   const auditSev = auditCSeverity(auditScore);
   const scoffRes = scoffResult(scoffYes);
   const ptsdRes = ptsdScreenResult(ptsdEvent === true, ptsdSymYes);
+  const who5Sev = who5Severity(who5Score);
+  const stopBangRes = stopBangResult(stopbangYes);
 
   const phqDone = phq.every((v) => v !== null);
   const gadDone = gad.every((v) => v !== null);
@@ -73,6 +89,8 @@ export default function ScreeningPage() {
   const ptsdDone =
     ptsdEvent === false || (ptsdEvent === true && ptsdSymptoms.every((v) => v !== null));
   const canNextPtsd = ptsdEvent !== null && ptsdDone;
+  const who5Done = who5.every((v) => v !== null);
+  const stopbangDone = stopbang.every((v) => v !== null);
 
   const phoneClean = phone.replace(/[^\d]/g, '');
   const phoneOk = phoneClean.length === 10 && /^[6-9]/.test(phoneClean);
@@ -90,6 +108,8 @@ export default function ScreeningPage() {
     setScoff(Array(5).fill(null));
     setPtsdEvent(null);
     setPtsdSymptoms(Array(5).fill(null));
+    setWho5(Array(5).fill(null));
+    setStopbang(Array(8).fill(null));
   }
 
   function goNext() {
@@ -111,6 +131,14 @@ export default function ScreeningPage() {
         symptom_yes_count: ptsdEvent ? ptsdSymYes : null,
         positive: ptsdRes.positive,
       };
+    if (modules.wellbeing) o.who5 = { answers: who5, raw: who5Score, index: who5Index, severity: who5Sev.label };
+    if (modules.osa)
+      o.stop_bang = {
+        answers: stopbang,
+        yes_count: stopbangYes,
+        severity: stopBangRes.label,
+        elevated: stopBangRes.elevated,
+      };
     return Object.keys(o).length ? o : null;
   }, [
     modules,
@@ -127,6 +155,14 @@ export default function ScreeningPage() {
     ptsdSymptoms,
     ptsdSymYes,
     ptsdRes.positive,
+    who5,
+    who5Score,
+    who5Index,
+    who5Sev.label,
+    stopbang,
+    stopbangYes,
+    stopBangRes.label,
+    stopBangRes.elevated,
   ]);
 
   async function handleSubmit() {
@@ -166,21 +202,25 @@ export default function ScreeningPage() {
     if (id === 'audit') return `AUDIT-C · ${audit.filter((v) => v !== null).length}/3`;
     if (id === 'scoff') return `SCOFF · ${scoff.filter((v) => v !== null).length}/5`;
     if (id === 'ptsd') return 'Trauma-related screen';
+    if (id === 'stopbang') return `STOP-BANG · ${stopbang.filter((v) => v !== null).length}/8`;
+    if (id === 'who5') return `WHO-5 · ${who5.filter((v) => v !== null).length}/5`;
     if (id === 'contact') return 'Contact';
     return '';
-  }, [flowIndex, flow, done, phq, gad, isi, audit, scoff]);
+  }, [flowIndex, flow, done, phq, gad, isi, audit, scoff, stopbang, who5]);
 
   const moduleExtra =
     (modules.sleep ? 1 : 0) +
+    (modules.osa ? 1 : 0) +
     (modules.alcohol ? 1 : 0) +
     (modules.eating ? 1 : 0) +
-    (modules.trauma ? 1 : 0);
+    (modules.trauma ? 1 : 0) +
+    (modules.wellbeing ? 1 : 0);
   const estMin = 3 + moduleExtra * 1.5;
 
   if (done) {
     return (
-      <div className="page" style={{ background: 'linear-gradient(180deg, #f0fdfa 0%, #ffffff 380px)', minHeight: '100vh' }}>
-        <div className="container" style={{ maxWidth: 720, padding: '2.5rem 1rem 4rem' }}>
+      <div className="screening-page screening-page--done page">
+        <div className="container screening-container">
           {hasSafetyFlag && (
             <div
               style={{
@@ -232,10 +272,18 @@ export default function ScreeningPage() {
               </p>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 12, marginBottom: '1.5rem' }}>
+            <div className="screening-results-grid">
               <ScoreCard title="Depression (PHQ-9)" score={phqScore} max={27} severity={phqSev} />
               <ScoreCard title="Anxiety (GAD-7)" score={gadScore} max={21} severity={gadSev} />
               {modules.sleep && <ScoreCard title="Sleep (ISI)" score={isiScore} max={28} severity={isiSev} />}
+              {modules.osa && (
+                <ScoreCard
+                  title="Sleep apnoea risk (STOP-BANG)"
+                  primaryText={`${stopbangYes} of 8 factors (Yes)`}
+                  severity={stopBangRes}
+                  hideBar
+                />
+              )}
               {modules.alcohol && (
                 <ScoreCard title="Alcohol (AUDIT-C)" score={auditScore} max={12} severity={auditSev} />
               )}
@@ -256,6 +304,14 @@ export default function ScreeningPage() {
                       : `${ptsdSymYes} of 5 symptoms · ${ptsdRes.positive ? 'Further assessment suggested' : 'Below typical cut-off'}`
                   }
                   severity={ptsdRes}
+                  hideBar
+                />
+              )}
+              {modules.wellbeing && (
+                <ScoreCard
+                  title="Wellbeing (WHO-5)"
+                  primaryText={`${who5Score}/25 · wellbeing index ${who5Index}/100`}
+                  severity={who5Sev}
                   hideBar
                 />
               )}
@@ -327,6 +383,12 @@ export default function ScreeningPage() {
     if (modules.trauma && ptsdRes.positive) {
       parts.push('Your trauma-related answers suggest a trauma-informed assessment could be useful.');
     }
+    if (modules.wellbeing && who5Index <= 28) {
+      parts.push('Your wellbeing score is in a range that often prompts a fuller mood discussion with a professional.');
+    }
+    if (modules.osa && stopbangYes >= 3) {
+      parts.push('Your STOP-BANG pattern suggests discussing sleep apnoea risk with a clinician, especially if you snore or feel very sleepy in the day.');
+    }
 
     return parts.join(' ');
   }
@@ -337,6 +399,8 @@ export default function ScreeningPage() {
     if (modules.alcohol) t += `, AUDIT-C: ${auditScore}`;
     if (modules.eating) t += `, SCOFF yes: ${scoffYes}/5`;
     if (modules.trauma && ptsdEvent) t += `, trauma screen: ${ptsdSymYes}/5 yes`;
+    if (modules.wellbeing) t += `, WHO-5 index: ${who5Index}/100`;
+    if (modules.osa) t += `, STOP-BANG: ${stopbangYes}/8 yes`;
     t += `. I'd like to talk to someone.`;
     return t;
   }
@@ -344,149 +408,90 @@ export default function ScreeningPage() {
   const toggle = (key) => () => setModules((m) => ({ ...m, [key]: !m[key] }));
 
   return (
-    <div className="page" style={{ background: 'linear-gradient(180deg, #f0fdfa 0%, #ffffff 380px)', minHeight: '100vh' }}>
-      <div className="container" style={{ maxWidth: 720, padding: '2.5rem 1rem 4rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
-          <p
-            style={{
-              fontSize: '0.78rem',
-              fontWeight: 700,
-              color: 'var(--brand-600)',
-              textTransform: 'uppercase',
-              letterSpacing: '0.08em',
-              marginBottom: 8,
-            }}
-          >
-            Self-screening
-          </p>
-          <h1
-            style={{
-              fontSize: 'clamp(1.75rem, 4vw, 2.4rem)',
-              fontWeight: 800,
-              lineHeight: 1.15,
-              marginBottom: 10,
-              letterSpacing: '-0.02em',
-            }}
-          >
+    <div className="screening-page page">
+      <div className="container screening-container">
+        <header className="screening-hero">
+          <p className="screening-hero-kicker">Self-screening</p>
+          <h1 className="screening-hero-title">
             How have you been{' '}
-            <span
-              style={{
-                background: 'linear-gradient(135deg, #14b8a6, #0f766e)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-              }}
-            >
-              feeling lately?
-            </span>
+            <span className="screening-hero-accent">feeling lately?</span>
           </h1>
-          <p style={{ color: 'var(--text-muted)', fontSize: '1rem', maxWidth: 560, margin: '0 auto', lineHeight: 1.55 }}>
-            Confidential check-in using validated tools: <strong>PHQ-9</strong> (depression) and <strong>GAD-7</strong> (anxiety). You can add optional screens for{' '}
-            <strong>sleep</strong>, <strong>alcohol</strong>, <strong>eating</strong>, or <strong>trauma-related stress</strong>. ~{estMin.toFixed(0)}–8 min.
+          <p className="screening-hero-lead">
+            Confidential check-in using validated tools: <strong>PHQ-9</strong> and <strong>GAD-7</strong> first. Add optional screens —{' '}
+            <strong>sleep</strong>, <strong>sleep apnoea risk</strong>, <strong>alcohol</strong>, <strong>eating</strong>, <strong>trauma stress</strong>,{' '}
+            <strong>wellbeing</strong>. About {estMin.toFixed(0)}–10 min if you select several add-ons.
           </p>
-        </div>
+        </header>
 
         {flowIndex > 0 && (
-          <div style={{ marginBottom: '1.5rem' }}>
-            <div
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                fontSize: '0.78rem',
-                color: 'var(--text-muted)',
-                marginBottom: 5,
-                fontWeight: 600,
-              }}
-            >
+          <div className="screening-progress" aria-hidden={false}>
+            <div className="screening-progress-meta">
               <span>
                 Step {flowIndex} of {flow.length - 1}
               </span>
               <span>
-                {flowStepLabel(stepId)} {progressDetail ? `· ${progressDetail}` : ''}
+                {flowStepLabel(stepId)}
+                {progressDetail ? ` · ${progressDetail}` : ''}
               </span>
             </div>
-            <div style={{ background: '#e6fffa', height: 8, borderRadius: 99, overflow: 'hidden' }}>
-              <div
-                style={{
-                  background: 'linear-gradient(90deg, #14b8a6, #0f766e)',
-                  height: '100%',
-                  width: `${progressPct}%`,
-                  transition: 'width 0.3s ease',
-                  borderRadius: 99,
-                }}
-              />
+            <div className="screening-progress-track">
+              <div className="screening-progress-fill" style={{ width: `${progressPct}%` }} />
             </div>
           </div>
         )}
 
         {stepId === 'intro' && (
           <Card>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 14, marginBottom: '1.25rem' }}>
+            <div className="screening-intro-features">
               {[
                 { icon: '🧘', title: 'Confidential', desc: 'Your responses are sent securely to our care team.' },
-                { icon: '🩺', title: 'Validated tools', desc: 'Same screeners used in clinics worldwide.' },
-                { icon: '➕', title: 'Optional add-ons', desc: 'Pick extra screens that match your concerns.' },
+                { icon: '🩺', title: 'Validated tools', desc: 'Screeners commonly used in clinical practice.' },
+                { icon: '➕', title: 'Pick your add-ons', desc: 'Only complete the extra questionnaires you choose.' },
               ].map((f) => (
-                <div key={f.title} style={{ background: '#f0fdfa', borderRadius: 12, padding: '1rem', textAlign: 'center' }}>
-                  <div style={{ fontSize: '1.6rem', marginBottom: 6 }}>{f.icon}</div>
-                  <div style={{ fontWeight: 800, fontSize: '0.92rem', marginBottom: 2 }}>{f.title}</div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{f.desc}</div>
+                <div key={f.title} className="screening-intro-feature">
+                  <div className="screening-intro-feature-icon" aria-hidden>
+                    {f.icon}
+                  </div>
+                  <div className="screening-intro-feature-title">{f.title}</div>
+                  <div className="screening-intro-feature-desc">{f.desc}</div>
                 </div>
               ))}
             </div>
 
-            <div style={{ fontWeight: 800, fontSize: '0.92rem', marginBottom: 10, color: 'var(--text)' }}>
-              Optional — screen for a specific concern
-            </div>
-            <p style={{ fontSize: '0.86rem', color: 'var(--text-muted)', marginBottom: 12, lineHeight: 1.5 }}>
-              PHQ-9 and GAD-7 always run first. Tap any area below to add an extra questionnaire (not a diagnosis).
+            <h2 className="screening-module-heading">Optional — add screens by concern</h2>
+            <p className="screening-module-sub">
+              PHQ-9 and GAD-7 always run first. Tap a card to include that tool (not a diagnosis).
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 10, marginBottom: '1.25rem' }}>
+            <div className="screening-module-grid">
               {[
-                { key: 'sleep', icon: '🌙', label: 'Sleep / insomnia', sub: 'ISI' },
+                { key: 'sleep', icon: '🌙', label: 'Insomnia / sleep quality', sub: 'ISI' },
+                { key: 'osa', icon: '😮‍💨', label: 'Sleep apnoea risk', sub: 'STOP-BANG' },
                 { key: 'alcohol', icon: '🍷', label: 'Alcohol use', sub: 'AUDIT-C' },
                 { key: 'eating', icon: '🍽', label: 'Eating / weight', sub: 'SCOFF' },
-                { key: 'trauma', icon: '🛡', label: 'Trauma / PTSD-type stress', sub: '5-item screen' },
+                { key: 'trauma', icon: '🛡', label: 'Trauma & stress', sub: '5-item screen' },
+                { key: 'wellbeing', icon: '☀️', label: 'General wellbeing', sub: 'WHO-5' },
               ].map((x) => (
                 <button
                   key={x.key}
                   type="button"
                   onClick={toggle(x.key)}
-                  style={{
-                    textAlign: 'left',
-                    padding: '12px 14px',
-                    borderRadius: 12,
-                    border: modules[x.key] ? '2px solid var(--brand-500, #14b8a6)' : '1px solid var(--border)',
-                    background: modules[x.key] ? '#e6fffa' : '#fff',
-                    cursor: 'pointer',
-                    fontFamily: 'inherit',
-                  }}
+                  className={`screening-module-tile${modules[x.key] ? ' is-selected' : ''}`}
                 >
-                  <div style={{ fontSize: '1.2rem', marginBottom: 4 }}>{x.icon}</div>
-                  <div style={{ fontWeight: 800, fontSize: '0.88rem' }}>{x.label}</div>
-                  <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 2 }}>{x.sub}</div>
+                  <span className="screening-module-tile-icon" aria-hidden>
+                    {x.icon}
+                  </span>
+                  <span className="screening-module-tile-label">{x.label}</span>
+                  <span className="screening-module-tile-sub">{x.sub}</span>
                 </button>
               ))}
             </div>
 
-            <div
-              style={{
-                background: 'var(--bg-subtle, #f8f9fa)',
-                borderRadius: 10,
-                padding: '12px 14px',
-                fontSize: '0.85rem',
-                color: 'var(--text-muted)',
-                marginBottom: '1.5rem',
-                borderLeft: '3px solid #ffc107',
-              }}
-            >
+            <div className="screening-disclaimer">
               ⚠ <strong>Important:</strong> This is self-screening, not a diagnosis. If you&apos;re in crisis, call{' '}
-              <a href="tel:7777936367" style={{ color: 'var(--brand-700)', fontWeight: 600 }}>
-                7777936367
-              </a>{' '}
-              or emergency services.
+              <a href="tel:7777936367">7777936367</a> or emergency services.
             </div>
 
-            <button type="button" onClick={beginFlow} className="btn btn-primary btn-lg btn-full">
+            <button type="button" onClick={beginFlow} className="btn btn-primary btn-lg btn-full screening-begin-btn">
               Begin screening →
             </button>
           </Card>
@@ -560,6 +565,33 @@ export default function ScreeningPage() {
             onBack={goBack}
             onNext={goNext}
             canNext={canNextPtsd}
+          />
+        )}
+
+        {stepId === 'stopbang' && (
+          <YesNoCard
+            tool="STOP-BANG"
+            title="Answer yes or no. This estimates risk for obstructive sleep apnoea — it does not replace a sleep study."
+            questions={STOPBANG_QUESTIONS}
+            answers={stopbang}
+            setAnswers={setStopbang}
+            onBack={goBack}
+            onNext={goNext}
+            canNext={stopbangDone}
+          />
+        )}
+
+        {stepId === 'who5' && (
+          <QuestionnaireCard
+            tool="WHO-5"
+            title="Over the last two weeks — for each statement, how often have you felt this way?"
+            questions={WHO5_QUESTIONS}
+            answers={who5}
+            setAnswers={setWho5}
+            options={WHO5_OPTIONS}
+            onBack={goBack}
+            onNext={goNext}
+            canNext={who5Done}
           />
         )}
 
@@ -655,76 +687,25 @@ export default function ScreeningPage() {
 }
 
 function Card({ children }) {
-  return (
-    <div
-      style={{
-        background: '#fff',
-        borderRadius: 16,
-        padding: '1.75rem',
-        boxShadow: '0 8px 24px rgba(15, 118, 110, 0.08)',
-        border: '1px solid var(--border)',
-      }}
-    >
-      {children}
-    </div>
-  );
+  return <div className="screening-card">{children}</div>;
 }
 
 function QuestionnaireCard({ tool, title, questions, answers, setAnswers, options, onBack, onNext, canNext }) {
   return (
     <Card>
-      <div style={{ marginBottom: '1.25rem' }}>
-        <div
-          style={{
-            display: 'inline-block',
-            background: '#f0fdfa',
-            color: 'var(--brand-700, #0f766e)',
-            padding: '3px 10px',
-            borderRadius: 99,
-            fontSize: '0.72rem',
-            fontWeight: 700,
-            letterSpacing: '0.04em',
-            marginBottom: 8,
-          }}
-        >
-          {tool}
-        </div>
-        <h2 style={{ fontSize: '1.1rem', fontWeight: 700, lineHeight: 1.4 }}>{title}</h2>
+      <div className="screening-q-header">
+        <div className="screening-tool-badge">{tool}</div>
+        <h2 className="screening-q-title">{title}</h2>
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div className="screening-q-list">
         {questions.map((q, i) => (
-          <div
-            key={i}
-            style={{
-              background: answers[i] !== null ? '#f0fdfa' : 'var(--bg-subtle, #fafafa)',
-              border: `1px solid ${answers[i] !== null ? 'var(--brand-300, #5eead4)' : 'var(--border)'}`,
-              borderRadius: 12,
-              padding: '12px 14px',
-              transition: 'all 0.15s',
-            }}
-          >
-            <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
-              <span
-                style={{
-                  background: 'var(--brand-500, #14b8a6)',
-                  color: '#fff',
-                  width: 22,
-                  height: 22,
-                  borderRadius: '50%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.72rem',
-                  fontWeight: 800,
-                  flexShrink: 0,
-                }}
-              >
-                {i + 1}
-              </span>
-              <p style={{ margin: 0, fontSize: '0.92rem', lineHeight: 1.5, fontWeight: 500 }}>{q}</p>
+          <div key={i} className={`screening-q-item${answers[i] !== null ? ' is-answered' : ''}`}>
+            <div className="screening-q-item-top">
+              <span className="screening-q-num">{i + 1}</span>
+              <p className="screening-q-text">{q}</p>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: 6 }}>
+            <div className="screening-scale-grid">
               {options.map((opt) => {
                 const selected = answers[i] === opt.value;
                 return (
@@ -736,21 +717,10 @@ function QuestionnaireCard({ tool, title, questions, answers, setAnswers, option
                       next[i] = opt.value;
                       setAnswers(next);
                     }}
-                    style={{
-                      padding: '7px 8px',
-                      borderRadius: 8,
-                      border: selected ? '2px solid var(--brand-500, #14b8a6)' : '1px solid var(--border)',
-                      background: selected ? 'var(--brand-500, #14b8a6)' : '#fff',
-                      color: selected ? '#fff' : 'var(--text)',
-                      fontSize: '0.75rem',
-                      fontWeight: selected ? 700 : 500,
-                      cursor: 'pointer',
-                      transition: 'all 0.12s',
-                      lineHeight: 1.2,
-                    }}
+                    className={`screening-scale-btn${selected ? ' is-selected' : ''}`}
                   >
                     <div>{opt.label}</div>
-                    {opt.sub && <div style={{ fontSize: '0.65rem', opacity: 0.85 }}>{opt.sub}</div>}
+                    {opt.sub && <div className="screening-scale-sub">{opt.sub}</div>}
                   </button>
                 );
               })}
@@ -759,7 +729,7 @@ function QuestionnaireCard({ tool, title, questions, answers, setAnswers, option
         ))}
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, marginTop: '1.5rem' }}>
+      <div className="screening-nav-buttons">
         <button type="button" onClick={onBack} className="btn btn-ghost">
           ← Back
         </button>

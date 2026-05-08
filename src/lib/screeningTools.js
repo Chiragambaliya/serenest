@@ -97,6 +97,36 @@ export const PTSD_SYMPTOM_QUESTIONS = [
   'In the past month, have you felt strong guilt, blamed yourself, or had strong negative feelings about yourself or the world?',
 ];
 
+/** WHO-5 — Well-Being Index (WHO). Higher sum = better wellbeing (0–25 raw → ×4 = 0–100%). */
+export const WHO5_QUESTIONS = [
+  'I have felt cheerful and in good spirits',
+  'I have felt calm and relaxed',
+  'I have felt active and vigorous',
+  'I woke up feeling fresh and rested',
+  'My daily life has been filled with things that interest me',
+];
+
+export const WHO5_OPTIONS = [
+  { value: 0, label: 'At no time' },
+  { value: 1, label: 'Some of the time' },
+  { value: 2, label: 'Less than half' },
+  { value: 3, label: 'More than half' },
+  { value: 4, label: 'Most of the time' },
+  { value: 5, label: 'All of the time' },
+];
+
+/** STOP-BANG — obstructive sleep apnoea risk screen (yes/no). Not a diagnosis. */
+export const STOPBANG_QUESTIONS = [
+  'Do you Snore loudly (loud enough to be heard through closed doors or louder than talking)?',
+  'Do you often feel Tired, fatigued, or sleepy during daytime?',
+  'Has anyone Observed you stop breathing during your sleep?',
+  'Do you have or are you being treated for high blood Pressure?',
+  'Is your BMI more than 35 kg/m²? (or do you believe you would be classified as severely overweight by a clinician?)',
+  'Are you older than 50 years of age?',
+  'Is your neck circumference large — e.g. shirt collar roughly 17 in (43 cm) or more if male, 16 in (41 cm) or more if female?',
+  'Are you male?',
+];
+
 export const FREQ_OPTIONS = [
   { value: 0, label: 'Not at all', sub: '0 days' },
   { value: 1, label: 'Several days', sub: '1–6 days' },
@@ -107,9 +137,11 @@ export const FREQ_OPTIONS = [
 export function buildFlow(modules) {
   const f = ['intro', 'phq9', 'gad7'];
   if (modules.sleep) f.push('isi');
+  if (modules.osa) f.push('stopbang');
   if (modules.alcohol) f.push('audit');
   if (modules.eating) f.push('scoff');
   if (modules.trauma) f.push('ptsd');
+  if (modules.wellbeing) f.push('who5');
   f.push('contact');
   return f;
 }
@@ -162,15 +194,66 @@ export function ptsdScreenResult(eventYes, symptomYesCount) {
   return { positive, label: 'Further assessment suggested', color: '#e67e22', desc: 'Pattern can warrant PTSD assessment — only a clinician can diagnose.' };
 }
 
+/** Raw sum 0–25; index score = sum × 4 (0–100). ≤28 suggests poor wellbeing per WHO guidance. */
+export function who5Severity(rawSum) {
+  const index = rawSum * 4;
+  if (index <= 28) {
+    return {
+      label: 'Poor wellbeing',
+      color: '#dc3545',
+      desc: 'This pattern often warrants a fuller mood check-in with a clinician — many people also benefit from counselling.',
+    };
+  }
+  if (index <= 50) {
+    return {
+      label: 'Below average',
+      color: '#e67e22',
+      desc: 'There may be room to improve energy, sleep, and daily enjoyment — self-care and professional support can help.',
+    };
+  }
+  if (index <= 70) {
+    return { label: 'Moderate', color: '#0d6efd', desc: 'Reasonable wellbeing with some ups and downs — fine to optimise further.' };
+  }
+  return { label: 'Good', color: '#198754', desc: 'Scores suggest relatively strong wellbeing over the past two weeks.' };
+}
+
+/** YES count 0–8. ≥3 and ≥5 often used as increasing OSA risk tiers. */
+export function stopBangResult(yesCount) {
+  if (yesCount <= 2) {
+    return {
+      elevated: false,
+      label: 'Lower risk',
+      color: '#198754',
+      desc: 'Fewer risk factors on this screen — still seek evaluation if you have heavy snoring, choking in sleep, or severe sleepiness.',
+    };
+  }
+  if (yesCount <= 4) {
+    return {
+      elevated: true,
+      label: 'Intermediate risk',
+      color: '#e67e22',
+      desc: 'Several risk factors — consider discussing sleep apnoea with a doctor, especially if you snore or feel non-restored after sleep.',
+    };
+  }
+  return {
+    elevated: true,
+    label: 'Higher risk',
+    color: '#dc3545',
+    desc: 'Many risk factors — a formal sleep evaluation may be appropriate; this screen does not diagnose sleep apnoea.',
+  };
+}
+
 export function flowStepLabel(stepId) {
   const map = {
     intro: 'Start',
     phq9: 'Mood (PHQ-9)',
     gad7: 'Anxiety (GAD-7)',
     isi: 'Sleep (ISI)',
+    stopbang: 'Sleep apnoea risk',
     audit: 'Alcohol (AUDIT-C)',
     scoff: 'Eating (SCOFF)',
     ptsd: 'Trauma stress',
+    who5: 'Wellbeing (WHO-5)',
     contact: 'Your details',
   };
   return map[stepId] ?? stepId;

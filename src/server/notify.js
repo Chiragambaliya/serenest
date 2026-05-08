@@ -177,6 +177,8 @@ export const notify = {
           row('Trauma screen', p.event ? `${esc(p.symptom_yes_count)}/5 yes · ${p.positive ? 'further eval +' : 'below cut-off'}` : 'No trauma endorsement'),
         );
       }
+      if (extras.who5) extraRowList.push(row('WHO-5 (wellbeing)', `${esc(extras.who5.raw)}/25 · index ${esc(extras.who5.index)}/100 · ${esc(extras.who5.severity)}`));
+      if (extras.stop_bang) extraRowList.push(row('STOP-BANG', `${esc(extras.stop_bang.yes_count)}/8 yes · ${esc(extras.stop_bang.severity)}`));
     }
 
     const html = `
@@ -199,6 +201,8 @@ export const notify = {
       if (extras.audit_c) parts.push(`AUDIT-C ${esc(extras.audit_c.score)}`);
       if (extras.scoff) parts.push(`SCOFF ${esc(extras.scoff.yes_count)}y`);
       if (extras.ptsd_screen?.event) parts.push(`Trauma ${esc(extras.ptsd_screen.symptom_yes_count)}/5`);
+      if (extras.who5) parts.push(`WHO-5 ${esc(extras.who5.index)}`);
+      if (extras.stop_bang) parts.push(`STOP-BANG ${esc(extras.stop_bang.yes_count)}/8`);
       tgExtra = `\n${parts.join(' · ')}`;
     }
     fire(sendEmail({ subject: `${safety ? '🚨 SAFETY' : 'New screening'} — ${s.name || 'Anonymous'} (PHQ-9: ${s.phq9_score}, GAD-7: ${s.gad7_score})`, html, urgent: safety }));
