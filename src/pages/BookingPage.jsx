@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { bookings } from '../lib/api';
 
 const PRACTITIONER_TYPES = [
@@ -37,10 +37,19 @@ function makeSlots() {
 }
 
 export default function BookingPage() {
+  const [searchParams] = useSearchParams();
+  const preProId    = searchParams.get('pid') ?? '';
+  const preProName  = searchParams.get('pname') ?? '';
+  const preProRole  = searchParams.get('prole') ?? '';
+  const preProLabel = searchParams.get('prolabel') ?? '';
+  const preProFee   = searchParams.get('pfee') ?? '';
+  const preProDur   = searchParams.get('pduration') ?? '';
+  const hasPro = Boolean(preProName);
+
   const { days, times } = useMemo(() => makeSlots(), []);
   const [step, setStep] = useState(1);
 
-  const [practitionerType, setPractitionerType] = useState('psychiatrist');
+  const [practitionerType, setPractitionerType] = useState(preProRole || 'psychiatrist');
   const [mode, setMode] = useState('video');
   const [dayKey, setDayKey] = useState(days[0]?.key ?? '');
   const [time, setTime] = useState(times[0] ?? '');
@@ -65,6 +74,7 @@ export default function BookingPage() {
         patient_phone: phoneClean,
         patient_email: email.trim() || undefined,
         practitioner_type: practitionerType,
+        ...(hasPro && { professional_id: preProId, professional_name: preProName }),
         mode,
         preferred_date: dayKey,
         preferred_time: time,
@@ -97,11 +107,31 @@ export default function BookingPage() {
         <div className="container">
           <div className="section-head about-hero-head">
             <p className="kicker">Booking</p>
-            <h1 className="page-title">Book an appointment in minutes.</h1>
+            <h1 className="page-title">
+              {hasPro ? `Book a session with ${preProName}` : 'Book an appointment in minutes.'}
+            </h1>
             <p className="about-subtext">
-              Choose your practitioner type and consultation mode, pick a slot, and share your details.
+              {hasPro
+                ? `${preProLabel}${preProFee ? ` · ₹${preProFee}` : ''}${preProDur ? ` · ${preProDur} min` : ''}. Pick a slot and share your details.`
+                : 'Choose your practitioner type and consultation mode, pick a slot, and share your details.'}
             </p>
           </div>
+          {hasPro && (
+            <div className="pro-booking-banner">
+              <div className="pro-booking-avatar">{preProName.charAt(0).toUpperCase()}</div>
+              <div>
+                <div className="pro-booking-name">{preProName}</div>
+                <div className="pro-booking-meta">
+                  {preProLabel}
+                  {preProFee ? ` · ₹${preProFee}` : ''}
+                  {preProDur ? ` · ${preProDur} min session` : ''}
+                </div>
+              </div>
+              <Link to="/patient/find-professional" className="btn btn-ghost" style={{ marginLeft: 'auto' }}>
+                Change
+              </Link>
+            </div>
+          )}
         </div>
       </section>
 
@@ -141,17 +171,19 @@ export default function BookingPage() {
               <div className="booking-body">
                 <div className="section-head" style={{ marginBottom: 10 }}>
                   <p className="section-label">Step 1</p>
-                  <h2>Choose your care type.</h2>
+                  <h2>{hasPro ? `Booking with ${preProName}` : 'Choose your care type.'}</h2>
+                  {hasPro && <p className="muted">{preProLabel}{preProFee ? ` · ₹${preProFee}` : ''}{preProDur ? ` · ${preProDur} min` : ''}</p>}
                 </div>
 
                 <div className="form-grid">
                   <div>
-                    <div className="field-label">Practitioner</div>
+                    <div className="field-label">Practitioner {hasPro && <span className="summary-pill" style={{ marginLeft: 6 }}>{preProLabel}</span>}</div>
                     <div className="choice-grid">
                       {PRACTITIONER_TYPES.map((t) => (
                         <button
                           key={t.id}
                           type="button"
+                          disabled={hasPro}
                           className={`choice-card ${practitionerType === t.id ? 'is-selected' : ''}`}
                           onClick={() => setPractitionerType(t.id)}
                         >

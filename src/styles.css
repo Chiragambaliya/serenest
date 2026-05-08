@@ -3468,3 +3468,44 @@ button {
   .hero-actions { flex-direction: column; align-items: stretch; }
   .btn-lg { padding: 14px 20px; }
 }
+
+/* ── Professional pre-selected booking banner ─────────── */
+.pro-booking-banner {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 24px;
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid rgba(63, 107, 85, 0.22);
+  border-radius: 16px;
+  padding: 16px 20px;
+  backdrop-filter: blur(8px);
+  max-width: 540px;
+  box-shadow: 0 4px 18px rgba(63, 107, 85, 0.10);
+}
+
+.pro-booking-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--sage-3), var(--sage-2));
+  color: #fff;
+  font-size: 20px;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.pro-booking-name {
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--ink);
+}
+
+.pro-booking-meta {
+  font-size: 13px;
+  color: rgba(11, 43, 34, 0.65);
+  margin-top: 2px;
+}

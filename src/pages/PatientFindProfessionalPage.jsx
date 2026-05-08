@@ -460,7 +460,7 @@ function ProfessionalCard({ p }) {
       {/* Actions */}
       <div style={{ display: 'flex', gap: 8, marginTop: 'auto', paddingTop: 4 }}>
         <Link
-          to="/book"
+          to={`/book?pid=${encodeURIComponent(p.id)}&pname=${encodeURIComponent(p.name)}&prole=${encodeURIComponent(p.role)}&prolabel=${encodeURIComponent(p.roleLabel)}&pfee=${encodeURIComponent(p.fee ?? '')}&pduration=${encodeURIComponent(p.duration ?? '')}`}
           className="btn btn-primary"
           style={{ flex: 1, justifyContent: 'center', display: 'flex' }}
         >
