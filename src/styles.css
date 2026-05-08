@@ -1435,6 +1435,16 @@ button {
   padding: 5px 12px;
 }
 
+.summary-pill-accent {
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  background: rgba(63, 107, 85, 0.12);
+  border-color: rgba(63, 107, 85, 0.35);
+  color: var(--ink);
+}
+
 .booking-body {
   padding: 28px 24px;
 }

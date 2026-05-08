@@ -159,7 +159,13 @@ export default function BookingPage() {
               </div>
 
               <div className="booking-summary" aria-label="Selection summary">
-                <div className="summary-pill">{selectedTypeLabel}</div>
+                {hasPro ? (
+                  <div className="summary-pill summary-pill-accent" title={preProLabel}>
+                    {preProName}
+                  </div>
+                ) : (
+                  <div className="summary-pill">{selectedTypeLabel}</div>
+                )}
                 <div className="summary-pill">{selectedModeLabel}</div>
                 <div className="summary-pill">
                   {dayLabel} · {time}
@@ -225,7 +231,15 @@ export default function BookingPage() {
                 <div className="section-head" style={{ marginBottom: 10 }}>
                   <p className="section-label">Step 2</p>
                   <h2>Pick a preferred slot.</h2>
-                  <p>These are sample slots for now (we’ll connect real availability next).</p>
+                  <p>
+                    These are sample slots for now (we’ll connect real availability next).
+                    {hasPro && (
+                      <>
+                        {' '}
+                        <strong>Consultant:</strong> {preProName} ({preProLabel})
+                      </>
+                    )}
+                  </p>
                 </div>
 
                 <div className="slot-grid">
@@ -272,6 +286,11 @@ export default function BookingPage() {
                 <div className="section-head" style={{ marginBottom: 10 }}>
                   <p className="section-label">Step 3</p>
                   <h2>Your details.</h2>
+                  {hasPro && (
+                    <p className="muted" style={{ margin: 0 }}>
+                      Booking for session with <strong>{preProName}</strong> ({preProLabel})
+                    </p>
+                  )}
                 </div>
 
                 <div className="form-grid">
@@ -369,8 +388,19 @@ export default function BookingPage() {
 
                 <div className="confirm-grid">
                   <div className="confirm-card">
+                    {hasPro && (
+                      <div className="confirm-row">
+                        <span className="confirm-k">Consultant</span>
+                        <span className="confirm-v">
+                          {preProName}
+                          <span className="muted" style={{ display: 'block', fontWeight: 500, fontSize: '0.9em', marginTop: 4 }}>
+                            {preProLabel}
+                          </span>
+                        </span>
+                      </div>
+                    )}
                     <div className="confirm-row">
-                      <span className="confirm-k">Practitioner</span>
+                      <span className="confirm-k">{hasPro ? 'Role' : 'Practitioner'}</span>
                       <span className="confirm-v">{selectedTypeLabel}</span>
                     </div>
                     <div className="confirm-row">
@@ -467,8 +497,19 @@ export default function BookingPage() {
                   Booking received!
                 </h2>
                 <p style={{ color: 'var(--text-muted)', maxWidth: 460, margin: '0 auto 1.5rem' }}>
-                  Thank you, <strong>{name.split(' ')[0]}</strong>. We've received your request for a{' '}
-                  <strong>{selectedTypeLabel.toLowerCase()}</strong> {selectedModeLabel.toLowerCase()} session
+                  Thank you, <strong>{name.split(' ')[0]}</strong>. We've received your request
+                  {hasPro ? (
+                    <>
+                      {' '}
+                      for a {selectedModeLabel.toLowerCase()} session with <strong>{preProName}</strong> ({preProLabel})
+                    </>
+                  ) : (
+                    <>
+                      {' '}
+                      for a <strong>{selectedTypeLabel.toLowerCase()}</strong> {selectedModeLabel.toLowerCase()} session
+                    </>
+                  )}
+                  {' '}
                   on <strong>{dayLabel}</strong> at <strong>{time}</strong>.
                 </p>
 
@@ -488,13 +529,23 @@ export default function BookingPage() {
 
                 <p style={{ fontSize: '0.92rem', marginBottom: '1.5rem' }}>
                   Our team will contact you on <strong>+91 {phoneClean}</strong> within a few hours
-                  to confirm your professional and payment.
+                  to confirm {hasPro ? (
+                    <>
+                      your session with <strong>{preProName}</strong> and payment.
+                    </>
+                  ) : (
+                    <>your professional and payment.</>
+                  )}
                 </p>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
                   <a
                     className="btn btn-primary"
-                    href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I just booked a ${selectedTypeLabel} session (Ref: ${confirmation.id?.slice(0, 8).toUpperCase()})`)}`}
+                    href={`https://wa.me/917777936367?text=${encodeURIComponent(
+                      hasPro
+                        ? `Hi, I just booked a ${selectedModeLabel} session with ${preProName} (${preProLabel}) — Ref: ${confirmation.id?.slice(0, 8).toUpperCase()}`
+                        : `Hi, I just booked a ${selectedTypeLabel} session (Ref: ${confirmation.id?.slice(0, 8).toUpperCase()})`,
+                    )}`}
                     target="_blank"
                     rel="noreferrer"
                   >
