@@ -1,14 +1,17 @@
 /**
- * Notification helper — alerts the Serenest team about meaningful
- * events on the site. Currently uses Resend (email).
+ * Notification helper — team alerts + optional patient confirmations.
  *
- * Setup (3 minutes):
- *   1. Sign up at https://resend.com (free — 3,000 emails/month)
- *   2. Verify a domain you own (e.g. serenest.fit) under Domains
- *      — OR — skip verification & use the default test sender
- *        `onboarding@resend.dev` (works immediately, may hit spam)
- *   3. Create an API key at https://resend.com/api-keys
- *   4. Set RESEND_API_KEY, NOTIFY_FROM, NOTIFY_EMAIL in .env / Render
+ * Email (free tier — Resend, 3k/mo):
+ *   RESEND_API_KEY, NOTIFY_FROM, NOTIFY_EMAIL  → team inbox
+ *   Same key sends patient confirmations when they leave an email (booking / screening).
+ *   Verify your domain in Resend for best deliverability to arbitrary addresses.
+ *
+ * Team WhatsApp (free — CallMeBot, personal notifications):
+ *   https://www.callmebot.com/blog/free-api-whatsapp-messages/
+ *   Link your WhatsApp, get an apikey, then set:
+ *   CALLMEBOT_WHATSAPP_APIKEY, CALLMEBOT_WHATSAPP_PHONE (digits only, e.g. 917777936367)
+ *
+ * Optional: TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID for Telegram backup.
  *
  * Failures are swallowed — notifications must never break user flow.
  */
@@ -17,13 +20,27 @@ const RESEND_KEY  = process.env.RESEND_API_KEY;
 const NOTIFY_FROM = process.env.NOTIFY_FROM  || 'Serenest Alerts <onboarding@resend.dev>';
 const NOTIFY_TO   = process.env.NOTIFY_EMAIL;
 
+const CALLMEBOT_KEY   = process.env.CALLMEBOT_WHATSAPP_APIKEY;
+const CALLMEBOT_PHONE = process.env.CALLMEBOT_WHATSAPP_PHONE
+  ? String(process.env.CALLMEBOT_WHATSAPP_PHONE).replace(/\D/g, '')
+  : '';
+
 // Optional secondary channel — kept silent unless explicitly enabled.
 const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TG_CHAT  = process.env.TELEGRAM_CHAT_ID;
 
 // ── Internal: send email via Resend ───────────────────────────────
-async function sendEmail({ subject, html, urgent = false }) {
-  if (!RESEND_KEY || !NOTIFY_TO) return false;
+/** @param {{ subject: string, html: string, urgent?: boolean, to?: string | string[] }} opts If `to` omitted, uses NOTIFY_EMAIL. */
+async function sendEmail({ subject, html, urgent = false, to = null }) {
+  if (!RESEND_KEY) return false;
+
+  let recipients = [];
+  if (to) {
+    recipients = (Array.isArray(to) ? to : String(to).split(',')).map((s) => s.trim()).filter(Boolean);
+  } else if (NOTIFY_TO) {
+    recipients = NOTIFY_TO.split(',').map((s) => s.trim()).filter(Boolean);
+  }
+  if (!recipients.length) return false;
 
   try {
     const r = await fetch('https://api.resend.com/emails', {
@@ -34,7 +51,7 @@ async function sendEmail({ subject, html, urgent = false }) {
       },
       body: JSON.stringify({
         from:    NOTIFY_FROM,
-        to:      NOTIFY_TO.split(',').map((s) => s.trim()).filter(Boolean),
+        to:      recipients,
         subject: urgent ? `🚨 URGENT — ${subject}` : subject,
         html:    wrapHtml(html, urgent),
       }),
@@ -48,6 +65,27 @@ async function sendEmail({ subject, html, urgent = false }) {
     return true;
   } catch (e) {
     console.warn('[notify] Resend error:', e.message);
+    return false;
+  }
+}
+
+/** Short plain-text ping to your WhatsApp via CallMeBot (no Meta Business setup). */
+async function sendTeamWhatsApp(text) {
+  if (!CALLMEBOT_KEY || !CALLMEBOT_PHONE) return false;
+  const safe = String(text).slice(0, 3500);
+  try {
+    const url =
+      'https://api.callmebot.com/whatsapp.php?' +
+      `phone=${encodeURIComponent(CALLMEBOT_PHONE)}&text=${encodeURIComponent(safe)}&apikey=${encodeURIComponent(CALLMEBOT_KEY)}`;
+    const r = await fetch(url);
+    const body = await r.text().catch(() => '');
+    if (!r.ok || /error/i.test(body)) {
+      console.warn('[notify] CallMeBot WhatsApp:', r.status, body.slice(0, 120));
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.warn('[notify] CallMeBot error:', e.message);
     return false;
   }
 }
@@ -110,6 +148,56 @@ function wrapHtml(inner, urgent) {
 </body></html>`;
 }
 
+function wrapPatientHtml(inner, urgent) {
+  const accent = urgent ? '#dc2626' : '#0f766e';
+  const head = urgent
+    ? 'Important message from Serenest'
+    : 'Thank you for connecting with Serenest';
+  return `<!doctype html><html><body style="margin:0;padding:24px 12px;background:#f0fdfa;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif">
+<table role="presentation" cellpadding="0" cellspacing="0" style="max-width:560px;margin:0 auto;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(15,118,110,0.08)">
+  <tr><td style="background:linear-gradient(135deg,${accent},#0c4a45);padding:18px 24px;color:#ffffff">
+    <div style="font-size:13px;letter-spacing:0.08em;text-transform:uppercase;opacity:.85">Serenest</div>
+    <div style="font-size:18px;font-weight:700;margin-top:2px">${head}</div>
+  </td></tr>
+  <tr><td style="padding:22px 24px;color:#0f172a;font-size:14px;line-height:1.55">
+    ${inner}
+  </td></tr>
+  <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e8f0;color:#64748b;font-size:12px;line-height:1.5">
+    <a href="https://serenest.fit" style="color:${accent};text-decoration:none;font-weight:600">serenest.fit</a>
+    <span style="display:block;margin-top:8px">Clinical telepsychiatry for India. Reply to this email only if it was sent from a staffed address.</span>
+  </td></tr>
+</table>
+</body></html>`;
+}
+
+async function sendPatientEmail({ subject, html, urgent = false, to }) {
+  if (!RESEND_KEY || !to?.trim()) return false;
+  try {
+    const r = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${RESEND_KEY}`,
+        'Content-Type':  'application/json',
+      },
+      body: JSON.stringify({
+        from:    NOTIFY_FROM,
+        to:      [to.trim()],
+        subject: urgent ? `Important — ${subject}` : subject,
+        html:    wrapPatientHtml(html, urgent),
+      }),
+    });
+    if (!r.ok) {
+      const txt = await r.text().catch(() => '');
+      console.warn('[notify] Resend (patient) failed:', r.status, txt.slice(0, 200));
+      return false;
+    }
+    return true;
+  } catch (e) {
+    console.warn('[notify] Resend (patient) error:', e.message);
+    return false;
+  }
+}
+
 function table(rows) {
   return `<table cellpadding="0" cellspacing="0" style="width:100%;border-collapse:collapse;margin:6px 0">${rows.filter(Boolean).join('')}</table>`;
 }
@@ -123,6 +211,44 @@ function callouts({ phone, email }) {
   }
   if (email) btns.push(`<a href="mailto:${email}" style="display:inline-block;background:#475569;color:#fff;text-decoration:none;padding:9px 16px;border-radius:8px;font-size:13px;font-weight:600;margin:4px 6px 0 0">✉️ Email</a>`);
   return btns.length ? `<div style="margin-top:12px">${btns.join('')}</div>` : '';
+}
+
+function patientBookingBody(b) {
+  const firstToken = (b.patient_name || 'there').trim().split(/\s+/)[0];
+  const first = esc(firstToken);
+  const ref = b.id ? esc(b.id.slice(0, 8).toUpperCase()) : '';
+  return (
+    `<p style="margin:0 0 12px">Hi ${first},</p>`
+    + `<p style="margin:0 0 12px">Thank you for choosing Serenest. We have received your booking request for a <strong>${esc(b.mode)}</strong> consultation (${esc(b.practitioner_type)}).</p>`
+    + `<p style="margin:0 0 12px"><strong>Preferred slot:</strong> ${esc(b.preferred_date)} at ${esc(b.preferred_time)}</p>`
+    + `<p style="margin:0 0 12px">Our team will contact you on <strong>${fmtPhone(b.patient_phone)}</strong> shortly to confirm and share payment details.</p>`
+    + (ref ? `<p style="margin:0;color:#64748b;font-size:13px">Reference: <code style="font-family:monospace">${ref}</code></p>` : '')
+    + `<p style="margin:16px 0 0;font-size:13px;color:#64748b">Questions? WhatsApp <a href="https://wa.me/917777936367" style="color:#0f766e">+91 77779 36367</a>.</p>`
+  );
+}
+
+function patientScreeningBody(s) {
+  const safety = Array.isArray(s.phq9_answers) && (s.phq9_answers[8] ?? 0) > 0;
+  const firstToken = (s.name || 'there').trim().split(/\s+/)[0];
+  const first = esc(firstToken);
+  const crisis = safety
+    ? '<div style="background:#fee2e2;border:1px solid #fecaca;border-radius:10px;padding:14px 16px;margin:0 0 16px;color:#991b1b">'
+      + '<strong>If you are in crisis or thinking about hurting yourself, please reach out now.</strong><br/>'
+      + 'iCall: <a href="tel:9152987821" style="color:#991b1b;font-weight:700">9152987821</a> · '
+      + 'Vandrevala: <a href="tel:7777936367" style="color:#991b1b;font-weight:700">7777936367</a>'
+      + '</div>'
+    : '';
+  return (
+    `<p style="margin:0 0 12px">Hi ${first},</p>`
+    + crisis
+    + '<p style="margin:0 0 12px">Thanks for completing the self-screening on Serenest. This is a screening tool, not a medical diagnosis.</p>'
+    + `<p style="margin:0 0 12px"><strong>PHQ-9:</strong> ${esc(s.phq9_score)} (${esc(s.phq9_severity)})<br/>`
+    + `<strong>GAD-7:</strong> ${esc(s.gad7_score)} (${esc(s.gad7_severity)})</p>`
+    + `<p style="margin:0 0 12px">${s.wants_callback
+      ? 'You asked to be contacted — our team will reach out when possible.'
+      : 'You can book a consultation anytime on our website.'}</p>`
+    + '<p style="margin:16px 0 0;font-size:13px;color:#64748b">Need to talk? <a href="https://wa.me/917777936367" style="color:#0f766e">Message Serenest on WhatsApp</a>.</p>'
+  );
 }
 
 function fire(promise) {
@@ -151,8 +277,21 @@ export const notify = {
     `;
     fire(sendEmail({ subject: `New booking — ${b.patient_name} (${b.preferred_date})`, html }));
     fire(sendTelegram(
-      `<b>📅 New booking</b>\n<b>${esc(b.patient_name)}</b>\n📞 ${esc(fmtPhone(b.patient_phone))}\n${esc(b.practitioner_type)} • ${esc(b.preferred_date)} ${esc(b.preferred_time)}`
+      `<b>📅 New booking</b>\n<b>${esc(b.patient_name)}</b>\n📞 ${esc(fmtPhone(b.patient_phone))}\n${esc(b.practitioner_type)} • ${esc(b.preferred_date)} ${esc(b.preferred_time)}`,
     ));
+    const phoneDigits = String(b.patient_phone || '').replace(/\D/g, '');
+    fire(sendTeamWhatsApp(
+      `Serenest — New booking\n${b.patient_name}\n+91 ${phoneDigits}\n${b.practitioner_type} · ${b.mode}\n${b.preferred_date} ${b.preferred_time}${b.id ? `\nRef: ${b.id.slice(0, 8).toUpperCase()}` : ''}`,
+    ));
+
+    const bookingPatientEmail = b.patient_email?.trim();
+    if (bookingPatientEmail) {
+      fire(sendPatientEmail({
+        subject: 'We received your booking request',
+        html: patientBookingBody(b),
+        to: bookingPatientEmail,
+      }));
+    }
   },
 
   screening(s) {
@@ -181,8 +320,22 @@ export const notify = {
     fire(sendTelegram(
       (safety ? `<b>⚠️ SAFETY ALERT</b>\n` : `<b>🧠 New screening</b>\n`) +
       `<b>${esc(s.name)}</b> · 📞 ${esc(fmtPhone(s.phone))}\nPHQ-9: ${esc(s.phq9_score)} (${esc(s.phq9_severity)}) · GAD-7: ${esc(s.gad7_score)} (${esc(s.gad7_severity)})`,
-      { urgent: safety }
+      { urgent: safety },
     ));
+    const screeningDigits = String(s.phone || '').replace(/\D/g, '');
+    fire(sendTeamWhatsApp(
+      `Serenest — ${safety ? 'SAFETY ' : ''}Screening\n${s.name || 'Anonymous'}\n+91 ${screeningDigits}\nPHQ-9: ${s.phq9_score} (${s.phq9_severity}) · GAD-7: ${s.gad7_score} (${s.gad7_severity})`,
+    ));
+
+    const screeningPatientEmail = s.email?.trim();
+    if (screeningPatientEmail) {
+      fire(sendPatientEmail({
+        subject: safety ? 'Support resources after your screening' : 'We received your self-screening',
+        html: patientScreeningBody(s),
+        to: screeningPatientEmail,
+        urgent: safety,
+      }));
+    }
   },
 
   contact(c) {
@@ -197,6 +350,9 @@ export const notify = {
       ${callouts({ phone: c.phone, email: c.email })}
     `;
     fire(sendEmail({ subject: `New enquiry — ${c.name}${c.subject ? ' · ' + c.subject : ''}`, html }));
+    fire(sendTeamWhatsApp(
+      `Serenest — Enquiry\n${c.name}\n+91 ${String(c.phone || '').replace(/\D/g, '')}\n${c.subject || '—'}\n${String(c.message || '').slice(0, 200)}`,
+    ));
   },
 
   professionalApplication(p) {
@@ -216,6 +372,9 @@ export const notify = {
       <p style="margin:12px 0 0;color:#64748b;font-size:13px">Review this application in <a href="https://serenest.fit/admin" style="color:#0f766e;font-weight:600">Admin → Applications</a>.</p>
     `;
     fire(sendEmail({ subject: `New ${p.role} application — ${p.full_name}`, html }));
+    fire(sendTeamWhatsApp(
+      `Serenest — Clinician application\n${p.full_name} (${p.role})\n+91 ${String(p.phone || '').replace(/\D/g, '')}\n${p.city || ''}`.trim(),
+    ));
   },
 
   jobApplication(j) {
@@ -230,6 +389,9 @@ export const notify = {
       <p style="margin:12px 0 0;color:#64748b;font-size:13px">Review this candidate in <a href="https://serenest.fit/admin" style="color:#0f766e;font-weight:600">Admin → HR / Hiring</a>.</p>
     `;
     fire(sendEmail({ subject: `New job application — ${j.candidate_name} for ${j.position}`, html }));
+    fire(sendTeamWhatsApp(
+      `Serenest — Job application\n${j.candidate_name} · ${j.position}\n+91 ${String(j.candidate_phone || '').replace(/\D/g, '')}`,
+    ));
   },
 
   signup(s) {
@@ -268,6 +430,16 @@ export const notify = {
 
   isConfigured() {
     return Boolean(RESEND_KEY && NOTIFY_TO);
+  },
+
+  /** Resend API key set — can send patient confirmation emails. */
+  isPatientEmailEnabled() {
+    return Boolean(RESEND_KEY);
+  },
+
+  /** CallMeBot WhatsApp — free team pings. */
+  hasTeamWhatsApp() {
+    return Boolean(CALLMEBOT_KEY && CALLMEBOT_PHONE);
   },
 };
 

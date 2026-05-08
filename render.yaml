@@ -12,10 +12,6 @@ services:
       - key: NODE_ENV
         value: production
 
-      # Canonical + Open Graph base URL (match your public domain).
-      - key: VITE_SITE_URL
-        value: https://serenest.fit
-
       # ── Supabase ─────────────────────────────────────────────
       - key: VITE_SUPABASE_URL
         sync: false   # you'll paste this in Render dashboard
@@ -41,6 +37,13 @@ services:
       - key: NOTIFY_FROM
         value: Serenest Alerts <onboarding@resend.dev>
       - key: NOTIFY_EMAIL
+        sync: false
+
+      # ── Team WhatsApp pings via CallMeBot (optional, free) ───
+      # https://www.callmebot.com/blog/free-api-whatsapp-messages/
+      - key: CALLMEBOT_WHATSAPP_APIKEY
+        sync: false
+      - key: CALLMEBOT_WHATSAPP_PHONE
         sync: false
 
       # ── CORS (set to your Render URL after first deploy) ─────

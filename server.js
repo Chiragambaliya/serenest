@@ -48,6 +48,8 @@ app.get('/api/health', (_req, res) => {
     db: supabase ? 'connected' : 'not configured',
     daily: process.env.DAILY_API_KEY ? 'configured' : 'not configured',
     notifications: notify.isConfigured() ? 'enabled' : 'disabled',
+    patient_email: notify.isPatientEmailEnabled() ? 'enabled' : 'disabled',
+    team_whatsapp: notify.hasTeamWhatsApp() ? 'enabled' : 'disabled',
     ts: new Date().toISOString(),
   });
 });
@@ -986,5 +988,7 @@ app.listen(port, () => {
   console.log(`   DB:    ${supabase ? '✅ Supabase connected' : '⚠️  Not configured (set SUPABASE_URL + SUPABASE_SERVICE_KEY)'}`);
   console.log(`   Video: ${process.env.DAILY_API_KEY ? '✅ Daily.co configured' : '⚠️  Not configured (set DAILY_API_KEY)'}`);
   console.log(`   Admin: ${process.env.ADMIN_SECRET ? '✅ Secret set' : '⚠️  Not configured (set ADMIN_SECRET)'}`);
-  console.log(`   Alert: ${notify.isConfigured() ? '✅ Email notifications enabled (Resend)' : '⚠️  Not configured (set RESEND_API_KEY + NOTIFY_EMAIL)'}\n`);
+  console.log(`   Alert: ${notify.isConfigured() ? '✅ Team email (Resend)' : '⚠️  Team email incomplete'} (RESEND_API_KEY + NOTIFY_EMAIL)`);
+  console.log(`   Patient email: ${notify.isPatientEmailEnabled() ? '✅ Resend key set' : '⚠️  Add RESEND_API_KEY for confirmations'}`);
+  console.log(`   Team WhatsApp: ${notify.hasTeamWhatsApp() ? '✅ CallMeBot configured' : '○ Optional: CALLMEBOT_WHATSAPP_APIKEY + CALLMEBOT_WHATSAPP_PHONE'}\n`);
 });

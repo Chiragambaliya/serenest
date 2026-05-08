@@ -314,6 +314,7 @@ export default function BookingPage() {
                       placeholder="you@example.com"
                       autoComplete="email"
                     />
+                    <span className="field-hint">If provided, we&apos;ll send a short booking confirmation.</span>
                   </label>
 
                   <label className="field">

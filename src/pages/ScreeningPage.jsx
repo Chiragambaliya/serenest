@@ -234,7 +234,7 @@ export default function ScreeningPage() {
                 )}
               </div>
 
-              <FieldInput label="Email (optional)" value={email} onChange={setEmail} type="email" placeholder="you@example.com" />
+              <FieldInput label="Email (optional)" value={email} onChange={setEmail} type="email" placeholder="you@example.com" hint="If provided, we’ll email a copy of your screening summary (not a diagnosis)." />
 
               <label style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: '0.88rem', cursor: 'pointer', padding: '8px 0' }}>
                 <input
@@ -455,7 +455,7 @@ function ScoreCard({ title, score, max, severity }) {
   );
 }
 
-function FieldInput({ label, value, onChange, placeholder, type = 'text', required = false }) {
+function FieldInput({ label, value, onChange, placeholder, type = 'text', required = false, hint }) {
   return (
     <div>
       <label style={fieldLabelStyle}>{label}{required ? ' *' : ''}</label>
@@ -466,6 +466,9 @@ function FieldInput({ label, value, onChange, placeholder, type = 'text', requir
         placeholder={placeholder}
         style={inputStyle}
       />
+      {hint ? (
+        <p style={{ margin: '6px 0 0', fontSize: '0.8rem', color: 'var(--text-muted)', lineHeight: 1.45 }}>{hint}</p>
+      ) : null}
     </div>
   );
 }
