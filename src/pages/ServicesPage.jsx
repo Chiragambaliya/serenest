@@ -107,8 +107,8 @@ export default function ServicesPage() {
               icon="🎥"
               title="Online Mental Health Consultation"
               badge="Most Popular"
-              lead="Talk to a verified psychiatrist from home."
-              description="Book a 45-minute video consultation with a verified psychiatrist from anywhere in India. No waiting rooms. No travel. No stigma. Just a private, encrypted session with a qualified professional who listens, assesses, and guides your care."
+              lead="Talk to a verified psychiatrist or psychologist from home."
+              description="Book a 45-minute video, audio, or chat session with a verified psychiatrist or clinical psychologist anywhere in India. No waiting rooms. No travel. No stigma — private, encrypted care with clinicians who assess, diagnose (where licensed), recommend therapy or medication appropriately, and follow your progress."
               included={[
                 '45-minute encrypted video session',
                 'Clinical assessment (PHQ-9 / GAD-7)',
@@ -280,9 +280,9 @@ export default function ServicesPage() {
             <ol className="steps">
               {[
                 ['Create your account', 'Register with your phone number. Complete a quick PHQ-9 intake. 5 minutes.'],
-                ['Find your psychiatrist', 'Browse verified MDs. Filter by language, availability, and fee. Pick your slot.'],
+                ['Find your clinician', 'Browse verified psychiatrists and psychologists. Filter by language, fee, and more. Pick your slot.'],
                 ['Pay securely', 'Razorpay-powered payment. UPI, cards, net banking accepted. Instant confirmation.'],
-                ['Join your session', 'Click "Join Consultation" at your appointment time. Encrypted video call. 45 minutes.'],
+                ['Join your session', 'Click Join at appointment time — encrypted video, voice, or chat. Typical session ~45 minutes.'],
                 ['Get your prescription', 'Your doctor issues a digital Rx immediately after the session. Download as PDF.'],
               ].map(([title, desc], i) => (
                 <li key={title} className="step">
@@ -307,10 +307,10 @@ export default function ServicesPage() {
           </div>
           <div className="grid-2">
             {[
-              ['😟', 'First-time patients', "Never seen a psychiatrist before? Serenest makes your first step easy — private, judgement-free, and from home."],
+              ['😟', 'First-time patients', 'Never booked mental health care before? Serenest makes your first step easy — private, judgement-free, and from home with a clinician who fits your needs.'],
               ['💊', 'Patients on long-term medication', "Need regular follow-ups and prescription refills? Skip the clinic visit — consult online and get your Rx digitally."],
               ['🏘️', 'Patients in smaller cities & towns', "No psychiatrist nearby? Serenest gives you access to verified specialists from Deesa to Delhi — without travelling."],
-              ['👨‍⚕️', 'Psychiatrists expanding their practice', "Want to reach patients beyond your clinic's geography? Get a complete digital practice with scheduling, documentation, and payments."],
+              ['👨‍⚕️', 'Professionals expanding their practice', 'Psychiatrist or psychologist — reach patients statewide with scheduling, SOAP notes, encrypted sessions, and payments in one dashboard.'],
             ].map(([icon, title, desc]) => (
               <article key={title} className="tile" style={{ display: 'flex', gap: 16, alignItems: 'flex-start' }}>
                 <span style={{ fontSize: 28, flexShrink: 0 }}>{icon}</span>
@@ -329,7 +329,7 @@ export default function ServicesPage() {
         <div className="container">
           <div className="section-head center">
             <div className="section-kicker">Clinical areas</div>
-            <h2>What our psychiatrists treat</h2>
+            <h2>Conditions our psychiatrists &amp; psychologists support</h2>
           </div>
 
           <div className="conditions-table">

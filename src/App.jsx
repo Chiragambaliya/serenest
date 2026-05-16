@@ -5,6 +5,7 @@ import { trackVisit } from './lib/visitTracker';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
+const TeamPage = lazy(() => import('./pages/TeamPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
 const ProfessionalsPage = lazy(() => import('./pages/ProfessionalsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
@@ -58,6 +59,7 @@ export default function App() {
         <Route path="/" element={<SiteLayout />}>
           <Route index element={<S><HomePage /></S>} />
           <Route path="about" element={<S><AboutPage /></S>} />
+          <Route path="team" element={<S><TeamPage /></S>} />
           <Route path="services" element={<S><ServicesPage /></S>} />
           <Route path="professionals" element={<S><ProfessionalsPage /></S>} />
           <Route path="professionals/apply" element={<S><ProfessionalOnboardingPage /></S>} />

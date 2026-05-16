@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 
 /* ── Inline styles for elements that need minor one-off tweaks ─ */
@@ -68,7 +68,7 @@ export default function HomePage() {
               {/* Live badge */}
               <div className="hero-badge">
                 <span className="hero-badge-dot" />
-                Clinical Telepsychiatry · India
+                Clinical mental health · India
                 <span className="hero-badge-sep" aria-hidden="true">·</span>
                 <span className="hero-badge-new">New</span>
               </div>
@@ -94,8 +94,8 @@ export default function HomePage() {
               {/* Sub-copy */}
               <p className="hero-lead">
                 Secure video, audio, or chat consultations with licensed
-                psychiatrists — with structured intake, validated assessments,
-                and built-in continuity of care. All from home.
+                psychiatrists and psychologists — structured intake,
+                validated assessments, and continuity of care. All from home.
               </p>
 
               {/* CTAs */}
@@ -129,7 +129,7 @@ export default function HomePage() {
           <div className="stat-divider" aria-hidden="true" />
           <div className="stat-item">
             <div className="stat-value">40+</div>
-            <div className="stat-label">Expert psychiatrists</div>
+            <div className="stat-label">Clinical experts</div>
           </div>
           <div className="stat-divider" aria-hidden="true" />
           <div className="stat-item">
@@ -158,8 +158,8 @@ export default function HomePage() {
               <div className="tile-icon">🎥</div>
               <h3>Video Consultations</h3>
               <p>
-                Face-to-face sessions with a psychiatrist from the comfort
-                of your home. Secure, private, and fully clinical.
+                Face-to-face sessions with a psychiatrist or psychologist
+                from home. Secure, private, and fully clinical.
               </p>
             </article>
 
@@ -330,7 +330,7 @@ export default function HomePage() {
               <div className="section-kicker">Simple process</div>
               <h2>From first step to follow-up</h2>
               <p>
-                We removed the complexity from getting psychiatric care. It
+                We removed the complexity from getting mental health care. It
                 takes just minutes to go from sign-up to your first session.
               </p>
               <div style={{ marginTop: 28 }}>
@@ -357,8 +357,8 @@ export default function HomePage() {
                 <div className="step-body">
                   <strong>Book an appointment</strong>
                   <p>
-                    Browse available psychiatrists, pick a time slot that
-                    works for you, and confirm in seconds.
+                    Browse verified psychiatrists and psychologists,
+                    choose a slot that works for you, and confirm in seconds.
                   </p>
                 </div>
               </li>
@@ -459,15 +459,14 @@ export default function HomePage() {
         <div className="container">
           <div style={{ ...s.sectionTwoCol, gap: '56px' }}>
             <div>
-              <div className="section-kicker">For psychiatrists</div>
+              <div className="section-kicker">For professionals</div>
               <h2 style={{ marginBottom: 16 }}>
                 A clinician-first platform
               </h2>
               <p className="about-body" style={{ marginBottom: 28 }}>
-                Serenest isn't a generic telehealth tool. It's designed
-                around the workflows that psychiatrists actually use — from
-                structured intake to clinical note-taking to follow-up
-                management.
+                Serenest isn&apos;t a generic telehealth tool. It&apos;s designed
+                for psychiatrists and psychologists alike — structured intake,
+                clinical note-taking, assessments, and follow-up management.
               </p>
 
               <ul style={s.featureList}>
@@ -530,7 +529,7 @@ export default function HomePage() {
                 "A clean flow from intake to follow-up. It feels structured,
                 not like a generic chat app."
                 <div style={{ marginTop: 10, fontStyle: 'normal', fontWeight: 700, color: 'var(--teal-300)', fontSize: 12 }}>
-                  — Psychiatrist, Mumbai
+                  — Psychologist, Mumbai
                 </div>
               </div>
             </div>
@@ -553,9 +552,9 @@ export default function HomePage() {
               <div className="quote-mark" aria-hidden="true">"</div>
               <p className="quote-text">
                 A clean flow from intake to follow-up. It feels structured,
-                not like a chat app. This is how telepsychiatry should work.
+                not like a chat app. This is how telepsychiatry should work — and therapy too.
               </p>
-              <div className="quote-by">Psychiatrist · India</div>
+              <div className="quote-by">Clinical psychologist · India</div>
             </div>
 
             <div className="quote">

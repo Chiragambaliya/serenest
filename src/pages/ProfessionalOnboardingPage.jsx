@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { professionals } from '../lib/api';
+import { CONSULTATION_MODES } from '../lib/consultationModes';
 
 const ROLES = [
   { id: 'psychiatrist', label: 'Psychiatrist' },
@@ -34,7 +35,7 @@ export default function ProfessionalOnboardingPage() {
 
   const [fee, setFee] = useState('');
   const [duration, setDuration] = useState('45');
-  const [mode, setMode] = useState('Video / Audio / Chat');
+  const [modesOffered, setModesOffered] = useState(() => new Set(['video', 'audio', 'chat']));
   const [availability, setAvailability] = useState('Mon–Sat, 6pm–9pm');
   const [consent, setConsent] = useState(false);
 
@@ -42,7 +43,20 @@ export default function ProfessionalOnboardingPage() {
   const isPhoneValid = phoneClean.length === 10 && /^[6-9]/.test(phoneClean);
   const isNameValid = fullName.trim().length >= 2;
   const hasPracticeBasics = city.trim().length >= 2 && languages.trim().length >= 2;
-  const isStep4Valid = String(fee).trim().length > 0 && consent;
+  const isStep4Valid = String(fee).trim().length > 0 && modesOffered.size > 0 && consent;
+
+  function toggleMode(id) {
+    setModesOffered((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        if (next.size <= 1) return next;
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }
 
   const [step1Error, setStep1Error] = useState('');
 
@@ -62,9 +76,25 @@ export default function ProfessionalOnboardingPage() {
     setStep(2);
   }
 
+  function credentialRegistrationError(forRole, regTrim) {
+    if (regTrim.length >= 4) return '';
+    switch (forRole) {
+      case 'psychiatrist':
+        return 'MCI/SMC registration number is required for psychiatrists (min 4 characters).';
+      case 'psychologist':
+        return 'RCI / professional registration is required for psychologists (min 4 characters).';
+      case 'therapist':
+      case 'counsellor':
+        return 'Professional registration (e.g. RCI or equivalent) is required (min 4 characters).';
+      default:
+        return '';
+    }
+  }
+
   function tryGoToStep3() {
-    if (role === 'psychiatrist' && registration.trim().length < 4) {
-      setStep2Error('Registration / license number is required for psychiatrists (min 4 characters).');
+    const regErr = credentialRegistrationError(role, registration.trim());
+    if (regErr) {
+      setStep2Error(regErr);
       return;
     }
     setStep2Error('');
@@ -84,6 +114,10 @@ export default function ProfessionalOnboardingPage() {
   function trySubmit() {
     if (!String(fee).trim()) {
       setStep4Error('Please enter your consultation fee.');
+      return;
+    }
+    if (modesOffered.size === 0) {
+      setStep4Error('Select at least one consultation mode (video, audio, or chat).');
       return;
     }
     if (!consent) {
@@ -113,7 +147,10 @@ export default function ProfessionalOnboardingPage() {
     specialities: specialities.trim() || null,
     fee_inr: String(fee).trim(),
     duration_min: Number(duration),
-    modes: mode.trim(),
+    modes: [...modesOffered]
+      .map((id) => CONSULTATION_MODES.find((m) => m.id === id)?.label)
+      .filter(Boolean)
+      .join(', '),
     availability: availability.trim(),
     status: 'pending',
   };
@@ -339,7 +376,13 @@ export default function ProfessionalOnboardingPage() {
                       placeholder="MCI/SMC/RCI/etc."
                     />
                     {role === 'psychiatrist' && (
-                      <span className="field-hint">Required for psychiatrists.</span>
+                      <span className="field-hint">Required: MCI/SMC registration.</span>
+                    )}
+                    {role === 'psychologist' && (
+                      <span className="field-hint">Required: RCI or recognised professional registration.</span>
+                    )}
+                    {(role === 'therapist' || role === 'counsellor') && (
+                      <span className="field-hint">Required: registration with RCI / relevant counselling body.</span>
                     )}
                   </label>
 
@@ -493,15 +536,27 @@ export default function ProfessionalOnboardingPage() {
                     </select>
                   </label>
 
-                  <label className="field">
-                    <span className="field-label">Modes offered</span>
-                    <input
-                      className="input"
-                      value={mode}
-                      onChange={(e) => setMode(e.target.value)}
-                      placeholder="Video / Audio / Chat"
-                    />
-                  </label>
+                  <div className="field field-wide">
+                    <span className="field-label">Consultation modes offered</span>
+                    <p className="muted" style={{ margin: '0 0 8px', fontSize: 13 }}>
+                      Select every channel you can deliver sessions on (same choices patients see when booking).
+                    </p>
+                    <div className="choice-grid choice-grid--modes">
+                      {CONSULTATION_MODES.map((m) => (
+                        <button
+                          key={m.id}
+                          type="button"
+                          className={`choice-card choice-card--stacked ${modesOffered.has(m.id) ? 'is-selected' : ''}`}
+                          onClick={() => toggleMode(m.id)}
+                          aria-pressed={modesOffered.has(m.id)}
+                        >
+                          <span className="choice-card-icon" aria-hidden="true">{m.icon}</span>
+                          <span className="choice-card-title">{m.label}</span>
+                          <span className="choice-card-hint">{m.hint}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
 
                   <label className="field">
                     <span className="field-label">Availability (summary)</span>

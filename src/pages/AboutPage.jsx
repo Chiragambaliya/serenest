@@ -104,6 +104,9 @@ export default function AboutPage() {
                 <span className="cred-pill">Founder, Serenest Private Limited</span>
                 <span className="cred-pill">DPIIT Recognised Startup</span>
               </div>
+              <p className="muted" style={{ marginTop: 16 }}>
+                <Link to="/team">Meet our team →</Link>
+              </p>
             </div>
           </div>
         </div>

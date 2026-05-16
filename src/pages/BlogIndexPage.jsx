@@ -1,32 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const POSTS = [
-  {
-    slug: 'privacy-first-mental-health',
-    title: 'Privacy-first mental health care: what it means',
-    excerpt:
-      'How least-access design, locked records, and clear boundaries create a calmer, safer experience for patients and clinicians.',
-    date: 'Mar 2026',
-    tag: 'Privacy',
-  },
-  {
-    slug: 'phq9-gad7-tracking',
-    title: 'PHQ-9 & GAD-7: tracking progress, clinically',
-    excerpt:
-      'Why measurement-based care matters and how simple trends can help guide follow-ups and treatment decisions.',
-    date: 'Mar 2026',
-    tag: 'Clinical',
-  },
-  {
-    slug: 'telemedicine-guidelines-india',
-    title: 'Telemedicine in India: the basics for patients',
-    excerpt:
-      'What to expect from an online consultation, documentation, prescriptions, and safety considerations.',
-    date: 'Mar 2026',
-    tag: 'Guides',
-  },
-];
+import { BLOG_POSTS } from '../lib/blogPosts';
 
 export default function BlogIndexPage() {
   return (
@@ -47,7 +22,7 @@ export default function BlogIndexPage() {
       <section className="section">
         <div className="container">
           <div className="blog-grid">
-            {POSTS.map((p) => (
+            {BLOG_POSTS.map((p) => (
               <article key={p.slug} className="tile blog-card">
                 <div className="blog-meta">
                   <span className="faq-pill">{p.tag}</span>

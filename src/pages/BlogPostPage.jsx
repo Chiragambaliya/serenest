@@ -1,68 +1,12 @@
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { applyPageSeo } from '../lib/seo';
 
-const POSTS = [
-  {
-    slug: 'privacy-first-mental-health',
-    title: 'Privacy-first mental health care: what it means',
-    date: 'Mar 2026',
-    tag: 'Privacy',
-    body: [
-      'Privacy-first means we design the product so fewer people need to see your sensitive information to deliver care.',
-      'In practice, that includes least-access controls, clear boundaries, and clinical records that are locked after consultation.',
-      'For patients, this reduces anxiety around data exposure. For clinicians, it supports documentation that is auditable and medico-legally sound.',
-    ],
-  },
-  {
-    slug: 'phq9-gad7-tracking',
-    title: 'PHQ-9 & GAD-7: tracking progress, clinically',
-    date: 'Mar 2026',
-    tag: 'Clinical',
-    body: [
-      'Measurement-based care helps clinicians make better decisions with less guesswork.',
-      'Short assessments like PHQ-9 and GAD-7 create a simple trendline over time — which can be more informative than a single score.',
-      'Used well, tracking supports follow-up planning and shared understanding between patient and practitioner.',
-    ],
-  },
-  {
-    slug: 'telemedicine-guidelines-india',
-    title: 'Telemedicine in India: the basics for patients',
-    date: 'Mar 2026',
-    tag: 'Guides',
-    body: [
-      'Telemedicine is designed to make care more accessible — especially when distance, stigma, and long wait times block in-person visits.',
-      'A good tele-consultation still includes consent, clinical documentation, and (where applicable) a verifiable prescription.',
-      'If you are in immediate danger, online services are not a substitute for emergency care.',
-    ],
-  },
-];
+import { BLOG_POSTS } from '../lib/blogPosts';
 
 export default function BlogPostPage() {
   const { slug } = useParams();
 
-  const post = useMemo(() => POSTS.find((p) => p.slug === slug) ?? null, [slug]);
-
-  useEffect(() => {
-    const path = `/blog/${slug}`;
-    if (!post) {
-      applyPageSeo({
-        title: 'Post not found',
-        description: 'This blog post does not exist. Browse other articles on Serenest.',
-        path,
-        noindex: true,
-      });
-      return;
-    }
-    const full = post.body.join(' ');
-    const excerpt = full.length <= 160 ? full : `${full.slice(0, 157).trim()}…`;
-    applyPageSeo({
-      title: post.title,
-      description: excerpt,
-      path,
-      ogType: 'article',
-    });
-  }, [post, slug]);
+  const post = useMemo(() => BLOG_POSTS.find((p) => p.slug === slug) ?? null, [slug]);
 
   if (!post) {
     return (
@@ -111,8 +55,8 @@ export default function BlogPostPage() {
       <section className="section">
         <div className="container">
           <article className="tile blog-post">
-            {post.body.map((para) => (
-              <p key={para} className="blog-p">
+            {post.body.map((para, i) => (
+              <p key={`${post.slug}-${i}`} className="blog-p">
                 {para}
               </p>
             ))}

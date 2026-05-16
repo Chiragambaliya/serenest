@@ -36,6 +36,17 @@ function normalizeList(value) {
   return String(value).split(',').map((s) => s.trim()).filter(Boolean);
 }
 
+/** Modes are often saved as "Video, Audio, Chat" or "Video / Audio / Chat". */
+function normalizeModes(value) {
+  if (!value) return [];
+  const s = String(value).trim();
+  if (!s) return [];
+  const commaParts = s.split(',').map((x) => x.trim()).filter(Boolean);
+  if (commaParts.length > 1) return commaParts;
+  const slashParts = s.split(/\s*\/\s*/).map((x) => x.trim()).filter(Boolean);
+  return slashParts.length > 1 ? slashParts : commaParts;
+}
+
 function getInitials(name) {
   return name
     .split(' ')
@@ -58,7 +69,7 @@ function mapToProfessional(a) {
     duration: a.duration_min ? Number(a.duration_min) : 50,
     languages: normalizeList(a.languages),
     specialities: normalizeList(a.specialities),
-    modes: normalizeList(a.modes).length ? normalizeList(a.modes) : ['Video', 'Audio', 'Chat'],
+    modes: normalizeModes(a.modes).length ? normalizeModes(a.modes) : ['Video', 'Audio', 'Chat'],
     availability: a.availability || '',
     degree: a.degree || '',
   };

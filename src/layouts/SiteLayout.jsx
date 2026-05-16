@@ -1,9 +1,12 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useId } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
-import { applyPageSeo, seoForPathname } from '../lib/seo';
 
-// ── Serenest logo (inline SVG — calming leaf + S) ──────────────
+// ── Serenest logo (rounded square + gradient + “S”) — matches brand ─
 function SerenestLogo({ size = 36 }) {
+  const uid = useId().replace(/:/g, '_');
+  const gradId = `srn-grad-${uid}`;
+  const glossId = `srn-gloss-${uid}`;
+
   return (
     <svg
       className="brand-mark"
@@ -12,41 +15,36 @@ function SerenestLogo({ size = 36 }) {
       viewBox="0 0 48 48"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
-      role="img"
     >
       <defs>
-        <linearGradient id="srnGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%"  stopColor="#2dd4bf" />
-          <stop offset="55%" stopColor="#14b8a6" />
-          <stop offset="100%" stopColor="#0f766e" />
+        <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#7fe8d8" />
+          <stop offset="38%" stopColor="#2dd4bf" />
+          <stop offset="100%" stopColor="#0d6d63" />
         </linearGradient>
-        <linearGradient id="srnGlow" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#fff" stopOpacity="0.45" />
+        <linearGradient id={glossId} x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stopColor="#fff" stopOpacity="0.5" />
+          <stop offset="42%" stopColor="#fff" stopOpacity="0.07" />
           <stop offset="100%" stopColor="#fff" stopOpacity="0" />
         </linearGradient>
       </defs>
 
-      {/* rounded square background */}
-      <rect x="2" y="2" width="44" height="44" rx="12" fill="url(#srnGrad)" />
-      {/* subtle top highlight for depth */}
-      <rect x="2" y="2" width="44" height="22" rx="12" fill="url(#srnGlow)" />
+      <rect x="2.5" y="2.5" width="43" height="43" rx="11.5" fill={`url(#${gradId})`} />
+      <rect x="2.5" y="2.5" width="43" height="22" rx="11.5" fill={`url(#${glossId})`} />
 
-      {/* leaf / wave shape (representing calm + growth) */}
-      <path
-        d="M14 32 C14 22 22 14 34 14 C34 24 26 32 14 32 Z"
+      <text
+        x="24"
+        y="24"
+        textAnchor="middle"
+        dominantBaseline="central"
         fill="#fff"
-        opacity="0.18"
-      />
-
-      {/* stylised S */}
-      <path
-        d="M30 18.5 C30 16.6 28.5 15.5 26.5 15.5 L21 15.5 C18.8 15.5 17 17.3 17 19.5 C17 21.4 18.5 22.7 20.5 22.9 L26.5 23.6 C28.5 23.8 30 25.1 30 27 C30 29.2 28.2 31 26 31 L20 31"
-        stroke="#fff"
-        strokeWidth="2.6"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        fill="none"
-      />
+        fontFamily="Inter, ui-sans-serif, system-ui, -apple-system, sans-serif"
+        fontSize="26.5"
+        fontWeight="800"
+        letterSpacing="-0.05em"
+      >
+        S
+      </text>
     </svg>
   );
 }
@@ -60,19 +58,6 @@ export default function SiteLayout() {
   useEffect(() => {
     setMenuOpen(false);
   }, [location]);
-
-  useEffect(() => {
-    const { pathname } = location;
-    const cfg = seoForPathname(pathname);
-    applyPageSeo({
-      title: cfg.title,
-      description: cfg.description,
-      path: pathname,
-      noindex: cfg.noindex,
-      ogType: cfg.ogType || 'website',
-      isHome: Boolean(cfg.isHome),
-    });
-  }, [location.pathname]);
 
   // Scroll-aware header
   useEffect(() => {
@@ -140,6 +125,7 @@ export default function SiteLayout() {
           {/* Desktop nav */}
           <nav className="header-links" aria-label="Main navigation">
             <NavLink to="/about"         className={navClass}>About</NavLink>
+            <NavLink to="/team"          className={navClass}>Team</NavLink>
             <NavLink to="/services"      className={navClass}>Services</NavLink>
             <NavLink to="/pricing"       className={navClass}>Pricing</NavLink>
             <NavLink to="/professionals" className={navClass}>Professionals</NavLink>
@@ -203,6 +189,7 @@ export default function SiteLayout() {
               <Link to="/"                          onClick={() => setMenuOpen(false)}>🏠 Home</Link>
               <Link to="/patient/find-professional" onClick={() => setMenuOpen(false)}>🔍 Find a professional</Link>
               <Link to="/about"                     onClick={() => setMenuOpen(false)}>ℹ️ About us</Link>
+              <Link to="/team"                      onClick={() => setMenuOpen(false)}>👥 Team</Link>
               <Link to="/services"                  onClick={() => setMenuOpen(false)}>🎯 Services</Link>
               <Link to="/pricing"                   onClick={() => setMenuOpen(false)}>💳 Pricing</Link>
               <Link to="/professionals"             onClick={() => setMenuOpen(false)}>🩺 For professionals</Link>
@@ -242,6 +229,7 @@ export default function SiteLayout() {
                 <SerenestLogo size={42} />
                 <div className="footer-brandstack">
                   <div className="footer-name">Serenest</div>
+                  <div className="footer-brandtag">Mind care, simplified</div>
                   <div className="footer-tagline">
                     Premium, privacy-first telepsychiatry — built for continuity of care.
                   </div>
@@ -261,6 +249,7 @@ export default function SiteLayout() {
                   <Link to="/faq">FAQ</Link>
                   <Link to="/blog">Blog</Link>
                   <Link to="/about">About us</Link>
+                  <Link to="/team">Team</Link>
                 </nav>
               </div>
 

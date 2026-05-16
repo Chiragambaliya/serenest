@@ -119,6 +119,21 @@ create table if not exists public.contact_messages (
   message    text not null
 );
 
+-- ── Consultation chat (per appointment thread; used by ConsultationPage) ──
+create table if not exists public.chat_messages (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  appointment_id text not null,
+  sender_name text not null,
+  sender_role text not null default 'participant',
+  message text not null,
+  constraint chat_messages_message_len check (char_length(trim(message)) between 1 and 4000),
+  constraint chat_messages_sender_len check (char_length(trim(sender_name)) between 1 and 128)
+);
+
+create index if not exists chat_messages_appointment_created_idx
+  on public.chat_messages (appointment_id, created_at asc);
+
 -- ── Session notes (SOAP, locked after creation) ──────────────
 create table if not exists public.session_notes (
   id              uuid primary key default gen_random_uuid(),
@@ -171,6 +186,7 @@ alter table public.signups                enable row level security;
 alter table public.professionals          enable row level security;
 alter table public.screening_responses    enable row level security;
 alter table public.contact_messages       enable row level security;
+alter table public.chat_messages          enable row level security;
 alter table public.session_notes          enable row level security;
 alter table public.assessments            enable row level security;
 
@@ -292,6 +308,47 @@ create policy "auth_select_assessments"
   on public.assessments for select
   to authenticated
   using (true);
+
+-- ── Chat messages (consultation; anon uses SECURITY DEFINER validation) ──
+create or replace function public.chat_appointment_is_valid(thread_id text)
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (
+    select 1
+    from public.appointments a
+    where thread_id is not null
+      and thread_id <> ''
+      and (
+        (a.appointment_id is not null and a.appointment_id = thread_id)
+        or a.id::text = thread_id
+      )
+  );
+$$;
+
+revoke all on function public.chat_appointment_is_valid(text) from public;
+grant execute on function public.chat_appointment_is_valid(text)
+  to anon, authenticated, service_role;
+
+grant select, insert on public.chat_messages to anon, authenticated;
+
+create policy "anon_authenticated_select_chat_messages"
+  on public.chat_messages for select
+  to anon, authenticated
+  using (public.chat_appointment_is_valid(appointment_id));
+
+create policy "anon_authenticated_insert_chat_messages"
+  on public.chat_messages for insert
+  to anon, authenticated
+  with check (
+    public.chat_appointment_is_valid(appointment_id)
+    and sender_role in ('participant', 'professional', 'admin')
+    and char_length(trim(sender_name)) between 1 and 128
+    and char_length(trim(message)) between 1 and 4000
+  );
 
 -- ============================================================
 -- AUTH TRIGGER

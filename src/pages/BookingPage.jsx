@@ -1,18 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { bookings } from '../lib/api';
+import { CONSULTATION_MODES } from '../lib/consultationModes';
 
 const PRACTITIONER_TYPES = [
   { id: 'psychiatrist', label: 'Psychiatrist' },
   { id: 'psychologist', label: 'Psychologist' },
   { id: 'therapist', label: 'Therapist' },
   { id: 'counsellor', label: 'Counsellor' },
-];
-
-const MODES = [
-  { id: 'video', label: 'Video' },
-  { id: 'audio', label: 'Audio' },
-  { id: 'chat', label: 'Chat' },
 ];
 
 function pad2(n) {
@@ -94,7 +89,10 @@ export default function BookingPage() {
     () => PRACTITIONER_TYPES.find((t) => t.id === practitionerType)?.label ?? 'Practitioner',
     [practitionerType],
   );
-  const selectedModeLabel = useMemo(() => MODES.find((m) => m.id === mode)?.label ?? 'Video', [mode]);
+  const selectedModeLabel = useMemo(
+    () => CONSULTATION_MODES.find((m) => m.id === mode)?.label ?? 'Video',
+    [mode],
+  );
 
   const phoneClean = phone.replace(/[^\d]/g, '');
   const isPhoneValid = phoneClean.length === 10 && /^[6-9]/.test(phoneClean);
@@ -194,15 +192,17 @@ export default function BookingPage() {
                   </div>
                   <div>
                     <div className="field-label">Consultation mode</div>
-                    <div className="choice-grid">
-                      {MODES.map((m) => (
+                    <div className="choice-grid choice-grid--modes">
+                      {CONSULTATION_MODES.map((m) => (
                         <button
                           key={m.id}
                           type="button"
-                          className={`choice-card ${mode === m.id ? 'is-selected' : ''}`}
+                          className={`choice-card choice-card--stacked ${mode === m.id ? 'is-selected' : ''}`}
                           onClick={() => setMode(m.id)}
                         >
-                          {m.label}
+                          <span className="choice-card-icon" aria-hidden="true">{m.icon}</span>
+                          <span className="choice-card-title">{m.label}</span>
+                          <span className="choice-card-hint">{m.hint}</span>
                         </button>
                       ))}
                     </div>
