@@ -1444,6 +1444,135 @@ h6 {
   .feature-grid { grid-template-columns: 1fr; }
 }
 
+/* ── Professional learning hub (full-card links) ─────────────── */
+a.block-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.learning-card-aux {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--teal-700);
+}
+
+a.block-link:hover .learning-card-aux,
+a.block-link:focus-visible .learning-card-aux {
+  color: var(--teal-800);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.learning-card-soon {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+/* ── Professionals hub sub-navigation ────────────────────────── */
+.pro-subnav {
+  background: var(--bg-2);
+  border-bottom: 1px solid var(--border-soft);
+}
+
+.pro-subnav-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 0;
+  align-items: center;
+}
+
+.pro-subnav-link {
+  padding: 8px 14px;
+  border-radius: var(--r-full);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--ink-2);
+  text-decoration: none;
+  transition: background 140ms ease, color 140ms ease;
+}
+
+.pro-subnav-link:hover {
+  color: var(--teal-800);
+  background: var(--teal-100);
+}
+
+.pro-subnav-link.is-active {
+  background: var(--teal-600);
+  color: #fff;
+}
+
+.pro-subnav-link.is-active:hover {
+  background: var(--teal-700);
+  color: #fff;
+}
+
+a.pro-hub-tile {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+}
+
+a.pro-hub-tile:hover .learning-card-aux {
+  color: var(--teal-800);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.pro-learning-card.is-complete {
+  border-color: var(--border-brand);
+  box-shadow: 0 4px 20px rgba(20, 184, 166, 0.12);
+}
+
+.pro-learning-done-btn {
+  margin-top: 12px;
+  align-self: flex-start;
+  padding: 8px 14px;
+  border-radius: var(--r-full);
+  border: 1px solid var(--border);
+  background: var(--bg);
+  font-size: 12px;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--teal-800);
+  cursor: pointer;
+  transition: background 160ms ease, border-color 160ms ease;
+}
+
+.pro-learning-done-btn:hover {
+  background: var(--teal-50);
+  border-color: var(--border-brand);
+}
+
+.pro-learning-done-btn.is-done {
+  background: var(--teal-100);
+  border-color: var(--teal-400);
+  color: var(--teal-900);
+}
+
+.guidelines-stack {
+  display: grid;
+  gap: 20px;
+  max-width: 800px;
+}
+
+.guideline-topic .guideline-bullets {
+  margin: 0;
+  padding-left: 1.15rem;
+  display: grid;
+  gap: 8px;
+  color: var(--ink-2);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.guideline-topic .guideline-bullets li {
+  padding-left: 2px;
+}
+
 /* ── Booking Page ────────────────────────────────────────────── */
 .booking-shell {
   padding: 0;

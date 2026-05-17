@@ -3,6 +3,36 @@
 /** @type {BlogPost[]} */
 export const BLOG_POSTS = [
   {
+    slug: 'documenting-risk-safety-telehealth',
+    title: 'Documenting risk and safety in telepsychiatry: an orientation for clinicians',
+    excerpt:
+      'How to think about note content, boundaries, and follow-up intent when care is remote — not a substitute for local protocols or supervision.',
+    date: 'Jun 2026',
+    tag: 'Clinical',
+    body: [
+      'Telepsychiatry does not remove duty of care. It changes how visibility, rapport, and contingency planning show up in the encounter.',
+      'Clear documentation usually answers: who was seen, how identity was verified, what was assessed, what changed, and what happens next (including crises).',
+      'If your institution has a risk form or triage ladder, use it. If not, agree as a practice what “urgent follow-up” means in hours, not vibes.',
+      'After-hours messaging should be explicit in consent and in the note when you discussed limits with the patient.',
+      'When uncertain, consult peers or medico-legal resources in your jurisdiction. This article cannot cover every edge case.',
+    ],
+  },
+  {
+    slug: 'continuity-telepsychiatry-handoffs',
+    title: 'Continuity between telepsychiatry sessions: practical handoffs',
+    excerpt:
+      'Short habits that keep treatment coherent when visits are spaced out or modalities change.',
+    date: 'Jun 2026',
+    tag: 'Clinical',
+    body: [
+      'Patients forget what they agreed to when life gets noisy. A written plan in plain language reduces drop-out more than eloquence in session.',
+      'End each visit with three lines: what improved, what to watch, and the next concrete step (including date of follow-up when possible).',
+      'Measurement-based tools help when memory is unreliable: one trend beats three anecdotes.',
+      'If another clinician covers vacation, a one-paragraph summary plus current med list prevents destructive churn.',
+      'Serenest’s locked notes are built for continuity — still, teach patients how to access summaries they are allowed to see.',
+    ],
+  },
+  {
     slug: 'therapy-medication-both',
     title: 'Therapy, medication, or both: how clinicians usually think about it',
     excerpt:

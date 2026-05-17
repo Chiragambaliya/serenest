@@ -218,6 +218,12 @@ export default function ProfessionalOnboardingPage() {
             <p className="about-subtext">
               A structured application flow. Verification before going live. Built for clinical workflows.
             </p>
+            <p className="muted" style={{ marginTop: 12 }}>
+              New here?{' '}
+              <Link to="/professionals/learning" style={{ fontWeight: 700, color: 'var(--teal-700)' }}>
+                Browse the clinician learning hub →
+              </Link>
+            </p>
           </div>
         </div>
       </section>

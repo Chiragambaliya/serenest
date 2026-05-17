@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { professionals as professionalsApi } from '../lib/api';
 
 const ROLES = [
   { id: 'all',          label: 'All',          icon: '✨', color: '#0d9488' },
@@ -113,16 +113,16 @@ export default function PatientFindProfessionalPage() {
   const [error, setError]                 = useState(null);
 
   useEffect(() => {
-    if (!supabase) { setLoading(false); return; }
     setLoading(true);
-    supabase
-      .from('professional_applications')
-      .select('*')
-      .eq('status', 'approved')
-      .order('created_at', { ascending: false })
-      .then(({ data, error }) => {
-        if (error) setError(error.message);
-        else if (data) setProfessionals(data.map(mapToProfessional));
+    setError(null);
+    professionalsApi
+      .directory()
+      .then((json) => {
+        setProfessionals((json.professionals ?? []).map(mapToProfessional));
+        setLoading(false);
+      })
+      .catch((e) => {
+        setError(e.message);
         setLoading(false);
       });
   }, []);

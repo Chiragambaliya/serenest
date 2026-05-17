@@ -77,6 +77,9 @@ export const professionals = {
    *           duration_min?, modes?, availability? }} data
    */
   apply: (data) => post('/api/professionals/apply', data),
+
+  /** Public directory: approved professionals (sanitized fields). */
+  directory: () => get('/api/professionals/directory'),
 };
 
 // ── Video rooms ──────────────────────────────────────────────

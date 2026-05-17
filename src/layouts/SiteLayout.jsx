@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useCallback, useId } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
+import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
+
 // ── Serenest logo (rounded square + gradient + “S”) — matches brand ─
 function SerenestLogo({ size = 36 }) {
   const uid = useId().replace(/:/g, '_');
@@ -154,6 +156,8 @@ export default function SiteLayout() {
         </div>
       </header>
 
+      {location.pathname.startsWith('/professionals') ? <ProfessionalsSubNav /> : null}
+
       {/* ── Mobile Drawer ──────────────────────────────────── */}
       {menuOpen && (
         <div
@@ -193,6 +197,9 @@ export default function SiteLayout() {
               <Link to="/services"                  onClick={() => setMenuOpen(false)}>🎯 Services</Link>
               <Link to="/pricing"                   onClick={() => setMenuOpen(false)}>💳 Pricing</Link>
               <Link to="/professionals"             onClick={() => setMenuOpen(false)}>🩺 For professionals</Link>
+              <Link to="/professionals/learning"    onClick={() => setMenuOpen(false)}>📚 Clinician learning</Link>
+              <Link to="/professionals/resources"   onClick={() => setMenuOpen(false)}>🗂️ Pro resources</Link>
+              <Link to="/professionals/guidelines"  onClick={() => setMenuOpen(false)}>⚖️ Pro guidelines</Link>
               <Link to="/faq"                       onClick={() => setMenuOpen(false)}>❓ FAQ</Link>
               <Link to="/blog"                      onClick={() => setMenuOpen(false)}>📝 Blog</Link>
             </nav>
@@ -250,6 +257,9 @@ export default function SiteLayout() {
                   <Link to="/blog">Blog</Link>
                   <Link to="/about">About us</Link>
                   <Link to="/team">Team</Link>
+                  <Link to="/professionals/learning">Clinician learning</Link>
+                  <Link to="/professionals/resources">Pro resources</Link>
+                  <Link to="/professionals/guidelines">Pro guidelines</Link>
                 </nav>
               </div>
 

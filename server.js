@@ -334,6 +334,26 @@ app.patch('/api/professionals/applications/:id', async (req, res) => {
 //  PROFESSIONALS MANAGEMENT
 // ══════════════════════════════════════════════════════════════
 
+/** GET /api/professionals/directory — public patient directory (sanitized fields only) */
+app.get('/api/professionals/directory', async (req, res) => {
+  if (!requireDb(res)) return;
+
+  const fields =
+    'id,created_at,full_name,role,role_label,city,clinic,fee_inr,duration_min,languages,specialities,modes,availability,degree';
+
+  const { data, error } = await supabase
+    .from('professional_applications')
+    .select(fields)
+    .eq('status', 'approved')
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('[GET /api/professionals/directory]', error);
+    return err(res, 'Failed to load professionals', 500);
+  }
+  return ok(res, { professionals: data ?? [] });
+});
+
 /** GET /api/professionals/list — all approved professionals with booking counts */
 app.get('/api/professionals/list', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;

@@ -19,14 +19,72 @@ export default function ProfessionalsPage() {
             <p className="muted" style={{ marginTop: 12 }}>
               Psychiatrist · Psychologist · Therapist · Counsellor
             </p>
-            <div className="hero-actions" style={{ marginTop: 20 }}>
+            <div className="hero-actions" style={{ marginTop: 20, flexWrap: 'wrap' }}>
               <Link className="btn btn-primary" to="/professionals/apply">
                 Apply to join →
+              </Link>
+              <Link className="btn btn-ghost" to="/professionals/learning">
+                Learning hub →
               </Link>
               <a className="btn btn-ghost" href="mailto:support@serenest.fit?subject=Clinic%20Partnership">
                 Clinic partnership
               </a>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section alt" aria-label="Professional hub">
+        <div className="container">
+          <div className="section-head center">
+            <p className="section-kicker">Professional hub</p>
+            <h2>Learning, resources, and compliance — together</h2>
+            <p>
+              Curated areas for clinicians who want structured telepsychiatry workflows, shareable patient
+              education, and India-aligned compliance context.
+            </p>
+          </div>
+          <div className="feature-grid">
+            <Link to="/professionals/learning" className="tile feature-card pro-hub-tile">
+              <div className="feature-icon" aria-hidden="true">
+                📚
+              </div>
+              <h3>Learning hub</h3>
+              <p className="muted">Articles, clinical framing, and platform training requests.</p>
+              <span className="learning-card-aux" style={{ marginTop: 'auto', paddingTop: 12 }}>
+                Explore learning →
+              </span>
+            </Link>
+            <Link to="/professionals/resources" className="tile feature-card pro-hub-tile">
+              <div className="feature-icon" aria-hidden="true">
+                🗂️
+              </div>
+              <h3>Resources</h3>
+              <p className="muted">Handouts, template requests, ops checklists, and partnership decks.</p>
+              <span className="learning-card-aux" style={{ marginTop: 'auto', paddingTop: 12 }}>
+                Browse resources →
+              </span>
+            </Link>
+            <Link to="/professionals/guidelines" className="tile feature-card pro-hub-tile">
+              <div className="feature-icon" aria-hidden="true">
+                ⚖️
+              </div>
+              <h3>Guidelines</h3>
+              <p className="muted">Telemedicine, privacy, prescribing — orientation, not legal advice.</p>
+              <span className="learning-card-aux" style={{ marginTop: 'auto', paddingTop: 12 }}>
+                Read guidelines →
+              </span>
+            </Link>
+            <Link to="/professionals/apply" className="tile feature-card pro-hub-tile">
+              <div className="feature-icon" aria-hidden="true">
+                ✅
+              </div>
+              <h3>Apply</h3>
+              <p className="muted">Structured onboarding: credentials, fees, modes, and verification.</p>
+              <span className="learning-card-aux" style={{ marginTop: 'auto', paddingTop: 12 }}>
+                Start application →
+              </span>
+            </Link>
           </div>
         </div>
       </section>
@@ -182,6 +240,9 @@ export default function ProfessionalsPage() {
             <div className="stack about-cta-actions">
               <Link className="btn btn-primary btn-full" to="/professionals/apply">
                 Apply now →
+              </Link>
+              <Link className="btn btn-ghost btn-full" to="/professionals/learning">
+                Learning hub →
               </Link>
               <a
                 className="btn btn-ghost btn-full"

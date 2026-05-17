@@ -160,6 +160,18 @@ create table if not exists public.assessments (
   severity        text
 );
 
+-- ── Professional learning progress (Supabase Auth — sync from app when pro login exists) ──
+create table if not exists public.pro_learning_progress (
+  id            uuid primary key default gen_random_uuid(),
+  user_id       uuid not null references auth.users (id) on delete cascade,
+  module_id     text not null,
+  completed_at  timestamptz not null default now(),
+  unique (user_id, module_id)
+);
+
+create index if not exists pro_learning_progress_user_idx
+  on public.pro_learning_progress (user_id);
+
 -- ============================================================
 -- UPDATED_AT TRIGGER
 -- ============================================================
@@ -189,6 +201,7 @@ alter table public.contact_messages       enable row level security;
 alter table public.chat_messages          enable row level security;
 alter table public.session_notes          enable row level security;
 alter table public.assessments            enable row level security;
+alter table public.pro_learning_progress   enable row level security;
 
 -- Drop old policies before recreating (idempotent)
 do $$ declare r record;
@@ -308,6 +321,28 @@ create policy "auth_select_assessments"
   on public.assessments for select
   to authenticated
   using (true);
+
+-- ── Professional learning progress ────────────────────────────
+create policy "pro_learning_select_own"
+  on public.pro_learning_progress for select
+  to authenticated
+  using (auth.uid() = user_id);
+
+create policy "pro_learning_insert_own"
+  on public.pro_learning_progress for insert
+  to authenticated
+  with check (auth.uid() = user_id);
+
+create policy "pro_learning_update_own"
+  on public.pro_learning_progress for update
+  to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+
+create policy "pro_learning_delete_own"
+  on public.pro_learning_progress for delete
+  to authenticated
+  using (auth.uid() = user_id);
 
 -- ── Chat messages (consultation; anon uses SECURITY DEFINER validation) ──
 create or replace function public.chat_appointment_is_valid(thread_id text)
