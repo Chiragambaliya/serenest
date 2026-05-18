@@ -1553,6 +1553,22 @@ a.pro-hub-tile:hover .learning-card-aux {
   color: var(--teal-900);
 }
 
+.learning-track-pill.learning-track-pill--pharmacology {
+  color: var(--teal-800);
+  background: var(--teal-50);
+  border-color: var(--border-brand);
+}
+
+.learning-track-pill.learning-track-pill--psychology {
+  color: #3730a3;
+  background: #eef2ff;
+  border-color: rgba(79, 70, 229, 0.28);
+}
+
+.learning-track-block {
+  scroll-margin-top: 96px;
+}
+
 .guidelines-stack {
   display: grid;
   gap: 20px;

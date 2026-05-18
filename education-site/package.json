@@ -1,0 +1,23 @@
+{
+  "name": "serenest-education-site",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Serenest Education — public mental health literacy & learning (separate from Serenest clinical)",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.3.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

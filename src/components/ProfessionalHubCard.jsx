@@ -22,6 +22,11 @@ export default function ProfessionalHubCard({
   const inner = (
     <>
       <div className="blog-meta" style={{ marginBottom: 10 }}>
+        {m.track ? (
+          <span className={`faq-pill learning-track-pill learning-track-pill--${m.track}`}>
+            {m.track === 'pharmacology' ? 'Pharmacology' : 'Psychology'}
+          </span>
+        ) : null}
         {pill}
         {m.icon ? (
           <span className="blog-date" aria-hidden>

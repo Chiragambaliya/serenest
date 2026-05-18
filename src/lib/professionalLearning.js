@@ -2,6 +2,10 @@
  * Curated learning paths for mental health professionals on Serenest.
  * Extend with new rows as you publish guides, videos, or in-app walkthroughs.
  *
+ * track (hub sections):
+ *  - pharmacology → prescribing, documentation, telemedicine norms, continuity, safety notes
+ *  - psychology → scales/assessment framing, psychoeducation, behavioural topics, language for patients/carers
+ *
  * kind:
  *  - blog   → internal React route in `to`
  *  - link   → external URL in `href`
@@ -12,6 +16,7 @@
  */
 
 /** @typedef {'blog' | 'link' | 'pdf' | 'video' | 'email' | 'soon'} ProfessionalLearningKind */
+/** @typedef {'pharmacology' | 'psychology'} ProfessionalLearningTrack */
 
 /**
  * @typedef {{
@@ -19,6 +24,7 @@
  *   title: string;
  *   summary: string;
  *   pill: string;
+ *   track: ProfessionalLearningTrack;
  *   kind: ProfessionalLearningKind;
  *   icon?: string;
  *   to?: string;
@@ -26,6 +32,17 @@
  *   emailSubject?: string;
  * }} ProfessionalLearningModule
  */
+
+/** Labels for sidebar / section headings */
+export const LEARNING_TRACK_LABELS = {
+  pharmacology: 'Pharmacology',
+  psychology: 'Psychology',
+};
+
+/** @param {ProfessionalLearningTrack} track */
+export function learningModulesForTrack(track) {
+  return PROFESSIONAL_LEARNING_MODULES.filter((m) => m.track === track);
+}
 
 /** @type {ProfessionalLearningModule[]} */
 export const PROFESSIONAL_LEARNING_MODULES = [
@@ -36,6 +53,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Plain-language basics on online consults, consent, and documentation — useful when onboarding patients and aligning with MCI-aligned practice.',
     pill: 'Compliance',
+    track: 'pharmacology',
     kind: 'blog',
     to: '/blog/telemedicine-guidelines-india',
   },
@@ -46,6 +64,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Why trendlines beat single scores and how brief tools support follow-ups and shared decisions in ongoing care.',
     pill: 'Clinical',
+    track: 'psychology',
     kind: 'blog',
     to: '/blog/phq9-gad7-tracking',
   },
@@ -56,6 +75,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'How least-access design, locked records, and clear roles reduce risk and build trust — aligned with DPDP-aware expectations.',
     pill: 'Privacy',
+    track: 'psychology',
     kind: 'blog',
     to: '/blog/privacy-first-mental-health',
   },
@@ -66,6 +86,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Checklist you can share: environment, timeline of symptoms, medications, and goals for the session.',
     pill: 'Patient education',
+    track: 'psychology',
     kind: 'blog',
     to: '/blog/prepare-first-online-consultation',
   },
@@ -76,6 +97,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'A neutral framing for discussions with patients about combined approaches — not a substitute for individualised advice.',
     pill: 'Clinical',
+    track: 'pharmacology',
     kind: 'blog',
     to: '/blog/therapy-medication-both',
   },
@@ -86,6 +108,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Platform-specific walkthrough: templates, locking, and continuity between visits. We can add short videos or PDFs here as they ship.',
     pill: 'Platform',
+    track: 'pharmacology',
     kind: 'soon',
   },
   {
@@ -95,6 +118,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Ask for a walkthrough for your clinic or team — scheduling, assessments, Rx workflow, and admin essentials.',
     pill: 'Training',
+    track: 'psychology',
     kind: 'email',
     emailSubject: 'Professional%20learning%20%2F%20orientation%20request',
   },
@@ -105,6 +129,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Discussing how sleep loss and stress interact — useful language for psychoeducation and treatment planning.',
     pill: 'Clinical',
+    track: 'psychology',
     kind: 'blog',
     to: '/blog/sleep-mood-stress-loop',
   },
@@ -115,6 +140,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Framing occupational overload for high-functioning patients — boundaries, signals, and when to escalate care.',
     pill: 'Clinical',
+    track: 'psychology',
     kind: 'blog',
     to: '/blog/work-stress-without-the-hustle-narrative',
   },
@@ -125,6 +151,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Evidence-informed habits to suggest when digital overload shows up in session.',
     pill: 'Lifestyle',
+    track: 'psychology',
     kind: 'blog',
     to: '/blog/screens-stimulation-and-anxiety',
   },
@@ -135,6 +162,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'How confidentiality and telehealth can lower barriers — helpful when patients fear disclosure.',
     pill: 'Privacy',
+    track: 'psychology',
     kind: 'blog',
     to: '/blog/stigma-and-reaching-out',
   },
@@ -145,6 +173,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Boundaries and language for carers; when to recommend professional care.',
     pill: 'Psychoeducation',
+    track: 'psychology',
     kind: 'blog',
     to: '/blog/family-friends-support-without-burnout',
   },
@@ -155,6 +184,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Normalising fit and handoffs — reduces shame when patients consider switching.',
     pill: 'Practice',
+    track: 'psychology',
     kind: 'blog',
     to: '/blog/changing-your-mental-health-provider',
   },
@@ -165,6 +195,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Lightweight handoff habits: what to capture in the plan, how to phrase follow-ups, and when to schedule touchpoints.',
     pill: 'Clinical',
+    track: 'pharmacology',
     kind: 'blog',
     to: '/blog/continuity-telepsychiatry-handoffs',
   },
@@ -175,6 +206,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Framing documentation for escalation pathways, collateral contacts, and after-hours expectations — not a protocol for your jurisdiction.',
     pill: 'Clinical',
+    track: 'pharmacology',
     kind: 'blog',
     to: '/blog/documenting-risk-safety-telehealth',
   },
@@ -185,6 +217,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Demonstrates PDF links from the hub. Replace this URL with a file in Supabase Storage or your CDN when your real checklist is ready.',
     pill: 'PDF',
+    track: 'pharmacology',
     kind: 'pdf',
     href: 'https://www.w3.org/WAI/WCAG21/working-examples/pdf-note/note.pdf',
   },
@@ -195,6 +228,7 @@ export const PROFESSIONAL_LEARNING_MODULES = [
     summary:
       'Placeholder: swap `href` for your own Loom, YouTube unlisted recording, or Vimeo. Useful pattern for “watch first” modules.',
     pill: 'Video',
+    track: 'psychology',
     kind: 'video',
     href: 'https://www.youtube.com/watch?v=KWvU3NaiaGs',
   },

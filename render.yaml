@@ -49,3 +49,17 @@ services:
       # ── CORS (set to your Render URL after first deploy) ─────
       # - key: CORS_ORIGIN
       #   value: https://serenest-website.onrender.com
+
+  # Separate public site: literacy & partnerships (static CDN).
+  # Build path is relative to repo root; rootDir scopes the service to education-site/.
+  - type: web
+    name: serenest-education-site
+    runtime: static
+    region: singapore
+    plan: free
+    rootDir: education-site
+    buildCommand: npm install && npm run build
+    staticPublishPath: ./education-site/dist
+    envVars:
+      - key: VITE_SERENEST_CARE_URL
+        value: https://serenest.fit
