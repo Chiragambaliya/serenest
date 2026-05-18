@@ -20,6 +20,9 @@ const RESEND_KEY  = process.env.RESEND_API_KEY;
 const NOTIFY_FROM = process.env.NOTIFY_FROM  || 'Serenest Alerts <onboarding@resend.dev>';
 const NOTIFY_TO   = process.env.NOTIFY_EMAIL;
 
+/** Shown in HTML email footers (legal entity). */
+const LEGAL_ENTITY = 'Serenest Education Pvt Ltd';
+
 const CALLMEBOT_KEY   = process.env.CALLMEBOT_WHATSAPP_APIKEY;
 const CALLMEBOT_PHONE = process.env.CALLMEBOT_WHATSAPP_PHONE
   ? String(process.env.CALLMEBOT_WHATSAPP_PHONE).replace(/\D/g, '')
@@ -143,6 +146,7 @@ function wrapHtml(inner, urgent) {
   <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e8f0;color:#64748b;font-size:12px">
     <a href="https://serenest.fit/admin" style="color:${accent};text-decoration:none;font-weight:600">Open admin dashboard →</a>
     <span style="float:right">${new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</span>
+    <div style="clear:both;padding-top:12px;margin-top:12px;border-top:1px solid #f1f5f9;font-size:11px;color:#94a3b8">${LEGAL_ENTITY}</div>
   </td></tr>
 </table>
 </body></html>`;
@@ -165,6 +169,7 @@ function wrapPatientHtml(inner, urgent) {
   <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e8f0;color:#64748b;font-size:12px;line-height:1.5">
     <a href="https://serenest.fit" style="color:${accent};text-decoration:none;font-weight:600">serenest.fit</a>
     <span style="display:block;margin-top:8px">Clinical telepsychiatry for India. Reply to this email only if it was sent from a staffed address.</span>
+    <span style="display:block;margin-top:10px;font-size:11px;color:#94a3b8">${LEGAL_ENTITY}</span>
   </td></tr>
 </table>
 </body></html>`;

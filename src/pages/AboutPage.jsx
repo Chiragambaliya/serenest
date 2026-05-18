@@ -101,7 +101,7 @@ export default function AboutPage() {
                 <span className="cred-pill">
                   Consultant Psychiatrist, Rudra Neuropsychiatry &amp; De-addiction Hospital, Deesa, Gujarat
                 </span>
-                <span className="cred-pill">Founder, Serenest Private Limited</span>
+                <span className="cred-pill">Founder, Serenest Education Pvt Ltd</span>
                 <span className="cred-pill">DPIIT Recognised Startup</span>
               </div>
               <p className="muted" style={{ marginTop: 16 }}>
@@ -257,7 +257,7 @@ export default function AboutPage() {
             <article className="tile">
               <h3>DPIIT Recognised Startup</h3>
               <p className="muted">
-                Serenest Private Limited is a DPIIT recognised startup under the Government of India&apos;s
+                Serenest Education Pvt Ltd is a DPIIT recognised startup under the Government of India&apos;s
                 Startup India initiative.
               </p>
             </article>

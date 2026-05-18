@@ -16,6 +16,9 @@ export default function PrivacyPolicyPage() {
             <p className="fineprint" style={{ marginTop: 10 }}>
               Last updated: {new Date().toLocaleDateString()}
             </p>
+            <p className="fineprint" style={{ marginTop: 8 }}>
+              <strong>Data controller:</strong> Serenest Education Pvt Ltd (brand name &quot;Serenest&quot;).
+            </p>
           </div>
         </div>
       </section>

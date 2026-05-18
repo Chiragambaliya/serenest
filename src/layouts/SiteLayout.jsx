@@ -301,7 +301,7 @@ export default function SiteLayout() {
             {/* Bottom row */}
             <div className="footer-bottom2">
               <p className="footer-legal">
-                © {new Date().getFullYear()} Serenest. All rights reserved.
+                © {new Date().getFullYear()} Serenest Education Pvt Ltd. All rights reserved.
               </p>
               <nav className="footer-mini-links" aria-label="Legal links">
                 <Link to="/privacy">Privacy</Link>
