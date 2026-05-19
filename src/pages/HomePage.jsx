@@ -3,12 +3,6 @@ import { Link } from 'react-router-dom';
 
 /* ── Inline styles for elements that need minor one-off tweaks ─ */
 const s = {
-  sectionTwoCol: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '48px',
-    alignItems: 'center',
-  },
   featureList: {
     listStyle: 'none',
     margin: 0,
@@ -325,7 +319,7 @@ export default function HomePage() {
       ══════════════════════════════════════════════════ */}
       <section className="section alt" id="how">
         <div className="container">
-          <div style={s.sectionTwoCol}>
+          <div className="section-two-col">
             <div className="section-head" style={{ marginBottom: 0 }}>
               <div className="section-kicker">Simple process</div>
               <h2>From first step to follow-up</h2>
@@ -457,7 +451,7 @@ export default function HomePage() {
       ══════════════════════════════════════════════════ */}
       <section className="section alt">
         <div className="container">
-          <div style={{ ...s.sectionTwoCol, gap: '56px' }}>
+          <div className="section-two-col section-two-col--wide-gap">
             <div>
               <div className="section-kicker">For professionals</div>
               <h2 style={{ marginBottom: 16 }}>
