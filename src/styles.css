@@ -15,12 +15,12 @@ html {
 
 body {
   margin: 0;
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+  font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
     "Segoe UI", Roboto, sans-serif;
   background: var(--bg);
   color: var(--ink);
   line-height: 1.6;
-  letter-spacing: -0.005em;
+  letter-spacing: 0.01em;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -51,7 +51,7 @@ button {
   --teal-200: #99f6e4;
   --teal-300: #5eead4;
   --teal-400: #2dd4bf;
-  --teal-500: #14b8a6;
+  --teal-500: #059669;
   --teal-600: #0d9488;
   --teal-700: #0f766e;
   --teal-800: #115e59;
@@ -103,35 +103,35 @@ button {
   --sp-7: 80px;
 
   /* Typography */
-  --font-heading: 'Inter', ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+  --font-heading: 'Cormorant Garamond', Georgia, serif, system-ui, -apple-system, "Segoe UI",
     Roboto, sans-serif;
 }
 
 /* Heading scale — Inter, tight tracking, balanced wrapping */
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  font-family: var(--font-heading);
+  font-family: 'Cormorant Garamond', Georgia, serif;
   color: var(--ink);
   text-wrap: balance;
 }
 
 h1 {
   font-size: clamp(2rem, 4.2vw, 2.75rem);
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: -0.032em;
   line-height: 1.06;
 }
 
 h2 {
   font-size: clamp(1.5rem, 2.9vw, 2rem);
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.024em;
   line-height: 1.14;
 }
 
 h3 {
   font-size: clamp(1.0625rem, 2vw, 1.1875rem);
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.018em;
   line-height: 1.22;
 }
@@ -152,7 +152,7 @@ h5 {
 
 h6 {
   font-size: 0.8125rem;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.06em;
   line-height: 1.35;
   text-transform: uppercase;
@@ -350,7 +350,7 @@ h6 {
 }
 
 .announce-link {
-  font-weight: 800;
+  font-weight: 500;
   color: var(--teal-200);
   text-decoration: underline;
   text-underline-offset: 2px;
@@ -433,7 +433,7 @@ h6 {
 .brand-text {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   font-size: 1.3125rem;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.022em;
   color: var(--teal-800);
 }
@@ -460,7 +460,7 @@ h6 {
   background: linear-gradient(135deg, var(--teal-500), var(--teal-700));
   color: #fff;
   font-size: 17px;
-  font-weight: 900;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -806,7 +806,7 @@ h6 {
   padding: 7px 14px;
   border-radius: var(--r-full);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--teal-700);
@@ -840,7 +840,7 @@ h6 {
   background: var(--teal-500);
   color: #fff;
   font-size: 9px;
-  font-weight: 900;
+  font-weight: 500;
   padding: 2px 6px;
   border-radius: var(--r-full);
   letter-spacing: 0.08em;
@@ -848,9 +848,9 @@ h6 {
 
 /* Headline */
 .hero-title {
-  font-family: var(--font-heading);
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(2.125rem, 5.5vw, 3.875rem);
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: -0.035em;
   line-height: 1.05;
   margin: 0 0 20px;
@@ -928,7 +928,7 @@ h6 {
   align-items: center;
   justify-content: center;
   font-size: 13px;
-  font-weight: 900;
+  font-weight: 500;
   color: #fff;
   margin-left: -10px;
   box-shadow: 0 2px 8px rgba(11,36,32,0.15);
@@ -944,7 +944,7 @@ h6 {
 
 .hero-proof-text strong {
   color: var(--ink);
-  font-weight: 800;
+  font-weight: 500;
 }
 
 .hero-stars {
@@ -1043,7 +1043,7 @@ h6 {
   background: linear-gradient(135deg, var(--teal-400), var(--teal-700));
   color: #fff;
   font-size: 20px;
-  font-weight: 900;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1055,7 +1055,7 @@ h6 {
 
 .hac-name {
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--ink);
   margin-bottom: 2px;
 }
@@ -1096,7 +1096,7 @@ h6 {
 
 .hac-session-label {
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
@@ -1132,7 +1132,7 @@ h6 {
 
 .hac-session-val {
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--ink);
   line-height: 1.2;
 }
@@ -1145,7 +1145,7 @@ h6 {
 /* Assessment bar */
 .hac-assess-label {
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
@@ -1192,7 +1192,7 @@ h6 {
   border: none;
   border-radius: var(--r-md);
   font-size: 14px;
-  font-weight: 800;
+  font-weight: 500;
   cursor: default;
   box-shadow: 0 6px 20px rgba(14,116,110,0.28);
 }
@@ -1253,9 +1253,9 @@ h6 {
 
 .section-kicker {
   display: inline-block;
-  font-family: var(--font-heading);
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--teal-600);
@@ -1263,9 +1263,9 @@ h6 {
 }
 
 .section-head h2 {
-  font-family: var(--font-heading);
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.625rem, 3.6vw, 2.625rem);
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1.08;
   margin-bottom: 14px;
@@ -1311,9 +1311,9 @@ h6 {
 }
 
 .tile h3 {
-  font-family: var(--font-heading);
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.0625rem, 1.4vw, 1.125rem);
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.017em;
   line-height: 1.24;
   margin-bottom: 10px;
@@ -1382,7 +1382,7 @@ h6 {
   background: linear-gradient(135deg, var(--teal-500), var(--teal-700));
   color: #fff;
   font-size: 15px;
-  font-weight: 900;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1391,7 +1391,7 @@ h6 {
 
 .step-body strong {
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--ink);
   display: block;
   margin-bottom: 4px;
@@ -1408,7 +1408,7 @@ h6 {
 .step > div > strong,
 .step > strong {
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--ink);
 }
 
@@ -1884,7 +1884,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .cta-banner h2 {
   font-size: clamp(22px, 3vw, 34px);
-  font-weight: 900;
+  font-weight: 500;
   color: #fff;
   margin-bottom: 10px;
 }
@@ -1920,7 +1920,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .cta h2 {
   font-size: 24px;
-  font-weight: 800;
+  font-weight: 500;
   margin-bottom: 8px;
 }
 
@@ -1955,9 +1955,9 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .kicker {
   display: inline-block;
-  font-family: var(--font-heading);
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 12px;
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--teal-700);
@@ -2007,9 +2007,9 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 .page-title {
-  font-family: var(--font-heading);
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.875rem, 4.5vw, 3.125rem);
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: -0.032em;
   line-height: 1.06;
   margin: 12px 0 16px;
@@ -2027,9 +2027,9 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 /* Section label (small eyebrow above h2) */
 .section-label {
-  font-family: var(--font-heading);
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--teal-600);
@@ -2038,9 +2038,9 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 /* Generic heading alias */
 .h2 {
-  font-family: var(--font-heading);
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.375rem, 3.2vw, 2.125rem);
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: -0.026em;
   line-height: 1.12;
   color: var(--ink);
@@ -2069,7 +2069,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   position: absolute;
   left: 0;
   color: var(--teal-500);
-  font-weight: 900;
+  font-weight: 500;
   font-size: 12px;
 }
 
@@ -2083,7 +2083,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .callout-title {
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--teal-700);
@@ -2174,7 +2174,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   display: inline-flex;
   align-items: center;
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.10em;
   text-transform: uppercase;
   color: var(--teal-700);
@@ -2211,9 +2211,9 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 .blog-title {
-  font-family: var(--font-heading);
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.0625rem, 1.5vw, 1.125rem);
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: -0.02em;
   line-height: 1.28;
   color: var(--ink);
@@ -2255,7 +2255,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .stat-card .stat-value {
   font-size: 42px;
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: -0.03em;
   color: var(--teal-700);
   line-height: 1;
@@ -2323,9 +2323,9 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 .page-hero-title {
-  font-family: var(--font-heading);
+  font-family: 'Cormorant Garamond', Georgia, serif;
   font-size: clamp(1.875rem, 4.5vw, 3.125rem);
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: -0.032em;
   line-height: 1.06;
   margin: 12px 0 18px;
@@ -2386,7 +2386,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .svc-badge {
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.10em;
   text-transform: uppercase;
   color: #fff;
@@ -2398,7 +2398,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .svc-title {
   font-size: 17px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--ink);
   line-height: 1.3;
   margin: 0;
@@ -2443,7 +2443,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .svc-subhead {
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--muted);
@@ -2471,7 +2471,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   position: absolute;
   left: 0;
   color: var(--teal-500);
-  font-weight: 900;
+  font-weight: 500;
   font-size: 11px;
 }
 
@@ -2523,7 +2523,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   background: var(--teal-900);
   color: rgba(255,255,255,0.85);
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 12px 20px;
@@ -2567,7 +2567,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .callout-box-title {
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 500;
   color: #92400e;
   margin-bottom: 4px;
 }
@@ -2622,7 +2622,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .org-tag {
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.10em;
   text-transform: uppercase;
   color: var(--teal-700);
@@ -2646,7 +2646,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .org-card h3 {
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--ink);
   margin: 0;
   line-height: 1.3;
@@ -2681,7 +2681,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   position: absolute;
   left: 0;
   color: var(--teal-500);
-  font-weight: 900;
+  font-weight: 500;
   font-size: 12px;
 }
 
@@ -2736,7 +2736,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .stat-value {
   font-size: 28px;
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: -0.03em;
   color: var(--teal-700);
   line-height: 1;
@@ -2798,7 +2798,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .trust-card h3 {
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--ink);
   margin-bottom: 6px;
 }
@@ -2847,14 +2847,14 @@ a.pro-hub-tile:hover .learning-card-aux {
   background: linear-gradient(135deg, var(--teal-500), var(--teal-700));
   color: #fff;
   font-size: 16px;
-  font-weight: 900;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .footer-name {
-  font-weight: 900;
+  font-weight: 500;
   font-size: 16px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -2889,7 +2889,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .footer-title2 {
   font-size: 11px;
-  font-weight: 800;
+  font-weight: 500;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: rgba(255,255,255,0.45);
@@ -3017,7 +3017,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   background: linear-gradient(135deg, var(--teal-400), var(--teal-600));
   color: #fff;
   font-size: 10px;
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: 0.12em;
   text-transform: uppercase;
   padding: 5px 14px;
@@ -3034,7 +3034,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .pricing-plan-name {
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--ink);
 }
 
@@ -3042,7 +3042,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .pricing-plan-price {
   font-size: 36px;
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: -0.03em;
   color: var(--ink);
   line-height: 1;
@@ -3106,7 +3106,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .pricing-check {
   color: var(--teal-500);
-  font-weight: 900;
+  font-weight: 500;
   font-size: 12px;
   flex-shrink: 0;
   margin-top: 1px;
@@ -3195,7 +3195,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .org-pricing-card h3 {
   font-size: 18px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--ink);
   margin: 0;
 }
@@ -3381,7 +3381,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .choice-card-title {
   font-size: 15px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--ink);
   letter-spacing: -0.02em;
 }
@@ -3515,7 +3515,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   align-items: center;
   justify-content: center;
   font-size: 22px;
-  font-weight: 900;
+  font-weight: 500;
   color: #fff;
   margin-bottom: 14px;
 }
@@ -3568,7 +3568,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .price-amount {
   font-size: 42px;
-  font-weight: 900;
+  font-weight: 500;
   letter-spacing: -0.03em;
   line-height: 1;
 }
@@ -3595,7 +3595,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .notfound h1 {
   font-size: 80px;
-  font-weight: 900;
+  font-weight: 500;
   color: var(--teal-200);
   letter-spacing: -0.05em;
 }
@@ -3636,7 +3636,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .faq-q {
   font-size: 16px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--ink);
   cursor: pointer;
   display: flex;
@@ -3686,13 +3686,13 @@ a.pro-hub-tile:hover .learning-card-aux {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 900;
+  font-weight: 500;
   font-size: 22px;
   letter-spacing: 0.04em;
 }
 
 .founder-name {
-  font-weight: 900;
+  font-weight: 500;
   font-size: 18px;
   color: var(--ink);
   margin-bottom: 4px;
@@ -3750,7 +3750,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   border-radius: 50%;
   background: linear-gradient(135deg, var(--teal-400), var(--teal-700));
   color: #fff;
-  font-weight: 900;
+  font-weight: 500;
   font-size: 20px;
   display: flex;
   align-items: center;
@@ -3761,7 +3761,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 .team-member-name {
   margin: 0;
   font-size: 18px;
-  font-weight: 900;
+  font-weight: 500;
   color: var(--ink);
   letter-spacing: -0.02em;
 }
@@ -3769,7 +3769,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 .team-member-role {
   margin: 4px 0 0;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 500;
   color: var(--teal-700);
 }
 
@@ -3902,7 +3902,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   background: linear-gradient(135deg, var(--sage-3), var(--sage-2));
   color: #fff;
   font-size: 20px;
-  font-weight: 900;
+  font-weight: 500;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3910,7 +3910,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 .pro-booking-name {
-  font-weight: 800;
+  font-weight: 500;
   font-size: 15px;
   color: var(--ink);
 }
