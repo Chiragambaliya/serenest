@@ -47,15 +47,15 @@ button {
 :root {
   /* Brand colours */
   --teal-50:  #f0fdf4;
-  --teal-100: #dcfce7;
+  --teal-100: #ddd8cc;
   --teal-200: #bbf7d0;
   --teal-300: #86efac;
   --teal-400: #4ade80;
-  --teal-500: #059669;
-  --teal-600: #16a34a;
-  --teal-700: #15803d;
-  --teal-800: #166534;
-  --teal-900: #14532d;
+  --teal-500: #2e5849;
+  --teal-600: #24473b;
+  --teal-700: #284f41;
+  --teal-800: #203d31;
+  --teal-900: #1c2b22;
 
   /* Semantic */
   --brand:       var(--teal-500);
