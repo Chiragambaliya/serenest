@@ -22,7 +22,24 @@ import { ROUTE_SEO, canonicalUrl } from '../src/lib/seo.js';
 
 const BASE = process.argv[2] || process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
 
-const ROUTES_200 = ['/', '/services', '/pricing', '/book', '/screening', '/team', '/about', '/faq', '/privacy'];
+const ROUTES_200 = [
+  '/',
+  '/services',
+  '/pricing',
+  '/book',
+  '/screening',
+  '/team',
+  '/about',
+  '/faq',
+  '/privacy',
+  '/online-psychiatrist-consultation-india',
+];
+const ROUTES_301 = [
+  ['/online-psychiatry-consultation-india', 'https://www.serenest.in/online-psychiatrist-consultation-india'],
+  ['/psychiatry-online-consultation', 'https://www.serenest.in/online-psychiatrist-consultation-india'],
+  ['/online-mental-health-consultation', 'https://www.serenest.in/online-psychiatrist-consultation-india'],
+  ['/consult-psychiatrist-online-india', 'https://www.serenest.in/online-psychiatrist-consultation-india'],
+];
 const ROUTES_410 = [
   '/kotagiri/',
   '/kotagiri',
@@ -162,6 +179,21 @@ for (const r of ROUTES_410) await checkStatus(r, 410, { mustNoindex: true });
 
 console.log('\nUnknown routes (404 + noindex):');
 for (const r of ROUTES_404) await checkStatus(r, 404, { mustNoindex: true });
+
+console.log('\nAlias routes (301 → canonical landing page):');
+for (const [from, expectedLocation] of ROUTES_301) {
+  const res = await fetch(`${BASE}${from}`, { redirect: 'manual' });
+  if (res.status !== 301) {
+    fail(from, `expected 301, got ${res.status}`);
+    continue;
+  }
+  const loc = res.headers.get('location');
+  if (loc !== expectedLocation) {
+    fail(from, `expected Location ${expectedLocation}, got ${loc}`);
+    continue;
+  }
+  pass(from, `301 → ${loc}`);
+}
 
 console.log(`\n${failures === 0 ? '✅ All checks passed.' : `❌ ${failures} check(s) failed.`}\n`);
 process.exit(failures === 0 ? 0 : 1);

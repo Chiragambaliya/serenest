@@ -92,6 +92,13 @@ export default function ServicesPage() {
               <Link className="btn btn-primary btn-lg" to="/book">Book an appointment →</Link>
               <Link className="btn btn-ghost btn-lg" to="/screening">Self-screening</Link>
             </div>
+            <p style={{ marginTop: 12, fontSize: 14 }}>
+              Looking for an{' '}
+              <Link to="/online-psychiatrist-consultation-india">
+                online psychiatrist consultation in India
+              </Link>
+              ? See our pan-India telepsychiatry overview.
+            </p>
           </div>
         </div>
       </section>

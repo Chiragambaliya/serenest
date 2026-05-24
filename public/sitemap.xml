@@ -45,4 +45,9 @@
     <changefreq>yearly</changefreq>
     <priority>0.5</priority>
   </url>
+  <url>
+    <loc>https://www.serenest.in/online-psychiatrist-consultation-india</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.95</priority>
+  </url>
 </urlset>

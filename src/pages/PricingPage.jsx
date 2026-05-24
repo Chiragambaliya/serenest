@@ -344,7 +344,12 @@ export default function PricingPage() {
           <div className="cta-banner">
             <div className="cta-banner-body">
               <h2>Ready to book your first session?</h2>
-              <p>No referral needed · Fully confidential · Available across India</p>
+              <p>
+                No referral needed · Fully confidential · Available across India.{' '}
+                <Link to="/online-psychiatrist-consultation-india" style={{ color: 'inherit', textDecoration: 'underline' }}>
+                  See how online psychiatry consultations work in India
+                </Link>.
+              </p>
             </div>
             <div className="cta-banner-actions">
               <Link className="btn btn-primary btn-lg" to="/book">Book a consultation →</Link>

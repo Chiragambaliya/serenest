@@ -82,6 +82,25 @@ export const ROUTE_SEO = {
     ogDescription:
       'How Serenest collects, protects, and processes consultation and personal data.',
   },
+  '/online-psychiatrist-consultation-india': {
+    title: 'Online Psychiatrist Consultation in India | Serenest',
+    description:
+      'Book an online psychiatrist consultation in India with verified psychiatrists. Secure video, audio, or chat sessions, PHQ-9/GAD-7 screening, and follow-up care. Pan-India access, including Gujarat.',
+    ogTitle: 'Online Psychiatrist Consultation in India | Serenest',
+    ogDescription:
+      'Verified Indian psychiatrists. Secure online consultations with structured assessment, prescriptions where appropriate, and continuity of care.',
+  },
+};
+
+// Routes that redirect (301) to a canonical route. Used by server.js.
+// Useful for keyword variants of the same landing page so internal links and
+// inbound links consolidate onto one URL.
+export const ROUTE_ALIASES = {
+  '/online-psychiatry-consultation-india': '/online-psychiatrist-consultation-india',
+  '/psychiatry-online-consultation': '/online-psychiatrist-consultation-india',
+  '/online-mental-health-consultation': '/online-psychiatrist-consultation-india',
+  '/consult-psychiatrist-online-india': '/online-psychiatrist-consultation-india',
+  '/online-psychiatry-india': '/online-psychiatrist-consultation-india',
 };
 
 // Routes that the SPA renders but should NOT be indexed (utility/internal pages).
@@ -275,6 +294,96 @@ export const ROUTE_JSONLD = {
         description:
           'Learn what data Serenest collects, how consultation information is protected, and how privacy-first care workflows are designed.',
         inLanguage: 'en-IN',
+      },
+    ],
+  },
+  '/online-psychiatrist-consultation-india': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        ...MEDICAL_BUSINESS_SCHEMA,
+        '@id': `${SITE_ORIGIN}/online-psychiatrist-consultation-india#medicalbusiness`,
+        url: `${SITE_ORIGIN}/online-psychiatrist-consultation-india`,
+      },
+      {
+        '@type': 'MedicalWebPage',
+        '@id': `${SITE_ORIGIN}/online-psychiatrist-consultation-india#webpage`,
+        url: `${SITE_ORIGIN}/online-psychiatrist-consultation-india`,
+        name: 'Online Psychiatrist Consultation in India',
+        description:
+          'Book an online psychiatrist consultation with verified Indian psychiatrists. Secure video, audio, or chat sessions, PHQ-9/GAD-7 screening, and follow-up care. Pan-India access including Gujarat.',
+        inLanguage: 'en-IN',
+        isAccessibleForFree: true,
+        audience: { '@type': 'PeopleAudience', geographicArea: { '@type': 'Country', name: 'India' } },
+        about: [
+          { '@type': 'MedicalCondition', name: 'Depression' },
+          { '@type': 'MedicalCondition', name: 'Anxiety Disorders' },
+          { '@type': 'MedicalCondition', name: 'Obsessive-Compulsive Disorder' },
+          { '@type': 'MedicalCondition', name: 'Bipolar Disorder' },
+          { '@type': 'MedicalCondition', name: 'Post-Traumatic Stress Disorder' },
+          { '@type': 'MedicalCondition', name: 'Sleep Disorders' },
+        ],
+        medicalAudience: 'Patient',
+        lastReviewed: '2026-05-24',
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${SITE_ORIGIN}/online-psychiatrist-consultation-india#faq`,
+        url: `${SITE_ORIGIN}/online-psychiatrist-consultation-india`,
+        mainEntity: [
+          {
+            q: 'How do I get an online psychiatrist consultation in India?',
+            a: 'Pick a slot on the Serenest booking page, complete a short intake (including PHQ-9 and GAD-7 self-screening if relevant), and join your appointment over secure video, audio, or chat. Sessions are typically 45 minutes with a verified psychiatrist.',
+          },
+          {
+            q: 'Is online psychiatry consultation legal in India?',
+            a: 'Yes. Registered medical practitioners can provide telepsychiatry consultations in India under the Telemedicine Practice Guidelines (2020) issued jointly by the Ministry of Health and the National Medical Commission. Clinicians follow these guidelines, including on prescribing.',
+          },
+          {
+            q: 'Can a psychiatrist prescribe medication online in India?',
+            a: 'In many cases, yes — a registered psychiatrist may issue a digital prescription after an appropriate consultation, following India’s Telemedicine Practice Guidelines. Some categories of medication (for example, controlled substances under Schedule X) or certain clinical situations may require in-person evaluation. The treating clinician decides what is appropriate based on your history and assessment.',
+          },
+          {
+            q: 'How much does an online psychiatry consultation cost on Serenest?',
+            a: 'Psychiatry consultations start at ₹499 per session. Final fees depend on the clinician you book with. Transparent, per-session pricing is shown before payment — see the Pricing page for current rates.',
+          },
+          {
+            q: 'Can I consult a psychiatrist from Gujarat (Ahmedabad, Surat, Vadodara, Rajkot, Deesa) online?',
+            a: 'Yes. Serenest is built for patients across India, including Gujarat. You can consult verified psychiatrists from any city or town with a stable internet connection. Sessions are available in English, Hindi, and Gujarati where the clinician supports the language.',
+          },
+          {
+            q: 'What conditions can be addressed in an online psychiatry consultation?',
+            a: 'Common areas include depression, anxiety disorders, OCD, PTSD, bipolar disorder, ADHD in adults, sleep difficulties, stress and burnout, and medication review or follow-up care. Severe or emergency presentations are not appropriate for telepsychiatry — see the emergency notice on this page.',
+          },
+          {
+            q: 'Is online psychiatry as effective as in-person care?',
+            a: 'For many common conditions, evidence supports telepsychiatry as a clinically useful option, especially for follow-up care, medication review, counselling, and continuity. Your clinician will tell you if in-person evaluation is recommended.',
+          },
+          {
+            q: 'Is my consultation private and confidential?',
+            a: 'Sessions are conducted over encrypted video and stored within Serenest’s privacy-first workflows on least-access principles. By default sessions are not recorded. See our Privacy Policy for details on what is collected and how it is protected.',
+          },
+        ].map((f) => ({
+          '@type': 'Question',
+          name: f.q,
+          acceptedAnswer: { '@type': 'Answer', text: f.a },
+        })),
+      },
+      {
+        '@type': 'BreadcrumbList',
+        '@id': `${SITE_ORIGIN}/online-psychiatrist-consultation-india#breadcrumbs`,
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
+          { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_ORIGIN}/services` },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: 'Online Psychiatrist Consultation in India',
+            item: `${SITE_ORIGIN}/online-psychiatrist-consultation-india`,
+          },
+        ],
       },
     ],
   },

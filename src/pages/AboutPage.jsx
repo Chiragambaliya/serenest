@@ -323,6 +323,9 @@ export default function AboutPage() {
               <Link className="btn btn-ghost btn-full" to="/">
                 Back to home
               </Link>
+              <Link className="btn btn-ghost btn-full" to="/online-psychiatrist-consultation-india">
+                Online psychiatrist consultation in India →
+              </Link>
             </div>
           </div>
         </div>

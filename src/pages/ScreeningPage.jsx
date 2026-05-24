@@ -336,7 +336,10 @@ export default function ScreeningPage() {
               </div>
 
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '1.25rem', lineHeight: 1.5 }}>
-                These tools are screeners, not a diagnosis. A licensed professional can give you a complete assessment.
+                These tools are screeners, not a diagnosis. A licensed professional can give you a complete assessment.{' '}
+                <Link to="/online-psychiatrist-consultation-india">
+                  Learn about online psychiatrist consultations in India
+                </Link>.
               </p>
             </Card>
           </div>

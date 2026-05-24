@@ -121,6 +121,10 @@ export default function TeamPage() {
             <Link to="/about">About Serenest</Link>
             {' '}— or browse{' '}
             <Link to="/patient/find-professional">verified professionals</Link>.
+            {' '}To book an{' '}
+            <Link to="/online-psychiatrist-consultation-india">
+              online psychiatrist consultation in India
+            </Link>, see the service overview.
           </p>
         </div>
       </section>

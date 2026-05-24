@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
-import { renderSeoHead, shouldNoindex, ROUTE_SEO } from './src/lib/seo.js';
+import { renderSeoHead, shouldNoindex, ROUTE_SEO, ROUTE_ALIASES, SITE_ORIGIN } from './src/lib/seo.js';
 
 // ── Setup ────────────────────────────────────────────────────
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -1012,6 +1012,7 @@ const VALID_ROUTES = new Set([
   '/admin',
   '/patient/find-professional',
   '/screening',
+  '/online-psychiatrist-consultation-india',
 ]);
 
 // Dynamic-route prefixes that the SPA legitimately serves.
@@ -1102,6 +1103,13 @@ function sendHtml(req, res, status) {
 app.use((req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();
   const pathname = req.path;
+
+  // Keyword-variant aliases → 301 to the canonical landing page.
+  const aliasTarget = ROUTE_ALIASES[normalize(pathname)] || ROUTE_ALIASES[pathname];
+  if (aliasTarget) {
+    res.set('Location', `${SITE_ORIGIN}${aliasTarget}`);
+    return res.status(301).end();
+  }
 
   if (GONE_PATTERNS.some((re) => re.test(pathname))) {
     return sendHtml(req, res, 410);
