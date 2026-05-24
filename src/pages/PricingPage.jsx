@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 const PLANS = [
   {
@@ -119,6 +121,7 @@ function FaqItem({ q, a }) {
 }
 
 export default function PricingPage() {
+  useSEO({ path: '/pricing', ...ROUTE_SEO['/pricing'] });
   return (
     <div>
 

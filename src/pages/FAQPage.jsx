@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 const FAQS = [
   {
@@ -46,7 +48,20 @@ const FAQS = [
 
 const CATEGORIES = ['All', 'General', 'Prescriptions', 'Privacy', 'Payments', 'Technical'];
 
+const FAQ_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  '@id': 'https://www.serenest.in/faq#faq',
+  url: 'https://www.serenest.in/faq',
+  mainEntity: FAQS.map((f) => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+};
+
 export default function FAQPage() {
+  useSEO({ path: '/faq', ...ROUTE_SEO['/faq'], jsonLd: FAQ_JSONLD });
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState('All');
 

@@ -986,9 +986,62 @@ app.post('/api/contact', async (req, res) => {
 // ══════════════════════════════════════════════════════════════
 app.use(express.static(dist, { index: 'index.html' }));
 
+// Routes the SPA actually handles. Anything outside this set should
+// return a real 404/410 status code instead of a soft-200 SPA shell.
+// Keep this in sync with src/App.jsx.
+const VALID_ROUTES = new Set([
+  '/',
+  '/about',
+  '/team',
+  '/services',
+  '/professionals',
+  '/professionals/learning',
+  '/professionals/resources',
+  '/professionals/guidelines',
+  '/professionals/apply',
+  '/book',
+  '/pricing',
+  '/faq',
+  '/blog',
+  '/privacy',
+  '/admin',
+  '/patient/find-professional',
+  '/screening',
+]);
+
+// Dynamic-route prefixes that the SPA legitimately serves.
+const VALID_PREFIXES = ['/blog/', '/consultation/'];
+
+// Known stale URLs surfaced in search from prior site contents. These have no
+// healthcare replacement, so return 410 Gone to ask Google to drop them.
+const GONE_PATTERNS = [
+  /^\/kotagiri\/?$/i,
+  /^\/travelx-tour-guides-section\/?$/i,
+  /^\/\d{4}\/\d{2}\/\d{2}\//,    // old WP-style dated post URLs
+  /^\/category\//i,
+  /^\/tag\//i,
+  /^\/wp-/i,
+];
+
+function isValidSpaRoute(pathname) {
+  if (VALID_ROUTES.has(pathname)) return true;
+  if (pathname !== '/' && VALID_ROUTES.has(pathname.replace(/\/+$/, ''))) return true;
+  return VALID_PREFIXES.some((p) => pathname.startsWith(p) && pathname.length > p.length);
+}
+
 app.use((req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();
-  res.sendFile(join(dist, 'index.html'), (e) => (e ? next(e) : undefined));
+  const pathname = req.path;
+
+  if (GONE_PATTERNS.some((re) => re.test(pathname))) {
+    return res.status(410).sendFile(join(dist, 'index.html'), (e) => (e ? next(e) : undefined));
+  }
+
+  if (!isValidSpaRoute(pathname)) {
+    return res.status(404).sendFile(join(dist, 'index.html'), (e) => (e ? next(e) : undefined));
+  }
+
+  return res.sendFile(join(dist, 'index.html'), (e) => (e ? next(e) : undefined));
 });
 
 // ── 404 for unmatched API routes ─────────────────────────────

@@ -1,8 +1,29 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { TEAM_MEMBERS } from '../lib/team';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
+
+function buildTeamJsonLd() {
+  return TEAM_MEMBERS.map((m, i) => ({
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    '@id': `https://www.serenest.in/team#person-${i + 1}`,
+    name: m.name,
+    jobTitle: m.role || undefined,
+    description: Array.isArray(m.bio) ? m.bio.join(' ') : m.bio,
+    worksFor: { '@id': 'https://www.serenest.in/#organization' },
+    knowsAbout: ['Psychiatry', 'Mental Health'],
+    affiliation: m.subtitle ? { '@type': 'Organization', name: m.subtitle } : undefined,
+    hasCredential: (m.credentials || []).map((c) => ({
+      '@type': 'EducationalOccupationalCredential',
+      name: c,
+    })),
+  }));
+}
 
 export default function TeamPage() {
+  useSEO({ path: '/team', ...ROUTE_SEO['/team'], jsonLd: buildTeamJsonLd() });
   return (
     <div className="page">
       <section className="section about-hero">

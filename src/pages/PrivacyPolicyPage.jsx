@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 export default function PrivacyPolicyPage() {
+  useSEO({ path: '/privacy', ...ROUTE_SEO['/privacy'] });
   return (
     <div className="page">
       <section className="section about-hero">

@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 /* ── Inline styles for elements that need minor one-off tweaks ─ */
 const s = {
@@ -43,6 +45,7 @@ const s = {
 };
 
 export default function HomePage() {
+  useSEO({ path: '/', ...ROUTE_SEO['/'] });
   return (
     <>
       {/* ══════════════════════════════════════════════════
