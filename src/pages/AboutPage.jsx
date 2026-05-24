@@ -1,7 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 export default function AboutPage() {
+  useSEO({ path: '/about', ...ROUTE_SEO['/about'] });
   return (
     <div className="page">
       <section className="section about-hero">
@@ -319,6 +322,9 @@ export default function AboutPage() {
               </Link>
               <Link className="btn btn-ghost btn-full" to="/">
                 Back to home
+              </Link>
+              <Link className="btn btn-ghost btn-full" to="/online-psychiatrist-consultation-india">
+                Online psychiatrist consultation in India →
               </Link>
             </div>
           </div>

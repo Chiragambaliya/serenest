@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /consultation/
+Disallow: /patient/find-professional
+Disallow: /professionals/apply
 
-Sitemap: https://serenest.in/sitemap.xml
+Sitemap: https://www.serenest.in/sitemap.xml

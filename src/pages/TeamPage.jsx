@@ -1,8 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { TEAM_MEMBERS } from '../lib/team';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 export default function TeamPage() {
+  useSEO({ path: '/team', ...ROUTE_SEO['/team'] });
   return (
     <div className="page">
       <section className="section about-hero">
@@ -118,6 +121,10 @@ export default function TeamPage() {
             <Link to="/about">About Serenest</Link>
             {' '}— or browse{' '}
             <Link to="/patient/find-professional">verified professionals</Link>.
+            {' '}To book an{' '}
+            <Link to="/online-psychiatrist-consultation-india">
+              online psychiatrist consultation in India
+            </Link>, see the service overview.
           </p>
         </div>
       </section>

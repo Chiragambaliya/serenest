@@ -23,6 +23,7 @@ const AdminPage = lazy(() => import('./pages/AdminPage'));
 const PatientFindProfessionalPage = lazy(() => import('./pages/PatientFindProfessionalPage'));
 const ScreeningPage = lazy(() => import('./pages/ScreeningPage'));
 const ConsultationPage = lazy(() => import('./pages/ConsultationPage'));
+const OnlinePsychiatristIndiaPage = lazy(() => import('./pages/OnlinePsychiatristIndiaPage'));
 
 // FIX Bug 5: PageFallback is used per-route so only the content area spins,
 // not the entire app (navbar + footer stay visible during lazy-load transitions)
@@ -79,6 +80,7 @@ export default function App() {
           <Route path="patient/find-professional" element={<S><PatientFindProfessionalPage /></S>} />
           <Route path="screening" element={<S><ScreeningPage /></S>} />
           <Route path="consultation/:appointmentId" element={<S><ConsultationPage /></S>} />
+          <Route path="online-psychiatrist-consultation-india" element={<S><OnlinePsychiatristIndiaPage /></S>} />
           <Route path="*" element={<S><NotFoundPage /></S>} />
         </Route>
       </Routes>

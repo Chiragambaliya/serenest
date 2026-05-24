@@ -2,6 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { bookings } from '../lib/api';
 import { CONSULTATION_MODES } from '../lib/consultationModes';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 const PRACTITIONER_TYPES = [
   { id: 'psychiatrist', label: 'Psychiatrist' },
@@ -32,6 +34,7 @@ function makeSlots() {
 }
 
 export default function BookingPage() {
+  useSEO({ path: '/book', ...ROUTE_SEO['/book'] });
   const [searchParams] = useSearchParams();
   const preProId    = searchParams.get('pid') ?? '';
   const preProName  = searchParams.get('pname') ?? '';

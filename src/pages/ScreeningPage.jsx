@@ -1,6 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { screening } from '../lib/api';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 // ── Validated clinical screeners ──────────────────────────────────
 // PHQ-9 — Patient Health Questionnaire for depression (Kroenke et al.)
@@ -51,6 +53,7 @@ function gad7Severity(score) {
 
 // ── Page ───────────────────────────────────────────────────────────
 export default function ScreeningPage() {
+  useSEO({ path: '/screening', ...ROUTE_SEO['/screening'] });
   // 0 = intro, 1 = PHQ-9, 2 = GAD-7, 3 = contact, 4 = results
   const [step, setStep] = useState(0);
 
@@ -333,7 +336,10 @@ export default function ScreeningPage() {
               </div>
 
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '1.25rem', lineHeight: 1.5 }}>
-                These tools are screeners, not a diagnosis. A licensed professional can give you a complete assessment.
+                These tools are screeners, not a diagnosis. A licensed professional can give you a complete assessment.{' '}
+                <Link to="/online-psychiatrist-consultation-india">
+                  Learn about online psychiatrist consultations in India
+                </Link>.
               </p>
             </Card>
           </div>

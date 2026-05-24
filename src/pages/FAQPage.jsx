@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 const FAQS = [
   {
@@ -47,6 +49,7 @@ const FAQS = [
 const CATEGORIES = ['All', 'General', 'Prescriptions', 'Privacy', 'Payments', 'Technical'];
 
 export default function FAQPage() {
+  useSEO({ path: '/faq', ...ROUTE_SEO['/faq'] });
   const [query, setQuery] = useState('');
   const [cat, setCat] = useState('All');
 
@@ -68,6 +71,11 @@ export default function FAQPage() {
             <h1 className="page-title">Answers to common questions.</h1>
             <p className="about-subtext">
               Search and filter by topic. If you don’t find what you need, contact support.
+              For service-specific questions, see our{' '}
+              <Link to="/online-psychiatrist-consultation-india">
+                online psychiatrist consultation in India
+              </Link>{' '}
+              overview.
             </p>
           </div>
         </div>

@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 /* ── Inline styles for elements that need minor one-off tweaks ─ */
 const s = {
@@ -43,6 +45,7 @@ const s = {
 };
 
 export default function HomePage() {
+  useSEO({ path: '/', ...ROUTE_SEO['/'] });
   return (
     <>
       {/* ══════════════════════════════════════════════════
@@ -95,7 +98,11 @@ export default function HomePage() {
               <p className="hero-lead">
                 Secure video, audio, or chat consultations with licensed
                 psychiatrists and psychologists — structured intake,
-                validated assessments, and continuity of care. All from home.
+                validated assessments, and continuity of care. All from home.{' '}
+                <Link to="/online-psychiatrist-consultation-india" style={{ color: 'inherit', textDecoration: 'underline' }}>
+                  Online psychiatrist consultation in India
+                </Link>
+                {' '}— learn how it works.
               </p>
 
               {/* CTAs */}
