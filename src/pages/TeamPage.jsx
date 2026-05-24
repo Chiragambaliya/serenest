@@ -9,10 +9,21 @@ export default function TeamPage() {
         <div className="container">
           <div className="section-head about-hero-head">
             <p className="kicker">Our team</p>
-            <h1 className="page-title">Clinicians, operators, one mission.</h1>
+            <h1 className="page-title">
+              Meet the clinicians and mental health professionals behind Serenest
+            </h1>
             <p className="about-subtext">
-              Serenest is built by people who&apos;ve worked inside real clinics —
-              pairing psychiatry-grade standards with humane, simple technology for patients and verified professionals nationwide.
+              Serenest is building a carefully verified network of psychiatrists,
+              psychologists, and counsellors for online mental health care in India.
+              Each profile will include qualifications, areas of focus, consultation
+              modes, languages, and registration details where applicable, so you can
+              make an informed choice before booking.
+            </p>
+            <p className="about-subtext" style={{ marginTop: 12 }}>
+              Our public clinician directory is being expanded in phases. Until every
+              profile is verified and ready, we show only professionals whose details
+              are complete. More profiles will be added as credential checks and
+              onboarding are completed.
             </p>
           </div>
         </div>
@@ -27,7 +38,7 @@ export default function TeamPage() {
               We&apos;ll expand this roster as advisors and core collaborators come on board. Have something to contribute?{' '}
               <Link to="/professionals/apply">Apply as a professional</Link>
               {' '}or{' '}
-              <a href="mailto:support@serenest.fit">email us</a>.
+              <a href="mailto:support@serenest.in">email us</a>.
             </p>
           </div>
 

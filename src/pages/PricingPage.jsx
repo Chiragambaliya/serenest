@@ -81,7 +81,7 @@ const FAQ = [
   },
   {
     q: 'Are prescriptions valid at pharmacies?',
-    a: 'Yes. Prescriptions issued after a consultation include the doctor\'s MCI registration number, are digitally signed, and are valid under the MCI Telemedicine Guidelines 2020. Accepted at pharmacies across India.',
+    a: 'When clinically appropriate, a qualified doctor may issue a digital prescription after consultation, following applicable telemedicine guidelines. Some medicines, conditions, or situations may require in-person evaluation. Serenest does not guarantee prescriptions on request; clinical judgment comes first.',
   },
   {
     q: 'What payment methods are accepted?',
@@ -93,7 +93,7 @@ const FAQ = [
   },
   {
     q: 'Do you offer refunds?',
-    a: 'Refund and cancellation terms depend on timing and booking status. Email support@serenest.fit and we\'ll assist based on your situation.',
+    a: 'Refund and cancellation terms depend on timing and booking status. Email support@serenest.in and we\'ll assist based on your situation.',
   },
   {
     q: 'Is there a subscription or membership?',
@@ -193,7 +193,7 @@ export default function PricingPage() {
                   </Link>
                   <a
                     className={`btn btn-full ${plan.popular ? 'btn-outline' : 'btn-ghost'}`}
-                    href={`mailto:support@serenest.fit?subject=${encodeURIComponent(`Pricing: ${plan.name}`)}`}
+                    href={`mailto:support@serenest.in?subject=${encodeURIComponent(`Pricing: ${plan.name}`)}`}
                   >
                     Ask a question
                   </a>
@@ -205,6 +205,45 @@ export default function PricingPage() {
           <p className="pricing-disclaimer">
             * Exact fee is shown before you confirm your booking. All prices are inclusive of GST.
           </p>
+
+          <div
+            className="muted"
+            style={{
+              maxWidth: 720,
+              margin: '20px auto 0',
+              padding: '14px 18px',
+              borderRadius: 10,
+              background: 'rgba(15,118,110,0.05)',
+              border: '1px solid rgba(15,118,110,0.12)',
+              fontSize: 14,
+              lineHeight: 1.65,
+            }}
+          >
+            <strong>How fees work.</strong> Psychiatrist fees vary by clinician experience,
+            appointment duration, specialty focus, and availability. Counselling and therapy
+            fees may vary by professional type, duration, and programme structure. The exact
+            consultation fee is shown before you confirm your booking, so there are no
+            surprise charges.
+          </div>
+
+          <div
+            style={{
+              maxWidth: 720,
+              margin: '16px auto 0',
+              padding: '16px 18px',
+              borderRadius: 10,
+              background: 'rgba(15,118,110,0.05)',
+              border: '1px solid rgba(15,118,110,0.12)',
+              fontSize: 14,
+              lineHeight: 1.65,
+            }}
+          >
+            <strong>About prescriptions.</strong> When clinically appropriate, a qualified
+            doctor may issue a digital prescription after consultation, following applicable
+            telemedicine guidelines. Some medicines, conditions, or situations may require
+            in-person evaluation. Serenest does not guarantee prescriptions on request;
+            clinical judgment comes first.
+          </div>
         </div>
       </section>
 
@@ -252,7 +291,7 @@ export default function PricingPage() {
                 <p>{desc}</p>
                 <a
                   className="btn btn-ghost btn-sm"
-                  href={`mailto:support@serenest.fit?subject=${subject}%20Enquiry`}
+                  href={`mailto:support@serenest.in?subject=${subject}%20Enquiry`}
                   style={{ marginTop: 'auto' }}
                 >
                   Get a quote →

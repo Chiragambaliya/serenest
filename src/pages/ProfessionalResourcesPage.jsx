@@ -34,7 +34,7 @@ export default function ProfessionalResourcesPage() {
             <p className="section-label">Library</p>
             <h2>Tools you can use with patients and admin</h2>
             <p>
-              Need a custom item? Email <a href="mailto:support@serenest.fit">support@serenest.fit</a> with your
+              Need a custom item? Email <a href="mailto:support@serenest.in">support@serenest.in</a> with your
               speciality and format preference.
             </p>
           </div>

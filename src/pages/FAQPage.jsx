@@ -108,7 +108,7 @@ export default function FAQPage() {
                 <div className="callout-title">No results</div>
                 <p className="muted" style={{ margin: 0 }}>
                   Try a different search or category, or email{' '}
-                  <a href="mailto:support@serenest.fit">support@serenest.fit</a>.
+                  <a href="mailto:support@serenest.in">support@serenest.in</a>.
                 </p>
               </div>
             ) : (
@@ -138,7 +138,7 @@ export default function FAQPage() {
               </p>
             </div>
             <div className="stack about-cta-actions">
-              <a className="btn btn-primary btn-full" href="mailto:support@serenest.fit?subject=FAQ%20Question">
+              <a className="btn btn-primary btn-full" href="mailto:support@serenest.in?subject=FAQ%20Question">
                 Contact support →
               </a>
               <Link className="btn btn-ghost btn-full" to="/book">

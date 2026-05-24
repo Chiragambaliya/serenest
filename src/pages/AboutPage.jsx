@@ -307,7 +307,7 @@ export default function AboutPage() {
             <div className="stack about-cta-actions">
               <a
                 className="btn btn-primary btn-full"
-                href="mailto:support@serenest.fit?subject=Book%20a%20Consultation"
+                href="mailto:support@serenest.in?subject=Book%20a%20Consultation"
               >
                 Book a Consultation →
               </a>

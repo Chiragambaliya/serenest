@@ -3,7 +3,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 const CARE_SITE =
   (typeof import.meta.env.VITE_SERENEST_CARE_URL === 'string' &&
     import.meta.env.VITE_SERENEST_CARE_URL.trim()) ||
-  'https://serenest.fit';
+  'https://serenest.in';
 
 const LEARNING_HUB = `${CARE_SITE.replace(/\/$/, '')}/professionals/learning`;
 
@@ -277,7 +277,7 @@ export default function App() {
             <div className="ed-cta-actions">
               <a
                 className="ed-btn ed-btn-primary ed-btn-lg ed-btn-full"
-                href="mailto:support@serenest.fit?subject=Serenest%20Education%20%E2%80%94%20partnership"
+                href="mailto:support@serenest.in?subject=Serenest%20Education%20%E2%80%94%20partnership"
               >
                 Email Serenest Education →
               </a>
@@ -301,7 +301,7 @@ export default function App() {
           <nav className="ed-footer-nav" aria-label="Footer">
             <a href="#learn">Programmes</a>
             <a href={CARE_SITE}>Serenest clinical</a>
-            <a href="mailto:support@serenest.fit">support@serenest.fit</a>
+            <a href="mailto:support@serenest.in">support@serenest.in</a>
           </nav>
           <p className="ed-footer-legal">
             © {new Date().getFullYear()} Serenest Education Pvt Ltd. Educational content is informational only and

@@ -71,7 +71,7 @@ export default function PrivacyPolicyPage() {
               <p className="muted" style={{ marginTop: 10 }}>
                 No system can be 100% secure. If you believe your account is compromised, contact us
                 immediately at{' '}
-                <a href="mailto:support@serenest.fit">support@serenest.fit</a>.
+                <a href="mailto:support@serenest.in">support@serenest.in</a>.
               </p>
             </article>
           </div>
@@ -98,7 +98,7 @@ export default function PrivacyPolicyPage() {
               </p>
             </div>
             <div className="stack about-cta-actions">
-              <a className="btn btn-primary btn-full" href="mailto:support@serenest.fit?subject=Privacy%20Question">
+              <a className="btn btn-primary btn-full" href="mailto:support@serenest.in?subject=Privacy%20Question">
                 Contact support →
               </a>
               <Link className="btn btn-ghost btn-full" to="/">

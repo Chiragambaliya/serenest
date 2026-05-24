@@ -278,9 +278,9 @@ export default function SiteLayout() {
                 <div className="footer-contact">
                   <a
                     className="footer-pill"
-                    href="mailto:support@serenest.fit"
+                    href="mailto:support@serenest.in"
                   >
-                    support@serenest.fit
+                    support@serenest.in
                   </a>
                   <a className="footer-pill" href="tel:7777936367">
                     📞 7777936367
@@ -298,6 +298,21 @@ export default function SiteLayout() {
 
             <div className="footer-divider" aria-hidden="true" />
 
+            <p
+              className="footer-legal"
+              style={{
+                fontSize: 12,
+                lineHeight: 1.55,
+                opacity: 0.75,
+                margin: '0 0 12px',
+                maxWidth: '72ch',
+              }}
+            >
+              Serenest is operated by Serenest Education Pvt Ltd. Serenest provides
+              technology-enabled mental health access, education, screening, and
+              care-coordination services through qualified professionals.
+            </p>
+
             {/* Bottom row */}
             <div className="footer-bottom2">
               <p className="footer-legal">
@@ -305,7 +320,7 @@ export default function SiteLayout() {
               </p>
               <nav className="footer-mini-links" aria-label="Legal links">
                 <Link to="/privacy">Privacy</Link>
-                <a href="mailto:support@serenest.fit?subject=Feedback">Feedback</a>
+                <a href="mailto:support@serenest.in?subject=Feedback">Feedback</a>
               </nav>
             </div>
           </div>

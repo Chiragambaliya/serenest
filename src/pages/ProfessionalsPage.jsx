@@ -26,7 +26,7 @@ export default function ProfessionalsPage() {
               <Link className="btn btn-ghost" to="/professionals/learning">
                 Learning hub →
               </Link>
-              <a className="btn btn-ghost" href="mailto:support@serenest.fit?subject=Clinic%20Partnership">
+              <a className="btn btn-ghost" href="mailto:support@serenest.in?subject=Clinic%20Partnership">
                 Clinic partnership
               </a>
             </div>
@@ -246,7 +246,7 @@ export default function ProfessionalsPage() {
               </Link>
               <a
                 className="btn btn-ghost btn-full"
-                href="mailto:support@serenest.fit?subject=Clinic%20Partnership%20Request"
+                href="mailto:support@serenest.in?subject=Clinic%20Partnership%20Request"
               >
                 Clinic partnership
               </a>

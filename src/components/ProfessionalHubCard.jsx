@@ -143,7 +143,7 @@ export default function ProfessionalHubCard({
     return (
       <article className="tile feature-card" style={{ display: 'flex', flexDirection: 'column' }}>
         <a
-          href={`mailto:support@serenest.fit${q}`}
+          href={`mailto:support@serenest.in${q}`}
           className="block-link"
           style={{ color: 'inherit', display: 'flex', flexDirection: 'column', flex: 1 }}
         >

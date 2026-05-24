@@ -62,4 +62,4 @@ services:
     staticPublishPath: ./education-site/dist
     envVars:
       - key: VITE_SERENEST_CARE_URL
-        value: https://serenest.fit
+        value: https://serenest.in

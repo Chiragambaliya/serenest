@@ -144,7 +144,7 @@ function wrapHtml(inner, urgent) {
     ${inner}
   </td></tr>
   <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e8f0;color:#64748b;font-size:12px">
-    <a href="https://serenest.fit/admin" style="color:${accent};text-decoration:none;font-weight:600">Open admin dashboard →</a>
+    <a href="https://serenest.in/admin" style="color:${accent};text-decoration:none;font-weight:600">Open admin dashboard →</a>
     <span style="float:right">${new Date().toLocaleString('en-IN', { dateStyle: 'medium', timeStyle: 'short' })}</span>
     <div style="clear:both;padding-top:12px;margin-top:12px;border-top:1px solid #f1f5f9;font-size:11px;color:#94a3b8">${LEGAL_ENTITY}</div>
   </td></tr>
@@ -167,7 +167,7 @@ function wrapPatientHtml(inner, urgent) {
     ${inner}
   </td></tr>
   <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e8f0;color:#64748b;font-size:12px;line-height:1.5">
-    <a href="https://serenest.fit" style="color:${accent};text-decoration:none;font-weight:600">serenest.fit</a>
+    <a href="https://serenest.in" style="color:${accent};text-decoration:none;font-weight:600">serenest.in</a>
     <span style="display:block;margin-top:8px">Clinical telepsychiatry for India. Reply to this email only if it was sent from a staffed address.</span>
     <span style="display:block;margin-top:10px;font-size:11px;color:#94a3b8">${LEGAL_ENTITY}</span>
   </td></tr>
@@ -374,7 +374,7 @@ export const notify = {
         row('Fee / duration', p.fee_inr ? `₹${esc(p.fee_inr)} / ${esc(p.duration_min || 45)} min` : ''),
       ])}
       ${callouts({ phone: p.phone, email: p.email })}
-      <p style="margin:12px 0 0;color:#64748b;font-size:13px">Review this application in <a href="https://serenest.fit/admin" style="color:#0f766e;font-weight:600">Admin → Applications</a>.</p>
+      <p style="margin:12px 0 0;color:#64748b;font-size:13px">Review this application in <a href="https://serenest.in/admin" style="color:#0f766e;font-weight:600">Admin → Applications</a>.</p>
     `;
     fire(sendEmail({ subject: `New ${p.role} application — ${p.full_name}`, html }));
     fire(sendTeamWhatsApp(
@@ -391,7 +391,7 @@ export const notify = {
         row('Experience', j.experience_years ? `${esc(j.experience_years)} years` : ''),
       ])}
       ${callouts({ phone: j.candidate_phone, email: j.candidate_email })}
-      <p style="margin:12px 0 0;color:#64748b;font-size:13px">Review this candidate in <a href="https://serenest.fit/admin" style="color:#0f766e;font-weight:600">Admin → HR / Hiring</a>.</p>
+      <p style="margin:12px 0 0;color:#64748b;font-size:13px">Review this candidate in <a href="https://serenest.in/admin" style="color:#0f766e;font-weight:600">Admin → HR / Hiring</a>.</p>
     `;
     fire(sendEmail({ subject: `New job application — ${j.candidate_name} for ${j.position}`, html }));
     fire(sendTeamWhatsApp(
@@ -424,7 +424,7 @@ export const notify = {
         row('Referrer', esc(referrer)),
         row('Browser',  userAgent ? `<span style="color:#64748b;font-size:12px">${esc(userAgent.slice(0, 100))}</span>` : ''),
       ])}
-      <p style="margin:12px 0 0;color:#64748b;font-size:13px">You'll get one email per day for traffic. The live count is at <a href="https://serenest.fit/admin" style="color:#0f766e;font-weight:600">/admin → Overview</a>.</p>
+      <p style="margin:12px 0 0;color:#64748b;font-size:13px">You'll get one email per day for traffic. The live count is at <a href="https://serenest.in/admin" style="color:#0f766e;font-weight:600">/admin → Overview</a>.</p>
     `;
     fire(sendEmail({ subject: `Today's first visitor on Serenest`, html }));
   },

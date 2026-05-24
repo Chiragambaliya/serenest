@@ -158,7 +158,7 @@ export default function ProfessionalLearningPage() {
               </p>
             </div>
             <div className="stack about-cta-actions">
-              <a className="btn btn-primary btn-full" href="mailto:support@serenest.fit?subject=Learning%20hub%20suggestion">
+              <a className="btn btn-primary btn-full" href="mailto:support@serenest.in?subject=Learning%20hub%20suggestion">
                 Suggest a topic →
               </a>
               <Link className="btn btn-ghost btn-full" to="/blog">

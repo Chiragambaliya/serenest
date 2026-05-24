@@ -124,15 +124,15 @@ export default function ServicesPage() {
             <ServiceCard
               icon="📄"
               title="Digital Prescription"
-              lead="Valid prescriptions. Delivered digitally."
-              description="Every prescription issued on Serenest is MCI-compliant, digitally signed with the doctor's registration number, and accepted at pharmacies across India. No paper. Just a clean, verifiable PDF you can download instantly."
+              lead="Issued by a qualified doctor, when clinically appropriate."
+              description="When clinically appropriate, a qualified doctor may issue a digital prescription after consultation, following applicable telemedicine guidelines. Some medicines, conditions, or situations may require in-person evaluation. Serenest does not guarantee prescriptions on request; clinical judgment comes first."
               included={[
-                'Digital PDF prescription',
-                "Doctor's MCI registration number",
-                'Drug name, dose, frequency, duration',
+                'Digital PDF prescription where appropriate',
+                "Issued by a registered medical practitioner",
+                'Drug name, dose, frequency, and duration',
                 'Patient details and consultation date',
-                'QR-verifiable digital signature',
-                'Valid under MCI Telemedicine Guidelines 2020',
+                'Digitally signed by the prescribing doctor',
+                'Subject to applicable telemedicine guidelines',
               ]}
             />
 
@@ -218,7 +218,7 @@ export default function ServicesPage() {
                 <li>Anonymous team wellbeing assessments</li>
                 <li>Dedicated psychiatry hours per month</li>
               </ul>
-              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.fit?subject=Corporate%20Enquiry">
+              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.in?subject=Corporate%20Enquiry">
                 Enquire for your company →
               </a>
             </div>
@@ -236,7 +236,7 @@ export default function ServicesPage() {
                 <li>Learning disability &amp; ADHD assessments</li>
                 <li>Staff mental wellness support</li>
               </ul>
-              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.fit?subject=School%20Enquiry">
+              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.in?subject=School%20Enquiry">
                 Enquire for your school →
               </a>
             </div>
@@ -254,7 +254,7 @@ export default function ServicesPage() {
                 <li>Crisis triage &amp; referral pathways</li>
                 <li>Anonymous mental health pulse surveys</li>
               </ul>
-              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.fit?subject=College%20Enquiry">
+              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.in?subject=College%20Enquiry">
                 Enquire for your institution →
               </a>
             </div>
@@ -262,8 +262,8 @@ export default function ServicesPage() {
 
           <div className="org-bottom-cta">
             <p>Want a custom programme? Every organisation is different — we'll build a plan that fits your size, budget, and goals.</p>
-            <a className="btn btn-primary" href="mailto:support@serenest.fit?subject=Organisation%20Partnership">
-              Talk to our partnerships team →
+            <a className="btn btn-primary" href="mailto:support@serenest.in?subject=Organisation%20Partnership">
+              Request a partnership consultation →
             </a>
           </div>
         </div>
@@ -274,7 +274,7 @@ export default function ServicesPage() {
         <div className="container">
           <div className="section-head center">
             <div className="section-kicker">Step by step</div>
-            <h2>From booking to prescription in under an hour</h2>
+            <h2>From booking to your first session</h2>
           </div>
           <div style={{ maxWidth: 680, margin: '0 auto' }}>
             <ol className="steps">
@@ -283,7 +283,7 @@ export default function ServicesPage() {
                 ['Find your clinician', 'Browse verified psychiatrists and psychologists. Filter by language, fee, and more. Pick your slot.'],
                 ['Pay securely', 'Razorpay-powered payment. UPI, cards, net banking accepted. Instant confirmation.'],
                 ['Join your session', 'Click Join at appointment time — encrypted video, voice, or chat. Typical session ~45 minutes.'],
-                ['Get your prescription', 'Your doctor issues a digital Rx immediately after the session. Download as PDF.'],
+                ['Receive your care plan', 'Your doctor shares a clinical summary and, where appropriate, a digital prescription. Some medicines or situations may need in-person evaluation.'],
               ].map(([title, desc], i) => (
                 <li key={title} className="step">
                   <div className="step-num">{i + 1}</div>
@@ -393,7 +393,7 @@ export default function ServicesPage() {
             </div>
             <div className="cta-banner-actions">
               <Link className="btn btn-primary btn-lg" to="/book">Book an appointment →</Link>
-              <a className="btn btn-outline btn-lg" href="mailto:support@serenest.fit">Email us</a>
+              <a className="btn btn-outline btn-lg" href="mailto:support@serenest.in">Email us</a>
             </div>
           </div>
         </div>

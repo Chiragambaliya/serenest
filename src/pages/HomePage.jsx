@@ -70,7 +70,7 @@ export default function HomePage() {
                 <span className="hero-badge-dot" />
                 Clinical mental health · India
                 <span className="hero-badge-sep" aria-hidden="true">·</span>
-                <span className="hero-badge-new">New</span>
+                <span className="hero-badge-new">Private by design</span>
               </div>
 
               {/* Headline */}
@@ -118,25 +118,57 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════
-          STATS
+          TRUST STRIP
       ══════════════════════════════════════════════════ */}
       <div className="container">
         <div className="stats-row">
           <div className="stat-item">
-            <div className="stat-value">98%</div>
-            <div className="stat-label">Patient satisfaction</div>
+            <div className="stat-value" style={{ fontSize: 22 }}>✔︎</div>
+            <div className="stat-label">Verified clinical professionals</div>
           </div>
           <div className="stat-divider" aria-hidden="true" />
           <div className="stat-item">
-            <div className="stat-value">40+</div>
-            <div className="stat-label">Clinical experts</div>
+            <div className="stat-value" style={{ fontSize: 22 }}>📋</div>
+            <div className="stat-label">Structured intake and follow-up</div>
           </div>
           <div className="stat-divider" aria-hidden="true" />
           <div className="stat-item">
-            <div className="stat-value">24h</div>
-            <div className="stat-label">Avg. booking time</div>
+            <div className="stat-value" style={{ fontSize: 22 }}>🔒</div>
+            <div className="stat-label">Private video, audio, and chat care</div>
           </div>
         </div>
+        <p
+          className="muted"
+          style={{
+            textAlign: 'center',
+            marginTop: 18,
+            fontSize: 13,
+            maxWidth: 640,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            lineHeight: 1.6,
+          }}
+        >
+          What you can verify before booking: clinician profile and qualification,
+          consultation mode and exact fee before confirmation, plain-language privacy
+          policy, and a clear follow-up pathway after your first session.
+        </p>
+        <p
+          className="muted"
+          style={{
+            textAlign: 'center',
+            marginTop: 10,
+            fontSize: 12.5,
+            maxWidth: 640,
+            marginLeft: 'auto',
+            marginRight: 'auto',
+            lineHeight: 1.55,
+            fontStyle: 'italic',
+          }}
+        >
+          Serenest is not an emergency service. If you or someone else is at immediate
+          risk, contact local emergency services or a crisis helpline right away.
+        </p>
       </div>
 
       {/* ══════════════════════════════════════════════════
@@ -252,7 +284,7 @@ export default function HomePage() {
                 <li>Anonymous team wellbeing assessments</li>
                 <li>Dedicated psychiatry hours per month</li>
               </ul>
-              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.fit?subject=Corporate%20Enquiry">
+              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.in?subject=Corporate%20Enquiry">
                 Enquire for your company →
               </a>
             </div>
@@ -276,7 +308,7 @@ export default function HomePage() {
                 <li>Learning disability &amp; ADHD assessments</li>
                 <li>Staff mental wellness support</li>
               </ul>
-              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.fit?subject=School%20Enquiry">
+              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.in?subject=School%20Enquiry">
                 Enquire for your school →
               </a>
             </div>
@@ -300,7 +332,7 @@ export default function HomePage() {
                 <li>Crisis triage &amp; referral pathways</li>
                 <li>Anonymous mental health pulse surveys</li>
               </ul>
-              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.fit?subject=College%20Enquiry">
+              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.in?subject=College%20Enquiry">
                 Enquire for your institution →
               </a>
             </div>
@@ -313,8 +345,8 @@ export default function HomePage() {
               Want a custom programme? Every organisation is different — we'll
               build a plan that fits your size, budget, and goals.
             </p>
-            <a className="btn btn-primary" href="mailto:support@serenest.fit?subject=Organisation%20Partnership">
-              Talk to our partnerships team →
+            <a className="btn btn-primary" href="mailto:support@serenest.in?subject=Organisation%20Partnership">
+              Request a partnership consultation →
             </a>
           </div>
         </div>
@@ -594,10 +626,10 @@ export default function HomePage() {
               <p style={{ marginTop: 8, fontSize: 14, color: 'rgba(255,255,255,0.60)' }}>
                 Email:{' '}
                 <a
-                  href="mailto:support@serenest.fit"
+                  href="mailto:support@serenest.in"
                   style={{ color: 'rgba(255,255,255,0.80)', textDecoration: 'underline' }}
                 >
-                  support@serenest.fit
+                  support@serenest.in
                 </a>
               </p>
             </div>
@@ -608,7 +640,7 @@ export default function HomePage() {
               </Link>
               <a
                 className="btn btn-outline btn-lg"
-                href="mailto:support@serenest.fit"
+                href="mailto:support@serenest.in"
               >
                 Email us
               </a>

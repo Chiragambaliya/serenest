@@ -34,7 +34,7 @@ Form submissions (sign up, professionals, screening) are stored in Supabase. Aut
 ### 3. Enable email auth
 
 1. In Supabase Dashboard → **Authentication → Providers → Email**, enable email logins.
-2. In **Authentication → URL Configuration**, set **Site URL** to your deployed domain (e.g. `https://serenest.fit`).
+2. In **Authentication → URL Configuration**, set **Site URL** to your deployed domain (e.g. `https://serenest.in`).
 3. Optionally disable email confirmation during testing (Authentication → Settings → "Enable email confirmations").
 
 ### 4. Connect the site to Supabase

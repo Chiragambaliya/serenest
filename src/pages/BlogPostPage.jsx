@@ -75,7 +75,7 @@ export default function BlogPostPage() {
               <Link className="btn btn-primary btn-full" to="/book">
                 Book now →
               </Link>
-              <a className="btn btn-ghost btn-full" href="mailto:support@serenest.fit?subject=Blog%20Question">
+              <a className="btn btn-ghost btn-full" href="mailto:support@serenest.in?subject=Blog%20Question">
                 Email support
               </a>
             </div>
