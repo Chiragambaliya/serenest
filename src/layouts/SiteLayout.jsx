@@ -274,6 +274,20 @@ export default function SiteLayout() {
               </div>
 
               <div className="footer-col2">
+                <div className="footer-title2">Topics</div>
+                <nav className="footer-nav2" aria-label="Topic links">
+                  <Link to="/online-psychiatrist-consultation-india">Online psychiatrist in India</Link>
+                  <Link to="/online-psychiatrist-for-depression-india">Online psychiatrist for depression</Link>
+                  <Link to="/anxiety-counselling-online-india">Anxiety counselling online</Link>
+                  <Link to="/adhd-assessment-online-india">Adult ADHD assessment online</Link>
+                  <Link to="/online-psychiatrist-gujarat">Online psychiatrist in Gujarat</Link>
+                  <Link to="/phq-9-depression-screening">PHQ-9 depression screening</Link>
+                  <Link to="/gad-7-anxiety-screening">GAD-7 anxiety screening</Link>
+                  <Link to="/online-psychiatrist-prescription-india">Online prescription validity</Link>
+                </nav>
+              </div>
+
+              <div className="footer-col2">
                 <div className="footer-title2">Contact</div>
                 <div className="footer-contact">
                   <a

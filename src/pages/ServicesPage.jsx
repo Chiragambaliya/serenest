@@ -97,7 +97,12 @@ export default function ServicesPage() {
               <Link to="/online-psychiatrist-consultation-india">
                 online psychiatrist consultation in India
               </Link>
-              ? See our pan-India telepsychiatry overview.
+              ? See our pan-India telepsychiatry overview. Topic-specific pages:{' '}
+              <Link to="/online-psychiatrist-for-depression-india">depression</Link>,{' '}
+              <Link to="/anxiety-counselling-online-india">anxiety</Link>,{' '}
+              <Link to="/adhd-assessment-online-india">adult ADHD</Link>,{' '}
+              <Link to="/online-psychiatrist-gujarat">Gujarat</Link>, and{' '}
+              <Link to="/online-psychiatrist-prescription-india">online prescription validity</Link>.
             </p>
           </div>
         </div>

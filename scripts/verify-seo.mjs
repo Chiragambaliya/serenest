@@ -33,12 +33,29 @@ const ROUTES_200 = [
   '/faq',
   '/privacy',
   '/online-psychiatrist-consultation-india',
+  '/online-psychiatrist-for-depression-india',
+  '/anxiety-counselling-online-india',
+  '/adhd-assessment-online-india',
+  '/online-psychiatrist-gujarat',
+  '/phq-9-depression-screening',
+  '/gad-7-anxiety-screening',
+  '/online-psychiatrist-prescription-india',
 ];
 const ROUTES_301 = [
   ['/online-psychiatry-consultation-india', 'https://www.serenest.in/online-psychiatrist-consultation-india'],
   ['/psychiatry-online-consultation', 'https://www.serenest.in/online-psychiatrist-consultation-india'],
   ['/online-mental-health-consultation', 'https://www.serenest.in/online-psychiatrist-consultation-india'],
   ['/consult-psychiatrist-online-india', 'https://www.serenest.in/online-psychiatrist-consultation-india'],
+  ['/depression-treatment-online-india', 'https://www.serenest.in/online-psychiatrist-for-depression-india'],
+  ['/depression-counselling-online-india', 'https://www.serenest.in/online-psychiatrist-for-depression-india'],
+  ['/online-psychiatrist-for-anxiety-india', 'https://www.serenest.in/anxiety-counselling-online-india'],
+  ['/online-adhd-consultation-india', 'https://www.serenest.in/adhd-assessment-online-india'],
+  ['/adult-adhd-psychiatrist-online-india', 'https://www.serenest.in/adhd-assessment-online-india'],
+  ['/gujarati-speaking-psychiatrist-online', 'https://www.serenest.in/online-psychiatrist-gujarat'],
+  ['/phq-9-test-online-india', 'https://www.serenest.in/phq-9-depression-screening'],
+  ['/gad-7-test-online-india', 'https://www.serenest.in/gad-7-anxiety-screening'],
+  ['/online-psychiatry-prescription-india', 'https://www.serenest.in/online-psychiatrist-prescription-india'],
+  ['/is-online-psychiatric-prescription-valid-in-india', 'https://www.serenest.in/online-psychiatrist-prescription-india'],
 ];
 const ROUTES_410 = [
   '/kotagiri/',
@@ -193,6 +210,30 @@ for (const [from, expectedLocation] of ROUTES_301) {
     continue;
   }
   pass(from, `301 → ${loc}`);
+}
+
+// ── Metadata uniqueness: titles and descriptions should not collide across
+//    indexable routes (Google flags duplicate metadata as a quality signal). ──
+console.log('\nMetadata uniqueness (titles + descriptions per indexable route):');
+{
+  const titles = new Map();
+  const descs = new Map();
+  for (const r of ROUTES_200) {
+    const seo = ROUTE_SEO[r];
+    if (!seo) {
+      fail(r, 'no ROUTE_SEO entry');
+      continue;
+    }
+    if (titles.has(seo.title)) {
+      fail(r, `duplicate <title> shared with ${titles.get(seo.title)}: ${JSON.stringify(seo.title)}`);
+    } else titles.set(seo.title, r);
+    if (descs.has(seo.description)) {
+      fail(r, `duplicate meta description shared with ${descs.get(seo.description)}`);
+    } else descs.set(seo.description, r);
+  }
+  if (titles.size === ROUTES_200.length && descs.size === ROUTES_200.length) {
+    pass('uniqueness', `${ROUTES_200.length} unique titles and descriptions`);
+  }
 }
 
 console.log(`\n${failures === 0 ? '✅ All checks passed.' : `❌ ${failures} check(s) failed.`}\n`);

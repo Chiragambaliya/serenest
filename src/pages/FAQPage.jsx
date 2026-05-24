@@ -134,6 +134,41 @@ export default function FAQPage() {
         </div>
       </section>
 
+      <section className="section">
+        <div className="container">
+          <div className="section-head center">
+            <div className="section-kicker">Topic-specific guides</div>
+            <h2>Detailed pages for common questions</h2>
+          </div>
+          <div className="grid-3">
+            <article className="tile">
+              <h3><Link to="/online-psychiatrist-prescription-india">Online psychiatry prescription validity in India</Link></h3>
+              <p>How prescriptions work under the Telemedicine Practice Guidelines, 2020 — categories of medicines, Schedule X limits, pharmacy acceptance.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/online-psychiatrist-consultation-india">Online psychiatrist consultation (India)</Link></h3>
+              <p>How to book, what to expect, conditions seen, and how follow-up works.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/online-psychiatrist-gujarat">Online psychiatrist in Gujarat</Link></h3>
+              <p>Coverage across Gujarat, language options, and what we do not overclaim.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/online-psychiatrist-for-depression-india">Depression — online care</Link></h3>
+              <p>Screening, therapy, medication review, and the difference between counselling and psychiatry.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/anxiety-counselling-online-india">Anxiety — online care</Link></h3>
+              <p>GAD-7, stepped care, regulated medication categories, and how online therapy works.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/adhd-assessment-online-india">Adult ADHD — assessment online</Link></h3>
+              <p>Structured assessment process, validated scales, and why prescribing is careful.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
       <section className="section alt">
         <div className="container">
           <div className="cta about-cta">
