@@ -24,6 +24,13 @@ const PatientFindProfessionalPage = lazy(() => import('./pages/PatientFindProfes
 const ScreeningPage = lazy(() => import('./pages/ScreeningPage'));
 const ConsultationPage = lazy(() => import('./pages/ConsultationPage'));
 const OnlinePsychiatristIndiaPage = lazy(() => import('./pages/OnlinePsychiatristIndiaPage'));
+const DepressionPage = lazy(() => import('./pages/DepressionPage'));
+const AnxietyPage = lazy(() => import('./pages/AnxietyPage'));
+const AdhdPage = lazy(() => import('./pages/AdhdPage'));
+const GujaratPsychiatristPage = lazy(() => import('./pages/GujaratPsychiatristPage'));
+const Phq9Page = lazy(() => import('./pages/Phq9Page'));
+const Gad7Page = lazy(() => import('./pages/Gad7Page'));
+const OnlinePrescriptionPage = lazy(() => import('./pages/OnlinePrescriptionPage'));
 
 // FIX Bug 5: PageFallback is used per-route so only the content area spins,
 // not the entire app (navbar + footer stay visible during lazy-load transitions)
@@ -81,6 +88,13 @@ export default function App() {
           <Route path="screening" element={<S><ScreeningPage /></S>} />
           <Route path="consultation/:appointmentId" element={<S><ConsultationPage /></S>} />
           <Route path="online-psychiatrist-consultation-india" element={<S><OnlinePsychiatristIndiaPage /></S>} />
+          <Route path="online-psychiatrist-for-depression-india" element={<S><DepressionPage /></S>} />
+          <Route path="anxiety-counselling-online-india" element={<S><AnxietyPage /></S>} />
+          <Route path="adhd-assessment-online-india" element={<S><AdhdPage /></S>} />
+          <Route path="online-psychiatrist-gujarat" element={<S><GujaratPsychiatristPage /></S>} />
+          <Route path="phq-9-depression-screening" element={<S><Phq9Page /></S>} />
+          <Route path="gad-7-anxiety-screening" element={<S><Gad7Page /></S>} />
+          <Route path="online-psychiatrist-prescription-india" element={<S><OnlinePrescriptionPage /></S>} />
           <Route path="*" element={<S><NotFoundPage /></S>} />
         </Route>
       </Routes>

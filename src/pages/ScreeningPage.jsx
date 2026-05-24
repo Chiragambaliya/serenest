@@ -171,6 +171,17 @@ export default function ScreeningPage() {
             <button onClick={() => setStep(1)} className="btn btn-primary btn-lg btn-full">
               Begin screening →
             </button>
+
+            <p style={{ marginTop: 16, fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', lineHeight: 1.55 }}>
+              Learn more about{' '}
+              <Link to="/phq-9-depression-screening" style={{ color: 'var(--brand-700)' }}>the PHQ-9</Link>
+              {' '}and{' '}
+              <Link to="/gad-7-anxiety-screening" style={{ color: 'var(--brand-700)' }}>the GAD-7</Link>
+              , or read about{' '}
+              <Link to="/online-psychiatrist-for-depression-india" style={{ color: 'var(--brand-700)' }}>online depression care</Link>
+              {' '}and{' '}
+              <Link to="/anxiety-counselling-online-india" style={{ color: 'var(--brand-700)' }}>online anxiety care</Link>.
+            </p>
           </Card>
         )}
 

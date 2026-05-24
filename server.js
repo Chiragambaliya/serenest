@@ -1013,6 +1013,13 @@ const VALID_ROUTES = new Set([
   '/patient/find-professional',
   '/screening',
   '/online-psychiatrist-consultation-india',
+  '/online-psychiatrist-for-depression-india',
+  '/anxiety-counselling-online-india',
+  '/adhd-assessment-online-india',
+  '/online-psychiatrist-gujarat',
+  '/phq-9-depression-screening',
+  '/gad-7-anxiety-screening',
+  '/online-psychiatrist-prescription-india',
 ]);
 
 // Dynamic-route prefixes that the SPA legitimately serves.

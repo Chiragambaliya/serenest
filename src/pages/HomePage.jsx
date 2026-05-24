@@ -492,6 +492,53 @@ export default function HomePage() {
       </section>
 
       {/* ══════════════════════════════════════════════════
+          TOPICS / CONDITIONS
+      ══════════════════════════════════════════════════ */}
+      <section className="section" id="topics">
+        <div className="container">
+          <div className="section-head center">
+            <div className="section-kicker">Explore by topic</div>
+            <h2>Care for the things people actually search for</h2>
+            <p>Each topic page explains how online care works, what it can and cannot do, and links to screening and booking.</p>
+          </div>
+          <div className="grid-3">
+            <article className="tile">
+              <h3><Link to="/online-psychiatrist-for-depression-india">Online psychiatrist for depression</Link></h3>
+              <p>Structured assessment, PHQ-9 screening, therapy or medication review by a verified psychiatrist.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/anxiety-counselling-online-india">Anxiety counselling online</Link></h3>
+              <p>GAD-7 screening, stepped care, and verified clinicians. Therapy and psychiatry options.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/adhd-assessment-online-india">Adult ADHD assessment online</Link></h3>
+              <p>Structured multi-session assessment with validated rating scales. Careful prescribing.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/online-psychiatrist-gujarat">Online psychiatrist in Gujarat</Link></h3>
+              <p>Pan-Gujarat access in Gujarati, Hindi, and English where the clinician supports the language.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/phq-9-depression-screening">PHQ-9 depression screening</Link></h3>
+              <p>A validated 9-item self-screening for depression severity. Not a diagnosis.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/gad-7-anxiety-screening">GAD-7 anxiety screening</Link></h3>
+              <p>A validated 7-item self-screening for anxiety severity. Not a diagnosis.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/online-psychiatrist-consultation-india">Online psychiatrist (all India)</Link></h3>
+              <p>The main online psychiatry consultation landing page. Pan-India access, English/Hindi/Gujarati where supported.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/online-psychiatrist-prescription-india">Online prescription validity</Link></h3>
+              <p>How psychiatric prescriptions work online in India under the Telemedicine Practice Guidelines, 2020.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════════
           FOR PROFESSIONALS
       ══════════════════════════════════════════════════ */}
       <section className="section alt">
