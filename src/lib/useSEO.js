@@ -1,6 +1,13 @@
 import { useEffect } from 'react';
 import { canonicalUrl, SITE_ORIGIN } from './seo.js';
 
+// On initial document load, server.js injects the route-correct title,
+// meta description, canonical, OG tags, and JSON-LD into the HTML between
+// the <!--SEO_HEAD_START--> sentinels. This hook only needs to keep those
+// in sync when the user navigates client-side within the SPA. It updates
+// the existing tags in place (no duplicates) and intentionally leaves
+// JSON-LD alone — the server-rendered block stays authoritative.
+
 function setMeta(attr, key, content) {
   if (content == null) return;
   let el = document.head.querySelector(`meta[${attr}="${key}"]`);
@@ -22,34 +29,6 @@ function setLink(rel, href) {
   el.setAttribute('href', href);
 }
 
-// Track per-page JSON-LD blocks we injected so we can remove them on unmount.
-function clearManagedJsonLd() {
-  document.head
-    .querySelectorAll('script[type="application/ld+json"][data-managed="route"]')
-    .forEach((n) => n.remove());
-}
-
-function addJsonLd(obj) {
-  if (!obj) return;
-  const script = document.createElement('script');
-  script.type = 'application/ld+json';
-  script.setAttribute('data-managed', 'route');
-  script.text = JSON.stringify(obj);
-  document.head.appendChild(script);
-}
-
-/**
- * Set per-route SEO head tags. Call once per page with stable values.
- *
- * @param {Object} opts
- * @param {string} opts.path     - canonical route path, e.g. "/services"
- * @param {string} opts.title
- * @param {string} opts.description
- * @param {string} [opts.ogTitle]
- * @param {string} [opts.ogDescription]
- * @param {boolean} [opts.noindex]
- * @param {Object|Object[]} [opts.jsonLd] - page-specific structured data
- */
 export function useSEO(opts) {
   const {
     path,
@@ -58,7 +37,6 @@ export function useSEO(opts) {
     ogTitle,
     ogDescription,
     noindex = false,
-    jsonLd,
   } = opts || {};
 
   useEffect(() => {
@@ -74,25 +52,13 @@ export function useSEO(opts) {
     setMeta('property', 'og:type', path === '/' ? 'website' : 'article');
     setMeta('property', 'og:site_name', 'Serenest');
 
-    // Robots
     if (noindex) {
       setMeta('name', 'robots', 'noindex, nofollow');
     } else {
       const el = document.head.querySelector('meta[name="robots"]');
       if (el) el.remove();
     }
-
-    // Page-specific JSON-LD (cleared on unmount; homepage globals in index.html remain).
-    clearManagedJsonLd();
-    if (jsonLd) {
-      const arr = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
-      arr.forEach(addJsonLd);
-    }
-
-    return () => {
-      clearManagedJsonLd();
-    };
-  }, [path, title, description, ogTitle, ogDescription, noindex, jsonLd]);
+  }, [path, title, description, ogTitle, ogDescription, noindex]);
 
   return { canonical: canonicalUrl(path || '/'), origin: SITE_ORIGIN };
 }

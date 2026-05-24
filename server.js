@@ -1,10 +1,12 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
+import { renderSeoHead, shouldNoindex, ROUTE_SEO } from './src/lib/seo.js';
 
 // ── Setup ────────────────────────────────────────────────────
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -982,9 +984,12 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════
-//  STATIC + SPA FALLBACK
+//  STATIC + SPA FALLBACK (with route-specific SEO injection)
 // ══════════════════════════════════════════════════════════════
-app.use(express.static(dist, { index: 'index.html' }));
+// Static for /assets, /favicon.svg, /sitemap.xml, etc. The {index:false} guard
+// prevents express.static from serving dist/index.html directly for "/" — we
+// want every HTML response (including "/") to go through the SEO injector.
+app.use(express.static(dist, { index: false }));
 
 // Routes the SPA actually handles. Anything outside this set should
 // return a real 404/410 status code instead of a soft-200 SPA shell.
@@ -1014,19 +1019,84 @@ const VALID_PREFIXES = ['/blog/', '/consultation/'];
 
 // Known stale URLs surfaced in search from prior site contents. These have no
 // healthcare replacement, so return 410 Gone to ask Google to drop them.
+// Patterns are anchored and accept optional trailing slashes.
 const GONE_PATTERNS = [
   /^\/kotagiri\/?$/i,
   /^\/travelx-tour-guides-section\/?$/i,
-  /^\/\d{4}\/\d{2}\/\d{2}\//,    // old WP-style dated post URLs
-  /^\/category\//i,
-  /^\/tag\//i,
+  /^\/\d{4}\/\d{2}\/\d{2}\/[^?#]*$/, // old WP-style dated post URLs (with or without trailing slash)
+  /^\/category(\/|$)/i,
+  /^\/tag(\/|$)/i,
   /^\/wp-/i,
 ];
 
+function normalize(pathname) {
+  if (pathname === '/') return '/';
+  return pathname.replace(/\/+$/, '');
+}
+
 function isValidSpaRoute(pathname) {
-  if (VALID_ROUTES.has(pathname)) return true;
-  if (pathname !== '/' && VALID_ROUTES.has(pathname.replace(/\/+$/, ''))) return true;
+  const norm = normalize(pathname);
+  if (VALID_ROUTES.has(norm)) return true;
   return VALID_PREFIXES.some((p) => pathname.startsWith(p) && pathname.length > p.length);
+}
+
+// ── SEO injection ─────────────────────────────────────────────
+// Read the built dist/index.html once and substitute the sentinel block per
+// request so the initial HTML response carries route-correct title, meta
+// description, canonical, Open Graph, and JSON-LD. Falls back gracefully if
+// the template is missing (e.g. before first build).
+const SEO_SENTINEL = /<!--SEO_HEAD_START-->[\s\S]*?<!--SEO_HEAD_END-->/;
+let templateCache = null;
+function loadTemplate() {
+  if (templateCache !== null) return templateCache;
+  try {
+    templateCache = readFileSync(join(dist, 'index.html'), 'utf8');
+  } catch {
+    templateCache = '';
+  }
+  return templateCache;
+}
+// Disable cache in development so edits to index.html are picked up
+// without a server restart.
+if (process.env.NODE_ENV !== 'production') {
+  templateCache = null;
+  // re-read every request in dev
+  loadTemplate.__dev = true;
+}
+
+function seoRouteKey(pathname) {
+  const norm = normalize(pathname);
+  // Map non-indexable SPA routes to a generic noindex SEO entry; only routes
+  // present in ROUTE_SEO get their own bespoke title/description.
+  return ROUTE_SEO[norm] ? norm : null;
+}
+
+function buildHtmlForRequest(pathname, { status }) {
+  const tpl = loadTemplate.__dev
+    ? readFileSync(join(dist, 'index.html'), 'utf8')
+    : loadTemplate();
+  if (!tpl) return '';
+
+  const routeKey = seoRouteKey(pathname);
+  const noindex = status === 404 || status === 410 || shouldNoindex(pathname) || !routeKey;
+  // For unknown/410 paths, use the homepage SEO entry as a baseline but mark
+  // noindex,nofollow so search engines don't index the 404 UI.
+  const renderPath = routeKey || '/';
+  const replacement = `<!--SEO_HEAD_START-->\n    ${renderSeoHead(renderPath, { noindex })}\n    <!--SEO_HEAD_END-->`;
+  return tpl.replace(SEO_SENTINEL, replacement);
+}
+
+function sendHtml(req, res, status) {
+  const html = buildHtmlForRequest(req.path, { status });
+  if (!html) {
+    // Template missing — fall back to plain file send so the user still
+    // sees something rather than an error.
+    return res.status(status).sendFile(join(dist, 'index.html'));
+  }
+  res.status(status);
+  res.set('Content-Type', 'text/html; charset=utf-8');
+  if (req.method === 'HEAD') return res.end();
+  return res.send(html);
 }
 
 app.use((req, res, next) => {
@@ -1034,14 +1104,12 @@ app.use((req, res, next) => {
   const pathname = req.path;
 
   if (GONE_PATTERNS.some((re) => re.test(pathname))) {
-    return res.status(410).sendFile(join(dist, 'index.html'), (e) => (e ? next(e) : undefined));
+    return sendHtml(req, res, 410);
   }
-
   if (!isValidSpaRoute(pathname)) {
-    return res.status(404).sendFile(join(dist, 'index.html'), (e) => (e ? next(e) : undefined));
+    return sendHtml(req, res, 404);
   }
-
-  return res.sendFile(join(dist, 'index.html'), (e) => (e ? next(e) : undefined));
+  return sendHtml(req, res, 200);
 });
 
 // ── 404 for unmatched API routes ─────────────────────────────

@@ -51,28 +51,9 @@ function gad7Severity(score) {
   return              { label: 'Severe',       color: '#dc3545', desc: 'Severe anxiety — professional support is strongly recommended.' };
 }
 
-const SCREENING_JSONLD = {
-  '@context': 'https://schema.org',
-  '@type': 'MedicalWebPage',
-  '@id': 'https://www.serenest.in/screening#webpage',
-  url: 'https://www.serenest.in/screening',
-  name: 'Free PHQ-9 & GAD-7 Mental Health Screening',
-  description:
-    'A confidential 3-minute self-screening check-in using PHQ-9 and GAD-7. This screening is not a diagnosis and does not replace evaluation by a qualified clinician.',
-  inLanguage: 'en-IN',
-  isAccessibleForFree: true,
-  audience: { '@type': 'PeopleAudience', geographicArea: { '@type': 'Country', name: 'India' } },
-  about: [
-    { '@type': 'MedicalCondition', name: 'Depression' },
-    { '@type': 'MedicalCondition', name: 'Anxiety' },
-  ],
-  primaryImageOfPage: undefined,
-  medicalAudience: 'Patient',
-};
-
 // ── Page ───────────────────────────────────────────────────────────
 export default function ScreeningPage() {
-  useSEO({ path: '/screening', ...ROUTE_SEO['/screening'], jsonLd: SCREENING_JSONLD });
+  useSEO({ path: '/screening', ...ROUTE_SEO['/screening'] });
   // 0 = intro, 1 = PHQ-9, 2 = GAD-7, 3 = contact, 4 = results
   const [step, setStep] = useState(0);
 

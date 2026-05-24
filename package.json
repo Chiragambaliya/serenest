@@ -9,6 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "node server.js",
+    "verify:seo": "node scripts/verify-seo.mjs",
     "build:education-site": "npm install --prefix education-site && npm run build --prefix education-site"
   },
   "dependencies": {

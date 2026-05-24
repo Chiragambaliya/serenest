@@ -68,38 +68,8 @@ function ServiceCard({ icon, title, badge, lead, description, included, forWho, 
   );
 }
 
-const SERVICES_JSONLD = {
-  '@context': 'https://schema.org',
-  '@type': 'MedicalBusiness',
-  '@id': 'https://www.serenest.in/services#medicalbusiness',
-  name: 'Serenest — Online Psychiatry & Counselling',
-  url: 'https://www.serenest.in/services',
-  medicalSpecialty: ['Psychiatry', 'Psychology', 'MentalHealth'],
-  areaServed: { '@type': 'Country', name: 'India' },
-  availableService: [
-    {
-      '@type': 'MedicalTherapy',
-      name: 'Online psychiatry consultation',
-      description:
-        'Secure online consultation with a psychiatrist, including structured intake, clinical assessment, and follow-up care where appropriate.',
-    },
-    {
-      '@type': 'MedicalTherapy',
-      name: 'Online counselling consultation',
-      description:
-        'Secure online counselling support with structured intake and continuity of care.',
-    },
-    {
-      '@type': 'MedicalTest',
-      name: 'Mental health self-screening',
-      description:
-        'Evidence-based self-screening tools such as PHQ-9 and GAD-7 to help users understand when professional support may be useful.',
-    },
-  ],
-};
-
 export default function ServicesPage() {
-  useSEO({ path: '/services', ...ROUTE_SEO['/services'], jsonLd: SERVICES_JSONLD });
+  useSEO({ path: '/services', ...ROUTE_SEO['/services'] });
   return (
     <div>
 
