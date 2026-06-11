@@ -221,7 +221,14 @@ export default function PatientFindProfessionalPage() {
             }}
           />
           {search && (
-            <button onClick={() => setSearch('')} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4 }}>✕</button>
+            <button
+              type="button"
+              aria-label="Clear search"
+              onClick={() => setSearch('')}
+              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', padding: 4 }}
+            >
+              ✕
+            </button>
           )}
         </div>
 
@@ -232,6 +239,7 @@ export default function PatientFindProfessionalPage() {
             const count = counts[r.id] ?? 0;
             return (
               <button
+                type="button"
                 key={r.id}
                 onClick={() => setRole(r.id)}
                 style={{
@@ -325,7 +333,7 @@ export default function PatientFindProfessionalPage() {
             )}
           </div>
           {activeFilterCount > 0 && (
-            <button onClick={clearFilters} style={{
+            <button type="button" onClick={clearFilters} style={{
               background: 'none', border: '1px solid var(--border)',
               padding: '6px 12px', borderRadius: 8, fontSize: '0.82rem',
               cursor: 'pointer', color: 'var(--text-muted)', fontWeight: 500,
@@ -355,7 +363,7 @@ export default function PatientFindProfessionalPage() {
             icon="🔍"
             title="No professionals match your filters"
             body="Try widening your search — different language, higher fee, or a nearby city."
-            cta={<button onClick={clearFilters} className="btn btn-primary">Reset filters</button>}
+            cta={<button type="button" onClick={clearFilters} className="btn btn-primary">Reset filters</button>}
           />
         ) : (
           <div style={{

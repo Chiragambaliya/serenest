@@ -1,5 +1,5 @@
 import React, { lazy, Suspense, useEffect } from 'react';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import SiteLayout from './layouts/SiteLayout';
 import { trackVisit } from './lib/visitTracker';
 
@@ -31,6 +31,7 @@ const GujaratPsychiatristPage = lazy(() => import('./pages/GujaratPsychiatristPa
 const Phq9Page = lazy(() => import('./pages/Phq9Page'));
 const Gad7Page = lazy(() => import('./pages/Gad7Page'));
 const OnlinePrescriptionPage = lazy(() => import('./pages/OnlinePrescriptionPage'));
+const AcademyPage = lazy(() => import('./pages/AcademyPage'));
 
 // FIX Bug 5: PageFallback is used per-route so only the content area spins,
 // not the entire app (navbar + footer stay visible during lazy-load transitions)
@@ -95,6 +96,25 @@ export default function App() {
           <Route path="phq-9-depression-screening" element={<S><Phq9Page /></S>} />
           <Route path="gad-7-anxiety-screening" element={<S><Gad7Page /></S>} />
           <Route path="online-psychiatrist-prescription-india" element={<S><OnlinePrescriptionPage /></S>} />
+
+          {/* Serenest Academy — literacy/learning surface, merged in from the
+              former standalone education-site. /academy/learn redirects to the
+              clinician learning hub so old Academy deep-links keep working. */}
+          <Route path="academy" element={<S><AcademyPage /></S>} />
+          <Route
+            path="academy/learn"
+            element={<Navigate to="/professionals/learning" replace />}
+          />
+          <Route
+            path="academy/learn/pharmacology"
+            element={<Navigate to="/professionals/learning#learning-pharmacology" replace />}
+          />
+          <Route
+            path="academy/learn/psychology"
+            element={<Navigate to="/professionals/learning#learning-psychology" replace />}
+          />
+
+
           <Route path="*" element={<S><NotFoundPage /></S>} />
         </Route>
       </Routes>

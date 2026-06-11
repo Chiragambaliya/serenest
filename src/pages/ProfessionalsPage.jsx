@@ -19,12 +19,17 @@ export default function ProfessionalsPage() {
             <p className="muted" style={{ marginTop: 12 }}>
               Psychiatrist · Psychologist · Therapist · Counsellor
             </p>
+            <p className="muted" style={{ marginTop: 12, fontSize: '0.92rem', maxWidth: '48rem' }}>
+              Public literacy programmes and school or workplace collaborations are branded as{' '}
+              <strong>Serenest Academy</strong> — a standalone site operated by Serenest Education Pvt Ltd — separate from
+              this clinical app.
+            </p>
             <div className="hero-actions" style={{ marginTop: 20, flexWrap: 'wrap' }}>
               <Link className="btn btn-primary" to="/professionals/apply">
                 Apply to join →
               </Link>
               <Link className="btn btn-ghost" to="/professionals/learning">
-                Learning hub →
+                Clinician learning hub →
               </Link>
               <a className="btn btn-ghost" href="mailto:support@serenest.in?subject=Clinic%20Partnership">
                 Clinic partnership

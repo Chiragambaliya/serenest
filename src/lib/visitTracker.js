@@ -1,7 +1,7 @@
 /**
- * Lightweight visitor ping. The server dedupes per-day per-fingerprint,
- * so we send one request per route change but the team only gets a
- * Telegram notification on the *first* visit of the day from that browser.
+ * Lightweight visitor ping. The server dedupes per-day per-browser fingerprint.
+ * Each **new** visitor that day can trigger a team WhatsApp ping (if configured);
+ * email defaults to the first visitor of the day only (see NOTIFY_EACH_UNIQUE_VISITOR_EMAIL).
  *
  * - vid: random per-browser UUID stored in localStorage (cookieless)
  * - We swallow all errors — analytics must never break the page.
@@ -10,7 +10,7 @@
 const BASE = import.meta.env.VITE_API_URL ?? '';
 const VID_KEY = 'serenest.vid';
 
-function getVid() {
+export function getVisitorId() {
   try {
     let v = localStorage.getItem(VID_KEY);
     if (!v) {
@@ -32,7 +32,7 @@ export function trackVisit(path = window.location.pathname) {
   seenInTab.add(path);
 
   const body = JSON.stringify({
-    vid: getVid(),
+    vid: getVisitorId(),
     path,
     referrer: document.referrer || '',
   });
@@ -54,4 +54,4 @@ export function trackVisit(path = window.location.pathname) {
   }).catch(() => {});
 }
 
-export default { trackVisit };
+export default { trackVisit, getVisitorId };

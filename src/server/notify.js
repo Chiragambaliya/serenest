@@ -10,6 +10,10 @@
  *   https://www.callmebot.com/blog/free-api-whatsapp-messages/
  *   Link your WhatsApp, get an apikey, then set:
  *   CALLMEBOT_WHATSAPP_APIKEY, CALLMEBOT_WHATSAPP_PHONE (digits only, e.g. 917777936367)
+ *   → You get a short WhatsApp ping for each *new* unique visitor that day, and when someone opens Serenest Guide.
+ *
+ * Visitor email: first unique visitor of each UTC day by default. Set NOTIFY_EACH_UNIQUE_VISITOR_EMAIL=true
+ * to receive an email for every unique visitor as well (noisy on busy days).
  *
  * Optional: TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID for Telegram backup.
  *
@@ -408,25 +412,50 @@ export const notify = {
   },
 
   /**
-   * First visit of the day from a unique browser.
-   * Sent silent / less prominently because traffic emails would be noisy.
+   * Each new unique site visitor today (after server dedupe).
+   * WhatsApp: ping on every new visitor when CallMeBot is configured.
+   * Email: first visitor of the UTC day only, unless NOTIFY_EACH_UNIQUE_VISITOR_EMAIL is truthy.
    */
-  firstVisitToday({ count, path, referrer, userAgent }) {
-    // Only email the *first* visitor of each day (count === 1) to keep
-    // your inbox sane. Subsequent unique visitors are tracked silently
-    // and visible via /api/track/today.
-    if (count !== 1) return;
+  siteVisitor({ count, path, referrer, userAgent }) {
+    const pathEsc = path || '/';
+    const refShort = String(referrer || '').slice(0, 140);
+    const wa =
+      `Serenest — Visitor on site (#${count} unique today)\n` +
+      `Page: ${pathEsc}` +
+      (refShort ? `\nRef: ${refShort}` : '');
+    fire(sendTeamWhatsApp(wa));
+
+    const emailEach = /^1|true|yes$/i.test(process.env.NOTIFY_EACH_UNIQUE_VISITOR_EMAIL || '');
+    if (!emailEach && count !== 1) return;
+
+    const subject =
+      count === 1
+        ? `Today's first visitor on Serenest`
+        : `Serenest visitor (#${count} unique today)`;
 
     const html = `
-      <p style="margin:0 0 8px;font-size:16px">First visitor of the day just landed on Serenest 🎉</p>
+      <p style="margin:0 0 8px;font-size:16px">${
+        count === 1
+          ? 'First visitor of the day just landed on Serenest 🎉'
+          : `Another visitor on Serenest today (#${count} unique)`
+      }</p>
       ${table([
-        row('Page',     path     ? `<code style="font-family:monospace">${esc(path)}</code>` : ''),
+        row('Page', pathEsc ? `<code style="font-family:monospace">${esc(pathEsc)}</code>` : ''),
         row('Referrer', esc(referrer)),
-        row('Browser',  userAgent ? `<span style="color:#64748b;font-size:12px">${esc(userAgent.slice(0, 100))}</span>` : ''),
+        row(
+          'Browser',
+          userAgent ? `<span style="color:#64748b;font-size:12px">${esc(userAgent.slice(0, 160))}</span>` : '',
+        ),
       ])}
-      <p style="margin:12px 0 0;color:#64748b;font-size:13px">You'll get one email per day for traffic. The live count is at <a href="https://serenest.in/admin" style="color:#0f766e;font-weight:600">/admin → Overview</a>.</p>
+      <p style="margin:12px 0 0;color:#64748b;font-size:13px">Traffic overview: <a href="https://serenest.in/admin" style="color:#0f766e;font-weight:600">Admin</a>. WhatsApp pings fire for each new visitor when CallMeBot is set.</p>
     `;
-    fire(sendEmail({ subject: `Today's first visitor on Serenest`, html }));
+    fire(sendEmail({ subject, html }));
+  },
+
+  /** Someone opened the Serenest Guide AI panel (once per visitor per UTC day). */
+  serenestGuideOpened({ path }) {
+    const p = path || '/';
+    fire(sendTeamWhatsApp(`Serenest — AI Guide opened\nPage: ${p}`));
   },
 
   custom(subject, html, opts) {

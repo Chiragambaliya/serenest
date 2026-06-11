@@ -1,6 +1,8 @@
 # Deploy Serenest to Render as serenest.in
 
 Follow these steps to deploy the site and use the domain **serenest.in**.
+The deploy is **one Node web service** — Serenest clinical and Serenest
+Academy now ship together (Academy lives at `/academy`).
 
 ---
 
@@ -17,6 +19,9 @@ Follow these steps to deploy the site and use the domain **serenest.in**.
    - **Start command:** `npm start`
 5. Click **Create Web Service**. Your site will be at `https://serenest.onrender.com` (or similar).
 
+> The repo also contains `render.yaml` (Blueprint) describing this service —
+> the Dashboard and the Blueprint stay in sync.
+
 ---
 
 ## 2. (Optional) Add Supabase env vars
@@ -27,7 +32,9 @@ If you want form data saved to Supabase:
 2. Go to **Environment**.
 3. Add:
    - **Key:** `SUPABASE_URL` → **Value:** your Supabase project URL
-   - **Key:** `SUPABASE_ANON_KEY` → **Value:** your Supabase anon key
+   - **Key:** `SUPABASE_SERVICE_KEY` → **Value:** your Supabase service-role key
+   - **Key:** `VITE_SUPABASE_URL` → **Value:** same as `SUPABASE_URL`
+   - **Key:** `VITE_SUPABASE_ANON_KEY` → **Value:** your Supabase anon key
 4. Save. Render will redeploy automatically.
 
 ---
@@ -47,7 +54,7 @@ If you want form data saved to Supabase:
 Where you manage DNS for **serenest.in** (registrar, Cloudflare, etc.):
 
 1. Add the record Render showed you. Typical setup:
-   - **Type:** CNAME
+   - **Type:** CNAME (or ALIAS / ANAME for the apex on supported providers)
    - **Name/host:** `@` or `serenest.in`
    - **Target/value:** the Render URL shown (e.g. `serenest-xxxx.onrender.com`)
 2. For **www** (if you added it):
@@ -63,8 +70,8 @@ Where you manage DNS for **serenest.in** (registrar, Cloudflare, etc.):
 | Step | Where | What |
 |------|--------|------|
 | 1 | Render | New → Web Service, connect repo, build `npm install && npm run build`, start `npm start` |
-| 2 | Render → Environment | Add `SUPABASE_URL` and `SUPABASE_ANON_KEY` (optional) |
+| 2 | Render → Environment | Add Supabase vars (optional) |
 | 3 | Render → Settings → Custom Domains | Add `serenest.in` (and optionally `www.serenest.in`) |
 | 4 | Your DNS (registrar/Cloudflare) | Add CNAME record(s) as shown by Render |
 
-Live URL: **https://serenest.in**
+Live URL: **https://serenest.in** · Academy: **https://serenest.in/academy**

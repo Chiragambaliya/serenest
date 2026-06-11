@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 // ── API helper ──────────────────────────────────────────────────────────────
@@ -85,6 +85,7 @@ function fmtDate(dateStr) {
 // ── Tabs ────────────────────────────────────────────────────────────────────
 const TABS = [
   { id: 'overview',      label: 'Overview' },
+  { id: 'website',       label: 'Website' },
   { id: 'bookings',      label: 'Bookings' },
   { id: 'professionals', label: 'Professionals' },
   { id: 'applications',  label: 'Applications' },
@@ -96,6 +97,7 @@ const TABS = [
 
 const TAB_HELP = {
   overview: 'Quick KPI view and shortcuts to each workflow.',
+  website: 'Every public route — open in a new tab, copy links for QA or campaigns, ping API health.',
   bookings: 'Search bookings, update status, and manage patient requests.',
   professionals: 'View approved professionals and update their profiles.',
   applications: 'Review professional onboarding applications.',
@@ -118,6 +120,69 @@ const ROLE_COLORS = {
   therapist:    '#198754',
   counsellor:   '#e67e22',
 };
+
+/** Slug must exist in `src/lib/blogPosts.js` — used as a concrete example link. */
+const SAMPLE_BLOG_SLUG = 'documenting-risk-safety-telehealth';
+
+const SITE_PAGE_GROUPS = [
+  {
+    title: 'Core & trust',
+    pages: [
+      { label: 'Home', path: '/', hint: 'Landing, navigation, Serenest Guide' },
+      { label: 'About', path: '/about', hint: 'Mission & organisation' },
+      { label: 'Team', path: '/team', hint: 'Clinical team' },
+      { label: 'Services', path: '/services', hint: 'Conditions & care types' },
+      { label: 'Pricing', path: '/pricing', hint: 'Fees & on-page FAQ' },
+      { label: 'FAQ', path: '/faq', hint: 'Policies & common questions' },
+    ],
+  },
+  {
+    title: 'Patient journey',
+    pages: [
+      { label: 'Book a session', path: '/book', hint: 'Multi-step booking' },
+      { label: 'Find a professional', path: '/patient/find-professional', hint: 'Directory & filters' },
+      { label: 'Self-screening', path: '/screening', hint: 'PHQ-9 / GAD-7' },
+      {
+        label: 'Consultation room (sample)',
+        path: '/consultation/00000000-0000-4000-8000-000000000001',
+        hint: 'Replace UUID with a real appointment id from bookings / Supabase before sharing',
+      },
+    ],
+  },
+  {
+    title: 'Professionals hub',
+    pages: [
+      { label: 'For professionals', path: '/professionals', hint: 'Clinician landing' },
+      { label: 'Clinician learning', path: '/professionals/learning', hint: 'All modules' },
+      { label: 'Learning — pharmacology', path: '/professionals/learning#learning-pharmacology', hint: 'Deep link' },
+      { label: 'Learning — psychology', path: '/professionals/learning#learning-psychology', hint: 'Deep link' },
+      { label: 'Pro resources', path: '/professionals/resources', hint: 'Downloads & links' },
+      { label: 'Clinical guidelines', path: '/professionals/guidelines', hint: 'Practice expectations' },
+      { label: 'Apply as professional', path: '/professionals/apply', hint: 'Onboarding wizard' },
+    ],
+  },
+  {
+    title: 'Serenest Academy',
+    pages: [
+      { label: 'Academy home', path: '/academy', hint: 'Literacy & learning landing (merged into main site)' },
+      { label: 'Academy → tracks', path: '/academy#tracks', hint: 'Anchor: programmes overview' },
+      { label: 'Academy → audiences', path: '/academy#audiences', hint: 'Public / clinicians / orgs' },
+      { label: 'Academy → contact', path: '/academy#contact', hint: 'Partnerships & collaboration' },
+      { label: 'Academy → learn (legacy redirect)', path: '/academy/learn', hint: 'Redirects to /professionals/learning' },
+    ],
+  },
+  {
+    title: 'Content & legal',
+    pages: [
+      { label: 'Blog index', path: '/blog', hint: 'All posts' },
+      { label: 'Sample blog post', path: `/blog/${SAMPLE_BLOG_SLUG}`, hint: 'Example slug; see blogPosts.js for all' },
+      { label: 'Privacy policy', path: '/privacy', hint: 'Legal / controller' },
+      { label: '404 test', path: '/this-route-should-not-exist', hint: 'Sanity-check error page (expect Not found)' },
+    ],
+  },
+];
+
+const ALL_SITE_HUB_GROUPS = SITE_PAGE_GROUPS;
 
 // ── Main page ───────────────────────────────────────────────────────────────
 export default function AdminPage() {
@@ -158,6 +223,10 @@ export default function AdminPage() {
 
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
+
+  const [siteHubFilter, setSiteHubFilter] = useState('');
+  const [siteCopied, setSiteCopied]       = useState('');
+  const [healthProbe, setHealthProbe]     = useState(null);
 
   const authed = Boolean(secret);
 
@@ -216,6 +285,39 @@ export default function AdminPage() {
     if (authed) load('all');
   }, [authed, load]);
 
+  const filteredSiteHub = useMemo(() => {
+    const q = siteHubFilter.trim().toLowerCase();
+    if (!q) return ALL_SITE_HUB_GROUPS;
+    return ALL_SITE_HUB_GROUPS.map((group) => ({
+      ...group,
+      pages: group.pages.filter((p) =>
+        `${group.title} ${p.label} ${p.path} ${p.hint ?? ''}`.toLowerCase().includes(q),
+      ),
+    })).filter((g) => g.pages.length > 0);
+  }, [siteHubFilter]);
+
+  const copySiteUrl = useCallback((fullUrl) => {
+    navigator.clipboard.writeText(fullUrl).then(() => {
+      setSiteCopied(fullUrl);
+      window.setTimeout(() => setSiteCopied(''), 1800);
+    }).catch(() => {
+      setError('Could not copy to clipboard — check browser permissions.');
+    });
+  }, []);
+
+  const pingApiHealth = useCallback(async () => {
+    setHealthProbe(null);
+    try {
+      const root = BASE.replace(/\/$/, '');
+      const url = root ? `${root}/api/health` : '/api/health';
+      const res = await fetch(url);
+      const body = await res.json().catch(() => ({}));
+      setHealthProbe({ requestedUrl: url, httpOk: res.ok, status: res.status, body });
+    } catch (e) {
+      setHealthProbe({ ok: false, error: e?.message ?? String(e) });
+    }
+  }, []);
+
   // ── auth ───────────────────────────────────────────────────
   async function handleLogin(e) {
     e.preventDefault();
@@ -241,6 +343,9 @@ export default function AdminPage() {
     setMessages([]);
     setScreenings([]);
     setSignups([]);
+    setSiteHubFilter('');
+    setSiteCopied('');
+    setHealthProbe(null);
   }
 
   // ── job status + notes update ──────────────────────────────
@@ -554,11 +659,17 @@ export default function AdminPage() {
                 { id: 'applications',  icon: '👩‍⚕️', label: 'Applications',          desc: 'Approve or reject professional sign-ups' },
                 { id: 'hr',            icon: '🧑‍💼', label: 'HR / Hiring',           desc: 'Review and manage job applications' },
                 { id: 'messages',      icon: '💬', label: 'Contact Messages',       desc: 'Read enquiries from patients & orgs' },
+                { id: 'screenings',    icon: '🧠', label: 'Screenings',             desc: 'PHQ-9 / GAD-7 exports & safety flags' },
                 { id: 'signups',       icon: '📋', label: 'Waitlist',               desc: 'People who signed up before launch' },
+                { id: 'website',       icon: '🌐', label: 'Website & pages',        desc: 'Every route — open, copy links, health check' },
               ].map((item) => (
                 <button
                   key={item.id}
-                  onClick={() => { setTab(item.id); load(item.id); }}
+                  type="button"
+                  onClick={() => {
+                    setTab(item.id);
+                    if (item.id !== 'overview' && item.id !== 'website') load(item.id);
+                  }}
                   style={{
                     background: 'var(--surface)',
                     border: '1px solid var(--border)',
@@ -578,6 +689,174 @@ export default function AdminPage() {
                 </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* ── WEBSITE (every public page) ── */}
+        {tab === 'website' && (
+          <div>
+            <h2 style={{ fontWeight: 800, fontSize: '1.4rem', marginBottom: 8 }}>Website & pages</h2>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', marginBottom: 12, maxWidth: 800, lineHeight: 1.55 }}>
+              QA every route on the <strong>live site</strong> from this browser origin, copy URLs for campaigns or support,
+              and verify the backend health endpoint. Deep links (anchors) open the correct section after navigation.
+            </p>
+            <div style={{
+              fontSize: '0.8rem',
+              color: 'var(--text-muted)',
+              marginBottom: 14,
+              padding: '10px 12px',
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 10,
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '8px 16px',
+              alignItems: 'center',
+            }}>
+              <span>
+                <strong style={{ color: 'var(--text)' }}>Origin:</strong>{' '}
+                <code style={{ fontSize: '0.78rem' }}>{typeof window !== 'undefined' ? window.location.origin : ''}</code>
+              </span>
+              <span aria-hidden="true" style={{ opacity: 0.35 }}>|</span>
+              <span>
+                <strong style={{ color: 'var(--text)' }}>API base</strong> (<code>VITE_API_URL</code>):{' '}
+                <code style={{ fontSize: '0.78rem' }}>{BASE || '(same origin)'}</code>
+              </span>
+            </div>
+
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 14 }}>
+              Serenest Academy lives at <code style={{ fontSize: '0.78rem' }}>/academy</code> — same
+              deploy as Serenest clinical (no separate site / env var any more).
+            </p>
+
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: '1.25rem', alignItems: 'center' }}>
+              <input
+                type="search"
+                value={siteHubFilter}
+                onChange={(e) => setSiteHubFilter(e.target.value)}
+                placeholder="Filter by page name, path, or section…"
+                aria-label="Filter site pages"
+                style={{
+                  flex: '1 1 220px',
+                  maxWidth: 420,
+                  padding: '0.58rem 0.72rem',
+                  borderRadius: 8,
+                  border: '1px solid var(--border)',
+                  fontSize: '0.88rem',
+                  background: 'var(--bg)',
+                  color: 'var(--text)',
+                }}
+              />
+              <button type="button" className="btn btn-ghost btn-sm" onClick={pingApiHealth}>
+                Ping /api/health
+              </button>
+              <a
+                href={`${typeof window !== 'undefined' ? window.location.origin : ''}/`}
+                target="_blank"
+                rel="noreferrer"
+                className="btn btn-primary btn-sm"
+              >
+                Open homepage ↗
+              </a>
+              <Link to="/screening" target="_blank" className="btn btn-ghost btn-sm">Screening ↗</Link>
+              <Link to="/book" target="_blank" className="btn btn-ghost btn-sm">Book flow ↗</Link>
+            </div>
+
+            {healthProbe ? (
+              <div style={{
+                marginBottom: '1.25rem',
+                padding: '12px 14px',
+                borderRadius: 10,
+                border: '1px solid var(--border)',
+                background: healthProbe.error || healthProbe.httpOk === false ? '#fdecea' : 'var(--surface)',
+                fontSize: '0.8rem',
+                maxHeight: 220,
+                overflow: 'auto',
+              }}>
+                <div style={{ fontWeight: 700, marginBottom: 8 }}>Health response</div>
+                <pre style={{ margin: 0, whiteSpace: 'pre-wrap', wordBreak: 'break-word', fontSize: '0.76rem' }}>
+                  {JSON.stringify(healthProbe, null, 2)}
+                </pre>
+              </div>
+            ) : null}
+
+            {filteredSiteHub.length === 0 ? (
+              <div style={{
+                padding: '2rem',
+                textAlign: 'center',
+                color: 'var(--text-muted)',
+                border: '1px dashed var(--border)',
+                borderRadius: 12,
+              }}>
+                No pages match your filter.
+              </div>
+            ) : (
+              filteredSiteHub.map((group) => (
+                <div key={group.title} style={{ marginBottom: '1.75rem' }}>
+                  <h3 style={{
+                    fontSize: '0.72rem',
+                    fontWeight: 800,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.07em',
+                    color: 'var(--text-muted)',
+                    marginBottom: 12,
+                  }}>
+                    {group.title}
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {group.pages.map((p) => {
+                      const origin = typeof window !== 'undefined' ? window.location.origin : '';
+                      const fullUrl = p.external ? p.path : `${origin}${p.path}`;
+                      const copyDone = siteCopied === fullUrl;
+                      return (
+                        <div
+                          key={`${group.title}-${p.label}-${p.path}`}
+                          style={{
+                            display: 'grid',
+                            gridTemplateColumns: 'minmax(140px, 1fr) minmax(200px, 2.2fr) auto',
+                            gap: 12,
+                            alignItems: 'center',
+                            background: 'var(--surface)',
+                            border: '1px solid var(--border)',
+                            borderRadius: 10,
+                            padding: '12px 14px',
+                          }}
+                        >
+                          <div style={{ fontWeight: 700, fontSize: '0.92rem' }}>{p.label}</div>
+                          <div style={{ minWidth: 0 }}>
+                            <code style={{ fontSize: '0.78rem', wordBreak: 'break-word' }}>
+                              {p.path}
+                            </code>
+                            {p.hint ? (
+                              <div style={{ fontSize: '0.76rem', color: 'var(--text-muted)', marginTop: 6, lineHeight: 1.45 }}>
+                                {p.hint}
+                              </div>
+                            ) : null}
+                          </div>
+                          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                            <a
+                              href={fullUrl}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="btn btn-primary btn-sm"
+                            >
+                              Open ↗
+                            </a>
+                            <button
+                              type="button"
+                              className="btn btn-ghost btn-sm"
+                              onClick={() => copySiteUrl(fullUrl)}
+                            >
+                              {copyDone ? 'Copied ✓' : 'Copy URL'}
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         )}
 

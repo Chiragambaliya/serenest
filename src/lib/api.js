@@ -104,4 +104,14 @@ export const contact = {
   send: (data) => post('/api/contact', data),
 };
 
-export default { health, bookings, screening, professionals, rooms, contact };
+/**
+ * Site concierge (OpenAI via server). Not clinical advice.
+ * @param {{ role: 'user' | 'assistant', content: string }[]} messages
+ */
+export const assistant = {
+  chat: (messages) => post('/api/assistant/chat', { messages }),
+  /** Lets the team know Serenest Guide was opened (server dedupes per visitor/day). */
+  notifyGuideOpened: (payload) => post('/api/assistant/notify-open', payload),
+};
+
+export default { health, bookings, screening, professionals, rooms, contact, assistant };

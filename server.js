@@ -7,6 +7,7 @@ import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
 import { renderSeoHead, shouldNoindex, ROUTE_SEO, ROUTE_ALIASES, SITE_ORIGIN } from './src/lib/seo.js';
+import { handleAssistantChat } from './src/server/aiAssistant.js';
 
 // ── Setup ────────────────────────────────────────────────────
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -47,6 +48,7 @@ function requireDb(res) {
 app.get('/api/health', (_req, res) => {
   ok(res, {
     status: 'ok',
+    assistant: process.env.OPENAI_API_KEY ? 'configured' : 'disabled',
     db: supabase ? 'connected' : 'not configured',
     daily: process.env.DAILY_API_KEY ? 'configured' : 'not configured',
     notifications: notify.isConfigured() ? 'enabled' : 'disabled',
@@ -896,18 +898,20 @@ app.get('/api/signups', async (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════
-//  VISITOR TRACKING (lightweight — Telegram alert on first visit/day)
+//  VISITOR TRACKING (WhatsApp per new visitor/day; email configurable)
 // ══════════════════════════════════════════════════════════════
 
-// Daily-rotating set of visitor fingerprints. Resets at midnight UTC.
+// Daily-rotating sets — reset at midnight UTC.
 let visitorDay   = new Date().toISOString().slice(0, 10);
 let seenVisitors = new Set();
+let seenAssistantOpens = new Set();
 
 function rolloverIfNeeded() {
   const today = new Date().toISOString().slice(0, 10);
   if (today !== visitorDay) {
     visitorDay   = today;
     seenVisitors = new Set();
+    seenAssistantOpens = new Set();
   }
 }
 
@@ -924,13 +928,28 @@ app.post('/api/track/visit', (req, res) => {
   if (seenVisitors.has(fp)) return ok(res, { unique: false });
 
   seenVisitors.add(fp);
-  notify.firstVisitToday({
+  notify.siteVisitor({
     count: seenVisitors.size,
     path, referrer,
     userAgent: ua,
   });
 
   return ok(res, { unique: true, total_today: seenVisitors.size });
+});
+
+/** POST /api/assistant/notify-open — Serenest Guide opened (team WhatsApp, deduped / day / visitor). */
+app.post('/api/assistant/notify-open', (req, res) => {
+  rolloverIfNeeded();
+
+  const { vid, path: pg = '/' } = req.body || {};
+  const ip = (req.headers['x-forwarded-for']?.split(',')[0] || req.ip || '').trim();
+  const fp = `guide|${vid || 'anon'}|${ip}`;
+  if (seenAssistantOpens.has(fp)) return ok(res, { notified: false });
+
+  seenAssistantOpens.add(fp);
+  notify.serenestGuideOpened({ path: typeof pg === 'string' ? pg : '/' });
+
+  return ok(res, { notified: true });
 });
 
 /** GET /api/track/today — admin only — quick traffic count. */
@@ -984,6 +1003,15 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════
+//  AI ASSISTANT (site concierge — OpenAI, server-side key only)
+// ══════════════════════════════════════════════════════════════
+
+/** POST /api/assistant/chat — body: { messages: [{ role, content }] } */
+app.post('/api/assistant/chat', (req, res, next) => {
+  handleAssistantChat(req, res).catch(next);
+});
+
+// ══════════════════════════════════════════════════════════════
 //  STATIC + SPA FALLBACK (with route-specific SEO injection)
 // ══════════════════════════════════════════════════════════════
 // Static for /assets, /favicon.svg, /sitemap.xml, etc. The {index:false} guard
@@ -1012,6 +1040,10 @@ const VALID_ROUTES = new Set([
   '/admin',
   '/patient/find-professional',
   '/screening',
+  '/academy',
+  '/academy/learn',
+  '/academy/learn/pharmacology',
+  '/academy/learn/psychology',
   '/online-psychiatrist-consultation-india',
   '/online-psychiatrist-for-depression-india',
   '/anxiety-counselling-online-india',

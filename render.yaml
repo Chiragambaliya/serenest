@@ -30,6 +30,12 @@ services:
       - key: DAILY_API_KEY
         sync: false
 
+      # ── OpenAI: Serenest Guide chat (optional) ──────────────
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+
       # ── Email notifications via Resend (optional) ────────────
       # Get an API key at https://resend.com (free 3000/mo).
       - key: RESEND_API_KEY
@@ -46,20 +52,14 @@ services:
       - key: CALLMEBOT_WHATSAPP_PHONE
         sync: false
 
-      # ── CORS (set to your Render URL after first deploy) ─────
-      # - key: CORS_ORIGIN
-      #   value: https://serenest-website.onrender.com
+      # ── Visitor alerts: email each unique visitor (optional; WhatsApp pings always when CallMeBot set)
+      # - key: NOTIFY_EACH_UNIQUE_VISITOR_EMAIL
+      #   value: "true"
 
-  # Separate public site: literacy & partnerships (static CDN).
-  # Build path is relative to repo root; rootDir scopes the service to education-site/.
-  - type: web
-    name: serenest-education-site
-    runtime: static
-    region: singapore
-    plan: free
-    rootDir: education-site
-    buildCommand: npm install && npm run build
-    staticPublishPath: ./education-site/dist
-    envVars:
-      - key: VITE_SERENEST_CARE_URL
-        value: https://serenest.in
+      # ── CORS (set to your custom domain after first deploy) ──
+      # - key: CORS_ORIGIN
+      #   value: https://serenest.in
+
+  # NOTE: Serenest Academy used to be a second static service (rootDir:
+  # education-site). It's now merged into the main app at /academy and served
+  # from this single Node web service — one deploy, one domain (serenest.in).

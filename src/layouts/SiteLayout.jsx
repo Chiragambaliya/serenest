@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useId } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
+import SerenestAssistant from '../components/SerenestAssistant';
 
 // ── Serenest logo (rounded square + gradient + “S”) — matches brand ─
 function SerenestLogo({ size = 36 }) {
@@ -99,6 +100,10 @@ export default function SiteLayout() {
     location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/consultation');
 
+  const hideSerenestAssistant =
+    location.pathname.startsWith('/admin') ||
+    location.pathname.startsWith('/consultation');
+
   return (
     <div>
       <a className="skip-link" href="#main">Skip to content</a>
@@ -131,6 +136,7 @@ export default function SiteLayout() {
             <NavLink to="/services"      className={navClass}>Services</NavLink>
             <NavLink to="/pricing"       className={navClass}>Pricing</NavLink>
             <NavLink to="/professionals" className={navClass}>Professionals</NavLink>
+            <NavLink to="/academy"       className={navClass}>Academy</NavLink>
             <NavLink to="/blog"          className={navClass}>Blog</NavLink>
 
             {/* Divider */}
@@ -200,6 +206,7 @@ export default function SiteLayout() {
               <Link to="/professionals/learning"    onClick={() => setMenuOpen(false)}>📚 Clinician learning</Link>
               <Link to="/professionals/resources"   onClick={() => setMenuOpen(false)}>🗂️ Pro resources</Link>
               <Link to="/professionals/guidelines"  onClick={() => setMenuOpen(false)}>⚖️ Pro guidelines</Link>
+              <Link to="/academy"                   onClick={() => setMenuOpen(false)}>🎓 Serenest Academy</Link>
               <Link to="/faq"                       onClick={() => setMenuOpen(false)}>❓ FAQ</Link>
               <Link to="/blog"                      onClick={() => setMenuOpen(false)}>📝 Blog</Link>
             </nav>
@@ -257,6 +264,7 @@ export default function SiteLayout() {
                   <Link to="/blog">Blog</Link>
                   <Link to="/about">About us</Link>
                   <Link to="/team">Team</Link>
+                  <Link to="/academy">Serenest Academy</Link>
                   <Link to="/professionals/learning">Clinician learning</Link>
                   <Link to="/professionals/resources">Pro resources</Link>
                   <Link to="/professionals/guidelines">Pro guidelines</Link>
@@ -340,6 +348,8 @@ export default function SiteLayout() {
           </div>
         </div>
       </footer>
+
+      {!hideSerenestAssistant && <SerenestAssistant />}
 
       {/* WhatsApp floating button */}
       {!hideFloatingWhatsApp && (
