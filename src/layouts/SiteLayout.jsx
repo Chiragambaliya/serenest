@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback, useId } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
-import SerenestAssistant from '../components/SerenestAssistant';
 
 // ── Serenest logo (rounded square + gradient + “S”) — matches brand ─
 function SerenestLogo({ size = 36 }) {
@@ -97,10 +96,6 @@ export default function SiteLayout() {
   const hideFloatingWhatsApp =
     location.pathname.startsWith('/book') ||
     location.pathname.startsWith('/professionals/apply') ||
-    location.pathname.startsWith('/admin') ||
-    location.pathname.startsWith('/consultation');
-
-  const hideSerenestAssistant =
     location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/consultation');
 
@@ -348,8 +343,6 @@ export default function SiteLayout() {
           </div>
         </div>
       </footer>
-
-      {!hideSerenestAssistant && <SerenestAssistant />}
 
       {/* WhatsApp floating button */}
       {!hideFloatingWhatsApp && (
