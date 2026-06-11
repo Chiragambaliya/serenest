@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { assistant } from '../lib/api';
+import { assistant, health } from '../lib/api';
 import { getVisitorId } from '../lib/visitTracker';
 
 export default function SerenestAssistant() {
@@ -9,6 +9,7 @@ export default function SerenestAssistant() {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [guideOnline, setGuideOnline] = useState(null);
   const [errorBanner, setErrorBanner] = useState('');
   /** @type {[{ role: 'user' | 'assistant', content: string }]} */
   const [messages, setMessages] = useState([]);
@@ -19,6 +20,12 @@ export default function SerenestAssistant() {
   const scrollToBottom = () => {
     threadEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   };
+
+  useEffect(() => {
+    health()
+      .then((d) => setGuideOnline(d.assistant === 'configured'))
+      .catch(() => setGuideOnline(false));
+  }, []);
 
   useEffect(() => {
     if (open) {
@@ -119,10 +126,15 @@ export default function SerenestAssistant() {
             <div className="srn-ai-thread" role="log" aria-live="polite">
               <div className="srn-ai-msg srn-ai-msg-assistant">
                 <p className="srn-ai-bubble">
-                  Hi — tell me what you&apos;re trying to do or where you&apos;re stuck. I&apos;ll point you to the right page and clear steps (booking, screening, services, pricing, professionals). If something looks broken on your device, I&apos;ll suggest quick checks and how to reach our team.
+                  Hi — tell me what you&apos;re trying to do or where you&apos;re stuck. I&apos;ll point you to the right page and clear steps (booking, screening, services, pricing, professionals, Academy). If something looks broken on your device, I&apos;ll suggest quick checks and how to reach our team.
                   For emergencies, use local emergency services (e.g. 112 in India).
                 </p>
               </div>
+              {guideOnline === false ? (
+                <div className="srn-ai-error" role="status">
+                  Live AI replies are off right now — you can still browse the site, book at /book, WhatsApp +91 7777936367, or email support@serenest.fit.
+                </div>
+              ) : null}
               {messages.map((m, i) => (
                 <div
                   key={`${m.role}-${i}`}
@@ -168,7 +180,7 @@ export default function SerenestAssistant() {
               <button
                 type="button"
                 className="btn btn-primary srn-ai-send"
-                disabled={loading || !input.trim()}
+                disabled={loading || !input.trim() || guideOnline === false}
                 onClick={send}
               >
                 Send

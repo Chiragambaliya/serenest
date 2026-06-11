@@ -39,7 +39,22 @@ If you want form data saved to Supabase:
 
 ---
 
-## 3. Add custom domain serenest.in
+## 3. Enable Serenest Guide (OpenAI)
+
+The floating **Guide** button on the site uses OpenAI on the server (`POST /api/assistant/chat`). The API key never goes in the browser.
+
+1. Create a key at [platform.openai.com/api-keys](https://platform.openai.com/api-keys).
+2. Render → your **serenest** web service → **Environment** → add:
+   - **Key:** `OPENAI_API_KEY` → **Value:** your OpenAI secret key
+   - **Key:** `OPENAI_MODEL` → **Value:** `gpt-4o-mini` (optional; this is the default)
+3. Save and wait for redeploy.
+4. Confirm: open `https://www.serenest.in/api/health` — `"assistant": "configured"`. Then open the site and click **Guide** in the bottom corner.
+
+For local dev, copy `.env.example` to `.env` and set `OPENAI_API_KEY` there too.
+
+---
+
+## 4. Add custom domain serenest.in
 
 1. In your web service on Render, go to **Settings** → **Custom Domains**.
 2. Click **Add Custom Domain**.
@@ -49,7 +64,7 @@ If you want form data saved to Supabase:
 
 ---
 
-## 4. Configure DNS for serenest.in
+## 5. Configure DNS for serenest.in
 
 Where you manage DNS for **serenest.in** (registrar, Cloudflare, etc.):
 
@@ -71,7 +86,8 @@ Where you manage DNS for **serenest.in** (registrar, Cloudflare, etc.):
 |------|--------|------|
 | 1 | Render | New → Web Service, connect repo, build `npm install && npm run build`, start `npm start` |
 | 2 | Render → Environment | Add Supabase vars (optional) |
-| 3 | Render → Settings → Custom Domains | Add `serenest.in` (and optionally `www.serenest.in`) |
-| 4 | Your DNS (registrar/Cloudflare) | Add CNAME record(s) as shown by Render |
+| 3 | Render → Environment | Add `OPENAI_API_KEY` for Serenest Guide |
+| 4 | Render → Settings → Custom Domains | Add `serenest.in` (and optionally `www.serenest.in`) |
+| 5 | Your DNS (registrar/Cloudflare) | Add CNAME record(s) as shown by Render |
 
 Live URL: **https://serenest.in** · Academy: **https://serenest.in/academy**
