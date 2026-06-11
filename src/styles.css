@@ -15,8 +15,7 @@ html {
 
 body {
   margin: 0;
-  font-family: 'DM Sans', ui-sans-serif, system-ui, sans-serif;
-    "Segoe UI", Roboto, sans-serif;
+  font-family: 'DM Sans', ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
   background: var(--bg);
   color: var(--ink);
   line-height: 1.6;
