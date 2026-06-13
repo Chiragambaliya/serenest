@@ -120,7 +120,7 @@ export default function OnlinePrescriptionPage() {
       <FAQSection title="Online psychiatric prescription — common questions" faqs={PRESCRIPTION_FAQS} />
 
       <RelatedTopics items={[
-        { to: '/online-psychiatrist-consultation-india', title: 'Online psychiatrist consultation (India)', body: 'How to book, what to expect, and how prescriptions are issued where clinically appropriate.' },
+        { to: '/services', title: 'Services overview', body: 'How to book, what to expect, and how prescriptions are issued where clinically appropriate.' },
         { to: '/online-psychiatrist-for-depression-india', title: 'Online psychiatrist for depression', body: 'Depression-focused online care — therapy, medication review, follow-up.' },
         { to: '/adhd-assessment-online-india', title: 'ADHD assessment online', body: 'Why ADHD prescribing online is careful — and what an assessment looks like.' },
       ]} />

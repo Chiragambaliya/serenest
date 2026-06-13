@@ -110,6 +110,8 @@ export const contact = {
  */
 export const assistant = {
   chat: (messages) => post('/api/assistant/chat', { messages }),
+  /** Academy literacy assistant — uses academy-specific system prompt on the server. */
+  academyChat: (messages) => post('/api/assistant/chat', { messages, context: 'academy' }),
   /** Lets the team know Serenest Guide was opened (server dedupes per visitor/day). */
   notifyGuideOpened: (payload) => post('/api/assistant/notify-open', payload),
 };

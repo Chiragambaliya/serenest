@@ -346,8 +346,8 @@ export default function PricingPage() {
               <h2>Ready to book your first session?</h2>
               <p>
                 No referral needed · Fully confidential · Available across India.{' '}
-                <Link to="/online-psychiatrist-consultation-india" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                  See how online psychiatry consultations work in India
+                <Link to="/services" style={{ color: 'inherit', textDecoration: 'underline' }}>
+                  See our services
                 </Link>.
               </p>
             </div>

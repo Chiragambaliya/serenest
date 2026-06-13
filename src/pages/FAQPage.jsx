@@ -72,10 +72,7 @@ export default function FAQPage() {
             <p className="about-subtext">
               Search and filter by topic. If you don’t find what you need, contact support.
               For service-specific questions, see our{' '}
-              <Link to="/online-psychiatrist-consultation-india">
-                online psychiatrist consultation in India
-              </Link>{' '}
-              overview.
+              <Link to="/services">services overview</Link>.
             </p>
           </div>
         </div>
@@ -142,16 +139,8 @@ export default function FAQPage() {
           </div>
           <div className="grid-3">
             <article className="tile">
-              <h3><Link to="/online-psychiatrist-prescription-india">Online psychiatry prescription validity in India</Link></h3>
-              <p>How prescriptions work under the Telemedicine Practice Guidelines, 2020 — categories of medicines, Schedule X limits, pharmacy acceptance.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/online-psychiatrist-consultation-india">Online psychiatrist consultation (India)</Link></h3>
-              <p>How to book, what to expect, conditions seen, and how follow-up works.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/online-psychiatrist-gujarat">Online psychiatrist in Gujarat</Link></h3>
-              <p>Coverage across Gujarat, language options, and what we do not overclaim.</p>
+              <h3><Link to="/online-psychiatrist-prescription-india">Online prescription validity (India)</Link></h3>
+              <p>How psychiatric prescriptions work online under India&apos;s telemedicine guidelines.</p>
             </article>
             <article className="tile">
               <h3><Link to="/online-psychiatrist-for-depression-india">Depression — online care</Link></h3>
@@ -164,6 +153,10 @@ export default function FAQPage() {
             <article className="tile">
               <h3><Link to="/adhd-assessment-online-india">Adult ADHD — assessment online</Link></h3>
               <p>Structured assessment process, validated scales, and why prescribing is careful.</p>
+            </article>
+            <article className="tile">
+              <h3><Link to="/ocd-treatment-online-india">OCD — online treatment</Link></h3>
+              <p>Structured assessment, ERP-focused therapy, and medication review where clinically appropriate.</p>
             </article>
           </div>
         </div>

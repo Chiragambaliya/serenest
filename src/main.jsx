@@ -3,6 +3,9 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import './styles.css';
+import './styles/home.css';
+import './styles/guides.css';
+import './styles/services.css';
 
 // Must match Vite `base` so routes and assets resolve when deployed under a subpath.
 const basename = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '') || undefined;

@@ -119,10 +119,10 @@ export default function OnlinePsychiatristIndiaPage() {
             </article>
             <article className="tile">
               <div className="tile-icon">🌐</div>
-              <h3>Pan-India access, Gujarat-aware</h3>
+              <h3>Pan-India access</h3>
               <p>
-                Built to serve patients in metros and smaller cities alike — Ahmedabad, Surat,
-                Vadodara, Rajkot, Deesa, Gandhinagar, and beyond.
+                Built to serve patients in metros and smaller cities alike — anywhere in India
+                with a stable internet connection.
               </p>
             </article>
             <article className="tile">
@@ -283,30 +283,29 @@ export default function OnlinePsychiatristIndiaPage() {
         </div>
       </section>
 
-      {/* ── Gujarat / India access ─────────────────────────── */}
+      {/* ── Pan-India access ─────────────────────────────── */}
       <section className="section">
         <div className="container">
           <div className="section-head center">
             <div className="section-kicker">Where patients consult from</div>
-            <h2>Online psychiatry across India and Gujarat</h2>
+            <h2>Online psychiatry across India</h2>
             <p>
-              Serenest patients connect from across India — metros, smaller cities, and towns.
-              Gujarat is a particular focus, with clinicians who can support consultations in
-              Gujarati alongside English and Hindi where available.
+              Serenest patients connect from metros, smaller cities, and towns nationwide.
+              Sessions are available in English and Hindi where the clinician supports the language.
             </p>
           </div>
           <div className="grid-3">
             <article className="tile">
-              <h3>Major Gujarat cities</h3>
-              <p>Ahmedabad, Surat, Vadodara, Rajkot, Gandhinagar, Bhavnagar, Jamnagar, Junagadh.</p>
+              <h3>Major metros</h3>
+              <p>Mumbai, Delhi NCR, Bengaluru, Hyderabad, Chennai, Kolkata, Pune, and Ahmedabad.</p>
             </article>
             <article className="tile">
-              <h3>Smaller towns &amp; districts</h3>
-              <p>Deesa, Palanpur, Mehsana, Patan, Anand, Bharuch, Navsari, Valsad and surrounding talukas.</p>
+              <h3>Smaller cities &amp; towns</h3>
+              <p>Patients consult from tier-2 and tier-3 cities and surrounding districts when local access is limited.</p>
             </article>
             <article className="tile">
-              <h3>Other Indian states</h3>
-              <p>Patients also consult from Maharashtra, Karnataka, Tamil Nadu, Delhi NCR, Telangana, Rajasthan, Madhya Pradesh, and more.</p>
+              <h3>All states &amp; UTs</h3>
+              <p>Serenest is built for pan-India telepsychiatry — not limited to one region or state.</p>
             </article>
           </div>
         </div>

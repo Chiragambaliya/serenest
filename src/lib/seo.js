@@ -74,6 +74,22 @@ export const ROUTE_SEO = {
     ogDescription:
       'Common questions on online psychiatry, prescriptions, privacy, and payments — answered.',
   },
+  '/guides': {
+    title: 'Mental Health Guides India | Depression, Anxiety, ADHD & More | Serenest',
+    description:
+      'Patient guides on depression, anxiety, ADHD, online psychiatry in India, PHQ-9 and GAD-7 screening, and telemedicine prescriptions.',
+    ogTitle: 'Mental Health Guides | Serenest India',
+    ogDescription:
+      'Clear, clinical guides on common mental health topics and online care in India.',
+  },
+  '/academy': {
+    title: 'Serenest Academy | Mental Health Literacy & Learning India',
+    description:
+      'Serenest Academy: stigma-aware mental health guides, clinician learning tracks (pharmacology and psychology), and school or workplace partnerships on serenest.in.',
+    ogTitle: 'Serenest Academy | Literacy & Learning',
+    ogDescription:
+      'Guides, learning programmes, and partnerships from Serenest Education — same site as clinical telepsychiatry.',
+  },
   '/privacy': {
     title: 'Privacy Policy | Serenest Mental Health Platform India',
     description:
@@ -81,14 +97,6 @@ export const ROUTE_SEO = {
     ogTitle: 'Privacy Policy | Serenest',
     ogDescription:
       'How Serenest collects, protects, and processes consultation and personal data.',
-  },
-  '/online-psychiatrist-consultation-india': {
-    title: 'Online Psychiatrist Consultation in India | Serenest',
-    description:
-      'Book an online psychiatrist consultation in India with verified psychiatrists. Secure video, audio, or chat sessions, PHQ-9/GAD-7 screening, and follow-up care. Pan-India access, including Gujarat.',
-    ogTitle: 'Online Psychiatrist Consultation in India | Serenest',
-    ogDescription:
-      'Verified Indian psychiatrists. Secure online consultations with structured assessment, prescriptions where appropriate, and continuity of care.',
   },
   '/online-psychiatrist-for-depression-india': {
     title: 'Online Psychiatrist for Depression in India | Serenest',
@@ -113,6 +121,14 @@ export const ROUTE_SEO = {
     ogTitle: 'ADHD Assessment Online in India | Serenest',
     ogDescription:
       'Structured adult ADHD assessment online with verified Indian psychiatrists. Validated scales, careful prescribing, ongoing follow-up.',
+  },
+  '/ocd-treatment-online-india': {
+    title: 'OCD Treatment Online in India | ERP & Psychiatry | Serenest',
+    description:
+      'OCD treatment online in India with verified psychiatrists and psychologists. Structured assessment, exposure and response prevention (ERP), and medication review where clinically appropriate. Not an emergency service.',
+    ogTitle: 'OCD Treatment Online in India | Serenest',
+    ogDescription:
+      'Evidence-based online OCD care in India — structured assessment, ERP-focused therapy, and psychiatric follow-up.',
   },
   '/online-psychiatrist-gujarat': {
     title: 'Online Psychiatrist in Gujarat | Gujarati-Speaking Telepsychiatry | Serenest',
@@ -152,11 +168,12 @@ export const ROUTE_SEO = {
 // Useful for keyword variants of the same landing page so internal links and
 // inbound links consolidate onto one URL.
 export const ROUTE_ALIASES = {
-  '/online-psychiatry-consultation-india': '/online-psychiatrist-consultation-india',
-  '/psychiatry-online-consultation': '/online-psychiatrist-consultation-india',
-  '/online-mental-health-consultation': '/online-psychiatrist-consultation-india',
-  '/consult-psychiatrist-online-india': '/online-psychiatrist-consultation-india',
-  '/online-psychiatry-india': '/online-psychiatrist-consultation-india',
+  '/online-psychiatry-consultation-india': '/services',
+  '/psychiatry-online-consultation': '/services',
+  '/online-mental-health-consultation': '/services',
+  '/consult-psychiatrist-online-india': '/services',
+  '/online-psychiatry-india': '/services',
+  '/online-psychiatrist-consultation-india': '/services',
 
   // Depression keyword variants → canonical depression landing
   '/depression-treatment-online-india': '/online-psychiatrist-for-depression-india',
@@ -174,10 +191,17 @@ export const ROUTE_ALIASES = {
   '/adult-adhd-psychiatrist-online-india': '/adhd-assessment-online-india',
   '/adhd-psychiatrist-online-india': '/adhd-assessment-online-india',
 
-  // Gujarat keyword variants → canonical Gujarat landing
-  '/psychiatrist-online-gujarat': '/online-psychiatrist-gujarat',
-  '/online-psychiatrist-ahmedabad': '/online-psychiatrist-gujarat',
-  '/gujarati-speaking-psychiatrist-online': '/online-psychiatrist-gujarat',
+  // OCD keyword variants → canonical OCD landing
+  '/online-ocd-treatment-india': '/ocd-treatment-online-india',
+  '/ocd-counselling-online-india': '/ocd-treatment-online-india',
+  '/obsessive-compulsive-disorder-online-india': '/ocd-treatment-online-india',
+  '/online-psychiatrist-for-ocd-india': '/ocd-treatment-online-india',
+
+  // Gujarat keyword variants → pan-India landing
+  '/online-psychiatrist-gujarat': '/services',
+  '/psychiatrist-online-gujarat': '/services',
+  '/online-psychiatrist-ahmedabad': '/services',
+  '/gujarati-speaking-psychiatrist-online': '/services',
 
   // PHQ-9 keyword variants
   '/phq-9-test-online-india': '/phq-9-depression-screening',
@@ -438,6 +462,33 @@ export const ADHD_FAQS = [
   },
 ];
 
+export const OCD_FAQS = [
+  {
+    q: 'Can OCD be treated online in India?',
+    a: 'Yes. Verified Indian psychiatrists and psychologists can assess and treat OCD online through secure video, audio, or chat. Structured assessment, exposure and response prevention (ERP), and medication review where clinically appropriate are all possible in a telemedicine setting when the presentation is suitable.',
+  },
+  {
+    q: 'What is ERP and is it available online?',
+    a: 'Exposure and response prevention (ERP) is a specialised form of cognitive behavioural therapy and a first-line treatment for OCD. It involves gradually facing feared situations while resisting compulsions, with therapist guidance. ERP can be delivered effectively online when sessions are regular and homework is practised between appointments.',
+  },
+  {
+    q: 'Will an online psychiatrist prescribe medication for OCD?',
+    a: 'SSRIs are commonly used for OCD and may be considered after assessment, depending on severity, history, and safety. Prescribing follows India\'s Telemedicine Practice Guidelines, 2020 and the psychiatrist\'s clinical judgment. Serenest does not guarantee medication on request.',
+  },
+  {
+    q: 'How is OCD diagnosed online?',
+    a: 'Diagnosis requires a detailed clinical interview — symptom history, time course, impact on daily life, and differentiation from other conditions (generalised anxiety, depression, tic disorders, personality patterns). Clinicians may use validated scales such as Y-BOCS. PHQ-9 and GAD-7 on Serenest screen for co-existing depression and anxiety, not OCD itself.',
+  },
+  {
+    q: 'I have harm-related intrusive thoughts — is that OCD?',
+    a: 'Unwanted harm-related obsessions are a common OCD presentation and are usually ego-dystonic (deeply distressing and inconsistent with the person\'s values). A clinician assesses whether this is OCD, another anxiety disorder, or a situation requiring urgent in-person evaluation. If you feel unable to stay safe, contact emergency services immediately.',
+  },
+  {
+    q: 'How long does OCD treatment take?',
+    a: 'Timelines vary. Some people notice improvement within several weeks of consistent ERP; others need longer courses of therapy, medication, or both. OCD often benefits from follow-up rather than a single session. Your clinician will discuss a realistic plan for your situation.',
+  },
+];
+
 export const GUJARAT_FAQS = [
   {
     q: 'Can I consult an online psychiatrist in Gujarat?',
@@ -631,94 +682,23 @@ export const ROUTE_JSONLD = {
       },
     ],
   },
-  '/online-psychiatrist-consultation-india': {
+  '/academy': {
     '@context': 'https://schema.org',
     '@graph': [
       ORG_SCHEMA,
       WEBSITE_SCHEMA,
       {
-        ...MEDICAL_BUSINESS_SCHEMA,
-        '@id': `${SITE_ORIGIN}/online-psychiatrist-consultation-india#medicalbusiness`,
-        url: `${SITE_ORIGIN}/online-psychiatrist-consultation-india`,
-      },
-      {
-        '@type': 'MedicalWebPage',
-        '@id': `${SITE_ORIGIN}/online-psychiatrist-consultation-india#webpage`,
-        url: `${SITE_ORIGIN}/online-psychiatrist-consultation-india`,
-        name: 'Online Psychiatrist Consultation in India',
+        '@type': 'WebPage',
+        '@id': `${SITE_ORIGIN}/academy#webpage`,
+        url: `${SITE_ORIGIN}/academy`,
+        name: 'Serenest Academy',
         description:
-          'Book an online psychiatrist consultation with verified Indian psychiatrists. Secure video, audio, or chat sessions, PHQ-9/GAD-7 screening, and follow-up care. Pan-India access including Gujarat.',
+          'Mental health literacy, clinician learning tracks, and partnership programmes from Serenest Education Pvt Ltd.',
         inLanguage: 'en-IN',
-        isAccessibleForFree: true,
-        audience: { '@type': 'PeopleAudience', geographicArea: { '@type': 'Country', name: 'India' } },
-        about: [
-          { '@type': 'MedicalCondition', name: 'Depression' },
-          { '@type': 'MedicalCondition', name: 'Anxiety Disorders' },
-          { '@type': 'MedicalCondition', name: 'Obsessive-Compulsive Disorder' },
-          { '@type': 'MedicalCondition', name: 'Bipolar Disorder' },
-          { '@type': 'MedicalCondition', name: 'Post-Traumatic Stress Disorder' },
-          { '@type': 'MedicalCondition', name: 'Sleep Disorders' },
-        ],
-        medicalAudience: 'Patient',
-        lastReviewed: '2026-05-24',
+        isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+        about: ['Mental health literacy', 'Health education', 'Psychiatry education'],
       },
-      {
-        '@type': 'FAQPage',
-        '@id': `${SITE_ORIGIN}/online-psychiatrist-consultation-india#faq`,
-        url: `${SITE_ORIGIN}/online-psychiatrist-consultation-india`,
-        mainEntity: [
-          {
-            q: 'How do I get an online psychiatrist consultation in India?',
-            a: 'Pick a slot on the Serenest booking page, complete a short intake (including PHQ-9 and GAD-7 self-screening if relevant), and join your appointment over secure video, audio, or chat. Sessions are typically 45 minutes with a verified psychiatrist.',
-          },
-          {
-            q: 'Is online psychiatry consultation legal in India?',
-            a: 'Yes. Registered medical practitioners can provide telepsychiatry consultations in India under the Telemedicine Practice Guidelines (2020) issued jointly by the Ministry of Health and the National Medical Commission. Clinicians follow these guidelines, including on prescribing.',
-          },
-          {
-            q: 'Can a psychiatrist prescribe medication online in India?',
-            a: 'In many cases, yes — a registered psychiatrist may issue a digital prescription after an appropriate consultation, following India’s Telemedicine Practice Guidelines. Some categories of medication (for example, controlled substances under Schedule X) or certain clinical situations may require in-person evaluation. The treating clinician decides what is appropriate based on your history and assessment.',
-          },
-          {
-            q: 'How much does an online psychiatry consultation cost on Serenest?',
-            a: 'Psychiatry consultations start at ₹499 per session. Final fees depend on the clinician you book with. Transparent, per-session pricing is shown before payment — see the Pricing page for current rates.',
-          },
-          {
-            q: 'Can I consult a psychiatrist from Gujarat (Ahmedabad, Surat, Vadodara, Rajkot, Deesa) online?',
-            a: 'Yes. Serenest is built for patients across India, including Gujarat. You can consult verified psychiatrists from any city or town with a stable internet connection. Sessions are available in English, Hindi, and Gujarati where the clinician supports the language.',
-          },
-          {
-            q: 'What conditions can be addressed in an online psychiatry consultation?',
-            a: 'Common areas include depression, anxiety disorders, OCD, PTSD, bipolar disorder, ADHD in adults, sleep difficulties, stress and burnout, and medication review or follow-up care. Severe or emergency presentations are not appropriate for telepsychiatry — see the emergency notice on this page.',
-          },
-          {
-            q: 'Is online psychiatry as effective as in-person care?',
-            a: 'For many common conditions, evidence supports telepsychiatry as a clinically useful option, especially for follow-up care, medication review, counselling, and continuity. Your clinician will tell you if in-person evaluation is recommended.',
-          },
-          {
-            q: 'Is my consultation private and confidential?',
-            a: 'Sessions are conducted over encrypted video and stored within Serenest’s privacy-first workflows on least-access principles. By default sessions are not recorded. See our Privacy Policy for details on what is collected and how it is protected.',
-          },
-        ].map((f) => ({
-          '@type': 'Question',
-          name: f.q,
-          acceptedAnswer: { '@type': 'Answer', text: f.a },
-        })),
-      },
-      {
-        '@type': 'BreadcrumbList',
-        '@id': `${SITE_ORIGIN}/online-psychiatrist-consultation-india#breadcrumbs`,
-        itemListElement: [
-          { '@type': 'ListItem', position: 1, name: 'Home', item: `${SITE_ORIGIN}/` },
-          { '@type': 'ListItem', position: 2, name: 'Services', item: `${SITE_ORIGIN}/services` },
-          {
-            '@type': 'ListItem',
-            position: 3,
-            name: 'Online Psychiatrist Consultation in India',
-            item: `${SITE_ORIGIN}/online-psychiatrist-consultation-india`,
-          },
-        ],
-      },
+      breadcrumbs('/academy', 'Serenest Academy'),
     ],
   },
 
@@ -780,6 +760,27 @@ export const ROUTE_JSONLD = {
       breadcrumbs(
         '/adhd-assessment-online-india',
         'ADHD Assessment Online in India',
+        [{ name: 'Services', item: `${SITE_ORIGIN}/services` }],
+      ),
+    ],
+  },
+
+  // ── Topic cluster: OCD ──────────────────────────────────────────────────────
+  '/ocd-treatment-online-india': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      medicalWebPage('/ocd-treatment-online-india', {
+        name: 'OCD Treatment Online in India',
+        description:
+          'OCD treatment online in India with verified psychiatrists and psychologists. Structured assessment, exposure and response prevention (ERP), and medication review where clinically appropriate.',
+        about: ['Obsessive-Compulsive Disorder', 'OCD'],
+      }),
+      faqGraph('/ocd-treatment-online-india', OCD_FAQS),
+      breadcrumbs(
+        '/ocd-treatment-online-india',
+        'OCD Treatment Online in India',
         [{ name: 'Services', item: `${SITE_ORIGIN}/services` }],
       ),
     ],

@@ -23,14 +23,14 @@ const AdminPage = lazy(() => import('./pages/AdminPage'));
 const PatientFindProfessionalPage = lazy(() => import('./pages/PatientFindProfessionalPage'));
 const ScreeningPage = lazy(() => import('./pages/ScreeningPage'));
 const ConsultationPage = lazy(() => import('./pages/ConsultationPage'));
-const OnlinePsychiatristIndiaPage = lazy(() => import('./pages/OnlinePsychiatristIndiaPage'));
 const DepressionPage = lazy(() => import('./pages/DepressionPage'));
 const AnxietyPage = lazy(() => import('./pages/AnxietyPage'));
 const AdhdPage = lazy(() => import('./pages/AdhdPage'));
-const GujaratPsychiatristPage = lazy(() => import('./pages/GujaratPsychiatristPage'));
+const OcdPage = lazy(() => import('./pages/OcdPage'));
 const Phq9Page = lazy(() => import('./pages/Phq9Page'));
 const Gad7Page = lazy(() => import('./pages/Gad7Page'));
 const OnlinePrescriptionPage = lazy(() => import('./pages/OnlinePrescriptionPage'));
+const GuidesPage = lazy(() => import('./pages/GuidesPage'));
 const AcademyPage = lazy(() => import('./pages/AcademyPage'));
 
 // FIX Bug 5: PageFallback is used per-route so only the content area spins,
@@ -81,6 +81,7 @@ export default function App() {
           <Route path="book" element={<S><BookingPage /></S>} />
           <Route path="pricing" element={<S><PricingPage /></S>} />
           <Route path="faq" element={<S><FAQPage /></S>} />
+          <Route path="guides" element={<S><GuidesPage /></S>} />
           <Route path="blog" element={<S><BlogIndexPage /></S>} />
           <Route path="blog/:slug" element={<S><BlogPostPage /></S>} />
           <Route path="privacy" element={<S><PrivacyPolicyPage /></S>} />
@@ -88,11 +89,12 @@ export default function App() {
           <Route path="patient/find-professional" element={<S><PatientFindProfessionalPage /></S>} />
           <Route path="screening" element={<S><ScreeningPage /></S>} />
           <Route path="consultation/:appointmentId" element={<S><ConsultationPage /></S>} />
-          <Route path="online-psychiatrist-consultation-india" element={<S><OnlinePsychiatristIndiaPage /></S>} />
+          <Route path="online-psychiatrist-consultation-india" element={<Navigate to="/services" replace />} />
           <Route path="online-psychiatrist-for-depression-india" element={<S><DepressionPage /></S>} />
           <Route path="anxiety-counselling-online-india" element={<S><AnxietyPage /></S>} />
           <Route path="adhd-assessment-online-india" element={<S><AdhdPage /></S>} />
-          <Route path="online-psychiatrist-gujarat" element={<S><GujaratPsychiatristPage /></S>} />
+          <Route path="ocd-treatment-online-india" element={<S><OcdPage /></S>} />
+          <Route path="online-psychiatrist-gujarat" element={<Navigate to="/services" replace />} />
           <Route path="phq-9-depression-screening" element={<S><Phq9Page /></S>} />
           <Route path="gad-7-anxiety-screening" element={<S><Gad7Page /></S>} />
           <Route path="online-psychiatrist-prescription-india" element={<S><OnlinePrescriptionPage /></S>} />

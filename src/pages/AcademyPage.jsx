@@ -1,57 +1,50 @@
-import React, { useId } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
-// Logo used in Academy hero — inherits the main Serenest brand so the merged
-// shell looks coherent (the standalone education-site used a separate indigo
-// gradient; here we share the teal brand mark with the rest of the app).
-function AcademyLogoMark({ size = 40 }) {
-  const uid = useId().replace(/:/g, '_');
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 48 48"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id={`acad-grad-${uid}`} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#7fe8d8" />
-          <stop offset="38%" stopColor="#2dd4bf" />
-          <stop offset="100%" stopColor="#0d6d63" />
-        </linearGradient>
-        <linearGradient id={`acad-gloss-${uid}`} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#fff" stopOpacity="0.45" />
-          <stop offset="42%" stopColor="#fff" stopOpacity="0.07" />
-          <stop offset="100%" stopColor="#fff" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-      <rect x="2.5" y="2.5" width="43" height="43" rx="11.5" fill={`url(#acad-grad-${uid})`} />
-      <rect x="2.5" y="2.5" width="43" height="22" rx="11.5" fill={`url(#acad-gloss-${uid})`} />
-      <text
-        x="24"
-        y="24"
-        textAnchor="middle"
-        dominantBaseline="central"
-        fill="#fff"
-        fontFamily="DM Sans, ui-sans-serif, system-ui, sans-serif"
-        fontSize="26.5"
-        fontWeight="800"
-        letterSpacing="-0.05em"
-      >
-        S
-      </text>
-    </svg>
-  );
-}
+import AcademyGuide from '../components/AcademyGuide';
+
+const PROGRAMMES = [
+  {
+    label: 'Guides',
+    title: 'Articles & guides',
+    body: 'Plain-language explainers on conditions, coping skills, and help-seeking — aligned with Indian contexts where we work.',
+    href: '/guides',
+    cta: 'View all guides',
+  },
+  {
+    label: 'Pharmacology',
+    title: 'Pharmacology learning',
+    body: 'For prescribers and trainees: telemedicine norms, prescribing conversations, SOAP and Rx workflow, continuity between visits, and safety documentation.',
+    href: '/professionals/learning#learning-pharmacology',
+    cta: 'Open pharmacology track',
+  },
+  {
+    label: 'Psychology',
+    title: 'Psychology learning',
+    body: 'Assessment tools (PHQ-9 / GAD-7), psychoeducation, behavioural topics, stigma-aware language, and carer skills — curated modules on the learning hub.',
+    href: '/professionals/learning#learning-psychology',
+    cta: 'Open psychology track',
+  },
+  {
+    label: 'Partnerships',
+    title: 'Schools & workplaces',
+    body: 'Talks, workshops, and collaborations that prioritise psychological safety and verified information.',
+    href: 'mailto:support@serenest.in?subject=Serenest%20Academy%20%E2%80%94%20partnership',
+    cta: 'Start a conversation',
+    external: true,
+  },
+];
 
 export default function AcademyPage() {
+  useSEO({ path: '/academy', ...ROUTE_SEO['/academy'] });
+
   return (
     <div className="ed-page">
       <section className="ed-hero">
         <div className="container">
           <div className="ed-hero-brandline">
-            <AcademyLogoMark size={44} />
             <div className="ed-hero-brandstack">
               <span className="ed-brand-name">Serenest Academy</span>
               <span className="ed-brand-tag">Literacy &amp; learning · part of Serenest</span>
@@ -60,24 +53,28 @@ export default function AcademyPage() {
 
           <p className="ed-kicker">Serenest Academy · Serenest Education Pvt Ltd</p>
           <h1 className="ed-hero-title">
-            Mental health learning —{' '}
-            <span className="ed-gradient">clear, respectful, and grounded in care.</span>
+            Mental health learning — clear, respectful, and grounded in care.
           </h1>
           <p className="ed-hero-lead">
-            Serenest Academy is the literacy &amp; learning side of Serenest: explainers, learning tracks
-            (pharmacology &amp; psychology), partnerships, and outreach. It lives alongside our clinical
-            telepsychiatry — so understanding and care are one click apart, not one website apart.
+            Serenest Academy is the literacy and learning side of Serenest: explainers, learning tracks
+            (pharmacology and psychology), partnerships, and outreach. It lives on the same site as our
+            clinical telepsychiatry — so understanding and care are one click apart.
           </p>
           <div className="ed-hero-actions">
-            <a className="btn btn-primary btn-lg" href="#learn">
-              Explore programmes →
+            <a className="btn btn-primary btn-lg" href="#guide">
+              Ask Academy Guide
+            </a>
+            <a className="btn btn-ghost btn-lg" href="#learn">
+              Explore programmes
             </a>
             <Link className="btn btn-ghost btn-lg" to="/book">
-              Need an appointment? Book a consultation →
+              Book a consultation
             </Link>
           </div>
         </div>
       </section>
+
+      <AcademyGuide />
 
       <section id="learn" className="ed-section">
         <div className="container">
@@ -87,78 +84,31 @@ export default function AcademyPage() {
             <p className="ed-muted">
               Serenest Academy helps people recognise symptoms, reduce stigma, and take the next step.
               Diagnosis and treatment belong with licensed clinicians on Serenest. For clinicians,
-              structured learning is split into <strong>pharmacology</strong> and <strong>psychology</strong>{' '}
-              tracks.
+              structured learning is split into pharmacology and psychology tracks.
             </p>
           </div>
 
           <div id="tracks" className="ed-anchor-target" />
 
           <div className="ed-grid">
-            <article className="ed-card">
-              <div className="ed-card-icon" aria-hidden="true">📚</div>
-              <h3>Articles &amp; guides</h3>
-              <p>
-                Plain-language explainers on conditions, coping skills, and help-seeking — aligned with
-                Indian contexts where we work.
-              </p>
-              <p className="ed-card-cta">
-                <Link className="ed-link-arrow" to="/blog">
-                  Read the blog →
-                </Link>
-              </p>
-            </article>
-
-            <article className="ed-card">
-              <div className="ed-card-icon" aria-hidden="true">💊</div>
-              <h3>Pharmacology learning</h3>
-              <p>
-                For prescribers and trainees: telemedicine norms, prescribing conversations, SOAP &amp; Rx
-                workflow, continuity between visits, and safety documentation.
-              </p>
-              <p className="ed-card-cta">
-                <Link
-                  className="ed-link-arrow"
-                  to="/professionals/learning#learning-pharmacology"
-                >
-                  Open pharmacology track →
-                </Link>
-              </p>
-            </article>
-
-            <article className="ed-card">
-              <div className="ed-card-icon" aria-hidden="true">🧠</div>
-              <h3>Psychology learning</h3>
-              <p>
-                Assessment tools (e.g. PHQ-9 / GAD-7), psychoeducation, behavioural topics, stigma-aware
-                language, and carer skills — curated modules on the learning hub.
-              </p>
-              <p className="ed-card-cta">
-                <Link
-                  className="ed-link-arrow"
-                  to="/professionals/learning#learning-psychology"
-                >
-                  Open psychology track →
-                </Link>
-              </p>
-            </article>
-
-            <article className="ed-card">
-              <div className="ed-card-icon" aria-hidden="true">🤝</div>
-              <h3>Schools &amp; workplaces</h3>
-              <p>
-                Talks, workshops, and collaborations that prioritise psychological safety and verified
-                information.
-              </p>
-              <p className="ed-card-cta">
-                <a
-                  className="ed-link-arrow"
-                  href="mailto:support@serenest.fit?subject=Serenest%20Academy%20%E2%80%94%20partnership"
-                >
-                  Start a conversation →
-                </a>
-              </p>
-            </article>
+            {PROGRAMMES.map((item) => (
+              <article key={item.title} className="ed-card">
+                <p className="ed-card-label">{item.label}</p>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+                <p className="ed-card-cta">
+                  {item.external ? (
+                    <a className="ed-link" href={item.href}>
+                      {item.cta}
+                    </a>
+                  ) : (
+                    <Link className="ed-link" to={item.href}>
+                      {item.cta}
+                    </Link>
+                  )}
+                </p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
@@ -185,9 +135,9 @@ export default function AcademyPage() {
             </li>
           </ul>
           <p className="ed-muted ed-note">
-            Content offerings will expand here over time. Clinical workflows (booking, screening, video
-            consultations) live under the same Serenest roof — privacy and regulation stay sharp because
-            those routes are protected, not because they&apos;re on a different domain.
+            Clinical workflows (booking, screening, video consultations) live under the same Serenest roof.
+            Privacy and regulation stay sharp because those routes are protected — not because they are on
+            a different domain.
           </p>
         </div>
       </section>
@@ -200,15 +150,15 @@ export default function AcademyPage() {
               <h2>Same Serenest — bookings, screening &amp; consultations</h2>
               <p>
                 Bookings, screening, video consultations, and continuity of care all run inside Serenest.
-                Academy and clinical share the same brand, the same team, and now the same site.
+                Academy and clinical share the same brand, the same team, and the same site.
               </p>
               <p className="ed-muted">
-                Serenest Education Pvt Ltd publishes Serenest Academy and operates Serenest clinical;
-                merging the sites keeps the journey from learning → screening → booking unbroken.
+                Serenest Education Pvt Ltd publishes Serenest Academy and operates Serenest clinical care
+                at serenest.in.
               </p>
               <div className="ed-split-actions">
                 <Link className="btn btn-primary" to="/book">
-                  Book an appointment →
+                  Book an appointment
                 </Link>
                 <Link className="btn btn-ghost" to="/screening">
                   Self-screening (PHQ-9 / GAD-7)
@@ -240,12 +190,12 @@ export default function AcademyPage() {
           <div className="ed-cta-actions">
             <a
               className="btn btn-primary btn-lg btn-full"
-              href="mailto:support@serenest.fit?subject=Serenest%20Academy%20%E2%80%94%20partnership"
+              href="mailto:support@serenest.in?subject=Serenest%20Academy%20%E2%80%94%20partnership"
             >
-              Email Serenest Academy →
+              Email Serenest Academy
             </a>
             <Link className="btn btn-ghost btn-lg btn-full" to="/professionals">
-              Clinical / professional enquiries →
+              Clinical / professional enquiries
             </Link>
           </div>
         </div>

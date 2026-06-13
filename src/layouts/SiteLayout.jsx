@@ -1,55 +1,7 @@
-import React, { useEffect, useState, useCallback, useId } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
-
-// ── Serenest logo (rounded square + gradient + “S”) — matches brand ─
-function SerenestLogo({ size = 36 }) {
-  const uid = useId().replace(/:/g, '_');
-  const gradId = `srn-grad-${uid}`;
-  const glossId = `srn-gloss-${uid}`;
-
-  return (
-    <svg
-      className="brand-mark"
-      width={size}
-      height={size}
-      viewBox="0 0 48 48"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <defs>
-        <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stopColor="#7fe8d8" />
-          <stop offset="38%" stopColor="#2dd4bf" />
-          <stop offset="100%" stopColor="#0d6d63" />
-        </linearGradient>
-        <linearGradient id={glossId} x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stopColor="#fff" stopOpacity="0.5" />
-          <stop offset="42%" stopColor="#fff" stopOpacity="0.07" />
-          <stop offset="100%" stopColor="#fff" stopOpacity="0" />
-        </linearGradient>
-      </defs>
-
-      <rect x="2.5" y="2.5" width="43" height="43" rx="11.5" fill={`url(#${gradId})`} />
-      <rect x="2.5" y="2.5" width="43" height="22" rx="11.5" fill={`url(#${glossId})`} />
-
-      <text
-        x="24"
-        y="24"
-        textAnchor="middle"
-        dominantBaseline="central"
-        fill="#fff"
-        fontFamily="Inter, ui-sans-serif, system-ui, -apple-system, sans-serif"
-        fontSize="26.5"
-        fontWeight="800"
-        letterSpacing="-0.05em"
-      >
-        S
-      </text>
-    </svg>
-  );
-}
 
 export default function SiteLayout() {
   const [scrolled, setScrolled]   = useState(false);
@@ -86,8 +38,6 @@ export default function SiteLayout() {
     return () => { document.body.style.overflow = ''; };
   }, [menuOpen]);
 
-  const Logo = () => <SerenestLogo />;
-
   // Active nav link helper
   const navClass = ({ isActive }) =>
     isActive ? 'nav-link nav-link-active' : 'nav-link';
@@ -103,21 +53,11 @@ export default function SiteLayout() {
     <div>
       <a className="skip-link" href="#main">Skip to content</a>
 
-      {/* ── Announcement Bar ───────────────────────────────── */}
-      <div className="announce-bar">
-        <div className="container announce-inner">
-          <span className="announce-dot" aria-hidden="true" />
-          <span>Now accepting new patients — same-day slots available.</span>
-          <Link to="/book" className="announce-link">Book now →</Link>
-        </div>
-      </div>
-
       {/* ── Header ─────────────────────────────────────────── */}
       <header className={`header ${scrolled ? 'is-scrolled' : 'is-top'}`}>
         <div className="container header-inner">
           {/* Brand */}
           <Link to="/" className="brand" aria-label="Serenest — Home">
-            <Logo />
             <span className="brand-wordmark">
               <span className="brand-text">Serenest</span>
               <span className="brand-tagline">Mind care, simplified</span>
@@ -138,7 +78,6 @@ export default function SiteLayout() {
             <span className="nav-divider" aria-hidden="true" />
 
             <Link className="header-cta" to="/book">
-              <span className="header-cta-dot" aria-hidden="true" />
               Book now
             </Link>
           </nav>
@@ -176,8 +115,9 @@ export default function SiteLayout() {
             {/* Drawer header */}
             <div className="menu-drawer-head">
               <Link to="/" className="brand" style={{ fontSize: 13 }} onClick={() => setMenuOpen(false)}>
-                <Logo />
-                <span className="brand-text">Serenest</span>
+                <span className="brand-wordmark">
+                  <span className="brand-text">Serenest</span>
+                </span>
               </Link>
               <button
                 type="button"
@@ -201,7 +141,7 @@ export default function SiteLayout() {
               <Link to="/professionals/learning"    onClick={() => setMenuOpen(false)}>📚 Clinician learning</Link>
               <Link to="/professionals/resources"   onClick={() => setMenuOpen(false)}>🗂️ Pro resources</Link>
               <Link to="/professionals/guidelines"  onClick={() => setMenuOpen(false)}>⚖️ Pro guidelines</Link>
-              <Link to="/academy"                   onClick={() => setMenuOpen(false)}>🎓 Serenest Academy</Link>
+              <Link to="/academy" onClick={() => setMenuOpen(false)}>Serenest Academy</Link>
               <Link to="/faq"                       onClick={() => setMenuOpen(false)}>❓ FAQ</Link>
               <Link to="/blog"                      onClick={() => setMenuOpen(false)}>📝 Blog</Link>
             </nav>
@@ -235,7 +175,6 @@ export default function SiteLayout() {
             {/* Top row */}
             <div className="footer-top">
               <div className="footer-brandline">
-                <SerenestLogo size={42} />
                 <div className="footer-brandstack">
                   <div className="footer-name">Serenest</div>
                   <div className="footer-brandtag">Mind care, simplified</div>
@@ -279,11 +218,11 @@ export default function SiteLayout() {
               <div className="footer-col2">
                 <div className="footer-title2">Topics</div>
                 <nav className="footer-nav2" aria-label="Topic links">
-                  <Link to="/online-psychiatrist-consultation-india">Online psychiatrist in India</Link>
+                  <Link to="/guides">All guides</Link>
                   <Link to="/online-psychiatrist-for-depression-india">Online psychiatrist for depression</Link>
                   <Link to="/anxiety-counselling-online-india">Anxiety counselling online</Link>
                   <Link to="/adhd-assessment-online-india">Adult ADHD assessment online</Link>
-                  <Link to="/online-psychiatrist-gujarat">Online psychiatrist in Gujarat</Link>
+                  <Link to="/ocd-treatment-online-india">OCD treatment online</Link>
                   <Link to="/phq-9-depression-screening">PHQ-9 depression screening</Link>
                   <Link to="/gad-7-anxiety-screening">GAD-7 anxiety screening</Link>
                   <Link to="/online-psychiatrist-prescription-india">Online prescription validity</Link>

@@ -74,8 +74,11 @@ a {
 }
 
 .brand-text {
-  text-transform: uppercase;
-  font-size: 14px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: -0.02em;
+  text-transform: none;
 }
 
 .nav {

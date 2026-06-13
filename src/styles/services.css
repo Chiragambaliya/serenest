@@ -1,0 +1,753 @@
+/* ── Services page — full layout (matches home calm clinical) ── */
+.services-page {
+  --s-ink: #142019;
+  --s-muted: rgba(20, 32, 25, 0.62);
+  --s-subtle: rgba(20, 32, 25, 0.45);
+  --s-line: rgba(20, 32, 25, 0.1);
+  --s-sage: #24473b;
+  --s-sage-mid: #2e5849;
+  --s-sage-dark: #1c2b22;
+  --s-cream: #f7f9f6;
+  --s-cream-2: #eef3ec;
+  --s-white: #ffffff;
+  --s-radius: 1.125rem;
+  --s-section: clamp(4rem, 8vw, 5.5rem);
+  --s-anchor: 5.5rem;
+  background: var(--s-cream);
+  color: var(--s-ink);
+}
+
+/* ── Typography helpers ─────────────────────────────────────── */
+.services-page .svc-eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--s-sage-mid);
+}
+
+.services-page .svc-section__head {
+  max-width: 40rem;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+}
+
+.services-page .svc-section__head h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 3.2vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: -0.028em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.services-page .svc-section__head p {
+  margin: 0 auto;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--s-muted);
+  max-width: 46ch;
+}
+
+/* ── Hero ───────────────────────────────────────────────────── */
+.services-page .svc-hero {
+  padding: clamp(3.5rem, 9vw, 5rem) 0 clamp(2.5rem, 6vw, 3.25rem);
+  background:
+    radial-gradient(ellipse 80% 55% at 50% -15%, rgba(36, 71, 59, 0.08), transparent 62%),
+    linear-gradient(180deg, var(--s-cream) 0%, var(--s-cream-2) 100%);
+  border-bottom: 1px solid var(--s-line);
+}
+
+.services-page .svc-hero__inner {
+  max-width: 44rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.services-page .svc-hero__title {
+  margin: 0 0 1rem;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 2.85rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.services-page .svc-hero__lead {
+  margin: 0 auto 1.5rem;
+  max-width: 48ch;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--s-muted);
+}
+
+.services-page .svc-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.625rem;
+}
+
+.services-page .svc-hero__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.375rem;
+}
+
+.services-page .svc-hero__nav a {
+  display: inline-flex;
+  padding: 0.4375rem 0.875rem;
+  border: 1px solid var(--s-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--s-sage-mid);
+  text-decoration: none;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.services-page .svc-hero__nav a:hover {
+  border-color: rgba(46, 88, 73, 0.28);
+  background: var(--s-white);
+  color: var(--s-sage);
+}
+
+/* ── Three pillars strip ──────────────────────────────────────── */
+.services-page .svc-pillars {
+  padding: 1.25rem 0;
+  background: var(--s-white);
+  border-bottom: 1px solid var(--s-line);
+}
+
+.services-page .svc-pillars__grid {
+  display: grid;
+  gap: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  .services-page .svc-pillars__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+}
+
+.services-page .svc-pillar {
+  display: block;
+  padding: 1.125rem 1.25rem;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius);
+  background: var(--s-cream);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.services-page .svc-pillar:hover {
+  border-color: rgba(46, 88, 73, 0.22);
+  background: var(--s-white);
+}
+
+.services-page .svc-pillar__title {
+  margin: 0 0 0.375rem;
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.services-page .svc-pillar__body {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--s-muted);
+}
+
+/* ── Sections ───────────────────────────────────────────────── */
+.services-page .svc-section {
+  padding-block: var(--s-section);
+  scroll-margin-top: var(--s-anchor);
+  border-bottom: 1px solid var(--s-line);
+}
+
+.services-page .svc-section--cream {
+  background: var(--s-cream-2);
+}
+
+/* ── Core service cards ───────────────────────────────────────── */
+.services-page .svc-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .services-page .svc-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .services-page .svc-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.services-page .svc-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.625rem 1.5rem;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius);
+  background: var(--s-white);
+  box-shadow: 0 1px 2px rgba(20, 32, 25, 0.04);
+  transition: border-color 160ms ease;
+}
+
+.services-page .svc-card:hover {
+  border-color: rgba(46, 88, 73, 0.2);
+}
+
+.services-page .svc-card__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.625rem;
+}
+
+.services-page .svc-card__tag {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--s-sage-mid);
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--s-line);
+  border-radius: 999px;
+  background: var(--s-cream);
+}
+
+.services-page .svc-card__badge {
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--s-sage);
+  background: var(--s-cream-2);
+  border: 1px solid rgba(46, 88, 73, 0.15);
+  border-radius: 999px;
+  padding: 0.2rem 0.5rem;
+}
+
+.services-page .svc-card__title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.services-page .svc-card__lead {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  line-height: 1.55;
+  color: var(--s-ink);
+}
+
+.services-page .svc-card__detail {
+  margin: 0.5rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--s-muted);
+}
+
+.services-page .svc-card__toggle {
+  margin-top: 0.75rem;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--s-sage-mid);
+  cursor: pointer;
+  text-align: left;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.services-page .svc-card__toggle:hover {
+  color: var(--s-sage);
+}
+
+.services-page .svc-card__details {
+  margin-top: 0.75rem;
+  padding: 0.875rem;
+  border-radius: 0.625rem;
+  background: var(--s-cream);
+  border: 1px solid var(--s-line);
+}
+
+.services-page .svc-card__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.375rem;
+}
+
+.services-page .svc-card__list li {
+  position: relative;
+  padding-left: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--s-muted);
+}
+
+.services-page .svc-card__list li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  color: var(--s-sage-mid);
+  font-size: 0.6875rem;
+}
+
+.services-page .svc-card__for {
+  margin: 0.625rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--s-muted);
+}
+
+.services-page .svc-card__price {
+  margin: 0.875rem 0 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  background: var(--s-cream);
+  border: 1px solid var(--s-line);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--s-sage);
+}
+
+.services-page .svc-card__foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+/* ── Academy band ───────────────────────────────────────────── */
+.services-page .svc-academy__banner {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  border: 1px solid var(--s-line);
+  border-left: 4px solid var(--s-sage-mid);
+  border-radius: var(--s-radius);
+  background: var(--s-white);
+  box-shadow: 0 1px 2px rgba(20, 32, 25, 0.04), 0 8px 24px rgba(20, 32, 25, 0.05);
+}
+
+@media (min-width: 800px) {
+  .services-page .svc-academy__banner {
+    grid-template-columns: 1.2fr 0.8fr;
+    align-items: start;
+  }
+}
+
+.services-page .svc-academy__brand {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--s-sage);
+}
+
+.services-page .svc-academy__copy p:last-of-type {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--s-muted);
+}
+
+.services-page .svc-academy__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+  margin-top: 1.125rem;
+}
+
+.services-page .svc-academy__links {
+  margin: 0;
+  padding: 1rem 1.125rem;
+  list-style: none;
+  border-radius: 0.75rem;
+  background: var(--s-cream);
+  border: 1px solid var(--s-line);
+}
+
+.services-page .svc-academy__links li + li {
+  margin-top: 0.5rem;
+}
+
+.services-page .svc-academy__links a {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--s-sage-mid);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* ── Programme cards (Academy + Org) ────────────────────────── */
+.services-page .svc-programme-grid {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.services-page .svc-programme-grid--3 {
+  grid-template-columns: 1fr;
+}
+
+.services-page .svc-programme-grid--4 {
+  grid-template-columns: 1fr;
+}
+
+@media (min-width: 640px) {
+  .services-page .svc-programme-grid--4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 960px) {
+  .services-page .svc-programme-grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .services-page .svc-programme-grid--4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.services-page .svc-programme {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1.5rem 1.375rem;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius);
+  background: var(--s-white);
+  transition: border-color 160ms ease;
+}
+
+.services-page .svc-programme:hover {
+  border-color: rgba(46, 88, 73, 0.2);
+}
+
+.services-page .svc-programme__tag {
+  align-self: flex-start;
+  margin: 0 0 0.625rem;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--s-sage-mid);
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--s-line);
+  border-radius: 999px;
+  background: var(--s-cream);
+}
+
+.services-page .svc-programme__title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.25;
+}
+
+.services-page .svc-programme__body {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--s-muted);
+}
+
+.services-page .svc-programme__list {
+  list-style: none;
+  margin: 0.875rem 0 0;
+  padding: 0.75rem 0 0;
+  border-top: 1px solid var(--s-line);
+  flex: 1;
+  display: grid;
+  gap: 0.375rem;
+}
+
+.services-page .svc-programme__list li {
+  position: relative;
+  padding-left: 1rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--s-muted);
+}
+
+.services-page .svc-programme__list li::before {
+  content: "\2713";
+  position: absolute;
+  left: 0;
+  color: var(--s-sage-mid);
+  font-size: 0.6875rem;
+}
+
+.services-page .svc-programme__cta {
+  margin-top: 1rem;
+  align-self: stretch;
+  text-align: center;
+}
+
+.services-page .svc-band-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius);
+  background: var(--s-white);
+}
+
+.services-page .svc-band-cta p {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--s-muted);
+  max-width: 40ch;
+}
+
+/* ── Steps ──────────────────────────────────────────────────── */
+.services-page .svc-steps {
+  list-style: none;
+  margin: 0 auto;
+  padding: 0;
+  max-width: 40rem;
+  display: grid;
+  gap: 0.875rem;
+}
+
+.services-page .svc-step {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  padding: 1.25rem 1.375rem;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius);
+  background: var(--s-white);
+}
+
+.services-page .svc-step__num {
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--s-sage);
+  color: var(--s-white);
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+
+.services-page .svc-step strong {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.9375rem;
+}
+
+.services-page .svc-step p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--s-muted);
+}
+
+/* ── Audience grid ──────────────────────────────────────────── */
+.services-page .svc-audience {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .services-page .svc-audience {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+.services-page .svc-audience__item {
+  padding: 1.375rem 1.25rem;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius);
+  background: var(--s-white);
+}
+
+.services-page .svc-audience__item h3 {
+  margin: 0 0 0.375rem;
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.services-page .svc-audience__item p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--s-muted);
+}
+
+/* ── Conditions table ───────────────────────────────────────── */
+.services-page .svc-conditions {
+  max-width: 48rem;
+  margin-inline: auto;
+  border: 1px solid var(--s-line);
+  border-radius: var(--s-radius);
+  overflow: hidden;
+  background: var(--s-white);
+}
+
+.services-page .svc-conditions__head,
+.services-page .svc-conditions__row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 1rem;
+  padding: 0.875rem 1.125rem;
+  font-size: 0.875rem;
+}
+
+.services-page .svc-conditions__head {
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--s-sage-mid);
+  background: var(--s-cream);
+  border-bottom: 1px solid var(--s-line);
+}
+
+.services-page .svc-conditions__row {
+  border-bottom: 1px solid var(--s-line);
+  color: var(--s-muted);
+}
+
+.services-page .svc-conditions__row:last-child {
+  border-bottom: none;
+}
+
+.services-page .svc-conditions__row span:first-child {
+  font-weight: 600;
+  color: var(--s-ink);
+}
+
+.services-page .svc-emergency {
+  margin: 1.25rem auto 0;
+  max-width: 44ch;
+  text-align: center;
+  font-size: 0.875rem;
+  font-style: italic;
+  color: var(--s-subtle);
+}
+
+.services-page .svc-emergency a {
+  color: var(--s-sage);
+  font-weight: 600;
+  font-style: normal;
+}
+
+/* ── Bottom CTA ─────────────────────────────────────────────── */
+.services-page .svc-cta {
+  padding: var(--s-section) 0;
+  background: var(--s-sage-dark);
+  color: var(--s-white);
+}
+
+.services-page .svc-cta__inner {
+  display: grid;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .services-page .svc-cta__inner {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+.services-page .svc-cta h2 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 500;
+  color: var(--s-white);
+}
+
+.services-page .svc-cta p {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.services-page .svc-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.services-page .svc-cta .btn-primary {
+  background: var(--s-white);
+  border-color: var(--s-white);
+  color: var(--s-sage-dark);
+}
+
+.services-page .svc-cta .btn-primary:hover {
+  background: var(--s-cream);
+  border-color: var(--s-cream);
+}
+
+.services-page .svc-cta .btn-ghost {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--s-white);
+}
+
+.services-page .svc-cta .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+@media (max-width: 479px) {
+  .services-page .svc-hero__actions,
+  .services-page .svc-academy__actions,
+  .services-page .svc-cta__actions {
+    width: 100%;
+  }
+
+  .services-page .svc-hero__actions .btn,
+  .services-page .svc-academy__actions .btn,
+  .services-page .svc-cta__actions .btn,
+  .services-page .svc-band-cta .btn {
+    flex: 1 1 100%;
+  }
+
+  .services-page .svc-band-cta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

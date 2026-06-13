@@ -109,6 +109,7 @@ export default function AnxietyPage() {
       <RelatedTopics items={[
         { to: '/gad-7-anxiety-screening', title: 'GAD-7 anxiety screening', body: 'A validated 7-item self-screening. Screening is not a diagnosis.' },
         { to: '/online-psychiatrist-for-depression-india', title: 'Online psychiatrist for depression', body: 'Depression and anxiety often co-occur. Read about online depression care.' },
+        { to: '/ocd-treatment-online-india', title: 'OCD treatment online', body: 'Structured assessment, ERP-focused therapy, and psychiatric follow-up for OCD.' },
         { to: '/online-psychiatrist-prescription-india', title: 'Online prescription validity', body: 'How psychiatric prescriptions work online in India under the Telemedicine Practice Guidelines, 2020.' },
       ]} />
 

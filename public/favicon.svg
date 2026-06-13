@@ -13,7 +13,4 @@
   </defs>
   <rect x="2.5" y="2.5" width="43" height="43" rx="11.5" fill="url(#g)"/>
   <rect x="2.5" y="2.5" width="43" height="22" rx="11.5" fill="url(#h)"/>
-  <text x="24" y="24" text-anchor="middle" dominant-baseline="central" fill="#fff"
-    font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, sans-serif"
-    font-size="26.5" font-weight="800" letter-spacing="-0.05em">S</text>
 </svg>

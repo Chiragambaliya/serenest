@@ -21,8 +21,8 @@ export default function ProfessionalsPage() {
             </p>
             <p className="muted" style={{ marginTop: 12, fontSize: '0.92rem', maxWidth: '48rem' }}>
               Public literacy programmes and school or workplace collaborations are branded as{' '}
-              <strong>Serenest Academy</strong> — a standalone site operated by Serenest Education Pvt Ltd — separate from
-              this clinical app.
+              <strong>Serenest Academy</strong> at{' '}
+              <Link to="/academy">/academy</Link> — literacy and learning on the same site as clinical care.
             </p>
             <div className="hero-actions" style={{ marginTop: 20, flexWrap: 'wrap' }}>
               <Link className="btn btn-primary" to="/professionals/apply">

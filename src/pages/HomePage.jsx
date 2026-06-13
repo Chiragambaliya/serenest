@@ -2,706 +2,279 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import { HOME_FEATURED_GUIDES } from '../lib/guides';
 
-/* ── Inline styles for elements that need minor one-off tweaks ─ */
-const s = {
-  sectionTwoCol: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gap: '48px',
-    alignItems: 'center',
+function HomeIcon({ name }) {
+  const icons = {
+    consult: (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="3" y="5" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M17 9h2.5a1.5 1.5 0 0 1 1.5 1.5V16l-4-3h-4" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      </svg>
+    ),
+    screen: (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M7 4h10a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M8 9h8M8 13h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      </svg>
+    ),
+    follow: (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M5 12a7 7 0 0 1 12.9-3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M19 7v4h-4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M19 12a7 7 0 0 1-12.9 3.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        <path d="M5 17v-4h4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+    lock: (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <rect x="5" y="10" width="14" height="10" rx="2" stroke="currentColor" strokeWidth="1.6" />
+        <path d="M8 10V8a4 4 0 1 1 8 0v2" stroke="currentColor" strokeWidth="1.6" />
+      </svg>
+    ),
+    check: (
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M6 12.5 10 16.5 18 7.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+  };
+  return <span className="home__icon">{icons[name]}</span>;
+}
+
+const PILLARS = [
+  {
+    icon: 'lock',
+    title: 'Private by design',
+    body: 'Encrypted sessions and careful handling of your health information.',
   },
-  featureList: {
-    listStyle: 'none',
-    margin: 0,
-    padding: 0,
-    display: 'grid',
-    gap: '14px',
+  {
+    icon: 'check',
+    title: 'Verified clinicians',
+    body: 'Psychiatrists and psychologists reviewed before they join Serenest.',
   },
-  featureItem: {
-    display: 'flex',
-    gap: '12px',
-    alignItems: 'flex-start',
-    fontSize: '15px',
+  {
+    icon: 'follow',
+    title: 'Continuity of care',
+    body: 'Notes, follow-ups, and re-booking stay connected after your first visit.',
   },
-  featureCheck: {
-    width: '22px',
-    height: '22px',
-    borderRadius: '50%',
-    background: 'linear-gradient(135deg, #14b8a6, #0f766e)',
-    color: '#fff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: '11px',
-    fontWeight: 900,
-    flexShrink: 0,
-    marginTop: '1px',
+];
+
+const CARE = [
+  {
+    icon: 'consult',
+    title: 'Book a consultation',
+    body: 'Secure video, audio, or chat with a verified clinician. Structured intake included.',
+    href: '/book',
+    cta: 'Book now',
   },
-  featureText: {
-    color: 'rgba(11,36,32,0.75)',
-    lineHeight: 1.6,
+  {
+    icon: 'screen',
+    title: 'Start with screening',
+    body: 'PHQ-9 and GAD-7 help you understand symptoms before you book. Not a diagnosis on its own.',
+    href: '/screening',
+    cta: 'Take screening',
   },
-};
+  {
+    icon: 'follow',
+    title: 'Continue your care',
+    body: 'Follow-ups and care plans in one place so treatment does not stop after one session.',
+    href: '/services',
+    cta: 'View services',
+  },
+];
+
+const STEPS = [
+  { title: 'Choose your format', body: 'Video, audio, or chat — or begin with screening if you are unsure.' },
+  { title: 'Pick a time', body: 'Share your details. We confirm your clinician and next steps with you.' },
+  { title: 'Meet your clinician', body: 'Assessment, guidance, and a clear plan for follow-up where needed.' },
+];
+
+const LINKS = [
+  { label: 'Serenest Academy', to: '/academy' },
+  { label: 'Find a professional', to: '/patient/find-professional' },
+  { label: 'For professionals', to: '/professionals' },
+  { label: 'Pricing', to: '/pricing' },
+  { label: 'FAQ', to: '/faq' },
+  { label: 'Privacy', to: '/privacy' },
+];
 
 export default function HomePage() {
   useSEO({ path: '/', ...ROUTE_SEO['/'] });
+
   return (
-    <>
-      {/* ══════════════════════════════════════════════════
-          HERO
-      ══════════════════════════════════════════════════ */}
-      <section className="hero">
-        {/* Layered background */}
-        <div className="hero-blobs" aria-hidden="true">
-          <div className="hero-blob hero-blob-1" />
-          <div className="hero-blob hero-blob-2" />
-          <div className="hero-blob hero-blob-3" />
-        </div>
-
-        {/* Subtle dot grid overlay */}
-        <div className="hero-grid-overlay" aria-hidden="true" />
-
-        <div className="container">
-          <div className="hero-two-col">
-
-            {/* ── LEFT: Copy ───────────────────────────────── */}
-            <div className="hero-copy-col">
-
-              {/* Live badge */}
-              <div className="hero-badge">
-                <span className="hero-badge-dot" />
-                Clinical mental health · India
-                <span className="hero-badge-sep" aria-hidden="true">·</span>
-                <span className="hero-badge-new">Private by design</span>
-              </div>
-
-              {/* Headline */}
-              <h1 className="hero-title">
-                Mental health care that feels{' '}
-                <span className="hero-title-highlight">
-                  <span className="gradient-text">calm</span>
-                  <svg className="hero-underline-svg" viewBox="0 0 220 12" fill="none" aria-hidden="true">
-                    <path d="M2 9 C 50 3, 140 14, 218 6" stroke="url(#ugrad)" strokeWidth="3.5" strokeLinecap="round"/>
-                    <defs>
-                      <linearGradient id="ugrad" x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%" stopColor="#2dd4bf"/>
-                        <stop offset="100%" stopColor="#0f766e"/>
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                </span>
-                {', '}private &amp; clinical&#8209;grade.
-              </h1>
-
-              {/* Sub-copy */}
-              <p className="hero-lead">
-                Secure video, audio, or chat consultations with licensed
-                psychiatrists and psychologists — structured intake,
-                validated assessments, and continuity of care. All from home.{' '}
-                <Link to="/online-psychiatrist-consultation-india" style={{ color: 'inherit', textDecoration: 'underline' }}>
-                  Online psychiatrist consultation in India
-                </Link>
-                {' '}— learn how it works.
+    <div className="home">
+      <section className="home__hero" aria-labelledby="home-hero-title">
+        <div className="home__shell">
+          <div className="home__hero-grid">
+            <div className="home__hero-copy">
+              <p className="home__eyebrow">
+                <span>Serenest</span>
+                <span className="home__eyebrow-dot" aria-hidden="true">·</span>
+                <span>Pan-India telepsychiatry</span>
               </p>
-
-              {/* CTAs */}
-              <div className="hero-actions">
+              <h1 id="home-hero-title" className="home__title">
+                Private, clinical mental health care — wherever you are in India.
+              </h1>
+              <p className="home__lead">
+                Speak with verified psychiatrists and psychologists from home. Structured intake,
+                evidence-based screening, and care that continues beyond a single session.
+              </p>
+              <div className="home__actions">
                 <Link className="btn btn-primary btn-lg" to="/book">
-                  Book an appointment
-                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
+                  Book now
                 </Link>
                 <Link className="btn btn-ghost btn-lg" to="/screening">
-                  Self-screening quiz
+                  Take screening
                 </Link>
               </div>
-
+              <p className="home__note">
+                Not for emergencies. If you or someone else is at immediate risk, contact local
+                emergency services or a crisis helpline.
+              </p>
             </div>
 
+            <aside className="home__hero-card" aria-label="What Serenest includes">
+              <p className="home__hero-card-title">What you get on Serenest</p>
+              <ul className="home__hero-card-list">
+                <li><HomeIcon name="check" />Verified psychiatrists and psychologists</li>
+                <li><HomeIcon name="check" />Video, audio, and chat consultations</li>
+                <li><HomeIcon name="check" />PHQ-9 / GAD-7 screening tools</li>
+                <li><HomeIcon name="check" />Structured intake and follow-up care</li>
+                <li><HomeIcon name="lock" />Encrypted sessions and privacy-first records</li>
+              </ul>
+            </aside>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════
-          TRUST STRIP
-      ══════════════════════════════════════════════════ */}
-      <div className="container">
-        <div className="stats-row">
-          <div className="stat-item">
-            <div className="stat-value" style={{ fontSize: 22 }}>✔︎</div>
-            <div className="stat-label">Verified clinical professionals</div>
-          </div>
-          <div className="stat-divider" aria-hidden="true" />
-          <div className="stat-item">
-            <div className="stat-value" style={{ fontSize: 22 }}>📋</div>
-            <div className="stat-label">Structured intake and follow-up</div>
-          </div>
-          <div className="stat-divider" aria-hidden="true" />
-          <div className="stat-item">
-            <div className="stat-value" style={{ fontSize: 22 }}>🔒</div>
-            <div className="stat-label">Private video, audio, and chat care</div>
-          </div>
+      <section className="home__strip" aria-label="Consultation formats">
+        <div className="home__shell">
+          <ul className="home__modes">
+            <li>Video consultations</li>
+            <li>Audio sessions</li>
+            <li>Secure chat</li>
+            <li>Pan-India access</li>
+          </ul>
         </div>
-        <p
-          className="muted"
-          style={{
-            textAlign: 'center',
-            marginTop: 18,
-            fontSize: 13,
-            maxWidth: 640,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            lineHeight: 1.6,
-          }}
-        >
-          What you can verify before booking: clinician profile and qualification,
-          consultation mode and exact fee before confirmation, plain-language privacy
-          policy, and a clear follow-up pathway after your first session.
-        </p>
-        <p
-          className="muted"
-          style={{
-            textAlign: 'center',
-            marginTop: 10,
-            fontSize: 12.5,
-            maxWidth: 640,
-            marginLeft: 'auto',
-            marginRight: 'auto',
-            lineHeight: 1.55,
-            fontStyle: 'italic',
-          }}
-        >
-          Serenest is not an emergency service. If you or someone else is at immediate
-          risk, contact local emergency services or a crisis helpline right away.
-        </p>
-      </div>
+      </section>
 
-      {/* ══════════════════════════════════════════════════
-          SERVICES
-      ══════════════════════════════════════════════════ */}
-      <section className="section" id="services">
-        <div className="container">
-          <div className="section-head center">
-            <div className="section-kicker">What we offer</div>
-            <h2>Care formats built for you</h2>
-            <p>
-              Choose the consultation mode that fits your life. Everything is
-              clinically grounded and built for continuity.
-            </p>
-          </div>
+      <section className="home__pillars" aria-label="Why Serenest">
+        <div className="home__shell">
+          <ul className="home__pillar-list">
+            {PILLARS.map((item) => (
+              <li key={item.title} className="home__pillar">
+                <HomeIcon name={item.icon} />
+                <div>
+                  <strong>{item.title}</strong>
+                  <p>{item.body}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
 
-          <div className="grid-3">
-            <article className="tile">
-              <div className="tile-icon">🎥</div>
-              <h3>Video Consultations</h3>
-              <p>
-                Face-to-face sessions with a psychiatrist or psychologist
-                from home. Secure, private, and fully clinical.
-              </p>
-            </article>
-
-            <article className="tile">
-              <div className="tile-icon">🎙️</div>
-              <h3>Audio Sessions</h3>
-              <p>
-                Voice-only calls for those who prefer it. Same clinical
-                quality, with added privacy and comfort.
-              </p>
-            </article>
-
-            <article className="tile">
-              <div className="tile-icon">💬</div>
-              <h3>Chat Consultations</h3>
-              <p>
-                Typed consultations ideal for those who find writing easier
-                than speaking. Structured and asynchronous-friendly.
-              </p>
-            </article>
-
-            <article className="tile">
-              <div className="tile-icon">📋</div>
-              <h3>Clinical Assessments</h3>
-              <p>
-                PHQ-9, GAD-7, intake forms, and custom assessments that
-                guide care planning and track your progress over time.
-              </p>
-            </article>
-
-            <article className="tile">
-              <div className="tile-icon">🔁</div>
-              <h3>Follow-up &amp; Continuity</h3>
-              <p>
-                Care plans, prescription follow-ups, and easy re-booking
-                so your mental health care never lapses.
-              </p>
-            </article>
-
-            <article className="tile">
-              <div className="tile-icon">🧪</div>
-              <h3>Self-Screening</h3>
-              <p>
-                Not sure where to start? Take a quick, evidence-based
-                screening to find the right path forward.
-              </p>
-              <Link
-                to="/screening"
-                style={{ display: 'inline-flex', marginTop: 14, fontSize: 13, fontWeight: 700, color: 'var(--teal-700)' }}
-              >
-                Start screening →
+      <section className="home__section" id="care">
+        <div className="home__shell">
+          <header className="home__header home__header--center">
+            <p className="home__eyebrow">Start here</p>
+            <h2>Three clear paths into care</h2>
+            <p>Built for privacy and continuity — not anonymous one-off chats.</p>
+          </header>
+          <div className="home__cards">
+            {CARE.map((item) => (
+              <Link key={item.title} className="home__card" to={item.href}>
+                <HomeIcon name={item.icon} />
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+                <span className="home__card-link">{item.cta}</span>
               </Link>
-            </article>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════
-          FOR ORGANISATIONS
-      ══════════════════════════════════════════════════ */}
-      <section className="section alt" id="organisations">
-        <div className="container">
-          <div className="section-head center">
-            <div className="section-kicker">Beyond individual care</div>
-            <h2>Mental health programmes for organisations</h2>
-            <p>
-              We partner with corporates, schools, and colleges to bring
-              structured, stigma-free mental health support to entire communities.
-            </p>
-          </div>
-
-          <div className="org-cards">
-
-            {/* Corporate */}
-            <div className="org-card org-card-corporate">
-              <div className="org-card-top">
-                <div className="org-icon">🏢</div>
-                <div className="org-tag">Corporate</div>
-              </div>
-              <h3>Workplace Mental Health</h3>
-              <p>
-                Burnout, anxiety, and stress cost organisations billions each
-                year. We offer confidential telepsychiatry, EAP-style
-                counselling, and group wellness workshops tailored to your
-                workforce.
-              </p>
-              <ul className="org-features">
-                <li>Confidential 1-on-1 sessions for employees</li>
-                <li>Manager mental health training</li>
-                <li>Anonymous team wellbeing assessments</li>
-                <li>Dedicated psychiatry hours per month</li>
-              </ul>
-              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.in?subject=Corporate%20Enquiry">
-                Enquire for your company →
-              </a>
-            </div>
-
-            {/* Schools */}
-            <div className="org-card org-card-school">
-              <div className="org-card-top">
-                <div className="org-icon">🏫</div>
-                <div className="org-tag">Schools</div>
-              </div>
-              <h3>Student &amp; Staff Wellbeing</h3>
-              <p>
-                Young students face academic pressure, social anxiety, and
-                developmental challenges. Our school programme provides
-                accessible, age-appropriate psychiatric care for students
-                and counselling for teaching staff.
-              </p>
-              <ul className="org-features">
-                <li>Child &amp; adolescent psychiatry specialists</li>
-                <li>Parental guidance sessions</li>
-                <li>Learning disability &amp; ADHD assessments</li>
-                <li>Staff mental wellness support</li>
-              </ul>
-              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.in?subject=School%20Enquiry">
-                Enquire for your school →
-              </a>
-            </div>
-
-            {/* Colleges */}
-            <div className="org-card org-card-college">
-              <div className="org-card-top">
-                <div className="org-icon">🎓</div>
-                <div className="org-tag">Colleges &amp; Universities</div>
-              </div>
-              <h3>Campus Mental Health</h3>
-              <p>
-                College is when many mental health conditions first emerge.
-                We embed telepsychiatry into campus life — providing students
-                with on-demand consultations and structured follow-ups,
-                without waitlists.
-              </p>
-              <ul className="org-features">
-                <li>On-demand appointments for students</li>
-                <li>Depression, anxiety &amp; substance use support</li>
-                <li>Crisis triage &amp; referral pathways</li>
-                <li>Anonymous mental health pulse surveys</li>
-              </ul>
-              <a className="btn btn-ghost btn-sm org-cta" href="mailto:support@serenest.in?subject=College%20Enquiry">
-                Enquire for your institution →
-              </a>
-            </div>
-
-          </div>
-
-          {/* Bottom CTA */}
-          <div className="org-bottom-cta">
-            <p>
-              Want a custom programme? Every organisation is different — we'll
-              build a plan that fits your size, budget, and goals.
-            </p>
-            <a className="btn btn-primary" href="mailto:support@serenest.in?subject=Organisation%20Partnership">
-              Request a partnership consultation →
-            </a>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════
-          HOW IT WORKS
-      ══════════════════════════════════════════════════ */}
-      <section className="section alt" id="how">
-        <div className="container">
-          <div style={s.sectionTwoCol}>
-            <div className="section-head" style={{ marginBottom: 0 }}>
-              <div className="section-kicker">Simple process</div>
-              <h2>From first step to follow-up</h2>
-              <p>
-                We removed the complexity from getting mental health care. It
-                takes just minutes to go from sign-up to your first session.
-              </p>
-              <div style={{ marginTop: 28 }}>
-                <Link className="btn btn-primary" to="/book">
-                  Get started today →
-                </Link>
-              </div>
-            </div>
-
-            <ol className="steps" aria-label="How it works">
-              <li className="step">
-                <div className="step-num" aria-hidden="true">1</div>
-                <div className="step-body">
-                  <strong>Screen yourself</strong>
-                  <p>
-                    Answer a few quick questions to understand your needs and
-                    find the right kind of care.
-                  </p>
-                </div>
-              </li>
-
-              <li className="step">
-                <div className="step-num" aria-hidden="true">2</div>
-                <div className="step-body">
-                  <strong>Book an appointment</strong>
-                  <p>
-                    Browse verified psychiatrists and psychologists,
-                    choose a slot that works for you, and confirm in seconds.
-                  </p>
-                </div>
-              </li>
-
-              <li className="step">
-                <div className="step-num" aria-hidden="true">3</div>
-                <div className="step-body">
-                  <strong>Consult your doctor</strong>
-                  <p>
-                    Join your video, audio, or chat session. Your doctor
-                    takes structured notes throughout.
-                  </p>
-                </div>
-              </li>
-
-              <li className="step">
-                <div className="step-num" aria-hidden="true">4</div>
-                <div className="step-body">
-                  <strong>Stay consistent</strong>
-                  <p>
-                    Track symptoms, manage follow-ups, and maintain the
-                    continuity of care that produces real outcomes.
-                  </p>
-                </div>
-              </li>
+      <section className="home__section home__section--muted" id="how">
+        <div className="home__shell">
+          <div className="home__split">
+            <header className="home__header home__header--center home__header--split">
+              <p className="home__eyebrow">How it works</p>
+              <h2>Simple to start. Serious about follow-through.</h2>
+              <p>We keep the first step light and confirm everything with you before your session.</p>
+            </header>
+            <ol className="home__steps">
+              {STEPS.map((step, i) => (
+                <li key={step.title}>
+                  <span className="home__step-num">{i + 1}</span>
+                  <div>
+                    <strong>{step.title}</strong>
+                    <p>{step.body}</p>
+                  </div>
+                </li>
+              ))}
             </ol>
           </div>
         </div>
       </section>
 
-      {/* ══════════════════════════════════════════════════
-          TRUST & PRIVACY
-      ══════════════════════════════════════════════════ */}
-      <section className="section" id="trust">
-        <div className="container">
-          <div className="section-head center">
-            <div className="section-kicker">Safety first</div>
-            <h2>Privacy and security you can trust</h2>
+      <section className="home__section" id="topics">
+        <div className="home__shell">
+          <header className="home__header home__header--center">
+            <p className="home__eyebrow">Guides</p>
+            <h2>Common reasons people come to Serenest</h2>
             <p>
-              Mental health data is the most sensitive kind. We built
-              Serenest from the ground up to protect it.
-            </p>
-          </div>
-
-          <div className="trust-grid">
-            <div className="trust-card">
-              <div className="trust-icon">🔐</div>
-              <div>
-                <h3>End-to-end secure sessions</h3>
-                <p>
-                  All consultation sessions are encrypted. Only you and your
-                  doctor can access the content of your sessions.
-                </p>
-              </div>
-            </div>
-
-            <div className="trust-card">
-              <div className="trust-icon">🛡️</div>
-              <div>
-                <h3>Minimal data access</h3>
-                <p>
-                  We follow a least-access principle. Your records are
-                  visible only to your direct care team and authorized
-                  admins per policy.
-                </p>
-              </div>
-            </div>
-
-            <div className="trust-card">
-              <div className="trust-icon">📄</div>
-              <div>
-                <h3>Transparent privacy policy</h3>
-                <p>
-                  Plain-language policies — no legalese. You always know
-                  exactly what data we hold and why.
-                </p>
-              </div>
-            </div>
-
-            <div className="trust-card">
-              <div className="trust-icon">🏛️</div>
-              <div>
-                <h3>Compliant with Indian standards</h3>
-                <p>
-                  We align with India's telemedicine guidelines and follow
-                  international data protection best practices.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════
-          TOPICS / CONDITIONS
-      ══════════════════════════════════════════════════ */}
-      <section className="section" id="topics">
-        <div className="container">
-          <div className="section-head center">
-            <div className="section-kicker">Explore by topic</div>
-            <h2>Care for the things people actually search for</h2>
-            <p>Each topic page explains how online care works, what it can and cannot do, and links to screening and booking.</p>
-          </div>
-          <div className="grid-3">
-            <article className="tile">
-              <h3><Link to="/online-psychiatrist-for-depression-india">Online psychiatrist for depression</Link></h3>
-              <p>Structured assessment, PHQ-9 screening, therapy or medication review by a verified psychiatrist.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/anxiety-counselling-online-india">Anxiety counselling online</Link></h3>
-              <p>GAD-7 screening, stepped care, and verified clinicians. Therapy and psychiatry options.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/adhd-assessment-online-india">Adult ADHD assessment online</Link></h3>
-              <p>Structured multi-session assessment with validated rating scales. Careful prescribing.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/online-psychiatrist-gujarat">Online psychiatrist in Gujarat</Link></h3>
-              <p>Pan-Gujarat access in Gujarati, Hindi, and English where the clinician supports the language.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/phq-9-depression-screening">PHQ-9 depression screening</Link></h3>
-              <p>A validated 9-item self-screening for depression severity. Not a diagnosis.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/gad-7-anxiety-screening">GAD-7 anxiety screening</Link></h3>
-              <p>A validated 7-item self-screening for anxiety severity. Not a diagnosis.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/online-psychiatrist-consultation-india">Online psychiatrist (all India)</Link></h3>
-              <p>The main online psychiatry consultation landing page. Pan-India access, English/Hindi/Gujarati where supported.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/online-psychiatrist-prescription-india">Online prescription validity</Link></h3>
-              <p>How psychiatric prescriptions work online in India under the Telemedicine Practice Guidelines, 2020.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════
-          FOR PROFESSIONALS
-      ══════════════════════════════════════════════════ */}
-      <section className="section alt">
-        <div className="container">
-          <div style={{ ...s.sectionTwoCol, gap: '56px' }}>
-            <div>
-              <div className="section-kicker">For professionals</div>
-              <h2 style={{ marginBottom: 16 }}>
-                A clinician-first platform
-              </h2>
-              <p className="about-body" style={{ marginBottom: 28 }}>
-                Serenest isn&apos;t a generic telehealth tool. It&apos;s designed
-                for psychiatrists and psychologists alike — structured intake,
-                clinical note-taking, assessments, and follow-up management.
-              </p>
-
-              <ul style={s.featureList}>
-                {[
-                  'Structured patient intake and history',
-                  'Integrated PHQ-9, GAD-7 and custom assessments',
-                  'Session notes tied directly to patient records',
-                  'Easy re-scheduling and follow-up management',
-                  'Flexible schedule — work when you want',
-                  'Timely, transparent compensation',
-                ].map((text) => (
-                  <li key={text} style={s.featureItem}>
-                    <span style={s.featureCheck}>✓</span>
-                    <span style={s.featureText}>{text}</span>
-                  </li>
-                ))}
-              </ul>
-
-              <div style={{ marginTop: 32, display: 'flex', gap: 12 }}>
-                <Link className="btn btn-primary" to="/professionals/apply">
-                  Apply as a professional →
-                </Link>
-                <Link className="btn btn-ghost" to="/professionals">
-                  Learn more
-                </Link>
-              </div>
-            </div>
-
-            <div
-              style={{
-                background: 'linear-gradient(160deg, var(--teal-700), var(--teal-900))',
-                borderRadius: 'var(--r-xl)',
-                padding: '40px 36px',
-                color: '#fff',
-                boxShadow: 'var(--shadow-lg)',
-              }}
-            >
-              <div style={{ fontSize: 36, marginBottom: 16 }}>🧠</div>
-              <h3 style={{ color: '#fff', fontSize: 22, marginBottom: 12 }}>
-                Clinical tools that respect your time
-              </h3>
-              <p style={{ color: 'rgba(255,255,255,0.72)', fontSize: 15, lineHeight: 1.7 }}>
-                Fewer admin tasks. More time with patients. Serenest handles
-                scheduling, intake, documentation and billing so you can
-                focus entirely on clinical care.
-              </p>
-              <div
-                style={{
-                  marginTop: 28,
-                  padding: '16px',
-                  background: 'rgba(255,255,255,0.08)',
-                  borderRadius: 'var(--r-md)',
-                  border: '1px solid rgba(255,255,255,0.14)',
-                  fontSize: 14,
-                  color: 'rgba(255,255,255,0.85)',
-                  lineHeight: 1.65,
-                  fontStyle: 'italic',
-                }}
-              >
-                "A clean flow from intake to follow-up. It feels structured,
-                not like a generic chat app."
-                <div style={{ marginTop: 10, fontStyle: 'normal', fontWeight: 700, color: 'var(--teal-300)', fontSize: 12 }}>
-                  — Psychologist, Mumbai
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════
-          TESTIMONIALS
-      ══════════════════════════════════════════════════ */}
-      <section className="section" aria-label="Testimonials">
-        <div className="container">
-          <div className="section-head center">
-            <div className="section-kicker">What people say</div>
-            <h2>Designed for real clinical practice</h2>
-          </div>
-
-          <div className="grid-3">
-            <div className="quote">
-              <div className="quote-mark" aria-hidden="true">"</div>
-              <p className="quote-text">
-                A clean flow from intake to follow-up. It feels structured,
-                not like a chat app. This is how telepsychiatry should work — and therapy too.
-              </p>
-              <div className="quote-by">Clinical psychologist · India</div>
-            </div>
-
-            <div className="quote">
-              <div className="quote-mark" aria-hidden="true">"</div>
-              <p className="quote-text">
-                The experience is calm. Less friction, more clarity. That
-                matters so much when you're already dealing with anxiety.
-              </p>
-              <div className="quote-by">Patient · Bangalore</div>
-            </div>
-
-            <div className="quote">
-              <div className="quote-mark" aria-hidden="true">"</div>
-              <p className="quote-text">
-                Assessments, notes, and continuity in one place — built
-                with the right intent. Finally, a platform that understands
-                clinical workflows.
-              </p>
-              <div className="quote-by">Clinic administrator</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════════════
-          CTA BANNER
-      ══════════════════════════════════════════════════ */}
-      <section className="section alt" id="contact">
-        <div className="container">
-          <div className="cta-banner">
-            <div className="cta-banner-body">
-              <h2>Ready to start your care journey?</h2>
-              <p>
-                Book your first appointment today — same-day slots are often
-                available. Questions first? We're here to help.
-              </p>
-              <p style={{ marginTop: 8, fontSize: 14, color: 'rgba(255,255,255,0.60)' }}>
-                Email:{' '}
-                <a
-                  href="mailto:support@serenest.in"
-                  style={{ color: 'rgba(255,255,255,0.80)', textDecoration: 'underline' }}
-                >
-                  support@serenest.in
-                </a>
-              </p>
-            </div>
-
-            <div className="cta-banner-actions">
-              <Link className="btn btn-primary btn-lg" to="/book">
-                Book an appointment →
+              <Link className="home__guides-all" to="/guides">
+                View all guides
               </Link>
-              <a
-                className="btn btn-outline btn-lg"
-                href="mailto:support@serenest.in"
-              >
-                Email us
-              </a>
-            </div>
+              {' · '}
+              <Link className="home__guides-all" to="/academy">
+                Serenest Academy
+              </Link>
+            </p>
+          </header>
+          <div className="home__topics">
+            {HOME_FEATURED_GUIDES.map((t) => (
+              <Link key={t.path} className="home__topic" to={t.path}>
+                {t.title}
+              </Link>
+            ))}
           </div>
         </div>
       </section>
-    </>
+
+      <section className="home__cta">
+        <div className="home__shell">
+          <div className="home__cta-inner">
+            <div className="home__cta-copy">
+              <h2>Ready when you are</h2>
+              <p>
+                Book a consultation or reach out with questions. We respond on email and WhatsApp
+                during working hours.
+              </p>
+              <p className="home__contact">
+                <a href="mailto:support@serenest.in">support@serenest.in</a>
+                <span aria-hidden="true"> · </span>
+                <a href="tel:7777936367">7777936367</a>
+              </p>
+            </div>
+            <div className="home__cta-actions">
+              <Link className="btn btn-primary btn-lg" to="/book">
+                Book now
+              </Link>
+              <Link className="btn btn-ghost btn-lg" to="/faq">
+                Read FAQ
+              </Link>
+            </div>
+          </div>
+          <nav className="home__nav" aria-label="More on Serenest">
+            {LINKS.map((l) => (
+              <Link key={l.to} to={l.to}>
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </section>
+    </div>
   );
 }
