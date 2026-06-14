@@ -6,7 +6,7 @@ export const TEAM_MEMBERS = [
   {
     name: 'Dr. Chirag Aambalia',
     role: 'Founder · Consultant Psychiatrist',
-    subtitle: 'Rudra Neuropsychiatry & De-addiction Hospital, Deesa, Gujarat',
+    subtitle: 'Rudra Neuropsychiatry & De-addiction Hospital, Rajkot, Gujarat',
     initials: 'CA',
     bio: [
       'Consultant psychiatrist working across North Gujarat — where patients routinely travel long distances just to reach a clinician.',

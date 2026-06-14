@@ -133,7 +133,7 @@ export const ROUTE_SEO = {
   '/online-psychiatrist-gujarat': {
     title: 'Online Psychiatrist in Gujarat | Gujarati-Speaking Telepsychiatry | Serenest',
     description:
-      'Online psychiatrist consultation for Gujarat — Ahmedabad, Surat, Vadodara, Rajkot, Deesa, North Gujarat and beyond. Gujarati-, Hindi-, and English-language sessions where the clinician supports them.',
+      'Online psychiatrist consultation for Gujarat — Ahmedabad, Surat, Vadodara, Rajkot, North Gujarat and beyond. Gujarati-, Hindi-, and English-language sessions where the clinician supports them.',
     ogTitle: 'Online Psychiatrist in Gujarat | Serenest',
     ogDescription:
       'Verified online psychiatrists for patients in Gujarat. Secure consultations, structured assessment, follow-up — in Gujarati where supported.',
@@ -492,7 +492,7 @@ export const OCD_FAQS = [
 export const GUJARAT_FAQS = [
   {
     q: 'Can I consult an online psychiatrist in Gujarat?',
-    a: 'Yes. Patients across Gujarat — Ahmedabad, Surat, Vadodara, Rajkot, Gandhinagar, Bhavnagar, Jamnagar, Junagadh, Anand, Bharuch, Mehsana, Patan, Palanpur, Deesa, and surrounding districts — can consult verified psychiatrists online over secure video, audio, or chat.',
+    a: 'Yes. Patients across Gujarat — Ahmedabad, Surat, Vadodara, Rajkot, Gandhinagar, Bhavnagar, Jamnagar, Junagadh, Anand, Bharuch, Mehsana, Patan, Palanpur, and surrounding districts — can consult verified psychiatrists online over secure video, audio, or chat.',
   },
   {
     q: 'Is a Gujarati-speaking psychiatrist available online?',
@@ -804,7 +804,7 @@ export const ROUTE_JSONLD = {
       medicalWebPage('/online-psychiatrist-gujarat', {
         name: 'Online Psychiatrist in Gujarat',
         description:
-          'Online psychiatrist consultation for Gujarat — Ahmedabad, Surat, Vadodara, Rajkot, Deesa, North Gujarat and beyond. Sessions in Gujarati, Hindi, and English where the clinician supports them.',
+          'Online psychiatrist consultation for Gujarat — Ahmedabad, Surat, Vadodara, Rajkot, North Gujarat and beyond. Sessions in Gujarati, Hindi, and English where the clinician supports them.',
         about: ['Depression', 'Anxiety Disorders', 'Sleep Disorders', 'Adult ADHD'],
       }),
       faqGraph('/online-psychiatrist-gujarat', GUJARAT_FAQS),

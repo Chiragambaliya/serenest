@@ -3,111 +3,228 @@ import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 
+const HERO_NAV = [
+  { label: 'The gap', href: '#problem' },
+  { label: 'Founder', href: '#founder' },
+  { label: 'Platform', href: '#platform' },
+  { label: 'Trust', href: '#trust' },
+  { label: 'Team', href: '/team', route: true },
+];
+
+const PILLARS = [
+  {
+    title: 'An access problem',
+    body: 'India’s psychiatrist shortage leaves most people without care.',
+    href: '#problem',
+  },
+  {
+    title: 'Built by a clinician',
+    body: 'Designed in a real clinic — not by a team guessing at healthcare.',
+    href: '#founder',
+  },
+  {
+    title: 'A full platform',
+    body: 'Scheduling, sessions, notes, prescriptions, and follow-up in one place.',
+    href: '#platform',
+  },
+];
+
+const STATS = [
+  { value: '0.75', label: 'Psychiatrists per 1 lakh population' },
+  { value: '80%', label: 'Of people with mental illness receive no treatment' },
+  { value: '42 yrs', label: 'To fill India’s psychiatrist shortage at the current rate' },
+];
+
+const DIFFERENCE = [
+  {
+    tag: 'Clinical',
+    title: 'Built by a psychiatrist',
+    body: 'Every workflow, safety rule, and feature comes from daily practice — not product guesswork.',
+  },
+  {
+    tag: 'Compliance',
+    title: 'MCI telemedicine aligned',
+    body: 'Consultations follow India’s telemedicine practice guidelines. Prescriptions and records are documented correctly.',
+  },
+  {
+    tag: 'Privacy',
+    title: 'Privacy by design',
+    body: 'Encrypted sessions. No sharing with insurers or employers. Protected under India’s DPDP Act 2023.',
+  },
+];
+
+const PLATFORM = [
+  {
+    tag: 'Scheduling',
+    title: 'Smart scheduling',
+    body: 'Book verified psychiatrists across India with real-time slot availability.',
+  },
+  {
+    tag: 'Sessions',
+    title: 'Encrypted video consultations',
+    body: 'Secure video, audio, or chat — with structured intake and session documentation.',
+  },
+  {
+    tag: 'Notes',
+    title: 'SOAP clinical notes',
+    body: 'Subjective, Objective, Assessment, Plan — locked after each session.',
+  },
+  {
+    tag: 'Rx',
+    title: 'Digital prescriptions',
+    body: 'Telemedicine-compliant Rx with registration details, valid at pharmacies nationwide.',
+  },
+  {
+    tag: 'Tracking',
+    title: 'PHQ-9 & GAD-7',
+    body: 'Validated scales tracked over time so every clinician sees your history.',
+  },
+  {
+    tag: 'Academy',
+    title: 'Serenest Academy',
+    body: 'Patient guides and clinician learning on the same site — literacy alongside care.',
+  },
+];
+
+const TRUST = [
+  {
+    title: 'MCI Telemedicine Practice Guidelines 2020',
+    body: 'Prescription, documentation, and consent follow the national telemedicine standard.',
+  },
+  {
+    title: 'DPDP Act 2023',
+    body: 'You can access, correct, and delete your personal health data at any time.',
+  },
+  {
+    title: 'DPIIT recognised startup',
+    body: 'Serenest Education Pvt Ltd is recognised under Startup India.',
+  },
+  {
+    title: 'Schedule H compliance',
+    body: 'Psychiatric medications follow Schedule H rules. Only verified MD psychiatrists prescribe controlled substances.',
+  },
+];
+
 export default function AboutPage() {
   useSEO({ path: '/about', ...ROUTE_SEO['/about'] });
+
   return (
-    <div className="page">
-      <section className="section about-hero">
+    <div className="about-page">
+      <section className="abt-hero">
+        <div className="container abt-hero__inner">
+          <p className="abt-eyebrow">About Serenest</p>
+          <h1 className="abt-hero__title">Built by a psychiatrist who saw the gap firsthand.</h1>
+          <p className="abt-hero__lead">
+            Serenest started in a clinic in Rajkot, Gujarat — where patients drove hours for a
+            fifteen-minute consultation. We built the platform we wish had existed.
+          </p>
+          <div className="abt-hero__actions">
+            <Link className="btn btn-primary btn-lg" to="/book">Book a consultation</Link>
+            <Link className="btn btn-ghost btn-lg" to="/team">Meet the team</Link>
+          </div>
+          <nav className="abt-hero__nav" aria-label="On this page">
+            {HERO_NAV.map((item) =>
+              item.route ? (
+                <Link key={item.label} to={item.href}>{item.label}</Link>
+              ) : (
+                <a key={item.label} href={item.href}>{item.label}</a>
+              ),
+            )}
+          </nav>
+        </div>
+      </section>
+
+      <section className="abt-pillars" aria-label="About Serenest">
         <div className="container">
-          <div className="section-head about-hero-head">
-            <p className="kicker">About Serenest</p>
-            <h1 className="page-title">Built by a psychiatrist who saw the gap firsthand.</h1>
-            <p className="about-subtext">
-              Serenest was born in a clinic in Deesa, Gujarat — where patients drove hours for a 15-minute
-              consultation, and entire districts had no psychiatrist at all. We built the platform we wish
-              had existed.
+          <div className="abt-pillars__grid">
+            {PILLARS.map((item) => (
+              <a key={item.title} className="abt-pillar" href={item.href}>
+                <h2 className="abt-pillar__title">{item.title}</h2>
+                <p className="abt-pillar__body">{item.body}</p>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="abt-section" id="problem">
+        <div className="container">
+          <header className="abt-section__head">
+            <p className="abt-eyebrow">The reality in India</p>
+            <h2>800 million Indians have no access to a psychiatrist.</h2>
+            <p>Stigma, distance, and waitlists keep people from the care they need.</p>
+          </header>
+
+          <div className="abt-stats">
+            {STATS.map((stat) => (
+              <article key={stat.label} className="abt-stat">
+                <div className="abt-stat__value">{stat.value}</div>
+                <div className="abt-stat__label">{stat.label}</div>
+              </article>
+            ))}
+          </div>
+
+          <div className="abt-prose">
+            <p>
+              India carries one of the world&apos;s largest mental health burdens — yet infrastructure
+              remains critically underfunded. When people do seek help, waitlists stretch for weeks.
+            </p>
+            <p>
+              This is not a technology problem. It is an access problem. Technology is how we close it.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="section" aria-label="The Problem We're Solving">
+      <section className="abt-section abt-section--cream" id="founder">
         <div className="container">
-          <div className="section-head">
-            <p className="section-label">The reality in India</p>
-            <h2>800 million Indians have no access to a psychiatrist.</h2>
-          </div>
-
-          <div className="stat-grid">
-            <article className="tile stat-card">
-              <div className="stat-value">0.75</div>
-              <div className="stat-label">Psychiatrists per 1 lakh population</div>
-            </article>
-            <article className="tile stat-card">
-              <div className="stat-value">80%</div>
-              <div className="stat-label">Of people with mental illness receive no treatment</div>
-            </article>
-            <article className="tile stat-card">
-              <div className="stat-value">42 years</div>
-              <div className="stat-label">
-                Time needed to fill India&apos;s psychiatrist shortage at current rate
-              </div>
-            </article>
-          </div>
-
-          <p className="about-body">
-            India has one of the world&apos;s largest mental health burdens — yet our mental health
-            infrastructure remains critically underfunded. Stigma keeps patients silent. Distance keeps
-            them away from care. And when they do seek help, waitlists stretch for weeks.
-          </p>
-          <p className="about-body">
-            This is not a technology problem. It is an access problem. And technology is how we solve it.
-          </p>
-        </div>
-      </section>
-
-      <section className="section alt" aria-label="Founder Story">
-        <div className="container">
-          <div className="section-head">
-            <p className="section-label">From the founder</p>
+          <header className="abt-section__head">
+            <p className="abt-eyebrow">From the founder</p>
             <h2>Why I built Serenest</h2>
-          </div>
+          </header>
 
-          <div className="founder-grid">
-            <div className="tile founder-card">
-              <div className="founder-avatar" aria-hidden="true">
-                CA
-              </div>
+          <div className="abt-founder">
+            <div className="abt-founder__card">
+              <div className="abt-founder__avatar" aria-hidden="true">CA</div>
               <div>
-                <div className="founder-name">Dr. Chirag Aambalia</div>
-                <div className="founder-role">Consultant Psychiatrist · Deesa, Gujarat</div>
+                <div className="abt-founder__name">Dr. Chirag Aambalia</div>
+                <div className="abt-founder__role">
+                  Consultant Psychiatrist · Rajkot, Gujarat
+                </div>
               </div>
             </div>
 
-            <div className="tile founder-story">
-              <p className="quote-text">
+            <div className="abt-founder__story">
+              <p className="abt-founder__quote">
                 I&apos;m Dr. Chirag Aambalia — Consultant Psychiatrist at Rudra Neuropsychiatry and
-                De-addiction Hospital in Deesa, Gujarat.
+                De-addiction Hospital in Rajkot, Gujarat.
               </p>
 
-              <details className="service-more">
-                <summary className="service-summary">Read the founder story</summary>
-                <p className="quote-text">
-                  Every week in my clinic, I meet patients who&apos;ve waited months for an appointment — or
-                  who&apos;ve never seen a psychiatrist at all because the nearest one is 100 kilometres
-                  away. I meet families who are suffering in silence because they don&apos;t know help is
-                  available, or because they&apos;re afraid of what people will say.
+              <details className="abt-founder__toggle">
+                <summary>Read the founder story</summary>
+                <p>
+                  Every week I meet patients who waited months — or never saw a psychiatrist because
+                  the nearest one was a hundred kilometres away. Families suffer in silence, afraid of
+                  what people will say.
                 </p>
-                <p className="quote-text">
-                  I built Serenest because I believe every Indian deserves the same quality of psychiatric
-                  care — whether they live in Mumbai or a small town in North Gujarat. Clinical-grade.
-                  Private. Affordable. From home.
+                <p>
+                  I built Serenest because every Indian deserves the same quality of psychiatric care —
+                  whether they live in Mumbai or a small town in North Gujarat. Clinical-grade. Private.
+                  Affordable. From home.
                 </p>
-                <p className="quote-text">
-                  This isn&apos;t just an app. It&apos;s a clinical platform built by someone who has sat across
-                  from patients every single day and understood exactly what they need.
+                <p>
+                  This is not just an app. It is a clinical platform built by someone who sits across
+                  from patients every day and knows exactly what they need.
                 </p>
               </details>
 
-              <div className="cred-row" aria-label="Credentials">
-                <span className="cred-pill">MBBS · MD Psychiatry</span>
-                <span className="cred-pill">
-                  Consultant Psychiatrist, Rudra Neuropsychiatry &amp; De-addiction Hospital, Deesa, Gujarat
-                </span>
-                <span className="cred-pill">Founder, Serenest Education Pvt Ltd</span>
-                <span className="cred-pill">DPIIT Recognised Startup</span>
+              <div className="abt-creds" aria-label="Credentials">
+                <span className="abt-cred">MBBS · MD Psychiatry</span>
+                <span className="abt-cred">Rudra Neuropsychiatry, Rajkot</span>
+                <span className="abt-cred">Founder, Serenest Education Pvt Ltd</span>
+                <span className="abt-cred">DPIIT recognised</span>
               </div>
-              <p className="muted" style={{ marginTop: 16 }}>
+              <p className="abt-founder__link">
                 <Link to="/team">Meet our team →</Link>
               </p>
             </div>
@@ -115,222 +232,110 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="section" aria-label="What Makes Serenest Different">
+      <section className="abt-section">
         <div className="container">
-          <div className="section-head">
-            <p className="section-label">Our difference</p>
+          <header className="abt-section__head">
+            <p className="abt-eyebrow">Our difference</p>
             <h2>Not just another app. A clinical platform.</h2>
-          </div>
-          <div className="grid-3">
-            <article className="tile">
-              <h3>🩺 Built by a clinician</h3>
-              <p className="muted">
-                Serenest is designed by a practicing psychiatrist — not a tech team guessing at healthcare.
-                Every workflow, every feature, and every safety rule comes from real clinical experience.
-              </p>
-            </article>
-            <article className="tile">
-              <h3>📋 MCI Telemedicine Compliant</h3>
-              <p className="muted">
-                We follow India&apos;s MCI Telemedicine Practice Guidelines 2020 to the letter. Every
-                prescription is legally valid. Every session is documented correctly. Every record is
-                permanently locked after consultation.
-              </p>
-            </article>
-            <article className="tile">
-              <h3>🔒 Privacy by design</h3>
-              <p className="muted">
-                Your health information is yours. We never share it with insurers, employers, or third
-                parties. Sessions are end-to-end encrypted. Records are locked and protected under
-                India&apos;s DPDP Act 2023.
-              </p>
-            </article>
+          </header>
+          <div className="abt-grid abt-grid--3">
+            {DIFFERENCE.map((item) => (
+              <article key={item.tag} className="abt-card">
+                <span className="abt-card__tag">{item.tag}</span>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section alt" aria-label="Our Mission">
+      <section className="abt-section abt-section--cream">
         <div className="container">
-          <div className="section-head">
-            <p className="section-label">Mission</p>
+          <header className="abt-section__head">
+            <p className="abt-eyebrow">Mission</p>
             <h2>Make psychiatric care as accessible as a phone call.</h2>
-          </div>
-          <p className="about-body">
-            We believe mental health is health. Not a luxury. Not something to be ashamed of. Not something
-            you should have to travel hours to access.
-          </p>
-          <p className="about-body">
-            Serenest&apos;s mission is to connect every Indian — regardless of location, language, or income —
-            with a qualified, verified psychiatrist. In English, Hindi, or Gujarati. From anywhere. In
-            minutes.
-          </p>
-        </div>
-      </section>
-
-      <section className="section" aria-label="The Platform">
-        <div className="container">
-          <div className="section-head">
-            <p className="section-label">What we&apos;ve built</p>
-            <h2>A complete clinical ecosystem — not just video calls.</h2>
-          </div>
-
-          <div className="feature-grid">
-            <article className="tile feature-card">
-              <div className="feature-icon" aria-hidden="true">
-                📅
-              </div>
-              <h3>Smart Scheduling</h3>
-              <p className="muted">
-                Book appointments with verified psychiatrists across India. Real-time slot availability.
-              </p>
-            </article>
-            <article className="tile feature-card">
-              <div className="feature-icon" aria-hidden="true">
-                🎥
-              </div>
-              <h3>Encrypted Video Consultations</h3>
-              <p className="muted">
-                End-to-end encrypted video sessions. No data stored on third-party servers.
-              </p>
-            </article>
-            <article className="tile feature-card">
-              <div className="feature-icon" aria-hidden="true">
-                📋
-              </div>
-              <h3>SOAP Clinical Notes</h3>
-              <p className="muted">
-                Structured session documentation — Subjective, Objective, Assessment, Plan. Permanently
-                locked post-session.
-              </p>
-            </article>
-            <article className="tile feature-card">
-              <div className="feature-icon" aria-hidden="true">
-                💊
-              </div>
-              <h3>Digital Prescriptions</h3>
-              <p className="muted">
-                MCI-compliant digital Rx with doctor&apos;s registration number. Valid at pharmacies across
-                India.
-              </p>
-            </article>
-            <article className="tile feature-card">
-              <div className="feature-icon" aria-hidden="true">
-                📊
-              </div>
-              <h3>PHQ-9 &amp; GAD-7 Tracking</h3>
-              <p className="muted">
-                Validated clinical assessment tools tracked over time. Every doctor sees your full history.
-              </p>
-            </article>
-            <article className="tile feature-card">
-              <div className="feature-icon" aria-hidden="true">
-                🤖
-              </div>
-              <h3>AI-Assisted Analysis (coming soon)</h3>
-              <p className="muted">
-                Session summaries and clinical NLP — helping psychiatrists focus on patients, not paperwork.
-              </p>
-            </article>
+          </header>
+          <div className="abt-mission">
+            <p>
+              Mental health is health — not a luxury, not something to travel hours for.
+            </p>
+            <p>
+              Serenest connects every Indian with a qualified psychiatrist — in English, Hindi, or
+              Gujarati — from anywhere, in minutes.
+            </p>
           </div>
         </div>
       </section>
 
-      <section className="section alt" aria-label="Compliance & Trust">
+      <section className="abt-section" id="platform">
         <div className="container">
-          <div className="section-head">
-            <p className="section-label">Trust &amp; Safety</p>
-            <h2>Built on India&apos;s regulatory framework. From day one.</h2>
-          </div>
-
-          <div className="grid-2 compliance-grid">
-            <article className="tile">
-              <h3>MCI Telemedicine Practice Guidelines 2020</h3>
-              <p className="muted">
-                Every consultation on Serenest follows the national standard for telemedicine in India.
-                Prescription, documentation, and consent — all compliant.
-              </p>
-            </article>
-            <article className="tile">
-              <h3>DPDP Act 2023</h3>
-              <p className="muted">
-                Your personal health information is protected under India&apos;s Digital Personal Data
-                Protection Act. You have the right to access, correct, and delete your data at any time.
-              </p>
-            </article>
-            <article className="tile">
-              <h3>DPIIT Recognised Startup</h3>
-              <p className="muted">
-                Serenest Education Pvt Ltd is a DPIIT recognised startup under the Government of India&apos;s
-                Startup India initiative.
-              </p>
-            </article>
-            <article className="tile">
-              <h3>Schedule H Compliance</h3>
-              <p className="muted">
-                Psychiatric medications prescribed on Serenest follow Schedule H regulations. Only verified
-                MD psychiatrists can prescribe controlled substances.
-              </p>
-            </article>
+          <header className="abt-section__head">
+            <p className="abt-eyebrow">What we&apos;ve built</p>
+            <h2>A complete clinical ecosystem</h2>
+            <p>Scheduling, sessions, documentation, prescriptions, and Academy learning — together.</p>
+          </header>
+          <div className="abt-grid abt-grid--6">
+            {PLATFORM.map((item) => (
+              <article key={item.tag} className="abt-card">
+                <span className="abt-card__tag">{item.tag}</span>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section" aria-label="Vision">
+      <section className="abt-section abt-section--cream" id="trust">
         <div className="container">
-          <div className="section-head">
-            <p className="section-label">Where we&apos;re going</p>
-            <h2>The future of psychiatry in India is objective, accessible, and AI-assisted.</h2>
+          <header className="abt-section__head">
+            <p className="abt-eyebrow">Trust &amp; safety</p>
+            <h2>Built on India&apos;s regulatory framework</h2>
+          </header>
+          <div className="abt-grid abt-grid--2">
+            {TRUST.map((item) => (
+              <article key={item.title} className="abt-card">
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
           </div>
-          <p className="about-body">
-            Our long-term vision goes beyond scheduling and video calls. We&apos;re building an Objective
-            Psychiatry Engine — AI-powered session analysis, clinical NLP, risk detection, and treatment
-            optimisation tools that help psychiatrists make better clinical decisions faster.
-          </p>
-          <p className="about-body">
-            This is the platform that will close India&apos;s mental health gap — one consultation at a time.
-          </p>
         </div>
       </section>
 
-      <section className="section alt" aria-label="CTA">
+      <section className="abt-section">
         <div className="container">
-          <div className="cta about-cta">
-            <div>
-              <h2 className="h2" style={{ margin: 0 }}>
-                Ready to take the first step?
-              </h2>
-              <p className="muted" style={{ margin: '6px 0 0' }}>
-                Book a confidential consultation with a verified psychiatrist — from anywhere in India, in
-                minutes.
-              </p>
-              <p className="fineprint" style={{ marginBottom: 0 }}>
-                No referral needed · Consultations from ₹499 · Fully confidential
-              </p>
-            </div>
-            <div className="stack about-cta-actions">
-              <a
-                className="btn btn-primary btn-full"
-                href="mailto:support@serenest.in?subject=Book%20a%20Consultation"
-              >
-                Book a Consultation →
-              </a>
-              <Link
-                className="btn btn-ghost btn-full"
-                to="/professionals/apply"
-              >
-                Join as a Doctor
-              </Link>
-              <Link className="btn btn-ghost btn-full" to="/">
-                Back to home
-              </Link>
-              <Link className="btn btn-ghost btn-full" to="/services">
-                View services →
-              </Link>
-            </div>
+          <header className="abt-section__head">
+            <p className="abt-eyebrow">Where we&apos;re going</p>
+            <h2>Objective, accessible, clinician-led psychiatry for India</h2>
+          </header>
+          <div className="abt-prose">
+            <p>
+              Our vision goes beyond video calls — toward tools that help psychiatrists make better
+              clinical decisions faster, while keeping the human relationship at the centre.
+            </p>
+            <p>
+              This is how we close India&apos;s mental health gap — one consultation at a time.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="abt-cta">
+        <div className="container abt-cta__inner">
+          <div>
+            <h2>Ready to take the first step?</h2>
+            <p>Book a confidential consultation with a verified psychiatrist — anywhere in India.</p>
+            <p className="abt-cta__fine">No referral needed · From ₹499 · Fully confidential</p>
+          </div>
+          <div className="abt-cta__actions">
+            <Link className="btn btn-primary btn-lg" to="/book">Book now</Link>
+            <Link className="btn btn-ghost btn-lg" to="/professionals/apply">Join as a doctor</Link>
+            <Link className="btn btn-ghost btn-lg" to="/services">View services</Link>
           </div>
         </div>
       </section>
     </div>
   );
 }
-

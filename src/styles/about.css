@@ -1,0 +1,521 @@
+/* ── About page — matches home / services calm clinical ─────── */
+.about-page {
+  --a-ink: #142019;
+  --a-muted: rgba(20, 32, 25, 0.62);
+  --a-subtle: rgba(20, 32, 25, 0.45);
+  --a-line: rgba(20, 32, 25, 0.1);
+  --a-sage: #24473b;
+  --a-sage-mid: #2e5849;
+  --a-sage-dark: #1c2b22;
+  --a-cream: #f7f9f6;
+  --a-cream-2: #eef3ec;
+  --a-white: #ffffff;
+  --a-radius: 1.125rem;
+  --a-section: clamp(4rem, 8vw, 5.5rem);
+  background: var(--a-cream);
+  color: var(--a-ink);
+}
+
+.about-page .abt-eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--a-sage-mid);
+}
+
+.about-page .abt-section__head {
+  max-width: 40rem;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+}
+
+.about-page .abt-section__head h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 3.2vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: -0.028em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.about-page .abt-section__head p {
+  margin: 0 auto;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--a-muted);
+  max-width: 46ch;
+}
+
+.about-page .abt-prose {
+  max-width: 44rem;
+  margin-inline: auto;
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--a-muted);
+}
+
+.about-page .abt-prose p {
+  margin: 0 0 1rem;
+}
+
+.about-page .abt-prose p:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Hero ───────────────────────────────────────────────────── */
+.about-page .abt-hero {
+  padding: clamp(3.5rem, 9vw, 5rem) 0 clamp(2.5rem, 6vw, 3.25rem);
+  background:
+    radial-gradient(ellipse 80% 55% at 50% -15%, rgba(36, 71, 59, 0.08), transparent 62%),
+    linear-gradient(180deg, var(--a-cream) 0%, var(--a-cream-2) 100%);
+  border-bottom: 1px solid var(--a-line);
+}
+
+.about-page .abt-hero__inner {
+  max-width: 44rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.about-page .abt-hero__title {
+  margin: 0 0 1rem;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 2.85rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+  text-wrap: balance;
+}
+
+.about-page .abt-hero__lead {
+  margin: 0 auto 1.5rem;
+  max-width: 48ch;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--a-muted);
+}
+
+.about-page .abt-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.625rem;
+}
+
+.about-page .abt-hero__nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1.375rem;
+}
+
+.about-page .abt-hero__nav a {
+  display: inline-flex;
+  padding: 0.4375rem 0.875rem;
+  border: 1px solid var(--a-line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--a-sage-mid);
+  text-decoration: none;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.about-page .abt-hero__nav a:hover {
+  border-color: rgba(46, 88, 73, 0.28);
+  background: var(--a-white);
+  color: var(--a-sage);
+}
+
+/* ── Pillars ────────────────────────────────────────────────── */
+.about-page .abt-pillars {
+  padding: 1.75rem 0;
+  border-bottom: 1px solid var(--a-line);
+  background: var(--a-white);
+}
+
+.about-page .abt-pillars__grid {
+  display: grid;
+  gap: 0.875rem;
+}
+
+@media (min-width: 768px) {
+  .about-page .abt-pillars__grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+}
+
+.about-page .abt-pillar {
+  display: block;
+  padding: 1.125rem 1.25rem;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius);
+  background: var(--a-cream);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 160ms ease, background 160ms ease;
+}
+
+.about-page .abt-pillar:hover {
+  border-color: rgba(46, 88, 73, 0.22);
+  background: var(--a-white);
+}
+
+.about-page .abt-pillar__title {
+  margin: 0 0 0.375rem;
+  font-family: var(--font-heading);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: var(--a-sage);
+}
+
+.about-page .abt-pillar__body {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.55;
+  color: var(--a-muted);
+}
+
+/* ── Sections ───────────────────────────────────────────────── */
+.about-page .abt-section {
+  padding: var(--a-section) 0;
+}
+
+.about-page .abt-section--cream {
+  background: var(--a-cream-2);
+  border-block: 1px solid var(--a-line);
+}
+
+/* ── Stats ──────────────────────────────────────────────────── */
+.about-page .abt-stats {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+@media (min-width: 640px) {
+  .about-page .abt-stats {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.about-page .abt-stat {
+  padding: 1.375rem 1.25rem;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius);
+  background: var(--a-white);
+  text-align: center;
+}
+
+.about-page .abt-stat__value {
+  margin-bottom: 0.375rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  font-weight: 500;
+  letter-spacing: -0.03em;
+  color: var(--a-sage);
+}
+
+.about-page .abt-stat__label {
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--a-muted);
+}
+
+/* ── Founder ────────────────────────────────────────────────── */
+.about-page .abt-founder {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 768px) {
+  .about-page .abt-founder {
+    grid-template-columns: minmax(220px, 280px) 1fr;
+    align-items: start;
+  }
+}
+
+.about-page .abt-founder__card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius);
+  background: var(--a-white);
+}
+
+.about-page .abt-founder__avatar {
+  flex-shrink: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--a-sage);
+  color: var(--a-white);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.about-page .abt-founder__name {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.about-page .abt-founder__role {
+  margin-top: 0.125rem;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--a-muted);
+}
+
+.about-page .abt-founder__story {
+  padding: 1.375rem 1.25rem;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius);
+  background: var(--a-white);
+}
+
+.about-page .abt-founder__quote {
+  margin: 0 0 1rem;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--a-ink);
+}
+
+.about-page .abt-founder__toggle {
+  margin-bottom: 1rem;
+}
+
+.about-page .abt-founder__toggle summary {
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--a-sage-mid);
+  list-style: none;
+}
+
+.about-page .abt-founder__toggle summary::-webkit-details-marker {
+  display: none;
+}
+
+.about-page .abt-founder__toggle summary::after {
+  content: ' →';
+}
+
+.about-page .abt-founder__toggle[open] summary::after {
+  content: ' ↓';
+}
+
+.about-page .abt-founder__toggle p {
+  margin: 0.875rem 0 0;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--a-muted);
+}
+
+.about-page .abt-creds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.about-page .abt-cred {
+  display: inline-flex;
+  padding: 0.3125rem 0.6875rem;
+  border: 1px solid var(--a-line);
+  border-radius: 999px;
+  background: var(--a-cream);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--a-sage-mid);
+}
+
+.about-page .abt-founder__link {
+  margin: 1rem 0 0;
+  font-size: 0.875rem;
+}
+
+.about-page .abt-founder__link a {
+  color: var(--a-sage);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.about-page .abt-founder__link a:hover {
+  text-decoration: underline;
+}
+
+/* ── Cards grid ─────────────────────────────────────────────── */
+.about-page .abt-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .about-page .abt-grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .about-page .abt-grid--2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+
+  .about-page .abt-grid--6 {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+.about-page .abt-card {
+  padding: 1.375rem 1.25rem;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius);
+  background: var(--a-white);
+}
+
+.about-page .abt-card__tag {
+  display: inline-block;
+  margin-bottom: 0.625rem;
+  padding: 0.25rem 0.5625rem;
+  border-radius: 999px;
+  background: rgba(36, 71, 59, 0.08);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--a-sage-mid);
+}
+
+.about-page .abt-card h3 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.about-page .abt-card p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--a-muted);
+}
+
+/* ── Mission band ───────────────────────────────────────────── */
+.about-page .abt-mission {
+  max-width: 44rem;
+  margin-inline: auto;
+  padding: 2rem 1.5rem;
+  border: 1px solid var(--a-line);
+  border-radius: var(--a-radius);
+  background: var(--a-white);
+  text-align: center;
+}
+
+.about-page .abt-mission p {
+  margin: 0 0 1rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.45;
+  color: var(--a-ink);
+}
+
+.about-page .abt-mission p:last-child {
+  margin-bottom: 0;
+  font-family: inherit;
+  font-size: 1rem;
+  font-weight: 400;
+  color: var(--a-muted);
+}
+
+/* ── Bottom CTA ─────────────────────────────────────────────── */
+.about-page .abt-cta {
+  padding: var(--a-section) 0;
+  background: var(--a-sage-dark);
+  color: var(--a-white);
+}
+
+.about-page .abt-cta__inner {
+  display: grid;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .about-page .abt-cta__inner {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+.about-page .abt-cta h2 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 500;
+  color: var(--a-white);
+}
+
+.about-page .abt-cta p {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.about-page .abt-cta__fine {
+  margin-top: 0.375rem !important;
+  font-size: 0.8125rem !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+}
+
+.about-page .abt-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.about-page .abt-cta .btn-primary {
+  background: var(--a-white);
+  border-color: var(--a-white);
+  color: var(--a-sage-dark);
+}
+
+.about-page .abt-cta .btn-primary:hover {
+  background: var(--a-cream);
+  border-color: var(--a-cream);
+}
+
+.about-page .abt-cta .btn-ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--a-white);
+}
+
+.about-page .abt-cta .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: var(--a-white);
+}
+
+@media (max-width: 479px) {
+  .about-page .abt-hero__actions,
+  .about-page .abt-cta__actions {
+    width: 100%;
+  }
+
+  .about-page .abt-hero__actions .btn,
+  .about-page .abt-cta__actions .btn {
+    flex: 1 1 100%;
+  }
+}

@@ -17,7 +17,7 @@ export default function GujaratPsychiatristPage() {
         kicker="Telepsychiatry for Gujarat"
         title={<>Online psychiatrist in Gujarat — <span className="gradient-text">verified, private, language-aware.</span></>}
         lead={
-          <>Online psychiatry consultations for patients across Gujarat — Ahmedabad, Surat, Vadodara, Rajkot, Gandhinagar, North Gujarat including Deesa and surrounding districts. Sessions in Gujarati alongside English and Hindi, where the treating clinician supports the language.</>
+          <>Online psychiatry consultations for patients across Gujarat — Ahmedabad, Surat, Vadodara, Rajkot, Gandhinagar, North Gujarat and surrounding districts. Sessions in Gujarati alongside English and Hindi, where the treating clinician supports the language.</>
         }
         primaryHref="/book"
         primaryLabel="Book an online psychiatrist"
@@ -36,7 +36,7 @@ export default function GujaratPsychiatristPage() {
             </p>
           </div>
           <TrustGrid items={[
-            { icon: '🌐', title: 'Pan-Gujarat access', body: 'Ahmedabad, Surat, Vadodara, Rajkot, Gandhinagar, Bhavnagar, Jamnagar, Junagadh, Anand, Bharuch, Mehsana, Patan, Palanpur, Deesa, and surrounding districts.' },
+            { icon: '🌐', title: 'Pan-Gujarat access', body: 'Ahmedabad, Surat, Vadodara, Rajkot, Gandhinagar, Bhavnagar, Jamnagar, Junagadh, Anand, Bharuch, Mehsana, Patan, Palanpur, and surrounding districts.' },
             { icon: '🗣️', title: 'Gujarati where supported', body: 'Sessions in Gujarati alongside English and Hindi where the treating clinician supports the language. Indicate your preference during booking.' },
             { icon: '🔒', title: 'Private by design', body: 'Encrypted sessions and privacy-first workflows. No third-party ad trackers on consultation pages.' },
           ]} />

@@ -6,6 +6,8 @@ import './styles.css';
 import './styles/home.css';
 import './styles/guides.css';
 import './styles/services.css';
+import './styles/about.css';
+import './styles/team.css';
 
 // Must match Vite `base` so routes and assets resolve when deployed under a subpath.
 const basename = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '') || undefined;

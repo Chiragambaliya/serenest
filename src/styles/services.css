@@ -724,12 +724,15 @@
 }
 
 .services-page .svc-cta .btn-ghost {
+  background: transparent;
   border-color: rgba(255, 255, 255, 0.35);
   color: var(--s-white);
 }
 
 .services-page .svc-cta .btn-ghost:hover {
   background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: var(--s-white);
 }
 
 @media (max-width: 479px) {

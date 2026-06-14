@@ -1,0 +1,364 @@
+/* ── Team page — calm clinical to match home/services/about ── */
+.team-page {
+  --t-ink: #142019;
+  --t-muted: rgba(20, 32, 25, 0.62);
+  --t-subtle: rgba(20, 32, 25, 0.45);
+  --t-line: rgba(20, 32, 25, 0.1);
+  --t-sage: #24473b;
+  --t-sage-mid: #2e5849;
+  --t-sage-dark: #1c2b22;
+  --t-cream: #f7f9f6;
+  --t-cream-2: #eef3ec;
+  --t-white: #ffffff;
+  --t-radius: 1.125rem;
+  --t-section: clamp(4rem, 8vw, 5.5rem);
+  background: var(--t-cream);
+  color: var(--t-ink);
+}
+
+.team-page .tm-eyebrow {
+  margin: 0 0 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--t-sage-mid);
+}
+
+.team-page .tm-section__head {
+  max-width: 40rem;
+  margin: 0 auto 2.5rem;
+  text-align: center;
+}
+
+.team-page .tm-section__head h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 3.2vw, 2.35rem);
+  font-weight: 500;
+  letter-spacing: -0.028em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.team-page .tm-section__head p {
+  margin: 0 auto;
+  max-width: 50ch;
+  font-size: 1.0625rem;
+  line-height: 1.65;
+  color: var(--t-muted);
+}
+
+/* ── Hero ───────────────────────────────────────────────────── */
+.team-page .tm-hero {
+  padding: clamp(3.5rem, 9vw, 5rem) 0 clamp(2.5rem, 6vw, 3.25rem);
+  background:
+    radial-gradient(ellipse 80% 55% at 50% -15%, rgba(36, 71, 59, 0.08), transparent 62%),
+    linear-gradient(180deg, var(--t-cream) 0%, var(--t-cream-2) 100%);
+  border-bottom: 1px solid var(--t-line);
+}
+
+.team-page .tm-hero__inner {
+  max-width: 44rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.team-page .tm-hero__title {
+  margin: 0 0 1rem;
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 5vw, 2.75rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.team-page .tm-hero__lead {
+  margin: 0 auto 1.25rem;
+  max-width: 50ch;
+  font-size: 1.0625rem;
+  line-height: 1.7;
+  color: var(--t-muted);
+}
+
+.team-page .tm-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.625rem;
+}
+
+/* ── Sections ───────────────────────────────────────────────── */
+.team-page .tm-section {
+  padding: var(--t-section) 0;
+}
+
+.team-page .tm-section--cream {
+  background: var(--t-cream-2);
+  border-block: 1px solid var(--t-line);
+}
+
+/* ── Members grid ───────────────────────────────────────────── */
+.team-page .tm-members {
+  display: grid;
+  gap: 1.25rem;
+  max-width: 60rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .team-page .tm-members {
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+  }
+}
+
+.team-page .tm-member {
+  padding: 1.5rem 1.375rem;
+  border: 1px solid var(--t-line);
+  border-radius: var(--t-radius);
+  background: var(--t-white);
+}
+
+.team-page .tm-member__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.team-page .tm-member__avatar {
+  flex-shrink: 0;
+  width: 3.5rem;
+  height: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  background: var(--t-sage);
+  color: var(--t-white);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.team-page .tm-member__name {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.25;
+}
+
+.team-page .tm-member__role {
+  margin: 0.125rem 0 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--t-sage-mid);
+}
+
+.team-page .tm-member__sub {
+  margin: 0.25rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--t-muted);
+}
+
+.team-page .tm-member__bio {
+  margin: 0 0 1rem;
+}
+
+.team-page .tm-member__bio p {
+  margin: 0 0 0.625rem;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--t-muted);
+}
+
+.team-page .tm-member__bio p:last-child {
+  margin-bottom: 0;
+}
+
+.team-page .tm-creds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4375rem;
+}
+
+.team-page .tm-cred {
+  display: inline-flex;
+  padding: 0.3125rem 0.6875rem;
+  border: 1px solid var(--t-line);
+  border-radius: 999px;
+  background: var(--t-cream);
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--t-sage-mid);
+}
+
+/* ── Empty / apply note ─────────────────────────────────────── */
+.team-page .tm-apply {
+  max-width: 44rem;
+  margin: 2rem auto 0;
+  padding: 1.25rem 1.375rem;
+  border: 1px dashed rgba(46, 88, 73, 0.28);
+  border-radius: var(--t-radius);
+  background: var(--t-white);
+  text-align: center;
+  font-size: 0.9375rem;
+  line-height: 1.65;
+  color: var(--t-muted);
+}
+
+.team-page .tm-apply a {
+  color: var(--t-sage);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.team-page .tm-apply a:hover {
+  text-decoration: underline;
+}
+
+/* ── Network cards ──────────────────────────────────────────── */
+.team-page .tm-grid {
+  display: grid;
+  gap: 1rem;
+  max-width: 60rem;
+  margin-inline: auto;
+}
+
+@media (min-width: 768px) {
+  .team-page .tm-grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+}
+
+.team-page .tm-card {
+  padding: 1.375rem 1.25rem;
+  border: 1px solid var(--t-line);
+  border-radius: var(--t-radius);
+  background: var(--t-white);
+}
+
+.team-page .tm-card__tag {
+  display: inline-block;
+  margin-bottom: 0.625rem;
+  padding: 0.25rem 0.5625rem;
+  border-radius: 999px;
+  background: rgba(36, 71, 59, 0.08);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--t-sage-mid);
+}
+
+.team-page .tm-card h3 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.team-page .tm-card p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--t-muted);
+}
+
+/* ── Final notes / links band ───────────────────────────────── */
+.team-page .tm-links {
+  max-width: 44rem;
+  margin: 2.25rem auto 0;
+  text-align: center;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--t-muted);
+}
+
+.team-page .tm-links a {
+  color: var(--t-sage);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.team-page .tm-links a:hover {
+  text-decoration: underline;
+}
+
+/* ── CTA ────────────────────────────────────────────────────── */
+.team-page .tm-cta {
+  padding: var(--t-section) 0;
+  background: var(--t-sage-dark);
+  color: var(--t-white);
+}
+
+.team-page .tm-cta__inner {
+  display: grid;
+  gap: 1.5rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .team-page .tm-cta__inner {
+    grid-template-columns: 1fr auto;
+  }
+}
+
+.team-page .tm-cta h2 {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+  font-weight: 500;
+  color: var(--t-white);
+}
+
+.team-page .tm-cta p {
+  margin: 0;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.team-page .tm-cta__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.625rem;
+}
+
+.team-page .tm-cta .btn-primary {
+  background: var(--t-white);
+  border-color: var(--t-white);
+  color: var(--t-sage-dark);
+}
+
+.team-page .tm-cta .btn-primary:hover {
+  background: var(--t-cream);
+  border-color: var(--t-cream);
+}
+
+.team-page .tm-cta .btn-ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.35);
+  color: var(--t-white);
+}
+
+.team-page .tm-cta .btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.55);
+  color: var(--t-white);
+}
+
+@media (max-width: 479px) {
+  .team-page .tm-hero__actions,
+  .team-page .tm-cta__actions {
+    width: 100%;
+  }
+
+  .team-page .tm-hero__actions .btn,
+  .team-page .tm-cta__actions .btn {
+    flex: 1 1 100%;
+  }
+}

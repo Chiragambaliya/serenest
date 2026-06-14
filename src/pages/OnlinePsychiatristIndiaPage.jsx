@@ -23,7 +23,7 @@ const LANDING_FAQS = [
     a: 'Psychiatry consultations start at ₹499 per session. Final fees depend on the clinician you book with. Transparent, per-session pricing is shown before payment — see the Pricing page for current rates.',
   },
   {
-    q: 'Can I consult a psychiatrist from Gujarat (Ahmedabad, Surat, Vadodara, Rajkot, Deesa) online?',
+    q: 'Can I consult a psychiatrist from Gujarat (Ahmedabad, Surat, Vadodara, Rajkot) online?',
     a: 'Yes. Serenest is built for patients across India, including Gujarat. You can consult verified psychiatrists from any city or town with a stable internet connection. Sessions are available in English, Hindi, and Gujarati where the clinician supports the language.',
   },
   {
