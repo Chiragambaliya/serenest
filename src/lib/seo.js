@@ -11,12 +11,12 @@ export function canonicalUrl(path = '/') {
 // Per-route SEO metadata for indexable pages.
 export const ROUTE_SEO = {
   '/': {
-    title: 'Online Psychiatrist & Mental Health Care in India | Serenest',
+    title: 'Online Psychiatry, Therapy & Wellness in India | Serenest',
     description:
-      'Book secure online psychiatry, counselling, self-screening, and follow-up care with verified mental health professionals across India.',
-    ogTitle: 'Serenest | Online Mental Health Care in India',
+      "Serenest is India's mental health ecosystem: online psychiatry, therapy, counselling, screening, and de-addiction support with verified professionals.",
+    ogTitle: "Serenest | India's Mental Health Ecosystem",
     ogDescription:
-      'Secure online psychiatry, counselling, screening, and follow-up care for people across India.',
+      'Online psychiatry, therapy, screening, de-addiction support, and clinician education — verified, private care across India.',
   },
   '/services': {
     title: 'Online Psychiatrist Consultation in India | Video, Audio & Chat',
