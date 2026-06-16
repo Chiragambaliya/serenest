@@ -39,22 +39,26 @@ To get a working backend for testing, install them once per VM and start a local
    `supabase start` (heavy services can be skipped: `-x studio,imgproxy,edge-runtime,realtime,logflare,vector,pooler,storage`).
 4. Get legacy JWT keys with `supabase status -o env` → use `ANON_KEY` for `VITE_SUPABASE_ANON_KEY`
    and `SERVICE_ROLE_KEY` for `SUPABASE_SERVICE_KEY`; URL is `http://127.0.0.1:54321`.
+5. Apply the schema: `psql "$DB_URL" -v ON_ERROR_STOP=1 -f supabase/schema.sql` (single pass).
 
-### Schema gotchas (important)
-`supabase/schema.sql` is the documented schema but is OUT OF SYNC with `server.js`:
-- It has forward references (e.g. `appointments` references `professional_applications`
-  defined later), so apply it 2× idempotently. A few `chat_messages` RLS policies fail to
-  create (the `chat_appointment_is_valid` function fails on a fresh DB) — harmless for non-chat flows.
-- `screening_responses` in `schema.sql` is an older shape; the server writes extra columns
-  (`name, phone, email, phq9_*, gad7_*, wants_callback, status`) that must be added with
-  `alter table ... add column if not exists ...` for `/api/screening` to work.
-- `server.js` also references tables NOT in `schema.sql` (`job_postings`, `job_applications`,
-  `interview_schedules`) — those admin/jobs endpoints need extra tables.
-- Tables created via `psql` (not the Supabase API) do NOT inherit grants automatically — run
-  `grant usage on schema public ...` + `grant all on all tables/sequences in schema public to anon, authenticated, service_role;`
-  or inserts fail with `42501 permission denied`.
-- The `appointments` table matches the server exactly, so the booking flow (`/book`) works with
-  only `schema.sql` applied — it is the simplest end-to-end smoke test (ends on a "Booking received!" screen with a reference code).
+### Schema notes
+`supabase/schema.sql` is the single source of truth and now applies cleanly in ONE pass on a
+fresh database (it is also idempotent / safe to re-run and self-upgrades older DBs via
+`add column if not exists`). It is in sync with `server.js`:
+- Tables are created in dependency order, so foreign keys never reference a missing table.
+- It includes all tables the server uses, including the hiring pipeline
+  (`job_postings`, `job_applications`, `interview_schedules`).
+- `appointments` has a human-friendly `appointment_id` (auto-filled by a trigger) that the
+  consultation chat (`chat_appointment_is_valid`) depends on.
+- `screening_responses` matches `POST /api/screening` (`name, phone, email, phq9_*, gad7_*,
+  wants_callback, status`).
+- It grants the Supabase API roles (`anon, authenticated, service_role`) so it also works when
+  applied via `psql` (outside the Supabase SQL Editor, default privileges are not auto-applied).
+- Simplest end-to-end smoke test: the booking flow (`/book`) → ends on a "Booking received!"
+  screen with a reference code; the row lands in `appointments`.
+- The files in `supabase/migrations/` are historical fixes against the OLD production table
+  shapes (they reference legacy columns like `designation`); do NOT apply them on top of a fresh
+  `schema.sql` database.
 
 ### Local helper files
 `.env`, `supabase/config.toml`, and `supabase/.gitignore` are gitignored/untracked dev-only
