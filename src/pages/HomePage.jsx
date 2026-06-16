@@ -89,6 +89,37 @@ const STEPS = [
   { title: 'Meet your clinician', body: 'Assessment, guidance, and a clear plan for follow-up where needed.' },
 ];
 
+const ECOSYSTEM = [
+  {
+    icon: '🩺',
+    title: 'Mental Healthcare Services',
+    body: 'Verified psychiatrists and psychologists for video, audio, and chat consultations.',
+    href: '/services',
+  },
+  {
+    icon: '🎓',
+    title: 'Serenest Academy',
+    body: 'Clinically oriented education and certificate programs for the mental health workforce.',
+    href: '/academy',
+  },
+  {
+    icon: '🏢',
+    title: 'Corporate Mental Wellness',
+    body: 'Workplace programmes and EAP-style support for organisations. Coming soon.',
+  },
+  {
+    icon: '💊',
+    title: 'De-addiction & Rehabilitation',
+    body: 'Structured recovery support and continuity of care. Coming soon.',
+  },
+  {
+    icon: '🌐',
+    title: 'Digital Mental Health Solutions',
+    body: 'Telepsychiatry infrastructure and tools built for Indian care delivery.',
+    href: '/services',
+  },
+];
+
 const LINKS = [
   { label: 'Serenest Academy', to: '/academy' },
   { label: 'Find a professional', to: '/patient/find-professional' },
@@ -171,6 +202,34 @@ export default function HomePage() {
               </li>
             ))}
           </ul>
+        </div>
+      </section>
+
+      <section className="home__section" id="ecosystem">
+        <div className="home__shell">
+          <header className="home__header home__header--center">
+            <p className="home__eyebrow">Serenest Ecosystem</p>
+            <h2>One brand. Care, education, and wellness together.</h2>
+            <p>Mental healthcare services, professional education, corporate wellness, de-addiction
+              support, and digital health infrastructure — all under Serenest.</p>
+          </header>
+          <div className="home__cards home__cards--ecosystem">
+            {ECOSYSTEM.map((item) =>
+              item.href ? (
+                <Link key={item.title} className="home__card" to={item.href}>
+                  <span className="home__icon home__icon--emoji" aria-hidden="true">{item.icon}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </Link>
+              ) : (
+                <div key={item.title} className="home__card home__card--soon">
+                  <span className="home__icon home__icon--emoji" aria-hidden="true">{item.icon}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </div>
+              ),
+            )}
+          </div>
         </div>
       </section>
 

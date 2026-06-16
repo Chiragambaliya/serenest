@@ -426,6 +426,29 @@
   text-underline-offset: 3px;
 }
 
+.home__icon--emoji {
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  background: rgba(36, 71, 59, 0.07);
+}
+
+@media (min-width: 768px) {
+  .home__cards--ecosystem {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+.home__card--soon {
+  cursor: default;
+  opacity: 0.78;
+}
+
+.home__card--soon:hover {
+  border-color: var(--h-line);
+  box-shadow: var(--h-shadow);
+}
+
 /* ── Steps ─────────────────────────────────────────────────── */
 .home__split {
   display: grid;

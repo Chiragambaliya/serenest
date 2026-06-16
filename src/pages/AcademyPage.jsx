@@ -7,34 +7,72 @@ import AcademyGuide from '../components/AcademyGuide';
 
 const PROGRAMMES = [
   {
-    label: 'Guides',
-    title: 'Articles & guides',
-    body: 'Plain-language explainers on conditions, coping skills, and help-seeking — aligned with Indian contexts where we work.',
-    href: '/guides',
-    cta: 'View all guides',
+    label: '🧠 Certificates',
+    title: 'Professional Certificate Programs',
+    body: 'Structured, clinically reviewed certificate tracks for working professionals and students.',
+    href: '/professionals/learning',
+    cta: 'Explore certificates',
   },
   {
-    label: 'Pharmacology',
-    title: 'Pharmacology learning',
-    body: 'For prescribers and trainees: telemedicine norms, prescribing conversations, SOAP and Rx workflow, continuity between visits, and safety documentation.',
-    href: '/professionals/learning#learning-pharmacology',
-    cta: 'Open pharmacology track',
-  },
-  {
-    label: 'Psychology',
-    title: 'Psychology learning',
-    body: 'Assessment tools (PHQ-9 / GAD-7), psychoeducation, behavioural topics, stigma-aware language, and carer skills — curated modules on the learning hub.',
+    label: '🎓 Students',
+    title: 'Psychology Student Training',
+    body: 'Foundational and applied training for psychology students entering clinical practice.',
     href: '/professionals/learning#learning-psychology',
-    cta: 'Open psychology track',
+    cta: 'Open student track',
   },
   {
-    label: 'Partnerships',
-    title: 'Schools & workplaces',
-    body: 'Talks, workshops, and collaborations that prioritise psychological safety and verified information.',
-    href: 'mailto:support@serenest.in?subject=Serenest%20Academy%20%E2%80%94%20partnership',
-    cta: 'Start a conversation',
-    external: true,
+    label: '👥 Counselling',
+    title: 'Counselling Skills Development',
+    body: 'Practical, case-based skill-building for counsellors — communication, ethics, and technique.',
+    href: '/professionals/learning#learning-psychology',
+    cta: 'Open counselling track',
   },
+  {
+    label: '🏥 Psychiatry',
+    title: 'Psychiatry Clinical Training',
+    body: 'For residents and prescribers: telemedicine norms, prescribing conversations, and SOAP/Rx workflow.',
+    href: '/professionals/learning#learning-pharmacology',
+    cta: 'Open psychiatry track',
+  },
+  {
+    label: '📚 Research',
+    title: 'Research & Publication Guidance',
+    body: 'Support for case write-ups, literature reviews, and publication-ready clinical writing.',
+    href: '/professionals/resources',
+    cta: 'View resources',
+  },
+  {
+    label: '💻 Telepsychiatry',
+    title: 'Digital Mental Health & Telepsychiatry',
+    body: 'Modern, remote-care delivery — platform workflows, documentation, and continuity of care.',
+    href: '/professionals/learning',
+    cta: 'Learn telepsychiatry',
+  },
+  {
+    label: '🎯 CPD',
+    title: 'Continuing Professional Development (CPD)',
+    body: 'Ongoing learning for licensed professionals to stay current and meet CPD requirements.',
+    href: '/professionals/learning',
+    cta: 'Open CPD track',
+  },
+];
+
+const AUDIENCE = [
+  'Psychology Students',
+  'Counsellors',
+  'Psychologists',
+  'Psychiatry Residents',
+  'Mental Health Professionals',
+  'Healthcare Organizations',
+];
+
+const WHY_SERENEST = [
+  'Clinician-led education',
+  'Practical case discussions',
+  'Industry-relevant skills',
+  'Flexible online learning',
+  'Certificates of completion',
+  'Community and mentorship',
 ];
 
 export default function AcademyPage() {
@@ -51,21 +89,22 @@ export default function AcademyPage() {
             </div>
           </div>
 
-          <p className="ed-kicker">Serenest Academy · Serenest Education Pvt Ltd</p>
+          <p className="ed-kicker">Serenest Academy · Building India&apos;s Future Mental Health Workforce</p>
           <h1 className="ed-hero-title">
-            Mental health learning — clear, respectful, and grounded in care.
+            Practical, clinically oriented education for India&apos;s mental health workforce.
           </h1>
           <p className="ed-hero-lead">
-            Serenest Academy is the literacy and learning side of Serenest: explainers, learning tracks
-            (pharmacology and psychology), partnerships, and outreach. It lives on the same site as our
-            clinical telepsychiatry — so understanding and care are one click apart.
+            At Serenest Academy, we provide practical, clinically oriented education for psychology
+            students, counsellors, psychologists, psychiatry residents, and mental health professionals.
+            Our programs focus on real-world skills, case-based learning, ethical practice, and modern
+            mental healthcare.
           </p>
           <div className="ed-hero-actions">
-            <a className="btn btn-primary btn-lg" href="#guide">
-              Ask Academy Guide
+            <a className="btn btn-primary btn-lg" href="#offer">
+              Explore Courses
             </a>
-            <a className="btn btn-ghost btn-lg" href="#learn">
-              Explore programmes
+            <a className="btn btn-ghost btn-lg" href="#guide">
+              Ask Academy Guide
             </a>
             <Link className="btn btn-ghost btn-lg" to="/book">
               Book a consultation
@@ -76,15 +115,15 @@ export default function AcademyPage() {
 
       <AcademyGuide />
 
-      <section id="learn" className="ed-section">
+      <section id="offer" className="ed-section">
         <div className="container">
           <div className="ed-section-head">
-            <p className="ed-section-label">What we publish</p>
-            <h2>Built for understanding — not as a substitute for assessment</h2>
+            <p className="ed-section-label">What We Offer</p>
+            <h2>Built for real-world clinical practice</h2>
             <p className="ed-muted">
-              Serenest Academy helps people recognise symptoms, reduce stigma, and take the next step.
-              Diagnosis and treatment belong with licensed clinicians on Serenest. For clinicians,
-              structured learning is split into pharmacology and psychology tracks.
+              Diagnosis and treatment belong with licensed clinicians on Serenest. Academy is where that
+              workforce is trained — structured tracks across certificates, students, counselling,
+              psychiatry, research, telepsychiatry, and CPD.
             </p>
           </div>
 
@@ -115,30 +154,57 @@ export default function AcademyPage() {
 
       <section id="audiences" className="ed-section ed-section-alt">
         <div className="container">
-          <div className="ed-section-head">
-            <p className="ed-section-label">Who it&apos;s for</p>
-            <h2>Three doors into the same mission</h2>
+          <div className="ed-split">
+            <div>
+              <p className="ed-section-label">Who Can Join?</p>
+              <h2>Built for the people training and practising in mental health</h2>
+              <ul className="ed-list">
+                {AUDIENCE.map((a) => (
+                  <li key={a}>{a}</li>
+                ))}
+              </ul>
+            </div>
+            <div className="ed-callout" aria-label="Why Serenest Academy">
+              <p className="ed-callout-title">Why Serenest Academy?</p>
+              <ul className="ed-list">
+                {WHY_SERENEST.map((w) => (
+                  <li key={w}>✅ {w}</li>
+                ))}
+              </ul>
+            </div>
           </div>
-          <ul className="ed-list">
-            <li>
-              <strong>Public readers</strong> — reduce stigma, learn vocabulary, know when to seek care.
-            </li>
-            <li>
-              <strong>Clinicians &amp; educators</strong> — follow{' '}
-              <Link to="/professionals/learning#learning-pharmacology">pharmacology</Link> or{' '}
-              <Link to="/professionals/learning#learning-psychology">psychology</Link> tracks on the
-              clinician learning hub.
-            </li>
-            <li>
-              <strong>Organisations</strong> — partner with us on stigma-aware programmes tailored to your
-              team.
-            </li>
-          </ul>
           <p className="ed-muted ed-note">
             Clinical workflows (booking, screening, video consultations) live under the same Serenest roof.
             Privacy and regulation stay sharp because those routes are protected — not because they are on
             a different domain.
           </p>
+        </div>
+      </section>
+
+      <section id="vision" className="ed-section">
+        <div className="container">
+          <div className="ed-split">
+            <div>
+              <p className="ed-section-label">Our Vision</p>
+              <h2>A skilled, ethically grounded mental health workforce</h2>
+              <p>
+                To create a skilled and ethically grounded mental health workforce that contributes to
+                India&apos;s vision of becoming a developed nation by 2047.
+              </p>
+              <div className="ed-split-actions">
+                <a className="btn btn-primary" href="#offer">
+                  Explore Courses
+                </a>
+              </div>
+            </div>
+            <div className="ed-callout" aria-label="Call to action">
+              <p className="ed-callout-title">Learn. Practice. Impact Lives.</p>
+              <p>
+                Serenest Academy turns clinical knowledge into real-world skill — case-based learning,
+                ethical practice, and modern mental healthcare, taught by clinicians.
+              </p>
+            </div>
+          </div>
         </div>
       </section>
 
