@@ -219,6 +219,10 @@ export default function AdminPage() {
   const [editPro, setEditPro]         = useState(null);
   const [editProData, setEditProData] = useState({});
   const [assignBooking, setAssignBooking] = useState(null);
+  const [prescribeBooking, setPrescribeBooking] = useState(null);
+  const [rxForm, setRxForm] = useState(null);
+  const [rxSaving, setRxSaving] = useState(false);
+  const [rxError, setRxError] = useState(null);
 
   // HR sub-state
   const [hrTab, setHrTab]               = useState('applications');
@@ -494,6 +498,68 @@ export default function AdminPage() {
         ? { ...b, professional_id: professionalId, status: 'confirmed' } : b));
       setAssignBooking(null);
     } catch (e) { setError(e.message); }
+  }
+
+  // ── prescriptions ───────────────────────────────────────────
+  function openPrescribe(booking) {
+    setPrescribeBooking(booking);
+    setRxError(null);
+    setRxForm({
+      professional_name: '',
+      patient_name: booking.patient_name || '',
+      medicines: [{ name: '', dosage: '', frequency: '', duration: '', instructions: '' }],
+      advice: '',
+      follow_up_date: '',
+    });
+  }
+
+  function updateRxMedicine(index, key, value) {
+    setRxForm((prev) => ({
+      ...prev,
+      medicines: prev.medicines.map((m, i) => (i === index ? { ...m, [key]: value } : m)),
+    }));
+  }
+
+  function addRxMedicine() {
+    setRxForm((prev) => ({
+      ...prev,
+      medicines: [...prev.medicines, { name: '', dosage: '', frequency: '', duration: '', instructions: '' }],
+    }));
+  }
+
+  function removeRxMedicine(index) {
+    setRxForm((prev) => ({ ...prev, medicines: prev.medicines.filter((_, i) => i !== index) }));
+  }
+
+  async function submitPrescription() {
+    setRxError(null);
+    const medicines = rxForm.medicines
+      .map((m) => ({ ...m, name: m.name.trim() }))
+      .filter((m) => m.name);
+    if (medicines.length === 0) {
+      setRxError('Add at least one medicine.');
+      return;
+    }
+    setRxSaving(true);
+    try {
+      await adminFetch('/api/prescriptions', secret, {
+        method: 'POST',
+        body: JSON.stringify({
+          appointment_id: prescribeBooking.id,
+          professional_name: rxForm.professional_name,
+          patient_name: rxForm.patient_name,
+          medicines,
+          advice: rxForm.advice,
+          follow_up_date: rxForm.follow_up_date || null,
+        }),
+      });
+      setPrescribeBooking(null);
+      setRxForm(null);
+    } catch (e) {
+      setRxError(e.message);
+    } finally {
+      setRxSaving(false);
+    }
   }
 
   // ── booking status update ──────────────────────────────────
@@ -954,6 +1020,9 @@ export default function AdminPage() {
                                 🎥 Room
                               </Link>
                             )}
+                            {(b.status === 'confirmed' || b.status === 'completed') && (
+                              <ActionBtn label="📋 Issue Rx" onClick={() => openPrescribe(b)} color="#6f42c1" />
+                            )}
                           </div>
                         </td>
                       </tr>
@@ -963,6 +1032,75 @@ export default function AdminPage() {
               </div>
               );
             })()}
+
+            {/* ── Issue prescription modal ── */}
+            {prescribeBooking && rxForm && (
+              <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
+                <div style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.5rem', maxWidth: 560, width: '100%', maxHeight: '88vh', overflowY: 'auto' }}>
+                  <h3 style={{ fontWeight: 800, marginBottom: 4 }}>Issue prescription</h3>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                    For: <strong>{prescribeBooking.patient_name}</strong> — {prescribeBooking.practitioner_type} · {fmtDate(prescribeBooking.preferred_date)}
+                  </p>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '0.75rem' }}>
+                    <div>
+                      <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>Professional name</label>
+                      <input value={rxForm.professional_name} onChange={(e) => setRxForm((p) => ({ ...p, professional_name: e.target.value }))} placeholder="Dr. …"
+                        style={{ width: '100%', padding: '7px 10px', fontSize: '0.88rem', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg)', color: 'var(--text)', boxSizing: 'border-box' }} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>Patient name</label>
+                      <input value={rxForm.patient_name} onChange={(e) => setRxForm((p) => ({ ...p, patient_name: e.target.value }))}
+                        style={{ width: '100%', padding: '7px 10px', fontSize: '0.88rem', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg)', color: 'var(--text)', boxSizing: 'border-box' }} />
+                    </div>
+                  </div>
+
+                  <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: 6 }}>Medicines</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: '0.75rem' }}>
+                    {rxForm.medicines.map((m, i) => (
+                      <div key={i} style={{ border: '1px solid var(--border)', borderRadius: 8, padding: '0.6rem' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: 6, marginBottom: 6 }}>
+                          <input value={m.name} onChange={(e) => updateRxMedicine(i, 'name', e.target.value)} placeholder="Medicine name"
+                            style={{ padding: '5px 8px', fontSize: '0.85rem', border: '1px solid var(--border)', borderRadius: 5, background: 'var(--bg)', color: 'var(--text)' }} />
+                          <input value={m.dosage} onChange={(e) => updateRxMedicine(i, 'dosage', e.target.value)} placeholder="Dosage"
+                            style={{ padding: '5px 8px', fontSize: '0.85rem', border: '1px solid var(--border)', borderRadius: 5, background: 'var(--bg)', color: 'var(--text)' }} />
+                          <input value={m.frequency} onChange={(e) => updateRxMedicine(i, 'frequency', e.target.value)} placeholder="Frequency"
+                            style={{ padding: '5px 8px', fontSize: '0.85rem', border: '1px solid var(--border)', borderRadius: 5, background: 'var(--bg)', color: 'var(--text)' }} />
+                          <input value={m.duration} onChange={(e) => updateRxMedicine(i, 'duration', e.target.value)} placeholder="Duration"
+                            style={{ padding: '5px 8px', fontSize: '0.85rem', border: '1px solid var(--border)', borderRadius: 5, background: 'var(--bg)', color: 'var(--text)' }} />
+                          <button type="button" onClick={() => removeRxMedicine(i)} className="btn btn-sm btn-ghost" style={{ color: '#dc3545' }}>✕</button>
+                        </div>
+                        <input value={m.instructions} onChange={(e) => updateRxMedicine(i, 'instructions', e.target.value)} placeholder="Instructions (e.g. after food)"
+                          style={{ width: '100%', padding: '5px 8px', fontSize: '0.85rem', border: '1px solid var(--border)', borderRadius: 5, background: 'var(--bg)', color: 'var(--text)', boxSizing: 'border-box' }} />
+                      </div>
+                    ))}
+                  </div>
+                  <button type="button" onClick={addRxMedicine} className="btn btn-ghost btn-sm" style={{ marginBottom: '1rem' }}>+ Add medicine</button>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '0.75rem' }}>
+                    <div style={{ gridColumn: '1 / -1' }}>
+                      <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>Advice</label>
+                      <textarea value={rxForm.advice} onChange={(e) => setRxForm((p) => ({ ...p, advice: e.target.value }))} rows={3} placeholder="General advice for the patient…"
+                        style={{ width: '100%', padding: '7px 10px', fontSize: '0.88rem', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg)', color: 'var(--text)', resize: 'vertical', boxSizing: 'border-box' }} />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>Follow-up date</label>
+                      <input type="date" value={rxForm.follow_up_date} onChange={(e) => setRxForm((p) => ({ ...p, follow_up_date: e.target.value }))}
+                        style={{ width: '100%', padding: '7px 10px', fontSize: '0.88rem', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg)', color: 'var(--text)', boxSizing: 'border-box' }} />
+                    </div>
+                  </div>
+
+                  {rxError && <p style={{ color: '#dc3545', fontSize: '0.82rem', marginBottom: '0.75rem' }}>{rxError}</p>}
+
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={submitPrescription} disabled={rxSaving} className="btn btn-primary btn-sm">
+                      {rxSaving ? 'Saving…' : 'Save prescription'}
+                    </button>
+                    <button onClick={() => { setPrescribeBooking(null); setRxForm(null); }} className="btn btn-ghost btn-sm">Cancel</button>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

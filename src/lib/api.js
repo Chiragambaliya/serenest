@@ -95,6 +95,12 @@ export const rooms = {
   get: (appointmentId) => get(`/api/rooms/${appointmentId}`),
 };
 
+// ── Prescriptions ──────────────────────────────────────────
+export const prescriptions = {
+  /** Public — fetch the prescription issued for an appointment, if any. */
+  get: (appointmentId) => get(`/api/prescriptions/${appointmentId}`),
+};
+
 // ── Contact ─────────────────────────────────────────────────
 export const contact = {
   /**
@@ -116,4 +122,4 @@ export const assistant = {
   notifyGuideOpened: (payload) => post('/api/assistant/notify-open', payload),
 };
 
-export default { health, bookings, screening, professionals, rooms, contact, assistant };
+export default { health, bookings, screening, professionals, rooms, contact, assistant, prescriptions };

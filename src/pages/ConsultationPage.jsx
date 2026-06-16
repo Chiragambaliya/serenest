@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import DailyIframe from '@daily-co/daily-js';
 import { supabase } from '../lib/supabase';
 import { createDailyRoom } from '../lib/daily';
@@ -340,6 +340,9 @@ export default function ConsultationPage() {
           <span style={{ fontSize: 12, color: '#888' }}>
             Mode:{' '}{modeMeta.label} ·{' '}{threadKey}
           </span>
+          <Link to={`/consultation/${threadKey}/prescription`} style={{ fontSize: 12, color: '#4f46e5', fontWeight: 600 }}>
+            📋 View prescription
+          </Link>
         </div>
         <div style={styles.chatMessages}>
           {messages.length === 0 && (

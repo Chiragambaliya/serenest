@@ -23,6 +23,7 @@ const AdminPage = lazy(() => import('./pages/AdminPage'));
 const PatientFindProfessionalPage = lazy(() => import('./pages/PatientFindProfessionalPage'));
 const ScreeningPage = lazy(() => import('./pages/ScreeningPage'));
 const ConsultationPage = lazy(() => import('./pages/ConsultationPage'));
+const PrescriptionPage = lazy(() => import('./pages/PrescriptionPage'));
 const DepressionPage = lazy(() => import('./pages/DepressionPage'));
 const AnxietyPage = lazy(() => import('./pages/AnxietyPage'));
 const AdhdPage = lazy(() => import('./pages/AdhdPage'));
@@ -89,6 +90,7 @@ export default function App() {
           <Route path="patient/find-professional" element={<S><PatientFindProfessionalPage /></S>} />
           <Route path="screening" element={<S><ScreeningPage /></S>} />
           <Route path="consultation/:appointmentId" element={<S><ConsultationPage /></S>} />
+          <Route path="consultation/:appointmentId/prescription" element={<S><PrescriptionPage /></S>} />
           <Route path="online-psychiatrist-consultation-india" element={<Navigate to="/services" replace />} />
           <Route path="online-psychiatrist-for-depression-india" element={<S><DepressionPage /></S>} />
           <Route path="anxiety-counselling-online-india" element={<S><AnxietyPage /></S>} />

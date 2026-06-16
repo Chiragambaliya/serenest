@@ -819,6 +819,97 @@ app.get('/api/rooms/:appointmentId', async (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════
+//  PRESCRIPTIONS
+// ══════════════════════════════════════════════════════════════
+
+/**
+ * GET /api/prescriptions/:appointmentId
+ * Public — a patient opens this from their consultation room link.
+ */
+app.get('/api/prescriptions/:appointmentId', async (req, res) => {
+  if (!requireDb(res)) return;
+
+  const { data, error } = await supabase
+    .from('prescriptions')
+    .select('*')
+    .eq('appointment_id', req.params.appointmentId)
+    .maybeSingle();
+
+  if (error) {
+    console.error('[GET /api/prescriptions/:appointmentId]', error);
+    return err(res, 'Failed to load prescription', 500);
+  }
+  return ok(res, { prescription: data ?? null });
+});
+
+/**
+ * POST /api/prescriptions
+ * Issue or update a prescription for an appointment (admin only).
+ * Upserts on appointment_id — re-issuing replaces the previous draft
+ * unless it has already been locked.
+ */
+app.post('/api/prescriptions', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const {
+    appointment_id, professional_id, professional_name, patient_name,
+    medicines = [], advice = '', follow_up_date = null,
+  } = req.body;
+
+  if (!appointment_id) return err(res, 'appointment_id is required');
+  if (!Array.isArray(medicines) || medicines.length === 0) {
+    return err(res, 'At least one medicine is required');
+  }
+
+  const { data: existing } = await supabase
+    .from('prescriptions')
+    .select('id, is_locked')
+    .eq('appointment_id', appointment_id)
+    .maybeSingle();
+
+  if (existing?.is_locked) return err(res, 'This prescription is locked and cannot be changed', 409);
+
+  const { data, error } = await supabase
+    .from('prescriptions')
+    .upsert({
+      appointment_id,
+      professional_id: professional_id || null,
+      professional_name: professional_name?.trim() || null,
+      patient_name: patient_name?.trim() || null,
+      medicines,
+      advice: advice.trim(),
+      follow_up_date,
+      updated_at: new Date().toISOString(),
+    }, { onConflict: 'appointment_id' })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('[POST /api/prescriptions]', error);
+    return err(res, 'Failed to save prescription', 500);
+  }
+  return ok(res, { prescription: data }, 201);
+});
+
+/**
+ * PATCH /api/prescriptions/:id/lock
+ * Lock a prescription so it can no longer be edited (admin only).
+ */
+app.patch('/api/prescriptions/:id/lock', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const { data, error } = await supabase
+    .from('prescriptions')
+    .update({ is_locked: true, locked_at: new Date().toISOString() })
+    .eq('id', req.params.id)
+    .select()
+    .single();
+
+  if (error) return err(res, 'Failed to lock prescription', 500);
+  return ok(res, { prescription: data });
+});
+
+// ══════════════════════════════════════════════════════════════
 //  ADMIN — aggregated helpers
 // ══════════════════════════════════════════════════════════════
 
