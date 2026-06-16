@@ -1007,6 +1007,14 @@ function rolloverIfNeeded() {
   }
 }
 
+/** Classify a user-agent string into a coarse device type. */
+function deviceFromUA(ua = '') {
+  const s = ua.toLowerCase();
+  if (/ipad|tablet|playbook|silk|(android(?!.*mobile))/.test(s)) return 'tablet';
+  if (/mobi|iphone|ipod|android.*mobile|windows phone/.test(s)) return 'mobile';
+  return 'desktop';
+}
+
 /** POST /api/track/visit — quietly records a visit. */
 app.post('/api/track/visit', (req, res) => {
   rolloverIfNeeded();
@@ -1014,6 +1022,23 @@ app.post('/api/track/visit', (req, res) => {
   const { vid, path = '/', referrer = '' } = req.body || {};
   const ip = (req.headers['x-forwarded-for']?.split(',')[0] || req.ip || '').trim();
   const ua = req.headers['user-agent'] || '';
+  const device = deviceFromUA(ua);
+  // Approximate country if the hosting platform/CDN supplies a header
+  // (Cloudflare / Vercel). Render does not by default — stays null then.
+  const country = (req.headers['cf-ipcountry'] || req.headers['x-vercel-ip-country'] || null);
+
+  // Persist every visit (best-effort — never block or fail the beacon).
+  if (supabase) {
+    supabase.from('site_visits').insert({
+      visitor_id: vid || null,
+      path: String(path).slice(0, 300),
+      referrer: String(referrer).slice(0, 300) || null,
+      device,
+      country: country && country !== 'XX' ? country : null,
+    }).then(({ error }) => {
+      if (error) console.warn('[track/visit] insert:', error.message);
+    });
+  }
 
   // Fingerprint = browser-supplied vid (cookie-less) + IP + UA hash
   const fp = `${vid || 'anon'}|${ip}`;
@@ -1051,6 +1076,113 @@ app.get('/api/track/today', (req, res) => {
   }
   rolloverIfNeeded();
   return ok(res, { date: visitorDay, unique_visitors: seenVisitors.size });
+});
+
+/** GET /api/track/stats — admin only — persisted traffic analytics. */
+app.get('/api/track/stats', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const now = new Date();
+  const since = (days) => new Date(now.getTime() - days * 86400000).toISOString();
+  const startOfToday = new Date(now); startOfToday.setHours(0, 0, 0, 0);
+
+  // Pull the last 30 days of visits once, then aggregate in memory.
+  const { data: rows, error } = await supabase
+    .from('site_visits')
+    .select('created_at, visitor_id, path, referrer, device, country')
+    .gte('created_at', since(30))
+    .order('created_at', { ascending: false });
+
+  if (error) {
+    console.error('[GET /api/track/stats]', error);
+    return err(res, 'Failed to load traffic', 500);
+  }
+
+  const all = rows ?? [];
+  const todayIso = startOfToday.toISOString();
+  const weekIso = since(7);
+
+  const inToday = all.filter((r) => r.created_at >= todayIso);
+  const inWeek = all.filter((r) => r.created_at >= weekIso);
+
+  const uniq = (list) => new Set(list.map((r) => r.visitor_id || r.created_at)).size;
+
+  const tally = (list, key) => {
+    const m = new Map();
+    for (const r of list) {
+      const v = r[key] || (key === 'referrer' ? 'Direct / none' : '—');
+      m.set(v, (m.get(v) || 0) + 1);
+    }
+    return [...m.entries()].sort((a, b) => b[1] - a[1]);
+  };
+
+  const cleanRef = (r) => {
+    if (!r) return 'Direct / none';
+    try { return new URL(r).hostname.replace(/^www\./, ''); } catch { return r.slice(0, 60); }
+  };
+  const refList = inWeek.map((r) => ({ ...r, referrer: cleanRef(r.referrer) }));
+
+  return ok(res, {
+    totals: {
+      today: inToday.length,
+      today_unique: uniq(inToday),
+      week: inWeek.length,
+      week_unique: uniq(inWeek),
+      month: all.length,
+      month_unique: uniq(all),
+    },
+    top_pages: tally(inWeek, 'path').slice(0, 12),
+    top_referrers: tally(refList, 'referrer').slice(0, 10),
+    devices: tally(inWeek, 'device'),
+    recent: all.slice(0, 40),
+  });
+});
+
+// ══════════════════════════════════════════════════════════════
+//  SUBSCRIBERS (opt-in email capture)
+// ══════════════════════════════════════════════════════════════
+
+/** POST /api/subscribe — public — capture an opt-in email. */
+app.post('/api/subscribe', async (req, res) => {
+  if (!requireDb(res)) return;
+
+  const { email, source } = req.body || {};
+  const clean = (email || '').trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(clean)) {
+    return err(res, 'Please enter a valid email address.');
+  }
+
+  const { data, error } = await supabase
+    .from('subscribers')
+    .upsert({ email: clean, source: source?.slice(0, 80) || null }, { onConflict: 'email' })
+    .select()
+    .single();
+
+  if (error) {
+    console.error('[POST /api/subscribe]', error);
+    return err(res, 'Could not save your email. Please try again.', 500);
+  }
+
+  notify.custom(
+    `New subscriber — ${clean}`,
+    `<p style="margin:0 0 8px;font-size:16px"><strong>${clean}</strong> subscribed for updates.</p>`
+    + `<p style="margin:0;color:#64748b;font-size:13px">Source: ${source || '—'}</p>`,
+  );
+
+  return ok(res, { subscriber: data }, 201);
+});
+
+/** GET /api/subscribers — admin only — list opt-in emails. */
+app.get('/api/subscribers', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const { data, error } = await supabase
+    .from('subscribers')
+    .select('*')
+    .order('created_at', { ascending: false });
+
+  if (error) return err(res, 'Failed to fetch subscribers', 500);
+  return ok(res, { subscribers: data });
 });
 
 // ══════════════════════════════════════════════════════════════

@@ -2963,6 +2963,75 @@ a.pro-hub-tile:hover .learning-card-aux {
   background: rgba(255,255,255,0.08);
 }
 
+/* ── Email capture (footer) ──────────────────────────────────── */
+.email-capture {
+  flex: 1 1 280px;
+  max-width: 380px;
+  margin-left: auto;
+}
+
+.email-capture-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.email-capture-sub {
+  font-size: 13px;
+  line-height: 1.55;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 14px;
+}
+
+.email-capture-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.email-capture-input {
+  flex: 1 1 160px;
+  min-width: 0;
+  padding: 10px 14px;
+  border-radius: var(--r-full);
+  border: 1px solid rgba(255,255,255,0.16);
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 160ms, background 160ms;
+}
+
+.email-capture-input::placeholder { color: rgba(255,255,255,0.4); }
+
+.email-capture-input:focus {
+  border-color: var(--teal-300);
+  background: rgba(255,255,255,0.1);
+}
+
+.email-capture .btn-primary {
+  white-space: nowrap;
+}
+
+.email-capture-done {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--teal-300);
+  margin: 0;
+}
+
+.email-capture-error {
+  font-size: 12.5px;
+  color: #f6b8b0;
+  margin: 8px 0 0;
+}
+
+@media (max-width: 760px) {
+  .email-capture { margin-left: 0; max-width: none; }
+}
+
 .footer-cols {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

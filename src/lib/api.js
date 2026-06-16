@@ -101,6 +101,12 @@ export const prescriptions = {
   get: (appointmentId) => get(`/api/prescriptions/${appointmentId}`),
 };
 
+// ── Subscribers (opt-in email capture) ─────────────────────
+export const subscribers = {
+  /** Save an opt-in email. @param {{ email: string, source?: string }} data */
+  add: (data) => post('/api/subscribe', data),
+};
+
 // ── Contact ─────────────────────────────────────────────────
 export const contact = {
   /**
@@ -122,4 +128,4 @@ export const assistant = {
   notifyGuideOpened: (payload) => post('/api/assistant/notify-open', payload),
 };
 
-export default { health, bookings, screening, professionals, rooms, contact, assistant, prescriptions };
+export default { health, bookings, screening, professionals, rooms, contact, assistant, prescriptions, subscribers };

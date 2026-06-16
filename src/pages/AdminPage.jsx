@@ -85,6 +85,7 @@ function fmtDate(dateStr) {
 // ── Tabs ────────────────────────────────────────────────────────────────────
 const TABS = [
   { id: 'overview',      label: 'Overview' },
+  { id: 'traffic',       label: 'Traffic' },
   { id: 'website',       label: 'Website' },
   { id: 'bookings',      label: 'Bookings' },
   { id: 'professionals', label: 'Professionals' },
@@ -92,11 +93,13 @@ const TABS = [
   { id: 'hr',            label: 'HR / Hiring' },
   { id: 'messages',      label: 'Messages' },
   { id: 'screenings',    label: 'Screenings' },
+  { id: 'subscribers',   label: 'Subscribers' },
   { id: 'signups',       label: 'Signups' },
 ];
 
 const TAB_ICONS = {
   overview: '📊',
+  traffic: '📈',
   website: '🌐',
   bookings: '📅',
   professionals: '🩺',
@@ -104,11 +107,13 @@ const TAB_ICONS = {
   hr: '🧑‍💼',
   messages: '💬',
   screenings: '🧠',
+  subscribers: '✉️',
   signups: '📋',
 };
 
 const TAB_HELP = {
   overview: 'Quick KPI view and shortcuts to each workflow.',
+  traffic: 'Who is visiting — visit counts, top pages, referrers, and devices (anonymous analytics).',
   website: 'Every public route — open in a new tab, copy links for QA or campaigns, ping API health.',
   bookings: 'Search bookings, update status, and manage patient requests.',
   professionals: 'View approved professionals and update their profiles.',
@@ -116,6 +121,7 @@ const TAB_HELP = {
   hr: 'Manage job applications, postings, interviews, and offers.',
   messages: 'Read incoming contact/enquiry messages.',
   screenings: 'Review self-screening submissions and callback leads.',
+  subscribers: 'People who opted in to email updates — export and reach out.',
   signups: 'View and export waitlist signups.',
 };
 
@@ -211,6 +217,8 @@ export default function AdminPage() {
   const [messages, setMessages]       = useState([]);
   const [screenings, setScreenings]   = useState([]);
   const [signups, setSignups]         = useState([]);
+  const [traffic, setTraffic]         = useState(null);
+  const [subscribers, setSubscribers] = useState([]);
   const [noteEdit, setNoteEdit]       = useState({});
   const [proFilter, setProFilter]     = useState('all');
   const [bookingFilter, setBookingFilter] = useState('all');
@@ -290,6 +298,14 @@ export default function AdminPage() {
         const r = await adminFetch('/api/screening', secret);
         setScreenings(r.screenings ?? []);
       }
+      if (which === 'all' || which === 'traffic') {
+        const r = await adminFetch('/api/track/stats', secret);
+        setTraffic(r);
+      }
+      if (which === 'all' || which === 'subscribers') {
+        const r = await adminFetch('/api/subscribers', secret);
+        setSubscribers(r.subscribers ?? []);
+      }
     } catch (e) {
       setError(e.message);
     } finally {
@@ -359,6 +375,8 @@ export default function AdminPage() {
     setMessages([]);
     setScreenings([]);
     setSignups([]);
+    setTraffic(null);
+    setSubscribers([]);
     setSiteHubFilter('');
     setSiteCopied('');
     setHealthProbe(null);
@@ -745,6 +763,60 @@ export default function AdminPage() {
                 </button>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* ── TRAFFIC ── */}
+        {tab === 'traffic' && (
+          <div>
+            <h2 style={{ fontWeight: 800, fontSize: '1.4rem', marginBottom: 4 }}>Traffic</h2>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.25rem', maxWidth: 760 }}>
+              Anonymous web analytics — page views, where visitors came from, and device type.
+              Visitors can’t be identified by name; for emails, see <strong>Subscribers</strong>,
+              <strong> Bookings</strong>, or <strong>Messages</strong>.
+            </p>
+
+            {!traffic ? (
+              <EmptyState icon="📈" text="No traffic data yet — visits appear here as people browse the site." />
+            ) : (
+              <>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.75rem' }}>
+                  <StatCard label="Today" value={traffic.totals?.today} sub={`${traffic.totals?.today_unique ?? 0} unique`} />
+                  <StatCard label="Last 7 days" value={traffic.totals?.week} sub={`${traffic.totals?.week_unique ?? 0} unique`} color="var(--brand-600)" />
+                  <StatCard label="Last 30 days" value={traffic.totals?.month} sub={`${traffic.totals?.month_unique ?? 0} unique`} color="var(--brand-700)" />
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '1.75rem' }}>
+                  <TrafficList title="Top pages (7d)" rows={traffic.top_pages} />
+                  <TrafficList title="Top referrers (7d)" rows={traffic.top_referrers} />
+                  <TrafficList title="Devices (7d)" rows={traffic.devices} />
+                </div>
+
+                <h3 style={{ fontSize: '0.95rem', fontWeight: 800, marginBottom: 10 }}>Recent visits</h3>
+                {(!traffic.recent || traffic.recent.length === 0) ? (
+                  <EmptyState icon="🕘" text="No recent visits" />
+                ) : (
+                  <div style={{ overflowX: 'auto' }}>
+                    <table style={tableStyle}>
+                      <thead>
+                        <tr>{['Time', 'Page', 'Referrer', 'Device', 'Country'].map((h) => <th key={h} style={thStyle}>{h}</th>)}</tr>
+                      </thead>
+                      <tbody>
+                        {traffic.recent.map((v, i) => (
+                          <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                            <td style={tdStyle}><small>{fmt(v.created_at)}</small></td>
+                            <td style={tdStyle}><code style={{ fontSize: '0.8rem' }}>{v.path}</code></td>
+                            <td style={tdStyle}><small>{v.referrer ? (() => { try { return new URL(v.referrer).hostname.replace(/^www\./, ''); } catch { return v.referrer; } })() : 'Direct'}</small></td>
+                            <td style={tdStyle}>{v.device || '—'}</td>
+                            <td style={tdStyle}>{v.country || '—'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         )}
 
@@ -1881,6 +1953,50 @@ export default function AdminPage() {
           </div>
         )}
 
+        {/* ── SUBSCRIBERS ── */}
+        {tab === 'subscribers' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 8 }}>
+              <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>
+                Email Subscribers <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({subscribers.length})</span>
+              </h2>
+              <button
+                onClick={() => {
+                  const csv = ['Email,Source,Date', ...subscribers.map((s) => `"${s.email}","${s.source ?? ''}","${fmtDate(s.created_at)}"`)].join('\n');
+                  const a = document.createElement('a');
+                  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+                  a.download = 'serenest-subscribers.csv';
+                  a.click();
+                }}
+                className="btn btn-ghost btn-sm"
+              >
+                Export CSV
+              </button>
+            </div>
+
+            {subscribers.length === 0 ? (
+              <EmptyState icon="✉️" text="No subscribers yet — the footer email form feeds this list" />
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={tableStyle}>
+                  <thead>
+                    <tr>{['Email', 'Source', 'Subscribed'].map((h) => <th key={h} style={thStyle}>{h}</th>)}</tr>
+                  </thead>
+                  <tbody>
+                    {subscribers.map((s) => (
+                      <tr key={s.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                        <td style={tdStyle}><a href={`mailto:${s.email}`} style={{ color: 'var(--brand-600)' }}>{s.email}</a></td>
+                        <td style={tdStyle}>{s.source || '—'}</td>
+                        <td style={tdStyle}>{fmt(s.created_at)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
         {/* ── SIGNUPS ── */}
         {tab === 'signups' && (
           <div>
@@ -1964,6 +2080,32 @@ const tdStyle = {
   verticalAlign: 'top',
   lineHeight: 1.5,
 };
+
+function TrafficList({ title, rows }) {
+  const max = rows && rows.length ? Math.max(...rows.map((r) => r[1])) : 0;
+  return (
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: '1rem 1.25rem' }}>
+      <div style={{ fontSize: '0.72rem', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--text-muted)', marginBottom: 12 }}>{title}</div>
+      {(!rows || rows.length === 0) ? (
+        <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>No data yet</div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {rows.map(([label, count]) => (
+            <div key={label}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.84rem', marginBottom: 3 }}>
+                <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '78%' }} title={label}>{label}</span>
+                <strong>{count}</strong>
+              </div>
+              <div style={{ height: 5, borderRadius: 99, background: 'var(--bg-subtle)', overflow: 'hidden' }}>
+                <div style={{ width: `${max ? (count / max) * 100 : 0}%`, height: '100%', background: 'linear-gradient(90deg, var(--brand-500), var(--brand-700))' }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function EmptyState({ icon, text }) {
   return (

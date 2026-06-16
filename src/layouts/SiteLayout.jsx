@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
+import EmailCapture from '../components/EmailCapture';
 
 export default function SiteLayout() {
   const [scrolled, setScrolled]   = useState(false);
@@ -183,6 +184,7 @@ export default function SiteLayout() {
                   </div>
                 </div>
               </div>
+              <EmailCapture source="footer" />
             </div>
 
             <div className="footer-divider" aria-hidden="true" />
