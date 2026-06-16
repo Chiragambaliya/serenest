@@ -2878,11 +2878,14 @@ a.pro-hub-tile:hover .learning-card-aux {
 /* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .footer {
   position: relative;
-  background:
-    radial-gradient(120% 80% at 0% 0%, rgba(123, 154, 90, 0.16), transparent 55%),
-    linear-gradient(165deg, #25341e 0%, #1a2415 60%, #161f12 100%);
+  background: linear-gradient(180deg, #0f2d1e 0%, #102a1a 100%);
   color: rgba(255,255,255,0.82);
-  padding: 72px 0 max(32px, env(safe-area-inset-bottom, 0px));
+  padding: 64px 0 max(28px, env(safe-area-inset-bottom, 0px));
+}
+
+.footer .container {
+  display: grid;
+  gap: 40px;
 }
 
 .footer::before {
@@ -2891,7 +2894,156 @@ a.pro-hub-tile:hover .learning-card-aux {
   inset: 0 0 auto 0;
   height: 3px;
   background: linear-gradient(90deg, var(--teal-400), var(--accent) 55%, var(--teal-300));
-  opacity: 0.85;
+  opacity: 0.8;
+}
+
+/* ── Pre-footer CTA ──────────────────────────────────────────── */
+.footer-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.footer-cta-copy h3 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 3vw, 1.85rem);
+  font-weight: 600;
+  color: #fff;
+  margin: 0 0 6px;
+}
+
+.footer-cta-copy p {
+  font-size: 15px;
+  color: rgba(255,255,255,0.65);
+  margin: 0;
+}
+
+.footer-cta-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.btn-whatsapp {
+  background: #25D366;
+  color: #fff;
+  border: none;
+}
+
+.btn-whatsapp:hover { background: #1da851; color: #fff; }
+
+/* ── Main grid ───────────────────────────────────────────────── */
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1.3fr 0.95fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.footer-brand .footer-name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1.65rem;
+  letter-spacing: -0.02em;
+  color: #fff;
+}
+
+.footer-brand .footer-tagline {
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.6);
+  margin: 12px 0 0;
+  max-width: 30ch;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+}
+
+.footer-nav2 a {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.footer-nav2 a span { font-size: 15px; line-height: 1; }
+
+/* ── Glassmorphism contact card ──────────────────────────────── */
+.footer-contact-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 20px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.05);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.footer-contact-card a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  padding: 9px 12px;
+  border-radius: 12px;
+  transition: background 150ms, color 150ms;
+}
+
+.footer-contact-card a:hover { background: rgba(255,255,255,0.07); color: #fff; }
+
+.footer-contact-card .footer-wa {
+  background: #25D366;
+  color: #fff;
+  font-weight: 600;
+  justify-content: center;
+}
+
+.footer-contact-card .footer-wa:hover { background: #1da851; }
+
+/* ── Trust strip ─────────────────────────────────────────────── */
+.footer-trust {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 28px;
+}
+
+.footer-trust li {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.7);
+}
+
+.footer-trust li::before {
+  content: '✓';
+  color: var(--teal-300);
+  font-weight: 700;
+}
+
+@media (max-width: 880px) {
+  .footer-grid { grid-template-columns: 1fr 1fr; }
+  .footer-contact-card { grid-column: 1 / -1; }
+}
+
+@media (max-width: 560px) {
+  .footer-grid { grid-template-columns: 1fr; }
+  .footer-cta { flex-direction: column; align-items: flex-start; }
+  .footer-cta-actions { width: 100%; }
+  .footer-cta-actions .btn { flex: 1; justify-content: center; }
+  .footer-trust { gap: 10px 20px; }
 }
 
 .footer-shell {
@@ -4052,9 +4204,15 @@ a.pro-hub-tile:hover .learning-card-aux {
 
   .grid-2 { grid-template-columns: 1fr; }
 
-  .footer-cols { grid-template-columns: 1fr; }
+  .footer-cols { grid-template-columns: 1fr 1fr; gap: 24px 18px; }
   .footer-top  { flex-direction: column; }
   .footer-bottom2 { flex-direction: column; align-items: flex-start; }
+  .footer-contact { width: 100%; }
+  .footer-pill { width: 100%; box-sizing: border-box; font-size: 12px; }
+}
+
+@media (max-width: 340px) {
+  .footer-cols { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 480px) {

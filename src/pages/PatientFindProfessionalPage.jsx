@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { professionals as professionalsApi } from '../lib/api';
+
+const VALID_ROLES = ['psychiatrist', 'psychologist', 'therapist', 'counsellor'];
 
 const ROLES = [
   { id: 'all',          label: 'All',          icon: '✨', color: '#4a5a30' },
@@ -100,7 +102,9 @@ function Avatar({ name, role, size = 56 }) {
 
 export default function PatientFindProfessionalPage() {
   // ── Filters ────────────────────────────────────────────────
-  const [role, setRole]         = useState('all');
+  const [searchParams] = useSearchParams();
+  const initialRole = VALID_ROLES.includes(searchParams.get('role')) ? searchParams.get('role') : 'all';
+  const [role, setRole]         = useState(initialRole);
   const [language, setLanguage] = useState('Any');
   const [city, setCity]         = useState('');
   const [search, setSearch]     = useState('');

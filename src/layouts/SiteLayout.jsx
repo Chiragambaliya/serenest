@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
-import EmailCapture from '../components/EmailCapture';
 
 export default function SiteLayout() {
   const [scrolled, setScrolled]   = useState(false);
@@ -172,115 +171,94 @@ export default function SiteLayout() {
       {/* ── Footer ─────────────────────────────────────────── */}
       <footer className="footer">
         <div className="container">
-          <div className="footer-shell">
-            {/* Top row */}
-            <div className="footer-top">
-              <div className="footer-brandline">
-                <div className="footer-brandstack">
-                  <div className="footer-name">Serenest</div>
-                  <div className="footer-brandtag">Mind care, simplified</div>
-                  <div className="footer-tagline">
-                    Premium, privacy-first telepsychiatry — built for continuity of care.
-                  </div>
-                </div>
-              </div>
-              <EmailCapture source="footer" />
+          {/* Pre-footer CTA */}
+          <div className="footer-cta">
+            <div className="footer-cta-copy">
+              <h3>Need help today?</h3>
+              <p>Book a consultation with a qualified mental health professional.</p>
+            </div>
+            <div className="footer-cta-actions">
+              <Link className="btn btn-primary btn-lg" to="/book">Book appointment</Link>
+              <a
+                className="btn btn-whatsapp btn-lg"
+                href="https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest"
+                target="_blank"
+                rel="noreferrer"
+              >
+                WhatsApp
+              </a>
+            </div>
+          </div>
+
+          <div className="footer-divider" aria-hidden="true" />
+
+          {/* Main grid: brand · quick links · contact card */}
+          <div className="footer-grid">
+            <div className="footer-brand">
+              <div className="footer-name">Serenest</div>
+              <p className="footer-tagline">
+                Doctor-led mental healthcare &amp; professional education.
+              </p>
             </div>
 
-            <div className="footer-divider" aria-hidden="true" />
-
-            {/* Link columns */}
-            <div className="footer-cols">
-              <div className="footer-col2">
-                <div className="footer-title2">Explore</div>
-                <nav className="footer-nav2" aria-label="Explore links">
-                  <Link to="/services">Services</Link>
-                  <Link to="/pricing">Pricing</Link>
-                  <Link to="/faq">FAQ</Link>
-                  <Link to="/blog">Blog</Link>
-                  <Link to="/about">About us</Link>
-                  <Link to="/team">Team</Link>
-                  <Link to="/academy">Serenest Academy</Link>
-                  <Link to="/professionals/learning">Clinician learning</Link>
-                  <Link to="/professionals/resources">Pro resources</Link>
-                  <Link to="/professionals/guidelines">Pro guidelines</Link>
-                </nav>
-              </div>
-
-              <div className="footer-col2">
+            <div className="footer-links">
+              <div>
                 <div className="footer-title2">Care</div>
                 <nav className="footer-nav2" aria-label="Care links">
-                  <Link to="/book">Book an appointment</Link>
-                  <Link to="/screening">Self-screening</Link>
-                  <Link to="/patient/find-professional">Find a professional</Link>
-                  <Link to="/privacy">Privacy policy</Link>
+                  <Link to="/book"><span aria-hidden="true">🩺</span> Book appointment</Link>
+                  <Link to="/patient/find-professional"><span aria-hidden="true">🔍</span> Find a professional</Link>
+                  <Link to="/screening"><span aria-hidden="true">📋</span> Self screening</Link>
+                  <Link to="/services"><span aria-hidden="true">🏢</span> Corporate wellness</Link>
                 </nav>
               </div>
-
-              <div className="footer-col2">
-                <div className="footer-title2">Topics</div>
-                <nav className="footer-nav2" aria-label="Topic links">
-                  <Link to="/guides">All guides</Link>
-                  <Link to="/online-psychiatrist-for-depression-india">Online psychiatrist for depression</Link>
-                  <Link to="/anxiety-counselling-online-india">Anxiety counselling online</Link>
-                  <Link to="/adhd-assessment-online-india">Adult ADHD assessment online</Link>
-                  <Link to="/ocd-treatment-online-india">OCD treatment online</Link>
-                  <Link to="/phq-9-depression-screening">PHQ-9 depression screening</Link>
-                  <Link to="/gad-7-anxiety-screening">GAD-7 anxiety screening</Link>
-                  <Link to="/online-psychiatrist-prescription-india">Online prescription validity</Link>
+              <div>
+                <div className="footer-title2">Academy</div>
+                <nav className="footer-nav2" aria-label="Academy links">
+                  <Link to="/academy"><span aria-hidden="true">🎓</span> Courses</Link>
+                  <Link to="/professionals/learning"><span aria-hidden="true">📚</span> Clinician learning</Link>
+                  <Link to="/professionals/resources"><span aria-hidden="true">📖</span> Resources</Link>
+                  <Link to="/academy#offer"><span aria-hidden="true">🏆</span> Certifications</Link>
                 </nav>
-              </div>
-
-              <div className="footer-col2">
-                <div className="footer-title2">Contact</div>
-                <div className="footer-contact">
-                  <a
-                    className="footer-pill"
-                    href="mailto:support@serenest.in"
-                  >
-                    support@serenest.in
-                  </a>
-                  <a className="footer-pill" href="tel:7777936367">
-                    📞 7777936367
-                  </a>
-                  <a className="footer-pill" href="https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest" target="_blank" rel="noreferrer" style={{ background: '#25D366', color: '#fff' }}>
-                    WhatsApp us
-                  </a>
-                  <p className="footer-note">
-                    Not for emergencies. If you are in immediate danger,
-                    contact your nearest emergency service.
-                  </p>
-                </div>
               </div>
             </div>
 
-            <div className="footer-divider" aria-hidden="true" />
+            <div className="footer-contact-card">
+              <a href="mailto:support@serenest.in">
+                <span aria-hidden="true">📧</span> support@serenest.in
+              </a>
+              <a href="tel:917777936367">
+                <span aria-hidden="true">📞</span> +91 77779 36367
+              </a>
+              <a
+                className="footer-wa"
+                href="https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <span aria-hidden="true">🟢</span> WhatsApp support
+              </a>
+            </div>
+          </div>
 
-            <p
-              className="footer-legal"
-              style={{
-                fontSize: 12,
-                lineHeight: 1.55,
-                opacity: 0.75,
-                margin: '0 0 12px',
-                maxWidth: '72ch',
-              }}
-            >
-              Serenest is operated by Serenest Education Pvt Ltd. Serenest provides
-              technology-enabled mental health access, education, screening, and
-              care-coordination services through qualified professionals.
+          {/* Trust strip */}
+          <ul className="footer-trust" aria-label="Why Serenest">
+            <li>Doctor-led</li>
+            <li>Confidential</li>
+            <li>Evidence-based</li>
+            <li>Online across India</li>
+          </ul>
+
+          <div className="footer-divider" aria-hidden="true" />
+
+          {/* Bottom bar */}
+          <div className="footer-bottom2">
+            <p className="footer-legal">
+              © {new Date().getFullYear()} Serenest Education Pvt Ltd
             </p>
-
-            {/* Bottom row */}
-            <div className="footer-bottom2">
-              <p className="footer-legal">
-                © {new Date().getFullYear()} Serenest Education Pvt Ltd. All rights reserved.
-              </p>
-              <nav className="footer-mini-links" aria-label="Legal links">
-                <Link to="/privacy">Privacy</Link>
-                <a href="mailto:support@serenest.in?subject=Feedback">Feedback</a>
-              </nav>
-            </div>
+            <nav className="footer-mini-links" aria-label="Legal links">
+              <Link to="/privacy">Privacy policy</Link>
+              <a href="mailto:support@serenest.in?subject=Feedback">Feedback</a>
+            </nav>
           </div>
         </div>
       </footer>
