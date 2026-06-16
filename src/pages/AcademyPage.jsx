@@ -58,12 +58,12 @@ const PROGRAMMES = [
 ];
 
 const AUDIENCE = [
-  'Psychology Students',
-  'Counsellors',
-  'Psychologists',
-  'Psychiatry Residents',
-  'Mental Health Professionals',
-  'Healthcare Organizations',
+  'Psychology students',
+  'Fresh graduates',
+  'Practicing counsellors',
+  'Psychiatry residents',
+  'Mental health professionals',
+  'Researchers',
 ];
 
 const WHY_SERENEST = [
@@ -74,6 +74,34 @@ const WHY_SERENEST = [
   'Certificates of completion',
   'Community and mentorship',
 ];
+
+const STATS = [
+  { value: '50+', label: 'Hours of learning' },
+  { value: 'Expert', label: 'Clinician faculty' },
+  { value: 'Case-based', label: 'Practical training' },
+  { value: 'Certified', label: 'On completion' },
+];
+
+const LEARNING_PATHS = [
+  {
+    icon: '🧠',
+    title: 'Psychology Student Path',
+    steps: ['Foundations', 'Assessment', 'Case formulation', 'Internship readiness'],
+  },
+  {
+    icon: '💬',
+    title: 'Counsellor Path',
+    steps: ['Communication', 'Ethics', 'CBT basics', 'Supervision'],
+  },
+  {
+    icon: '🏥',
+    title: 'Psychiatry Path',
+    steps: ['Telepsychiatry', 'Documentation', 'Prescribing', 'Practice management'],
+  },
+];
+
+const INSTRUCTOR_MAILTO =
+  'mailto:support@serenest.in?subject=Serenest%20Academy%20%E2%80%94%20Become%20an%20Instructor';
 
 export default function AcademyPage() {
   useSEO({ path: '/academy', ...ROUTE_SEO['/academy'] });
@@ -89,27 +117,31 @@ export default function AcademyPage() {
             </div>
           </div>
 
-          <p className="ed-kicker">Serenest Academy · Building India&apos;s Future Mental Health Workforce</p>
+          <p className="ed-kicker">Learn. Practice. Grow.</p>
           <h1 className="ed-hero-title">
-            Practical, clinically oriented education for India&apos;s mental health workforce.
+            Training the next generation of psychologists, counsellors, and psychiatrists.
           </h1>
           <p className="ed-hero-lead">
-            At Serenest Academy, we provide practical, clinically oriented education for psychology
-            students, counsellors, psychologists, psychiatry residents, and mental health professionals.
-            Our programs focus on real-world skills, case-based learning, ethical practice, and modern
-            mental healthcare.
+            Professional certificates · Clinical skills · Research · Digital mental healthcare —
+            clinician-led education that takes you from classroom to clinical practice.
           </p>
           <div className="ed-hero-actions">
             <a className="btn btn-primary btn-lg" href="#offer">
-              Explore Courses
+              Explore programs
             </a>
-            <a className="btn btn-ghost btn-lg" href="#guide">
-              Ask Academy Guide
+            <a className="btn btn-ghost btn-lg" href={INSTRUCTOR_MAILTO}>
+              Become an instructor
             </a>
-            <Link className="btn btn-ghost btn-lg" to="/book">
-              Book a consultation
-            </Link>
           </div>
+
+          <ul className="ed-stats" aria-label="Academy at a glance">
+            {STATS.map((s) => (
+              <li key={s.label}>
+                <span className="ed-stat-value">{s.value}</span>
+                <span className="ed-stat-label">{s.label}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -119,7 +151,7 @@ export default function AcademyPage() {
         <div className="container">
           <div className="ed-section-head">
             <p className="ed-section-label">What We Offer</p>
-            <h2>Built for real-world clinical practice</h2>
+            <h2>From classroom to clinical practice.</h2>
             <p className="ed-muted">
               Diagnosis and treatment belong with licensed clinicians on Serenest. Academy is where that
               workforce is trained — structured tracks across certificates, students, counselling,
@@ -152,12 +184,41 @@ export default function AcademyPage() {
         </div>
       </section>
 
-      <section id="audiences" className="ed-section ed-section-alt">
+      <section id="paths" className="ed-section ed-section-alt">
+        <div className="container">
+          <div className="ed-section-head">
+            <p className="ed-section-label">Learning Paths</p>
+            <h2>Built around careers, not just courses.</h2>
+            <p className="ed-muted">
+              Follow a structured path from foundations to practice-ready, mapped to where you are in
+              your journey.
+            </p>
+          </div>
+
+          <div className="ed-paths">
+            {LEARNING_PATHS.map((p) => (
+              <article key={p.title} className="ed-path">
+                <div className="ed-path-head">
+                  <span className="ed-path-icon" aria-hidden="true">{p.icon}</span>
+                  <h3>{p.title}</h3>
+                </div>
+                <ol className="ed-path-steps">
+                  {p.steps.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ol>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="audiences" className="ed-section">
         <div className="container">
           <div className="ed-split">
             <div>
-              <p className="ed-section-label">Who Can Join?</p>
-              <h2>Built for the people training and practising in mental health</h2>
+              <p className="ed-section-label">Who Should Join?</p>
+              <h2>Designed for everyone building a career in mental health</h2>
               <ul className="ed-list">
                 {AUDIENCE.map((a) => (
                   <li key={a}>{a}</li>
