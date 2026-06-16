@@ -95,6 +95,18 @@ const TABS = [
   { id: 'signups',       label: 'Signups' },
 ];
 
+const TAB_ICONS = {
+  overview: '📊',
+  website: '🌐',
+  bookings: '📅',
+  professionals: '🩺',
+  applications: '👩‍⚕️',
+  hr: '🧑‍💼',
+  messages: '💬',
+  screenings: '🧠',
+  signups: '📋',
+};
+
 const TAB_HELP = {
   overview: 'Quick KPI view and shortcuts to each workflow.',
   website: 'Every public route — open in a new tab, copy links for QA or campaigns, ping API health.',
@@ -518,51 +530,33 @@ export default function AdminPage() {
   // ── login screen ───────────────────────────────────────────
   if (!authed) {
     return (
-      <div style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}>
-        <div style={{
-          width: '100%', maxWidth: 420,
-          background: 'var(--surface)',
-          border: '1px solid var(--border)',
-          borderRadius: 16,
-          padding: '2.5rem 2rem',
-          boxShadow: 'var(--shadow-lg)',
-        }}>
-          <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
-            <div style={{
-              width: 52, height: 52, borderRadius: 12, margin: '0 auto 1rem',
-              background: 'linear-gradient(135deg, var(--brand-500), var(--brand-700))',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '1.5rem',
-            }}>🛡</div>
-            <h1 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: 4 }}>Admin Panel</h1>
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Enter your admin secret to continue</p>
+      <div className="admin-page admin-login-screen">
+        <div className="admin-login-card">
+          <div className="admin-login-head">
+            <div className="admin-login-mark">🛡</div>
+            <h1>Admin Panel</h1>
+            <p>Enter your admin secret to continue</p>
           </div>
 
-          <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <form onSubmit={handleLogin} className="admin-login-form">
             <div>
-              <label style={{ display: 'block', fontWeight: 600, fontSize: '0.85rem', marginBottom: 6 }}>Admin Secret</label>
+              <label className="admin-field-label" htmlFor="admin-secret">Admin Secret</label>
               <input
+                id="admin-secret"
                 type="password"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Your ADMIN_SECRET from .env"
                 autoComplete="current-password"
-                style={{
-                  width: '100%', padding: '0.75rem 1rem',
-                  border: `1px solid ${authErr ? '#dc3545' : 'var(--border)'}`,
-                  borderRadius: 8, fontSize: '1rem',
-                  background: 'var(--bg)',
-                  color: 'var(--text)',
-                  boxSizing: 'border-box',
-                }}
+                className={`admin-input ${authErr ? 'admin-input--error' : ''}`}
               />
-              {authErr && <p style={{ color: '#dc3545', fontSize: '0.82rem', marginTop: 6 }}>{authErr}</p>}
+              {authErr && <p className="admin-field-error">{authErr}</p>}
             </div>
             <button type="submit" className="btn btn-primary btn-full">Sign in</button>
           </form>
 
-          <p style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            <Link to="/" style={{ color: 'var(--brand-600)' }}>← Back to website</Link>
+          <p className="admin-login-back">
+            <Link to="/">← Back to website</Link>
           </p>
         </div>
       </div>
@@ -570,76 +564,72 @@ export default function AdminPage() {
   }
 
   // ── dashboard ──────────────────────────────────────────────
+  const activeTabLabel = TABS.find((t) => t.id === tab)?.label ?? 'Dashboard';
+
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--bg-subtle, #f8f9fa)' }}>
-      {/* Top bar */}
-      <div style={{
-        background: 'var(--surface)',
-        borderBottom: '1px solid var(--border)',
-        padding: '0.75rem 1.5rem',
-        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        position: 'sticky', top: 0, zIndex: 10,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <span style={{ fontSize: '1.1rem' }}>🛡</span>
-          <strong style={{ fontSize: '1rem' }}>Serenest Admin</strong>
-        </div>
-        <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-          <button
-            onClick={() => load(tab === 'overview' ? 'all' : tab)}
-            disabled={loading}
-            className="btn btn-ghost btn-sm"
-          >
-            {loading ? '↻ Loading…' : '↻ Refresh'}
-          </button>
-          <button onClick={signOut} className="btn btn-ghost btn-sm">Sign out</button>
-        </div>
-      </div>
-
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '1.5rem' }}>
-        {error && (
-          <div style={{
-            background: '#fff3cd', border: '1px solid #ffc107',
-            borderRadius: 8, padding: '0.75rem 1rem',
-            marginBottom: '1rem', fontSize: '0.88rem', color: '#856404',
-          }}>
-            ⚠ {error}
+    <div className="admin-page admin-dashboard">
+      <div className="admin-shell">
+        <aside className="admin-sidebar">
+          <div className="admin-sidebar-brand">
+            <span className="admin-sidebar-mark">🛡</span>
+            <strong>Serenest Admin</strong>
           </div>
-        )}
 
-        {/* Tabs */}
-        <div style={{ display: 'flex', gap: 4, marginBottom: '1.5rem', overflowX: 'auto', paddingBottom: 4 }}>
-          {TABS.map((t) => (
+          <nav className="admin-nav" aria-label="Admin sections">
+            {TABS.map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                className={`admin-nav-item ${tab === t.id ? 'is-active' : ''}`}
+                onClick={() => { setTab(t.id); if (t.id !== 'overview') load(t.id); }}
+              >
+                <span className="admin-nav-icon" aria-hidden="true">{TAB_ICONS[t.id]}</span>
+                <span className="admin-nav-label">{t.label}</span>
+                {t.id === 'bookings'      && stats?.pending_bookings     > 0 && <Pill n={stats.pending_bookings} />}
+                {t.id === 'professionals' && stats?.active_professionals > 0 && <Pill n={stats.active_professionals} color="#198754" />}
+                {t.id === 'applications'  && stats?.pending_applications > 0 && <Pill n={stats.pending_applications} />}
+                {t.id === 'hr'            && stats?.new_jobs             > 0 && <Pill n={stats.new_jobs} />}
+              </button>
+            ))}
+          </nav>
+
+          <div className="admin-sidebar-footer">
             <button
-              key={t.id}
-              onClick={() => { setTab(t.id); if (t.id !== 'overview') load(t.id); }}
-              style={{
-                padding: '0.5rem 1.1rem',
-                borderRadius: 8,
-                border: 'none',
-                fontSize: '0.88rem',
-                fontWeight: tab === t.id ? 700 : 500,
-                cursor: 'pointer',
-                background: tab === t.id ? 'var(--brand-500)' : 'var(--surface)',
-                color: tab === t.id ? '#fff' : 'var(--text)',
-                boxShadow: tab === t.id ? '0 2px 8px rgba(0,128,128,0.3)' : 'none',
-                transition: 'all 0.15s',
-                whiteSpace: 'nowrap',
-              }}
+              type="button"
+              onClick={() => load(tab === 'overview' ? 'all' : tab)}
+              disabled={loading}
+              className="btn btn-ghost btn-sm btn-full"
             >
-              {t.label}
-              {t.id === 'bookings'      && stats?.pending_bookings     > 0 && <Pill n={stats.pending_bookings} />}
-              {t.id === 'professionals' && stats?.active_professionals > 0 && <Pill n={stats.active_professionals} color="#198754" />}
-              {t.id === 'applications'  && stats?.pending_applications > 0 && <Pill n={stats.pending_applications} />}
-              {t.id === 'hr'            && stats?.new_jobs             > 0 && <Pill n={stats.new_jobs} />}
+              {loading ? '↻ Loading…' : '↻ Refresh'}
             </button>
-          ))}
-        </div>
-        <p style={{ margin: '-0.8rem 0 1.25rem', fontSize: '0.84rem', color: 'var(--text-muted)' }}>
-          {TAB_HELP[tab]}
-        </p>
+            <button type="button" onClick={signOut} className="btn btn-ghost btn-sm btn-full">Sign out</button>
+          </div>
+        </aside>
 
-        {/* ── OVERVIEW ── */}
+        <div className="admin-main">
+          <header className="admin-topbar">
+            <div>
+              <h1 className="admin-topbar-title">{activeTabLabel}</h1>
+              <p className="admin-topbar-help">{TAB_HELP[tab]}</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => load(tab === 'overview' ? 'all' : tab)}
+              disabled={loading}
+              className="btn btn-ghost btn-sm admin-topbar-refresh"
+            >
+              {loading ? '↻ Loading…' : '↻ Refresh'}
+            </button>
+          </header>
+
+          <div className="admin-content">
+            {error && (
+              <div className="admin-alert">
+                ⚠ {error}
+              </div>
+            )}
+
+            {/* ── OVERVIEW ── */}
         {tab === 'overview' && (
           <div>
             <h2 style={{ fontWeight: 800, fontSize: '1.4rem', marginBottom: '1rem' }}>Dashboard Overview</h2>
@@ -1795,6 +1785,8 @@ export default function AdminPage() {
             )}
           </div>
         )}
+          </div>
+        </div>
       </div>
     </div>
   );

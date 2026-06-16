@@ -1,6 +1,6 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { bookings } from '../lib/api';
+import { bookings, professionals as professionalsApi } from '../lib/api';
 import { CONSULTATION_MODES } from '../lib/consultationModes';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
@@ -49,6 +49,37 @@ export default function BookingPage() {
 
   const [practitionerType, setPractitionerType] = useState(preProRole || 'psychiatrist');
   const [mode, setMode] = useState('video');
+
+  // ── Counsellor picker (only when no professional was preselected via deep link) ──
+  const [directory, setDirectory] = useState([]);
+  const [directoryLoading, setDirectoryLoading] = useState(false);
+  const [selectedProId, setSelectedProId] = useState('');
+
+  useEffect(() => {
+    if (hasPro) return;
+    setDirectoryLoading(true);
+    professionalsApi
+      .directory()
+      .then((json) => setDirectory(json.professionals ?? []))
+      .catch(() => setDirectory([]))
+      .finally(() => setDirectoryLoading(false));
+  }, [hasPro]);
+
+  const directoryForType = useMemo(
+    () => directory.filter((p) => p.role === practitionerType),
+    [directory, practitionerType],
+  );
+
+  const selectedPro = useMemo(
+    () => directoryForType.find((p) => p.id === selectedProId) ?? null,
+    [directoryForType, selectedProId],
+  );
+
+  // Reset the picked counsellor whenever the practitioner type changes —
+  // a previously selected id may not belong to the new type's list.
+  useEffect(() => {
+    setSelectedProId('');
+  }, [practitionerType]);
   const [dayKey, setDayKey] = useState(days[0]?.key ?? '');
   const [time, setTime] = useState(times[0] ?? '');
 
@@ -73,6 +104,7 @@ export default function BookingPage() {
         patient_email: email.trim() || undefined,
         practitioner_type: practitionerType,
         ...(hasPro && { professional_id: preProId, professional_name: preProName }),
+        ...(!hasPro && selectedProId && { professional_id: selectedProId, professional_name: selectedPro?.full_name }),
         mode,
         preferred_date: dayKey,
         preferred_time: time,
@@ -193,6 +225,48 @@ export default function BookingPage() {
                       ))}
                     </div>
                   </div>
+
+                  {!hasPro && (
+                    <div className="field-wide">
+                      <div className="field-label">
+                        Choose your counsellor <span className="muted" style={{ fontWeight: 400 }}>(optional)</span>
+                      </div>
+                      {directoryLoading ? (
+                        <p className="muted" style={{ marginTop: 8 }}>Loading available professionals…</p>
+                      ) : directoryForType.length === 0 ? (
+                        <p className="muted" style={{ marginTop: 8 }}>
+                          No verified {selectedTypeLabel.toLowerCase()}s listed yet — we'll match you with the next available one.
+                        </p>
+                      ) : (
+                        <div className="choice-grid choice-grid--modes">
+                          <button
+                            type="button"
+                            className={`choice-card choice-card--stacked ${selectedProId === '' ? 'is-selected' : ''}`}
+                            onClick={() => setSelectedProId('')}
+                          >
+                            <span className="choice-card-icon" aria-hidden="true">✨</span>
+                            <span className="choice-card-title">Any available</span>
+                            <span className="choice-card-hint">We'll match you with a verified professional</span>
+                          </button>
+                          {directoryForType.map((p) => (
+                            <button
+                              key={p.id}
+                              type="button"
+                              className={`choice-card choice-card--stacked ${selectedProId === p.id ? 'is-selected' : ''}`}
+                              onClick={() => setSelectedProId(p.id)}
+                            >
+                              <span className="choice-card-icon" aria-hidden="true">🧑‍⚕️</span>
+                              <span className="choice-card-title">{p.full_name}</span>
+                              <span className="choice-card-hint">
+                                {p.fee_inr ? `₹${p.fee_inr}` : ''}{p.duration_min ? ` · ${p.duration_min} min` : ''}{p.city ? ` · ${p.city}` : ''}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                   <div>
                     <div className="field-label">Consultation mode</div>
                     <div className="choice-grid choice-grid--modes">
@@ -376,6 +450,12 @@ export default function BookingPage() {
                     <div className="confirm-row">
                       <span className="confirm-k">Practitioner</span>
                       <span className="confirm-v">{selectedTypeLabel}</span>
+                    </div>
+                    <div className="confirm-row">
+                      <span className="confirm-k">Counsellor</span>
+                      <span className="confirm-v">
+                        {hasPro ? preProName : (selectedPro?.full_name ?? 'Any available')}
+                      </span>
                     </div>
                     <div className="confirm-row">
                       <span className="confirm-k">Mode</span>
