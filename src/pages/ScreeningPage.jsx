@@ -115,14 +115,14 @@ export default function ScreeningPage() {
   const progress = step === 0 ? 0 : step === 4 ? 100 : Math.round(((step - 1) / 3) * 100 + ((step === 1 ? phq.filter(v => v !== null).length / 9 : step === 2 ? gad.filter(v => v !== null).length / 7 : step === 3 ? (nameOk + phoneOk) / 2 : 0) / 3) * 100);
 
   return (
-    <div className="page" style={{ background: 'linear-gradient(180deg, #f0fdfa 0%, #ffffff 380px)', minHeight: '100vh' }}>
+    <div className="page" style={{ background: 'linear-gradient(180deg, #f4eee4 0%, #faf7f1 380px)', minHeight: '100vh' }}>
       <div className="container" style={{ maxWidth: 720, padding: '2.5rem 1rem 4rem' }}>
 
         {/* ── Header ────────────────────────────────────────── */}
         <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
           <p style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--brand-600)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Self-screening</p>
           <h1 style={{ fontSize: 'clamp(1.75rem, 4vw, 2.4rem)', fontWeight: 800, lineHeight: 1.15, marginBottom: 10, letterSpacing: '-0.02em' }}>
-            How have you been <span style={{ background: 'linear-gradient(135deg, #14b8a6, #0f766e)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>feeling lately?</span>
+            How have you been <span style={{ background: 'linear-gradient(135deg, #7a9a5a, #46552f)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>feeling lately?</span>
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1rem', maxWidth: 540, margin: '0 auto', lineHeight: 1.55 }}>
             A confidential 3-minute check-in using clinically validated questionnaires (PHQ-9 + GAD-7). Your answers help us match you with the right support.
@@ -136,9 +136,9 @@ export default function ScreeningPage() {
               <span>Step {step} of 3</span>
               <span>{step === 1 ? 'Mood (PHQ-9)' : step === 2 ? 'Anxiety (GAD-7)' : 'Your details'}</span>
             </div>
-            <div style={{ background: '#e6fffa', height: 8, borderRadius: 99, overflow: 'hidden' }}>
+            <div style={{ background: '#f1ebe1', height: 8, borderRadius: 99, overflow: 'hidden' }}>
               <div style={{
-                background: 'linear-gradient(90deg, #14b8a6, #0f766e)',
+                background: 'linear-gradient(90deg, #7a9a5a, #46552f)',
                 height: '100%', width: `${progress}%`,
                 transition: 'width 0.3s ease',
                 borderRadius: 99,
@@ -156,7 +156,7 @@ export default function ScreeningPage() {
                 { icon: '⏱',  title: '3 minutes',      desc: 'Quick, focused, well-designed questions.' },
                 { icon: '🩺', title: 'Clinically valid', desc: 'Same tools used by psychiatrists worldwide.' },
               ].map((f) => (
-                <div key={f.title} style={{ background: '#f0fdfa', borderRadius: 12, padding: '1rem', textAlign: 'center' }}>
+                <div key={f.title} style={{ background: '#f4eee4', borderRadius: 12, padding: '1rem', textAlign: 'center' }}>
                   <div style={{ fontSize: '1.6rem', marginBottom: 6 }}>{f.icon}</div>
                   <div style={{ fontWeight: 800, fontSize: '0.92rem', marginBottom: 2 }}>{f.title}</div>
                   <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{f.desc}</div>
@@ -229,7 +229,7 @@ export default function ScreeningPage() {
                 <div style={{ display: 'flex', gap: 6, alignItems: 'stretch' }}>
                   <span style={{
                     display: 'inline-flex', alignItems: 'center', padding: '0 10px',
-                    background: 'var(--bg-subtle, #f0fdfa)', border: '1px solid var(--border)',
+                    background: 'var(--bg-subtle, #f4eee4)', border: '1px solid var(--border)',
                     borderRadius: 8, fontWeight: 600, color: 'var(--text-muted)',
                   }}>+91</span>
                   <input
@@ -255,7 +255,7 @@ export default function ScreeningPage() {
                   type="checkbox"
                   checked={callback}
                   onChange={(e) => setCallback(e.target.checked)}
-                  style={{ width: 18, height: 18, accentColor: 'var(--brand-500, #14b8a6)', flexShrink: 0, marginTop: 2 }}
+                  style={{ width: 18, height: 18, accentColor: 'var(--brand-500, #7a9a5a)', flexShrink: 0, marginTop: 2 }}
                 />
                 <span>I'd like a Serenest professional to <strong>reach out and discuss my results</strong>.</span>
               </label>
@@ -296,11 +296,11 @@ export default function ScreeningPage() {
               <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
                 <div style={{
                   width: 72, height: 72, borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #2dd4bf, #0f766e)',
+                  background: 'linear-gradient(135deg, #9bb481, #46552f)',
                   display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '2.2rem', color: '#fff',
                   marginBottom: '1rem',
-                  boxShadow: '0 8px 24px rgba(15, 118, 110, 0.35)',
+                  boxShadow: '0 8px 24px rgba(70, 85, 47, 0.35)',
                 }}>✓</div>
                 <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: 4 }}>Your results, {name.split(' ')[0]}</h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem' }}>
@@ -325,10 +325,10 @@ export default function ScreeningPage() {
 
               {/* Recommendation */}
               <div style={{
-                background: '#f0fdfa', border: '1px solid var(--brand-300, #5eead4)',
+                background: '#f4eee4', border: '1px solid var(--brand-300, #9bb481)',
                 borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '1.25rem',
               }}>
-                <div style={{ fontWeight: 800, marginBottom: 6, color: 'var(--brand-700, #0f766e)' }}>💡 Our recommendation</div>
+                <div style={{ fontWeight: 800, marginBottom: 6, color: 'var(--brand-700, #46552f)' }}>💡 Our recommendation</div>
                 <p style={{ margin: 0, fontSize: '0.92rem', lineHeight: 1.6 }}>
                   {(() => {
                     const high = Math.max(phqScore, gadScore);
@@ -367,7 +367,7 @@ function Card({ children }) {
       background: '#fff',
       borderRadius: 16,
       padding: '1.75rem',
-      boxShadow: '0 8px 24px rgba(15, 118, 110, 0.08)',
+      boxShadow: '0 8px 24px rgba(70, 85, 47, 0.08)',
       border: '1px solid var(--border)',
     }}>{children}</div>
   );
@@ -377,7 +377,7 @@ function QuestionnaireCard({ tool, title, questions, answers, setAnswers, onBack
   return (
     <Card>
       <div style={{ marginBottom: '1.25rem' }}>
-        <div style={{ display: 'inline-block', background: '#f0fdfa', color: 'var(--brand-700, #0f766e)', padding: '3px 10px', borderRadius: 99, fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.04em', marginBottom: 8 }}>
+        <div style={{ display: 'inline-block', background: '#f4eee4', color: 'var(--brand-700, #46552f)', padding: '3px 10px', borderRadius: 99, fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.04em', marginBottom: 8 }}>
           {tool}
         </div>
         <h2 style={{ fontSize: '1.1rem', fontWeight: 700, lineHeight: 1.4 }}>{title}</h2>
@@ -386,15 +386,15 @@ function QuestionnaireCard({ tool, title, questions, answers, setAnswers, onBack
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
         {questions.map((q, i) => (
           <div key={i} style={{
-            background: answers[i] !== null ? '#f0fdfa' : 'var(--bg-subtle, #fafafa)',
-            border: `1px solid ${answers[i] !== null ? 'var(--brand-300, #5eead4)' : 'var(--border)'}`,
+            background: answers[i] !== null ? '#f4eee4' : 'var(--bg-subtle, #fafafa)',
+            border: `1px solid ${answers[i] !== null ? 'var(--brand-300, #9bb481)' : 'var(--border)'}`,
             borderRadius: 12,
             padding: '12px 14px',
             transition: 'all 0.15s',
           }}>
             <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
               <span style={{
-                background: 'var(--brand-500, #14b8a6)', color: '#fff',
+                background: 'var(--brand-500, #7a9a5a)', color: '#fff',
                 width: 22, height: 22, borderRadius: '50%',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '0.72rem', fontWeight: 800, flexShrink: 0,
@@ -415,8 +415,8 @@ function QuestionnaireCard({ tool, title, questions, answers, setAnswers, onBack
                     style={{
                       padding: '7px 8px',
                       borderRadius: 8,
-                      border: selected ? '2px solid var(--brand-500, #14b8a6)' : '1px solid var(--border)',
-                      background: selected ? 'var(--brand-500, #14b8a6)' : '#fff',
+                      border: selected ? '2px solid var(--brand-500, #7a9a5a)' : '1px solid var(--border)',
+                      background: selected ? 'var(--brand-500, #7a9a5a)' : '#fff',
                       color: selected ? '#fff' : 'var(--text)',
                       fontSize: '0.8rem',
                       fontWeight: selected ? 700 : 500,
@@ -458,7 +458,7 @@ function ScoreCard({ title, score, max, severity }) {
         <span style={{ fontSize: '2.2rem', fontWeight: 800, color: severity.color, lineHeight: 1 }}>{score}</span>
         <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>/ {max}</span>
       </div>
-      <div style={{ background: 'var(--bg-subtle, #f0fdfa)', height: 6, borderRadius: 99, overflow: 'hidden', marginBottom: 8 }}>
+      <div style={{ background: 'var(--bg-subtle, #f4eee4)', height: 6, borderRadius: 99, overflow: 'hidden', marginBottom: 8 }}>
         <div style={{ background: severity.color, height: '100%', width: `${pct}%`, borderRadius: 99 }} />
       </div>
       <div style={{

@@ -1848,26 +1848,26 @@ export default function AdminPage() {
                         <div style={{ gridColumn: '1 / -1', paddingTop: 8, borderTop: '1px dashed var(--border)', display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
                           <span style={{ fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Also screened:</span>
                           {s.optional_screenings.isi && (
-                            <span style={{ background: '#e6fffa', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>Sleep ISI {s.optional_screenings.isi.score}</span>
+                            <span style={{ background: '#f1ebe1', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>Sleep ISI {s.optional_screenings.isi.score}</span>
                           )}
                           {s.optional_screenings.audit_c && (
-                            <span style={{ background: '#e6fffa', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>AUDIT-C {s.optional_screenings.audit_c.score}/12</span>
+                            <span style={{ background: '#f1ebe1', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>AUDIT-C {s.optional_screenings.audit_c.score}/12</span>
                           )}
                           {s.optional_screenings.scoff && (
-                            <span style={{ background: '#e6fffa', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>SCOFF {s.optional_screenings.scoff.yes_count} yes</span>
+                            <span style={{ background: '#f1ebe1', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>SCOFF {s.optional_screenings.scoff.yes_count} yes</span>
                           )}
                           {s.optional_screenings.ptsd_screen && (
-                            <span style={{ background: '#e6fffa', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>
+                            <span style={{ background: '#f1ebe1', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>
                               Trauma {s.optional_screenings.ptsd_screen.event ? `${s.optional_screenings.ptsd_screen.symptom_yes_count}/5` : '—'}
                             </span>
                           )}
                           {s.optional_screenings.who5 && (
-                            <span style={{ background: '#e6fffa', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>
+                            <span style={{ background: '#f1ebe1', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>
                               WHO-5 {s.optional_screenings.who5.index}/100
                             </span>
                           )}
                           {s.optional_screenings.stop_bang && (
-                            <span style={{ background: '#e6fffa', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>
+                            <span style={{ background: '#f1ebe1', padding: '2px 8px', borderRadius: 99, fontSize: '0.75rem' }}>
                               STOP-BANG {s.optional_screenings.stop_bang.yes_count}/8
                             </span>
                           )}

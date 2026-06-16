@@ -15,7 +15,7 @@ html {
 
 body {
   margin: 0;
-  font-family: 'DM Sans', ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Inter', ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
   background: var(--bg);
   color: var(--ink);
   line-height: 1.6;
@@ -45,21 +45,21 @@ button {
 /* â”€â”€ Design Tokens â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 :root {
   /* Brand colours */
-  --teal-50:  #f0fdf4;
-  --teal-100: #ddd8cc;
-  --teal-200: #bbf7d0;
-  --teal-300: #86efac;
-  --teal-400: #4ade80;
-  --teal-500: #2e5849;
-  --teal-600: #24473b;
-  --teal-700: #284f41;
-  --teal-800: #203d31;
-  --teal-900: #1c2b22;
+  --teal-50:  #f5f1e3;
+  --teal-100: #e3dcc4;
+  --teal-200: #c9d2b0;
+  --teal-300: #9bb481;
+  --teal-400: #7a9a5a;
+  --teal-500: #57683f;
+  --teal-600: #3c4a2c;
+  --teal-700: #46552f;
+  --teal-800: #333f1f;
+  --teal-900: #2a3320;
 
   /* Secondary accent - modern cyan */
-  --accent: #06b6d4;
-  --accent-light: #cffafe;
-  --accent-dark: #164e63;
+  --accent: #c1572d;
+  --accent-light: #fbe3d3;
+  --accent-dark: #7a3015;
 
   /* Semantic */
   --brand:       var(--teal-500);
@@ -67,28 +67,28 @@ button {
   --brand-dark:  var(--teal-900);
 
   /* Neutral */
-  --ink:    #142019;
-  --ink-2:  rgba(20, 32, 25, 0.75);
-  --muted:  rgba(20, 32, 25, 0.55);
-  --subtle: rgba(20, 32, 25, 0.36);
+  --ink:    #1c2418;
+  --ink-2:  rgba(28, 36, 24, 0.75);
+  --muted:  rgba(28, 36, 24, 0.55);
+  --subtle: rgba(28, 36, 24, 0.36);
 
   /* Backgrounds */
-  --bg:       #fafdf9;
-  --bg-2:     #f0fdf4;
+  --bg:       #faf7f1;
+  --bg-2:     #f4eee4;
   --surface:  rgba(255, 255, 255, 0.92);
   --surface-2: rgba(255, 255, 255, 0.70);
 
   /* Borders */
-  --border:       rgba(20, 32, 25, 0.12);
-  --border-soft:  rgba(20, 32, 25, 0.07);
-  --border-brand: rgba(74, 103, 65, 0.07);
+  --border:       rgba(28, 36, 24, 0.12);
+  --border-soft:  rgba(28, 36, 24, 0.07);
+  --border-brand: rgba(92, 90, 56, 0.07);
 
   /* Shadows */
-  --shadow-xs: 0 1px 4px rgba(20, 32, 25, 0.06);
-  --shadow-sm: 0 4px 14px rgba(20, 32, 25, 0.08);
-  --shadow-md: 0 12px 32px rgba(20, 32, 25, 0.10);
-  --shadow-lg: 0 24px 60px rgba(20, 32, 25, 0.13);
-  --shadow-xl: 0 40px 90px rgba(20, 32, 25, 0.15);
+  --shadow-xs: 0 1px 4px rgba(28, 36, 24, 0.06);
+  --shadow-sm: 0 4px 14px rgba(28, 36, 24, 0.08);
+  --shadow-md: 0 12px 32px rgba(28, 36, 24, 0.10);
+  --shadow-lg: 0 24px 60px rgba(28, 36, 24, 0.13);
+  --shadow-xl: 0 40px 90px rgba(28, 36, 24, 0.15);
 
   /* Radius */
   --r-sm:  12px;
@@ -107,7 +107,7 @@ button {
   --sp-7: 80px;
 
   /* Typography */
-  --font-heading: 'Cormorant Garamond', Georgia, serif, system-ui, -apple-system, "Segoe UI",
+  --font-heading: 'Fraunces', Georgia, serif, system-ui, -apple-system, "Segoe UI",
     Roboto, sans-serif;
 
   /* Horizontal page gutter — keeps brand and copy off screen edges */
@@ -117,7 +117,7 @@ button {
 /* Heading scale â€” Inter, tight tracking, balanced wrapping */
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   color: var(--ink);
   text-wrap: balance;
 }
@@ -804,7 +804,7 @@ h6 {
 
 /* Headline */
 .hero-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(2.125rem, 5.5vw, 3.875rem);
   font-weight: 500;
   letter-spacing: -0.035em;
@@ -1209,7 +1209,7 @@ h6 {
 
 .section-kicker {
   display: inline-block;
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.14em;
@@ -1219,7 +1219,7 @@ h6 {
 }
 
 .section-head h2 {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(1.625rem, 3.6vw, 2.625rem);
   font-weight: 500;
   letter-spacing: -0.03em;
@@ -1267,7 +1267,7 @@ h6 {
 }
 
 .tile h3 {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(1.0625rem, 1.4vw, 1.125rem);
   font-weight: 500;
   letter-spacing: -0.017em;
@@ -1911,7 +1911,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .kicker {
   display: inline-block;
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.12em;
@@ -1963,7 +1963,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 .page-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(1.875rem, 4.5vw, 3.125rem);
   font-weight: 500;
   letter-spacing: -0.032em;
@@ -1983,7 +1983,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 /* Section label (small eyebrow above h2) */
 .section-label {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.14em;
@@ -1994,7 +1994,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 /* Generic heading alias */
 .h2 {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(1.375rem, 3.2vw, 2.125rem);
   font-weight: 500;
   letter-spacing: -0.026em;
@@ -2167,7 +2167,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 .blog-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(1.0625rem, 1.5vw, 1.125rem);
   font-weight: 500;
   letter-spacing: -0.02em;
@@ -2279,7 +2279,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 .page-hero-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-size: clamp(1.875rem, 4.5vw, 3.125rem);
   font-weight: 500;
   letter-spacing: -0.032em;
@@ -2877,14 +2877,26 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 /* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .footer {
-  background: var(--ink);
+  position: relative;
+  background:
+    radial-gradient(120% 80% at 0% 0%, rgba(123, 154, 90, 0.16), transparent 55%),
+    linear-gradient(165deg, #25341e 0%, #1a2415 60%, #161f12 100%);
   color: rgba(255,255,255,0.82);
-  padding: 64px 0 max(32px, env(safe-area-inset-bottom, 0px));
+  padding: 72px 0 max(32px, env(safe-area-inset-bottom, 0px));
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--teal-400), var(--accent) 55%, var(--teal-300));
+  opacity: 0.85;
 }
 
 .footer-shell {
   display: grid;
-  gap: 48px;
+  gap: 44px;
 }
 
 .footer-top {
@@ -2922,7 +2934,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 .footer-name {
   font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 1.25rem;
+  font-size: 1.6rem;
   letter-spacing: -0.02em;
   line-height: 1.1;
   text-transform: none;
@@ -2932,16 +2944,18 @@ a.pro-hub-tile:hover .learning-card-aux {
 .footer-brandtag {
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.11em;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--teal-300);
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 .footer-tagline {
-  font-size: 13px;
-  color: rgba(255,255,255,0.55);
-  margin-top: 10px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255,255,255,0.62);
+  margin-top: 12px;
+  max-width: 34ch;
 }
 
 .footer-divider {
@@ -2951,16 +2965,16 @@ a.pro-hub-tile:hover .learning-card-aux {
 
 .footer-cols {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 32px;
 }
 
 .footer-title2 {
   font-size: 11px;
-  font-weight: 500;
+  font-weight: 700;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.45);
+  color: var(--teal-300);
   margin-bottom: 16px;
 }
 
@@ -2989,18 +3003,19 @@ a.pro-hub-tile:hover .learning-card-aux {
   align-items: center;
   font-size: 13px;
   font-weight: 600;
-  color: rgba(255,255,255,0.80);
+  color: rgba(255,255,255,0.82);
   background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.10);
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: var(--r-full);
-  padding: 7px 14px;
-  transition: background 140ms, color 140ms;
+  padding: 8px 15px;
+  transition: background 160ms, color 160ms, border-color 160ms, transform 160ms;
 }
 
 .footer-pill:hover {
-  background: rgba(74, 103, 65, 0.09);
-  color: var(--teal-300);
-  border-color: rgba(74, 103, 65, 0.25);
+  background: rgba(123, 154, 90, 0.16);
+  color: #fff;
+  border-color: rgba(123, 154, 90, 0.4);
+  transform: translateY(-1px);
 }
 
 .footer-note {
@@ -4264,7 +4279,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 /* ============================================================
    Serenest Academy (literacy & learning) — `.ed-*` namespace.
    Lives on `/academy` inside the same React app. Reuses the
-   main shell and sage/cream palette; Cormorant headings, DM Sans body.
+   main shell and sage/cream palette; Fraunces headings, Inter body.
    ============================================================ */
 
 .ed-page {
@@ -4277,7 +4292,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   --ed-brand: var(--brand);
   --ed-shadow: var(--shadow-sm);
 
-  font-family: 'DM Sans', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   color: var(--ed-ink);
   letter-spacing: -0.01em;
 }
@@ -4285,7 +4300,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 .ed-page h1,
 .ed-page h2,
 .ed-page h3 {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.2;
@@ -4312,7 +4327,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 .ed-brand-name {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
   font-size: 1.05rem;
   color: var(--ed-brand);
@@ -4603,7 +4618,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 .ed-guide-title {
-  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-family: 'Fraunces', Georgia, serif;
   font-weight: 700;
   font-size: 1.25rem;
   color: var(--ed-ink);

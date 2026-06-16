@@ -541,10 +541,10 @@ export default function BookingPage() {
               <div className="booking-body" style={{ textAlign: 'center', padding: '2rem 1rem' }}>
                 <div style={{
                   width: 80, height: 80, borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #2dd4bf, #0f766e)',
+                  background: 'linear-gradient(135deg, #9bb481, #46552f)',
                   display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                   fontSize: '2.4rem', color: '#fff', marginBottom: '1.25rem',
-                  boxShadow: '0 8px 24px rgba(15, 118, 110, 0.35)',
+                  boxShadow: '0 8px 24px rgba(70, 85, 47, 0.35)',
                 }}>✓</div>
 
                 <h2 style={{ fontSize: '1.7rem', fontWeight: 800, marginBottom: 8 }}>

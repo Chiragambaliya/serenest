@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { professionals as professionalsApi } from '../lib/api';
 
 const ROLES = [
-  { id: 'all',          label: 'All',          icon: '✨', color: '#0d9488' },
+  { id: 'all',          label: 'All',          icon: '✨', color: '#4a5a30' },
   { id: 'psychiatrist', label: 'Psychiatrist', icon: '🩺', color: '#6f42c1' },
   { id: 'psychologist', label: 'Psychologist', icon: '🧠', color: '#0d6efd' },
   { id: 'therapist',    label: 'Therapist',    icon: '💬', color: '#198754' },
@@ -78,7 +78,7 @@ function mapToProfessional(a) {
 // ── Avatar component ───────────────────────────────────────────
 function Avatar({ name, role, size = 56 }) {
   const initials = getInitials(name);
-  const color = ROLE_COLORS[role] || '#0d9488';
+  const color = ROLE_COLORS[role] || '#4a5a30';
   return (
     <div style={{
       width: size, height: size,
@@ -181,13 +181,13 @@ export default function PatientFindProfessionalPage() {
     (maxFee !== 3000 ? 1 : 0);
 
   return (
-    <div className="page" style={{ background: 'linear-gradient(180deg, #f0fdfa 0%, #ffffff 320px)', minHeight: '100vh' }}>
+    <div className="page" style={{ background: 'linear-gradient(180deg, #f4eee4 0%, #faf7f1 320px)', minHeight: '100vh' }}>
       {/* ── Page header ────────────────────────────────────── */}
       <section style={{ padding: '3rem 0 1.5rem' }}>
         <div className="container" style={{ textAlign: 'center', maxWidth: 720 }}>
           <p style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--brand-600)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Find your match</p>
           <h1 style={{ fontSize: 'clamp(1.85rem, 4vw, 2.6rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: 12, letterSpacing: '-0.02em' }}>
-            The right professional, <span style={{ background: 'linear-gradient(135deg, #14b8a6, #0f766e)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>matched to you</span>
+            The right professional, <span style={{ background: 'linear-gradient(135deg, #7a9a5a, #46552f)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>matched to you</span>
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.02rem', lineHeight: 1.55 }}>
             Browse Serenest-verified psychiatrists, psychologists, therapists and counsellors. Filter by language, city and budget.
@@ -201,7 +201,7 @@ export default function PatientFindProfessionalPage() {
           background: '#fff',
           borderRadius: 16,
           padding: '14px 18px',
-          boxShadow: '0 8px 24px rgba(15, 118, 110, 0.08)',
+          boxShadow: '0 8px 24px rgba(70, 85, 47, 0.08)',
           border: '1px solid var(--border)',
           display: 'flex',
           alignItems: 'center',
@@ -259,7 +259,7 @@ export default function PatientFindProfessionalPage() {
                 <span style={{ fontSize: '1rem' }}>{r.icon}</span>
                 {r.label}
                 {count > 0 && <span style={{
-                  background: active ? r.color : 'var(--bg-subtle, #f0fdfa)',
+                  background: active ? r.color : 'var(--bg-subtle, #f4eee4)',
                   color: active ? '#fff' : 'var(--text-muted)',
                   borderRadius: 99,
                   padding: '1px 8px',
@@ -313,7 +313,7 @@ export default function PatientFindProfessionalPage() {
               min={500} max={5000} step={100}
               value={maxFee}
               onChange={(e) => setMaxFee(Number(e.target.value))}
-              style={{ width: '100%', accentColor: 'var(--brand-500, #14b8a6)' }}
+              style={{ width: '100%', accentColor: 'var(--brand-500, #7a9a5a)' }}
             />
           </div>
 
@@ -381,7 +381,7 @@ export default function PatientFindProfessionalPage() {
 
 // ── Professional Card ────────────────────────────────────────────
 function ProfessionalCard({ p }) {
-  const roleColor = ROLE_COLORS[p.role] || '#0d9488';
+  const roleColor = ROLE_COLORS[p.role] || '#4a5a30';
   return (
     <article style={{
       background: '#fff',
@@ -392,11 +392,11 @@ function ProfessionalCard({ p }) {
       flexDirection: 'column',
       gap: 12,
       transition: 'all 0.2s ease',
-      boxShadow: '0 2px 8px rgba(15, 118, 110, 0.05)',
+      boxShadow: '0 2px 8px rgba(70, 85, 47, 0.05)',
       cursor: 'default',
     }}
     onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 12px 28px ${roleColor}25`; }}
-    onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(15, 118, 110, 0.05)'; }}
+    onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(70, 85, 47, 0.05)'; }}
     >
       {/* Top: avatar + name + price */}
       <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', justifyContent: 'space-between' }}>
@@ -431,7 +431,7 @@ function ProfessionalCard({ p }) {
         <div style={{ display: 'flex', gap: 5, flexWrap: 'wrap' }}>
           {p.languages.slice(0, 4).map((l) => (
             <span key={l} style={{
-              background: '#f0fdfa', color: 'var(--brand-700)',
+              background: '#f4eee4', color: 'var(--brand-700)',
               padding: '3px 10px', borderRadius: 99,
               fontSize: '0.72rem', fontWeight: 600,
             }}>{l}</span>

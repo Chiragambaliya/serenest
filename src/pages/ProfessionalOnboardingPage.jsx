@@ -178,10 +178,10 @@ export default function ProfessionalOnboardingPage() {
             <div className="section-head about-hero-head" style={{ textAlign: 'center', maxWidth: 540, margin: '0 auto', padding: '2rem 1rem' }}>
               <div style={{
                 width: 80, height: 80, borderRadius: '50%',
-                background: 'linear-gradient(135deg, #2dd4bf, #0f766e)',
+                background: 'linear-gradient(135deg, #9bb481, #46552f)',
                 display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '2.4rem', color: '#fff', marginBottom: '1.25rem',
-                boxShadow: '0 8px 24px rgba(15, 118, 110, 0.35)',
+                boxShadow: '0 8px 24px rgba(70, 85, 47, 0.35)',
               }}>✓</div>
               <h1 className="page-title">Application received!</h1>
               <p className="about-subtext">
@@ -268,7 +268,7 @@ export default function ProfessionalOnboardingPage() {
                   style={{
                     width: `${progressPct}%`,
                     height: '100%',
-                    background: 'linear-gradient(90deg, #2dd4bf, #0f766e)',
+                    background: 'linear-gradient(90deg, #9bb481, #46552f)',
                     transition: 'width 0.2s ease',
                   }}
                 />

@@ -14,7 +14,7 @@
   --text-muted: var(--muted);
   --bg-subtle: var(--bg-2);
   --surface: #ffffff;
-  --border: rgba(20, 32, 25, 0.12);
+  --border: rgba(28, 36, 24, 0.12);
 
   min-height: 100vh;
   background: var(--bg-subtle);
@@ -97,7 +97,7 @@
 .admin-input:focus {
   outline: none;
   border-color: var(--brand-500);
-  box-shadow: 0 0 0 3px rgba(46, 88, 73, 0.15);
+  box-shadow: 0 0 0 3px rgba(60, 74, 44, 0.15);
 }
 
 .admin-input--error {
@@ -189,7 +189,7 @@
   background: var(--brand-500);
   color: #fff;
   font-weight: 700;
-  box-shadow: 0 2px 8px rgba(36, 71, 59, 0.28);
+  box-shadow: 0 2px 8px rgba(60, 74, 44, 0.28);
 }
 
 .admin-nav-icon {
@@ -287,7 +287,7 @@
 }
 
 .admin-content table tbody tr:nth-child(even) {
-  background: rgba(20, 32, 25, 0.015);
+  background: rgba(28, 36, 24, 0.015);
 }
 
 .admin-content table tbody tr:nth-child(even):hover {
@@ -302,7 +302,7 @@
 
 .admin-content > div > div[style*='cursor: pointer']:hover,
 .admin-content button[style*='text-align: left']:hover {
-  box-shadow: var(--shadow-md, 0 12px 32px rgba(20, 32, 25, 0.1));
+  box-shadow: var(--shadow-md, 0 12px 32px rgba(28, 36, 24, 0.1));
   transform: translateY(-1px);
 }
 

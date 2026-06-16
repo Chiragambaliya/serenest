@@ -1,17 +1,17 @@
 /* ── Home — world-class calm clinical landing ───────────────── */
 .home {
-  --h-ink: #142019;
-  --h-muted: rgba(20, 32, 25, 0.62);
-  --h-subtle: rgba(20, 32, 25, 0.45);
-  --h-line: rgba(20, 32, 25, 0.1);
-  --h-sage: #24473b;
-  --h-sage-mid: #2e5849;
-  --h-sage-dark: #1c2b22;
-  --h-cream: #f7f9f6;
-  --h-cream-2: #eef3ec;
+  --h-ink: #1c2418;
+  --h-muted: rgba(28, 36, 24, 0.62);
+  --h-subtle: rgba(28, 36, 24, 0.45);
+  --h-line: rgba(28, 36, 24, 0.1);
+  --h-sage: #3c4a2c;
+  --h-sage-mid: #57683f;
+  --h-sage-dark: #2a3320;
+  --h-cream: #faf7f1;
+  --h-cream-2: #f1ebe1;
   --h-white: #ffffff;
   --h-radius: 1.125rem;
-  --h-shadow: 0 1px 2px rgba(20, 32, 25, 0.04), 0 12px 32px rgba(20, 32, 25, 0.06);
+  --h-shadow: 0 1px 2px rgba(28, 36, 24, 0.04), 0 12px 32px rgba(28, 36, 24, 0.06);
   --h-section: clamp(4.5rem, 9vw, 6.5rem);
   background: var(--h-cream);
   color: var(--h-ink);
@@ -120,7 +120,7 @@
 .home__hero {
   padding: clamp(4rem, 11vw, 6.5rem) 0 clamp(3rem, 7vw, 4rem);
   background:
-    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(36, 71, 59, 0.08), transparent 62%),
+    radial-gradient(ellipse 80% 60% at 50% -20%, rgba(60, 74, 44, 0.08), transparent 62%),
     linear-gradient(180deg, var(--h-cream) 0%, var(--h-cream-2) 100%);
   border-bottom: 1px solid var(--h-line);
 }
@@ -330,7 +330,7 @@
   margin-top: 0;
   padding: 0.4375rem;
   border-radius: 0.625rem;
-  background: rgba(36, 71, 59, 0.08);
+  background: rgba(60, 74, 44, 0.08);
 }
 
 .home__pillar strong {
@@ -385,8 +385,8 @@
 }
 
 .home__card:hover {
-  border-color: rgba(36, 71, 59, 0.22);
-  box-shadow: 0 1px 2px rgba(20, 32, 25, 0.04), 0 20px 44px rgba(20, 32, 25, 0.08);
+  border-color: rgba(60, 74, 44, 0.22);
+  box-shadow: 0 1px 2px rgba(28, 36, 24, 0.04), 0 20px 44px rgba(28, 36, 24, 0.08);
 }
 
 .home__card .home__icon {
@@ -395,7 +395,7 @@
   margin: 0 0 1.25rem;
   padding: 0.5rem;
   border-radius: 0.625rem;
-  background: rgba(36, 71, 59, 0.07);
+  background: rgba(60, 74, 44, 0.07);
 }
 
 .home__card h3 {
@@ -430,7 +430,7 @@
   align-items: center;
   justify-content: center;
   font-size: 1.25rem;
-  background: rgba(36, 71, 59, 0.07);
+  background: rgba(60, 74, 44, 0.07);
 }
 
 @media (min-width: 768px) {
@@ -565,7 +565,7 @@
 }
 
 .home__topic:hover {
-  border-color: rgba(36, 71, 59, 0.22);
+  border-color: rgba(60, 74, 44, 0.22);
   background: var(--h-cream);
 }
 

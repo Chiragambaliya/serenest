@@ -1,14 +1,14 @@
 /* ── Team page — calm clinical to match home/services/about ── */
 .team-page {
-  --t-ink: #142019;
-  --t-muted: rgba(20, 32, 25, 0.62);
-  --t-subtle: rgba(20, 32, 25, 0.45);
-  --t-line: rgba(20, 32, 25, 0.1);
-  --t-sage: #24473b;
-  --t-sage-mid: #2e5849;
-  --t-sage-dark: #1c2b22;
-  --t-cream: #f7f9f6;
-  --t-cream-2: #eef3ec;
+  --t-ink: #1c2418;
+  --t-muted: rgba(28, 36, 24, 0.62);
+  --t-subtle: rgba(28, 36, 24, 0.45);
+  --t-line: rgba(28, 36, 24, 0.1);
+  --t-sage: #3c4a2c;
+  --t-sage-mid: #57683f;
+  --t-sage-dark: #2a3320;
+  --t-cream: #faf7f1;
+  --t-cream-2: #f1ebe1;
   --t-white: #ffffff;
   --t-radius: 1.125rem;
   --t-section: clamp(4rem, 8vw, 5.5rem);
@@ -52,7 +52,7 @@
 .team-page .tm-hero {
   padding: clamp(3.5rem, 9vw, 5rem) 0 clamp(2.5rem, 6vw, 3.25rem);
   background:
-    radial-gradient(ellipse 80% 55% at 50% -15%, rgba(36, 71, 59, 0.08), transparent 62%),
+    radial-gradient(ellipse 80% 55% at 50% -15%, rgba(60, 74, 44, 0.08), transparent 62%),
     linear-gradient(180deg, var(--t-cream) 0%, var(--t-cream-2) 100%);
   border-bottom: 1px solid var(--t-line);
 }
@@ -247,7 +247,7 @@
   margin-bottom: 0.625rem;
   padding: 0.25rem 0.5625rem;
   border-radius: 999px;
-  background: rgba(36, 71, 59, 0.08);
+  background: rgba(60, 74, 44, 0.08);
   font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.05em;

@@ -1,14 +1,14 @@
 /* ── Services page — full layout (matches home calm clinical) ── */
 .services-page {
-  --s-ink: #142019;
-  --s-muted: rgba(20, 32, 25, 0.62);
-  --s-subtle: rgba(20, 32, 25, 0.45);
-  --s-line: rgba(20, 32, 25, 0.1);
-  --s-sage: #24473b;
-  --s-sage-mid: #2e5849;
-  --s-sage-dark: #1c2b22;
-  --s-cream: #f7f9f6;
-  --s-cream-2: #eef3ec;
+  --s-ink: #1c2418;
+  --s-muted: rgba(28, 36, 24, 0.62);
+  --s-subtle: rgba(28, 36, 24, 0.45);
+  --s-line: rgba(28, 36, 24, 0.1);
+  --s-sage: #3c4a2c;
+  --s-sage-mid: #57683f;
+  --s-sage-dark: #2a3320;
+  --s-cream: #faf7f1;
+  --s-cream-2: #f1ebe1;
   --s-white: #ffffff;
   --s-radius: 1.125rem;
   --s-section: clamp(4rem, 8vw, 5.5rem);
@@ -54,7 +54,7 @@
 .services-page .svc-hero {
   padding: clamp(3.5rem, 9vw, 5rem) 0 clamp(2.5rem, 6vw, 3.25rem);
   background:
-    radial-gradient(ellipse 80% 55% at 50% -15%, rgba(36, 71, 59, 0.08), transparent 62%),
+    radial-gradient(ellipse 80% 55% at 50% -15%, rgba(60, 74, 44, 0.08), transparent 62%),
     linear-gradient(180deg, var(--s-cream) 0%, var(--s-cream-2) 100%);
   border-bottom: 1px solid var(--s-line);
 }
@@ -205,7 +205,7 @@
   border: 1px solid var(--s-line);
   border-radius: var(--s-radius);
   background: var(--s-white);
-  box-shadow: 0 1px 2px rgba(20, 32, 25, 0.04);
+  box-shadow: 0 1px 2px rgba(28, 36, 24, 0.04);
   transition: border-color 160ms ease;
 }
 
@@ -356,7 +356,7 @@
   border-left: 4px solid var(--s-sage-mid);
   border-radius: var(--s-radius);
   background: var(--s-white);
-  box-shadow: 0 1px 2px rgba(20, 32, 25, 0.04), 0 8px 24px rgba(20, 32, 25, 0.05);
+  box-shadow: 0 1px 2px rgba(28, 36, 24, 0.04), 0 8px 24px rgba(28, 36, 24, 0.05);
 }
 
 @media (min-width: 800px) {
