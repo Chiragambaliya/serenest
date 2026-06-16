@@ -584,10 +584,17 @@ export default function BookingPage() {
                   >
                     💬 Chat on WhatsApp
                   </a>
+                  <Link className="btn btn-ghost" to={`/consultation/${confirmation.id}?mode=${mode}`}>
+                    🎥 Open consultation room
+                  </Link>
                   <Link className="btn btn-ghost" to="/">
                     Back to home
                   </Link>
                 </div>
+                <p className="fineprint" style={{ marginTop: 12 }}>
+                  The consultation room opens early so you can test your camera/mic — your session only
+                  starts once your professional is confirmed and joins at your booked time.
+                </p>
               </div>
             )}
           </div>

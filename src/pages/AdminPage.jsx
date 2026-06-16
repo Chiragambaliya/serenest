@@ -949,6 +949,11 @@ export default function AdminPage() {
                             {b.status === 'pending'   && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Confirm'}  onClick={() => updateBookingStatus(b.id, 'confirmed')}  color="#198754" disabled={bookingBusyId === b.id} />}
                             {b.status !== 'completed' && b.status !== 'cancelled' && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Complete'} onClick={() => updateBookingStatus(b.id, 'completed')} color="#0d6efd" disabled={bookingBusyId === b.id} />}
                             {b.status !== 'cancelled' && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Cancel'}   onClick={() => updateBookingStatus(b.id, 'cancelled')}  color="#dc3545" disabled={bookingBusyId === b.id} />}
+                            {b.status === 'confirmed' && (
+                              <Link to={`/consultation/${b.id}?mode=${b.mode}`} target="_blank" className="btn btn-sm btn-ghost" style={{ fontSize: '0.75rem' }}>
+                                🎥 Room
+                              </Link>
+                            )}
                           </div>
                         </td>
                       </tr>
