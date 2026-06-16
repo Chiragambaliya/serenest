@@ -2,8 +2,18 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import DailyIframe from '@daily-co/daily-js';
 import { supabase } from '../lib/supabase';
-import { createDailyRoom } from '../lib/daily';
+import { rooms as roomsApi } from '../lib/api';
 import { CONSULTATION_MODES, normalizeSessionMode } from '../lib/consultationModes';
+
+/** Create or fetch a Daily room via the secure server endpoint (key stays server-side). */
+async function makeRoom(appointmentId) {
+  try {
+    const res = await roomsApi.create(appointmentId);
+    return res.room ?? null;
+  } catch {
+    return null;
+  }
+}
 
 async function fetchAppointmentByRouteId(client, routeId) {
   if (!client || !routeId) return { data: null };
@@ -69,9 +79,9 @@ export default function ConsultationPage() {
             setLoading(false);
             return;
           }
-          const room = await createDailyRoom(routeAppointmentId);
+          const room = await makeRoom(routeAppointmentId);
           if (room?.url) setRoomUrl(room.url);
-          else setError('Could not create session room. Please configure Supabase and Daily.co API keys.');
+          else setError('Video sessions are not available yet — the team is setting them up. Please use chat or contact us on WhatsApp.');
           setLoading(false);
           return;
         }
@@ -95,7 +105,7 @@ export default function ConsultationPage() {
           setRoomUrl(appt.daily_room_url);
         } else {
           const roomKey = appt?.appointment_id || routeAppointmentId;
-          const room = await createDailyRoom(roomKey);
+          const room = await makeRoom(roomKey);
           if (room?.url) {
             setRoomUrl(room.url);
             if (appt?.id) {
@@ -108,7 +118,7 @@ export default function ConsultationPage() {
               }, { onConflict: 'id' });
             }
           } else {
-            setError('Could not create session room. Please check your Daily.co API key.');
+            setError('Video sessions are not available yet — the team is setting them up. Please use chat or contact us on WhatsApp.');
           }
         }
       } catch (e) {
