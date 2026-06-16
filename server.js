@@ -72,7 +72,7 @@ app.post('/api/bookings', async (req, res) => {
   const {
     patient_name, patient_phone, patient_email,
     practitioner_type, mode, preferred_date, preferred_time,
-    language = 'English', notes = '',
+    language = 'English', notes = '', professional_id,
   } = req.body;
 
   if (!patient_name?.trim())  return err(res, 'patient_name is required');
@@ -98,6 +98,7 @@ app.post('/api/bookings', async (req, res) => {
       preferred_time,
       language,
       notes: notes.trim(),
+      professional_id: professional_id || null,
       status: 'pending',
     })
     .select()
