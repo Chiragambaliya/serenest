@@ -135,7 +135,7 @@ export default function ProfessionalOnboardingPage() {
     role,
     role_label: roleLabel,
     full_name: fullName.trim(),
-    phone: `+91${phoneClean}`,
+    phone: phoneClean,
     email: email.trim() || null,
     registration: registration.trim() || null,
     degree: degree.trim() || null,
