@@ -42,7 +42,7 @@ const CORE_SERVICES = [
       'Digital prescription if clinically appropriate',
     ],
     forWho: 'Anxiety, depression, OCD, PTSD, ADHD, sleep, stress, medication review',
-    price: 'From ₹499 per session',
+    price: 'From ₹800 per session',
     book: true,
   },
   {

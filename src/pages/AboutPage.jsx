@@ -327,7 +327,7 @@ export default function AboutPage() {
           <div>
             <h2>Ready to take the first step?</h2>
             <p>Book a confidential consultation with a verified psychiatrist — anywhere in India.</p>
-            <p className="abt-cta__fine">No referral needed · From ₹499 · Fully confidential</p>
+            <p className="abt-cta__fine">No referral needed · From ₹800 · Fully confidential</p>
           </div>
           <div className="abt-cta__actions">
             <Link className="btn btn-primary btn-lg" to="/book">Book now</Link>

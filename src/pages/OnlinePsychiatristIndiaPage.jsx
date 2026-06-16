@@ -20,7 +20,7 @@ const LANDING_FAQS = [
   },
   {
     q: 'How much does an online psychiatry consultation cost on Serenest?',
-    a: 'Psychiatry consultations start at ₹499 per session. Final fees depend on the clinician you book with. Transparent, per-session pricing is shown before payment — see the Pricing page for current rates.',
+    a: 'Psychiatry consultations start at ₹1,200 per session. Final fees depend on the clinician you book with. Transparent, per-session pricing is shown before payment — see the Pricing page for current rates.',
   },
   {
     q: 'Can I consult a psychiatrist from Gujarat (Ahmedabad, Surat, Vadodara, Rajkot) online?',
