@@ -3,83 +3,12 @@ import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { useAuth, signOut } from '../lib/useAuth';
+import {
+  ACADEMY_PROGRAMS, ACADEMY_CATEGORIES, ACADEMY_JOURNEY, ACADEMY_STATS,
+} from '../lib/academyPrograms';
+import EdIcon from '../components/EdIcon';
 
 import AcademyGuide from '../components/AcademyGuide';
-
-const JOURNEY = [
-  'Student',
-  'Certificate Program',
-  'Clinical Training',
-  'Research & Publication',
-  'Professional Practice',
-  'CPD & Fellowship',
-];
-
-const PROGRAMME_ROWS = [
-  {
-    label: 'Career Entry',
-    items: [
-      {
-        icon: '🎓', title: 'Student Training', slug: 'student-training',
-        body: 'For Psychology, Psychiatry & Mental Health students.',
-        cta: 'View program',
-        featured: true, highlights: ['50+ hours training', 'Case discussions', 'Certificates included'],
-      },
-      {
-        icon: '🧠', title: 'Counselling Skills', slug: 'counselling-skills',
-        body: 'Foundational counselling and therapeutic communication.',
-        cta: 'View program',
-      },
-      {
-        icon: '📜', title: 'Certificate Programs', slug: 'certificate-programs',
-        body: 'Short-term professional certifications.',
-        cta: 'View program',
-      },
-    ],
-  },
-  {
-    label: 'Clinical Practice',
-    items: [
-      {
-        icon: '⚕️', title: 'Psychiatry Training', slug: 'psychiatry-training',
-        body: 'Clinical psychiatry, prescribing & telemedicine.',
-        cta: 'View program',
-        featured: true, highlights: ['Telemedicine norms', 'Prescribing conversations', 'SOAP / Rx workflow'],
-      },
-      {
-        icon: '💻', title: 'Digital Mental Health', slug: 'digital-mental-health',
-        body: 'Telepsychiatry, documentation & remote care.',
-        cta: 'View program',
-      },
-      {
-        icon: '🔬', title: 'Research & Publications', slug: 'research-publications',
-        body: 'Research methodology and publication support.',
-        cta: 'View program',
-        featured: true, highlights: ['Literature reviews', 'Case reports', 'Publication mentorship'],
-      },
-    ],
-  },
-  {
-    label: 'Professional Growth',
-    items: [
-      {
-        icon: '🎯', title: 'CPD Programs', slug: 'cpd-programs',
-        body: 'Continuous professional development.',
-        cta: 'View program',
-      },
-      {
-        icon: '👨‍🏫', title: 'Mentorship', slug: 'mentorship',
-        body: '1:1 supervision and career guidance.',
-        cta: 'View program',
-      },
-      {
-        icon: '🏆', title: 'Fellowship Programs', slug: 'fellowship-programs',
-        body: 'Advanced specialty tracks.',
-        cta: 'View program',
-      },
-    ],
-  },
-];
 
 const AUDIENCE = [
   'Psychology students',
@@ -180,33 +109,47 @@ export default function AcademyPage() {
 
           {/* Journey flow */}
           <ol className="ed-journey" aria-label="Learning journey">
-            {JOURNEY.map((step, i) => (
-              <li key={step}>
-                <span className="ed-journey-step">{step}</span>
-                {i < JOURNEY.length - 1 && <span className="ed-journey-arrow" aria-hidden="true">→</span>}
+            {ACADEMY_JOURNEY.map((step, i) => (
+              <li key={step.title} className="ed-journey-item">
+                <span className="ed-journey-ico"><EdIcon name={step.icon} size={26} /></span>
+                <span className="ed-journey-title">{step.title}</span>
+                <span className="ed-journey-sub">{step.sub}</span>
+                {i < ACADEMY_JOURNEY.length - 1 && <span className="ed-journey-arrow" aria-hidden="true">›</span>}
               </li>
             ))}
           </ol>
 
           {/* Grouped programme rows */}
-          {PROGRAMME_ROWS.map((row) => (
-            <div key={row.label} className="ed-row">
-              <div className="ed-row-label">{row.label}</div>
+          {ACADEMY_CATEGORIES.map((cat, ci) => (
+            <div key={cat.label} className="ed-row">
+              <div className="ed-row-head">
+                <span className="ed-row-num">{ci + 1}</span>
+                <span className="ed-row-label">{cat.label}</span>
+                <span className="ed-row-tagline">{cat.tagline}</span>
+              </div>
               <div className="ed-grid ed-grid--3">
-                {row.items.map((item) => (
-                  <article key={item.title} className={`ed-card ${item.featured ? 'ed-card--featured' : ''}`}>
-                    {item.featured && <span className="ed-card-badge">★ Featured</span>}
-                    <div className="ed-card-icon" aria-hidden="true">{item.icon}</div>
-                    <h3>{item.title}</h3>
-                    <p>{item.body}</p>
-                    {item.highlights && (
-                      <ul className="ed-card-highlights">
-                        {item.highlights.map((h) => <li key={h}>{h}</li>)}
-                      </ul>
-                    )}
-                    <p className="ed-card-cta">
-                      <Link className="ed-link" to={`/academy/program/${item.slug}`}>{item.cta} →</Link>
-                    </p>
+                {ACADEMY_PROGRAMS.filter((p) => p.category === cat.label).map((p) => (
+                  <article key={p.slug} className={`ed-pcard ed-acc-${p.accent}`}>
+                    {p.popular && <span className="ed-pcard-badge">POPULAR</span>}
+                    <div className="ed-pcard-top">
+                      <span className="ed-pcard-ico"><EdIcon name={p.iconName} size={24} /></span>
+                      <div>
+                        <h3>{p.title}</h3>
+                        <p className="ed-pcard-sub">{p.subtitle}</p>
+                      </div>
+                    </div>
+                    <p className="ed-pcard-body">{p.body}</p>
+                    <div className="ed-pcard-metrics">
+                      {p.metrics.map((m) => (
+                        <div key={m.sub}>
+                          <span className="ed-metric-top">{m.top}</span>
+                          <span className="ed-metric-sub">{m.sub}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <Link className="ed-pcard-cta" to={`/academy/program/${p.slug}`}>
+                      {p.ctaLabel} →
+                    </Link>
                   </article>
                 ))}
               </div>
@@ -215,11 +158,21 @@ export default function AcademyPage() {
 
           {/* Workforce vision banner */}
           <div className="ed-workforce">
-            <h3>Building India&apos;s Mental Health Workforce for 2047</h3>
-            <p>
-              Training psychologists, counsellors, psychiatrists, researchers, and digital mental
-              health professionals through structured education pathways.
-            </p>
+            <div className="ed-workforce-main">
+              <h3>Building India&apos;s Mental Health Workforce for 2047</h3>
+              <p>
+                Training psychologists, counsellors, psychiatrists, researchers, and digital mental
+                health professionals through structured education pathways.
+              </p>
+              <ul className="ed-workforce-stats">
+                {ACADEMY_STATS.map((s) => (
+                  <li key={s.label}>
+                    <span className="ed-wf-value">{s.value}</span>
+                    <span className="ed-wf-label">{s.label}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       </section>
