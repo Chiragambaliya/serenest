@@ -4648,6 +4648,9 @@ a.pro-hub-tile:hover .learning-card-aux {
   border-radius: var(--r-md);
   padding: 22px;
   box-shadow: var(--shadow-xs);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .ed-card-label {
@@ -4669,9 +4672,12 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 .ed-card-cta {
-  margin-top: 14px;
+  margin-top: auto;
+  padding-top: 14px;
   margin-bottom: 0;
 }
+
+.ed-card-highlights + .ed-card-cta { padding-top: 14px; }
 
 .ed-link,
 .ed-link-arrow {
