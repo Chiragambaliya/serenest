@@ -11,6 +11,7 @@ import './styles/team.css';
 import './styles/pricing.css';
 import './styles/professionals.css';
 import './styles/admin.css';
+import './styles/prescription.css';
 
 // Must match Vite `base` so routes and assets resolve when deployed under a subpath.
 const basename = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '') || undefined;

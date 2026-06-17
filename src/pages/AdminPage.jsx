@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
+import PrescriptionDocument from '../components/PrescriptionDocument';
 
 // ── API helper ──────────────────────────────────────────────────────────────
 const BASE = import.meta.env.VITE_API_URL ?? '';
@@ -231,6 +232,7 @@ export default function AdminPage() {
   const [rxForm, setRxForm] = useState(null);
   const [rxSaving, setRxSaving] = useState(false);
   const [rxError, setRxError] = useState(null);
+  const [rxPreview, setRxPreview] = useState(false);
 
   // HR sub-state
   const [hrTab, setHrTab]               = useState('applications');
@@ -519,16 +521,47 @@ export default function AdminPage() {
   }
 
   // ── prescriptions ───────────────────────────────────────────
+  const RX_EMPTY_MED = { name: '', strength: '', dosage: '', frequency: '', duration: '', instructions: '' };
+
   function openPrescribe(booking) {
     setPrescribeBooking(booking);
     setRxError(null);
+    setRxPreview(false);
     setRxForm({
-      professional_name: '',
+      // patient
       patient_name: booking.patient_name || '',
-      medicines: [{ name: '', dosage: '', frequency: '', duration: '', instructions: '' }],
+      patient_age_gender: '',
+      patient_contact: booking.patient_phone || '',
+      // doctor
+      professional_name: '',
+      doctor_qualification: '',
+      doctor_specialization: '',
+      doctor_reg_no: '',
+      doctor_contact: '',
+      mode: booking.mode || '',
+      // clinical
+      chief_complaints: '',
+      complaint_duration: '',
+      history_summary: '',
+      provisional_diagnosis: '',
+      risk_assessment: '',
+      // rx
+      medicines: [{ ...RX_EMPTY_MED }],
       advice: '',
+      review_after: '',
       follow_up_date: '',
+      emergency_advice: '',
+      important_notes: '',
+      // issued by
+      clinic_name: '',
+      clinic_address: '',
+      clinic_contact: '',
+      clinic_website: '',
     });
+  }
+
+  function setRx(key, value) {
+    setRxForm((prev) => ({ ...prev, [key]: value }));
   }
 
   function updateRxMedicine(index, key, value) {
@@ -539,10 +572,7 @@ export default function AdminPage() {
   }
 
   function addRxMedicine() {
-    setRxForm((prev) => ({
-      ...prev,
-      medicines: [...prev.medicines, { name: '', dosage: '', frequency: '', duration: '', instructions: '' }],
-    }));
+    setRxForm((prev) => ({ ...prev, medicines: [...prev.medicines, { ...RX_EMPTY_MED }] }));
   }
 
   function removeRxMedicine(index) {
@@ -552,7 +582,7 @@ export default function AdminPage() {
   async function submitPrescription() {
     setRxError(null);
     const medicines = rxForm.medicines
-      .map((m) => ({ ...m, name: m.name.trim() }))
+      .map((m) => ({ ...m, name: (m.name || '').trim() }))
       .filter((m) => m.name);
     if (medicines.length === 0) {
       setRxError('Add at least one medicine.');
@@ -563,16 +593,15 @@ export default function AdminPage() {
       await adminFetch('/api/prescriptions', secret, {
         method: 'POST',
         body: JSON.stringify({
+          ...rxForm,
           appointment_id: prescribeBooking.id,
-          professional_name: rxForm.professional_name,
-          patient_name: rxForm.patient_name,
           medicines,
-          advice: rxForm.advice,
           follow_up_date: rxForm.follow_up_date || null,
         }),
       });
       setPrescribeBooking(null);
       setRxForm(null);
+      setRxPreview(false);
     } catch (e) {
       setRxError(e.message);
     } finally {
@@ -1114,68 +1143,99 @@ export default function AdminPage() {
 
             {/* ── Issue prescription modal ── */}
             {prescribeBooking && rxForm && (
-              <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}>
-                <div style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.5rem', maxWidth: 560, width: '100%', maxHeight: '88vh', overflowY: 'auto' }}>
-                  <h3 style={{ fontWeight: 800, marginBottom: 4 }}>Issue prescription</h3>
+              <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '1.5rem 1rem', overflowY: 'auto' }}>
+                <div style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.5rem', maxWidth: rxPreview ? 880 : 600, width: '100%', maxHeight: '92vh', overflowY: 'auto' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4, gap: 8 }}>
+                    <h3 style={{ fontWeight: 800, margin: 0 }}>Issue prescription</h3>
+                    <button onClick={() => setRxPreview((v) => !v)} className="btn btn-ghost btn-sm">
+                      {rxPreview ? '← Edit' : '👁 Preview'}
+                    </button>
+                  </div>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
                     For: <strong>{prescribeBooking.patient_name}</strong> — {prescribeBooking.practitioner_type} · {fmtDate(prescribeBooking.preferred_date)}
                   </p>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '0.75rem' }}>
-                    <div>
-                      <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>Professional name</label>
-                      <input value={rxForm.professional_name} onChange={(e) => setRxForm((p) => ({ ...p, professional_name: e.target.value }))} placeholder="Dr. …"
-                        style={{ width: '100%', padding: '7px 10px', fontSize: '0.88rem', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg)', color: 'var(--text)', boxSizing: 'border-box' }} />
+                  {rxPreview ? (
+                    <div style={{ background: '#fff', borderRadius: 8, overflow: 'hidden' }}>
+                      <PrescriptionDocument prescription={{
+                        ...rxForm,
+                        appointment_id: prescribeBooking.id,
+                        created_at: new Date().toISOString(),
+                      }} />
                     </div>
-                    <div>
-                      <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>Patient name</label>
-                      <input value={rxForm.patient_name} onChange={(e) => setRxForm((p) => ({ ...p, patient_name: e.target.value }))}
-                        style={{ width: '100%', padding: '7px 10px', fontSize: '0.88rem', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg)', color: 'var(--text)', boxSizing: 'border-box' }} />
-                    </div>
-                  </div>
-
-                  <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: 6 }}>Medicines</label>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: '0.75rem' }}>
-                    {rxForm.medicines.map((m, i) => (
-                      <div key={i} style={{ border: '1px solid var(--border)', borderRadius: 8, padding: '0.6rem' }}>
-                        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr auto', gap: 6, marginBottom: 6 }}>
-                          <input value={m.name} onChange={(e) => updateRxMedicine(i, 'name', e.target.value)} placeholder="Medicine name"
-                            style={{ padding: '5px 8px', fontSize: '0.85rem', border: '1px solid var(--border)', borderRadius: 5, background: 'var(--bg)', color: 'var(--text)' }} />
-                          <input value={m.dosage} onChange={(e) => updateRxMedicine(i, 'dosage', e.target.value)} placeholder="Dosage"
-                            style={{ padding: '5px 8px', fontSize: '0.85rem', border: '1px solid var(--border)', borderRadius: 5, background: 'var(--bg)', color: 'var(--text)' }} />
-                          <input value={m.frequency} onChange={(e) => updateRxMedicine(i, 'frequency', e.target.value)} placeholder="Frequency"
-                            style={{ padding: '5px 8px', fontSize: '0.85rem', border: '1px solid var(--border)', borderRadius: 5, background: 'var(--bg)', color: 'var(--text)' }} />
-                          <input value={m.duration} onChange={(e) => updateRxMedicine(i, 'duration', e.target.value)} placeholder="Duration"
-                            style={{ padding: '5px 8px', fontSize: '0.85rem', border: '1px solid var(--border)', borderRadius: 5, background: 'var(--bg)', color: 'var(--text)' }} />
-                          <button type="button" onClick={() => removeRxMedicine(i)} className="btn btn-sm btn-ghost" style={{ color: '#dc3545' }}>✕</button>
-                        </div>
-                        <input value={m.instructions} onChange={(e) => updateRxMedicine(i, 'instructions', e.target.value)} placeholder="Instructions (e.g. after food)"
-                          style={{ width: '100%', padding: '5px 8px', fontSize: '0.85rem', border: '1px solid var(--border)', borderRadius: 5, background: 'var(--bg)', color: 'var(--text)', boxSizing: 'border-box' }} />
+                  ) : (
+                    <>
+                      <RxGroup title="Patient details" />
+                      <div style={rxGridStyle}>
+                        <RxField label="Name" value={rxForm.patient_name} onChange={(v) => setRx('patient_name', v)} />
+                        <RxField label="Age / Gender" value={rxForm.patient_age_gender} onChange={(v) => setRx('patient_age_gender', v)} placeholder="32 / Male" />
+                        <RxField label="Contact" value={rxForm.patient_contact} onChange={(v) => setRx('patient_contact', v)} />
+                        <RxField label="Mode" value={rxForm.mode} onChange={(v) => setRx('mode', v)} placeholder="video / audio / chat" />
                       </div>
-                    ))}
-                  </div>
-                  <button type="button" onClick={addRxMedicine} className="btn btn-ghost btn-sm" style={{ marginBottom: '1rem' }}>+ Add medicine</button>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '0.75rem' }}>
-                    <div style={{ gridColumn: '1 / -1' }}>
-                      <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>Advice</label>
-                      <textarea value={rxForm.advice} onChange={(e) => setRxForm((p) => ({ ...p, advice: e.target.value }))} rows={3} placeholder="General advice for the patient…"
-                        style={{ width: '100%', padding: '7px 10px', fontSize: '0.88rem', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg)', color: 'var(--text)', resize: 'vertical', boxSizing: 'border-box' }} />
-                    </div>
-                    <div>
-                      <label style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: 3 }}>Follow-up date</label>
-                      <input type="date" value={rxForm.follow_up_date} onChange={(e) => setRxForm((p) => ({ ...p, follow_up_date: e.target.value }))}
-                        style={{ width: '100%', padding: '7px 10px', fontSize: '0.88rem', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg)', color: 'var(--text)', boxSizing: 'border-box' }} />
-                    </div>
-                  </div>
+                      <RxGroup title="Doctor details" />
+                      <div style={rxGridStyle}>
+                        <RxField label="Doctor name" value={rxForm.professional_name} onChange={(v) => setRx('professional_name', v)} placeholder="Dr. …" />
+                        <RxField label="Qualification" value={rxForm.doctor_qualification} onChange={(v) => setRx('doctor_qualification', v)} placeholder="MBBS, MD" />
+                        <RxField label="Specialization" value={rxForm.doctor_specialization} onChange={(v) => setRx('doctor_specialization', v)} placeholder="Psychiatry" />
+                        <RxField label="Reg. No (Medical Council)" value={rxForm.doctor_reg_no} onChange={(v) => setRx('doctor_reg_no', v)} />
+                        <RxField label="Doctor contact" value={rxForm.doctor_contact} onChange={(v) => setRx('doctor_contact', v)} />
+                      </div>
 
-                  {rxError && <p style={{ color: '#dc3545', fontSize: '0.82rem', marginBottom: '0.75rem' }}>{rxError}</p>}
+                      <RxGroup title="Clinical summary" />
+                      <div style={rxGridStyle}>
+                        <RxField label="Chief complaints" value={rxForm.chief_complaints} onChange={(v) => setRx('chief_complaints', v)} wide />
+                        <RxField label="Duration" value={rxForm.complaint_duration} onChange={(v) => setRx('complaint_duration', v)} />
+                        <RxField label="Provisional diagnosis" value={rxForm.provisional_diagnosis} onChange={(v) => setRx('provisional_diagnosis', v)} />
+                        <RxArea label="History / summary" value={rxForm.history_summary} onChange={(v) => setRx('history_summary', v)} />
+                        <RxArea label="Risk assessment" value={rxForm.risk_assessment} onChange={(v) => setRx('risk_assessment', v)} />
+                      </div>
 
-                  <div style={{ display: 'flex', gap: 8 }}>
+                      <RxGroup title="Medications" />
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: '0.75rem' }}>
+                        {rxForm.medicines.map((m, i) => (
+                          <div key={i} style={{ border: '1px solid var(--border)', borderRadius: 8, padding: '0.6rem' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto', gap: 6, marginBottom: 6 }}>
+                              <input value={m.name} onChange={(e) => updateRxMedicine(i, 'name', e.target.value)} placeholder="Medicine" style={rxMedInputStyle} />
+                              <input value={m.strength} onChange={(e) => updateRxMedicine(i, 'strength', e.target.value)} placeholder="Strength" style={rxMedInputStyle} />
+                              <input value={m.dosage} onChange={(e) => updateRxMedicine(i, 'dosage', e.target.value)} placeholder="Dose" style={rxMedInputStyle} />
+                              <input value={m.frequency} onChange={(e) => updateRxMedicine(i, 'frequency', e.target.value)} placeholder="Frequency" style={rxMedInputStyle} />
+                              <input value={m.duration} onChange={(e) => updateRxMedicine(i, 'duration', e.target.value)} placeholder="Duration" style={rxMedInputStyle} />
+                              <button type="button" onClick={() => removeRxMedicine(i)} className="btn btn-sm btn-ghost" style={{ color: '#dc3545' }}>✕</button>
+                            </div>
+                            <input value={m.instructions} onChange={(e) => updateRxMedicine(i, 'instructions', e.target.value)} placeholder="Instructions (e.g. after food)"
+                              style={{ ...rxMedInputStyle, width: '100%', boxSizing: 'border-box' }} />
+                          </div>
+                        ))}
+                      </div>
+                      <button type="button" onClick={addRxMedicine} className="btn btn-ghost btn-sm" style={{ marginBottom: '1rem' }}>+ Add medicine</button>
+
+                      <RxGroup title="Advice & follow-up" />
+                      <div style={rxGridStyle}>
+                        <RxArea label="Advice (one per line)" value={rxForm.advice} onChange={(v) => setRx('advice', v)} wide rows={3} />
+                        <RxField label="Review after" value={rxForm.review_after} onChange={(v) => setRx('review_after', v)} placeholder="2 weeks" />
+                        <RxField label="Follow-up date" type="date" value={rxForm.follow_up_date} onChange={(v) => setRx('follow_up_date', v)} />
+                        <RxArea label="Emergency advice (one per line)" value={rxForm.emergency_advice} onChange={(v) => setRx('emergency_advice', v)} wide />
+                        <RxArea label="Important (one per line)" value={rxForm.important_notes} onChange={(v) => setRx('important_notes', v)} wide />
+                      </div>
+
+                      <RxGroup title="Issued by (optional — defaults applied)" />
+                      <div style={rxGridStyle}>
+                        <RxField label="Clinic / organization" value={rxForm.clinic_name} onChange={(v) => setRx('clinic_name', v)} placeholder="Serenest Education Pvt Ltd" />
+                        <RxField label="Address" value={rxForm.clinic_address} onChange={(v) => setRx('clinic_address', v)} />
+                        <RxField label="Contact" value={rxForm.clinic_contact} onChange={(v) => setRx('clinic_contact', v)} placeholder="7777936367" />
+                        <RxField label="Website / email" value={rxForm.clinic_website} onChange={(v) => setRx('clinic_website', v)} />
+                      </div>
+                    </>
+                  )}
+
+                  {rxError && <p style={{ color: '#dc3545', fontSize: '0.82rem', margin: '0.75rem 0' }}>{rxError}</p>}
+
+                  <div style={{ display: 'flex', gap: 8, marginTop: '1rem' }}>
                     <button onClick={submitPrescription} disabled={rxSaving} className="btn btn-primary btn-sm">
                       {rxSaving ? 'Saving…' : 'Save prescription'}
                     </button>
-                    <button onClick={() => { setPrescribeBooking(null); setRxForm(null); }} className="btn btn-ghost btn-sm">Cancel</button>
+                    <button onClick={() => { setPrescribeBooking(null); setRxForm(null); setRxPreview(false); }} className="btn btn-ghost btn-sm">Cancel</button>
                   </div>
                 </div>
               </div>
@@ -2087,6 +2147,37 @@ const tdStyle = {
   verticalAlign: 'top',
   lineHeight: 1.5,
 };
+
+const rxGridStyle = { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem', marginBottom: '1rem' };
+const rxLabelStyle = { fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', display: 'block', marginBottom: 3 };
+const rxInputStyle = { width: '100%', padding: '7px 10px', fontSize: '0.86rem', border: '1px solid var(--border)', borderRadius: 6, background: 'var(--bg)', color: 'var(--text)', boxSizing: 'border-box' };
+const rxMedInputStyle = { padding: '5px 8px', fontSize: '0.84rem', border: '1px solid var(--border)', borderRadius: 5, background: 'var(--bg)', color: 'var(--text)', minWidth: 0 };
+
+function RxGroup({ title }) {
+  return (
+    <div style={{ fontSize: '0.72rem', fontWeight: 800, color: 'var(--brand-600)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '0 0 8px', paddingBottom: 4, borderBottom: '1px solid var(--border)' }}>
+      {title}
+    </div>
+  );
+}
+
+function RxField({ label, value, onChange, type = 'text', placeholder, wide }) {
+  return (
+    <div style={wide ? { gridColumn: '1 / -1' } : undefined}>
+      <label style={rxLabelStyle}>{label}</label>
+      <input type={type} value={value || ''} placeholder={placeholder} onChange={(e) => onChange(e.target.value)} style={rxInputStyle} />
+    </div>
+  );
+}
+
+function RxArea({ label, value, onChange, placeholder, rows = 2, wide }) {
+  return (
+    <div style={wide ? { gridColumn: '1 / -1' } : undefined}>
+      <label style={rxLabelStyle}>{label}</label>
+      <textarea value={value || ''} placeholder={placeholder} rows={rows} onChange={(e) => onChange(e.target.value)} style={{ ...rxInputStyle, resize: 'vertical' }} />
+    </div>
+  );
+}
 
 function TrafficList({ title, rows }) {
   const max = rows && rows.length ? Math.max(...rows.map((r) => r[1])) : 0;

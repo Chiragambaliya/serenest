@@ -961,10 +961,7 @@ app.get('/api/prescriptions/:appointmentId', async (req, res) => {
 app.post('/api/prescriptions', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;
 
-  const {
-    appointment_id, professional_id, professional_name, patient_name,
-    medicines = [], advice = '', follow_up_date = null,
-  } = req.body;
+  const { appointment_id, medicines = [] } = req.body;
 
   if (!appointment_id) return err(res, 'appointment_id is required');
   if (!Array.isArray(medicines) || medicines.length === 0) {
@@ -979,18 +976,29 @@ app.post('/api/prescriptions', async (req, res) => {
 
   if (existing?.is_locked) return err(res, 'This prescription is locked and cannot be changed', 409);
 
+  // Whitelist of text fields accepted from the issue form.
+  const TEXT_FIELDS = [
+    'professional_name', 'patient_name', 'mode', 'advice', 'review_after',
+    'patient_age_gender', 'patient_contact',
+    'doctor_qualification', 'doctor_specialization', 'doctor_reg_no', 'doctor_contact',
+    'chief_complaints', 'complaint_duration', 'history_summary',
+    'provisional_diagnosis', 'risk_assessment', 'emergency_advice', 'important_notes',
+    'clinic_name', 'clinic_address', 'clinic_contact', 'clinic_website',
+  ];
+  const row = {
+    appointment_id,
+    professional_id: req.body.professional_id || null,
+    medicines,
+    follow_up_date: req.body.follow_up_date || null,
+    updated_at: new Date().toISOString(),
+  };
+  for (const f of TEXT_FIELDS) {
+    row[f] = typeof req.body[f] === 'string' ? req.body[f].trim() || null : null;
+  }
+
   const { data, error } = await supabase
     .from('prescriptions')
-    .upsert({
-      appointment_id,
-      professional_id: professional_id || null,
-      professional_name: professional_name?.trim() || null,
-      patient_name: patient_name?.trim() || null,
-      medicines,
-      advice: advice.trim(),
-      follow_up_date,
-      updated_at: new Date().toISOString(),
-    }, { onConflict: 'appointment_id' })
+    .upsert(row, { onConflict: 'appointment_id' })
     .select()
     .single();
 

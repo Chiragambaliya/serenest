@@ -1,0 +1,21 @@
+-- Full clinical teleconsultation prescription fields.
+alter table public.prescriptions
+  add column if not exists mode                  text,
+  add column if not exists patient_age_gender    text,
+  add column if not exists patient_contact       text,
+  add column if not exists doctor_qualification  text,
+  add column if not exists doctor_specialization text,
+  add column if not exists doctor_reg_no         text,
+  add column if not exists doctor_contact        text,
+  add column if not exists chief_complaints      text,
+  add column if not exists complaint_duration    text,
+  add column if not exists history_summary       text,
+  add column if not exists provisional_diagnosis text,
+  add column if not exists risk_assessment       text,
+  add column if not exists emergency_advice      text,
+  add column if not exists important_notes       text,
+  add column if not exists review_after          text,
+  add column if not exists clinic_name           text,
+  add column if not exists clinic_address        text,
+  add column if not exists clinic_contact        text,
+  add column if not exists clinic_website        text;
