@@ -6,55 +6,78 @@ import { useAuth, signOut } from '../lib/useAuth';
 
 import AcademyGuide from '../components/AcademyGuide';
 
-const PROGRAMMES = [
+const JOURNEY = [
+  'Student',
+  'Certificate Program',
+  'Clinical Training',
+  'Research & Publication',
+  'Professional Practice',
+  'CPD & Fellowship',
+];
+
+const PROGRAMME_ROWS = [
   {
-    label: '🧠 Certificates',
-    title: 'Professional Certificate Programs',
-    body: 'Structured, clinically reviewed certificate tracks for working professionals and students.',
-    href: '/professionals/learning',
-    cta: 'Explore certificates',
+    label: 'Career Entry',
+    items: [
+      {
+        icon: '🎓', title: 'Student Training', slug: 'student-training',
+        body: 'For Psychology, Psychiatry & Mental Health students.',
+        cta: 'View program',
+        featured: true, highlights: ['50+ hours training', 'Case discussions', 'Certificates included'],
+      },
+      {
+        icon: '🧠', title: 'Counselling Skills', slug: 'counselling-skills',
+        body: 'Foundational counselling and therapeutic communication.',
+        cta: 'View program',
+      },
+      {
+        icon: '📜', title: 'Certificate Programs', slug: 'certificate-programs',
+        body: 'Short-term professional certifications.',
+        cta: 'View program',
+      },
+    ],
   },
   {
-    label: '🎓 Students',
-    title: 'Psychology Student Training',
-    body: 'Foundational and applied training for psychology students entering clinical practice.',
-    href: '/professionals/learning#learning-psychology',
-    cta: 'Open student track',
+    label: 'Clinical Practice',
+    items: [
+      {
+        icon: '⚕️', title: 'Psychiatry Training', slug: 'psychiatry-training',
+        body: 'Clinical psychiatry, prescribing & telemedicine.',
+        cta: 'View program',
+        featured: true, highlights: ['Telemedicine norms', 'Prescribing conversations', 'SOAP / Rx workflow'],
+      },
+      {
+        icon: '💻', title: 'Digital Mental Health', slug: 'digital-mental-health',
+        body: 'Telepsychiatry, documentation & remote care.',
+        cta: 'View program',
+      },
+      {
+        icon: '🔬', title: 'Research & Publications', slug: 'research-publications',
+        body: 'Research methodology and publication support.',
+        cta: 'View program',
+        featured: true, highlights: ['Literature reviews', 'Case reports', 'Publication mentorship'],
+      },
+    ],
   },
   {
-    label: '👥 Counselling',
-    title: 'Counselling Skills Development',
-    body: 'Practical, case-based skill-building for counsellors — communication, ethics, and technique.',
-    href: '/professionals/learning#learning-psychology',
-    cta: 'Open counselling track',
-  },
-  {
-    label: '🏥 Psychiatry',
-    title: 'Psychiatry Clinical Training',
-    body: 'For residents and prescribers: telemedicine norms, prescribing conversations, and SOAP/Rx workflow.',
-    href: '/professionals/learning#learning-pharmacology',
-    cta: 'Open psychiatry track',
-  },
-  {
-    label: '📚 Research',
-    title: 'Research & Publication Guidance',
-    body: 'Support for case write-ups, literature reviews, and publication-ready clinical writing.',
-    href: '/professionals/resources',
-    cta: 'View resources',
-  },
-  {
-    label: '💻 Telepsychiatry',
-    title: 'Digital Mental Health & Telepsychiatry',
-    body: 'Modern, remote-care delivery — platform workflows, documentation, and continuity of care.',
-    href: '/professionals/learning',
-    cta: 'Learn telepsychiatry',
-  },
-  {
-    label: '🎯 CPD',
-    title: 'Continuing Professional Development (CPD)',
-    body: 'Ongoing learning for licensed professionals to stay current and meet CPD requirements.',
-    href: '/professionals/learning',
-    cta: 'Open CPD track',
+    label: 'Professional Growth',
+    items: [
+      {
+        icon: '🎯', title: 'CPD Programs', slug: 'cpd-programs',
+        body: 'Continuous professional development.',
+        cta: 'View program',
+      },
+      {
+        icon: '👨‍🏫', title: 'Mentorship', slug: 'mentorship',
+        body: '1:1 supervision and career guidance.',
+        cta: 'View program',
+      },
+      {
+        icon: '🏆', title: 'Fellowship Programs', slug: 'fellowship-programs',
+        body: 'Advanced specialty tracks.',
+        cta: 'View program',
+      },
+    ],
   },
 ];
 
@@ -81,24 +104,6 @@ const STATS = [
   { value: 'Expert', label: 'Clinician faculty' },
   { value: 'Case-based', label: 'Practical training' },
   { value: 'Certified', label: 'On completion' },
-];
-
-const LEARNING_PATHS = [
-  {
-    icon: '🧠',
-    title: 'Psychology Student Path',
-    steps: ['Foundations', 'Assessment', 'Case formulation', 'Internship readiness'],
-  },
-  {
-    icon: '💬',
-    title: 'Counsellor Path',
-    steps: ['Communication', 'Ethics', 'CBT basics', 'Supervision'],
-  },
-  {
-    icon: '🏥',
-    title: 'Psychiatry Path',
-    steps: ['Telepsychiatry', 'Documentation', 'Prescribing', 'Practice management'],
-  },
 ];
 
 const INSTRUCTOR_MAILTO =
@@ -163,65 +168,58 @@ export default function AcademyPage() {
       <section id="offer" className="ed-section">
         <div className="container">
           <div className="ed-section-head">
-            <p className="ed-section-label">What We Offer</p>
-            <h2>From classroom to clinical practice.</h2>
+            <p className="ed-section-label">Career Pathways</p>
+            <h2>Build your mental health career journey</h2>
             <p className="ed-muted">
-              Diagnosis and treatment belong with licensed clinicians on Serenest. Academy is where that
-              workforce is trained — structured tracks across certificates, students, counselling,
-              psychiatry, research, telepsychiatry, and CPD.
+              From student to licensed professional — learn, practice, publish, and grow with
+              Serenest Academy.
             </p>
           </div>
 
           <div id="tracks" className="ed-anchor-target" />
 
-          <div className="ed-grid">
-            {PROGRAMMES.map((item) => (
-              <article key={item.title} className="ed-card">
-                <p className="ed-card-label">{item.label}</p>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-                <p className="ed-card-cta">
-                  {item.external ? (
-                    <a className="ed-link" href={item.href}>
-                      {item.cta}
-                    </a>
-                  ) : (
-                    <Link className="ed-link" to={item.href}>
-                      {item.cta}
-                    </Link>
-                  )}
-                </p>
-              </article>
+          {/* Journey flow */}
+          <ol className="ed-journey" aria-label="Learning journey">
+            {JOURNEY.map((step, i) => (
+              <li key={step}>
+                <span className="ed-journey-step">{step}</span>
+                {i < JOURNEY.length - 1 && <span className="ed-journey-arrow" aria-hidden="true">→</span>}
+              </li>
             ))}
-          </div>
-        </div>
-      </section>
+          </ol>
 
-      <section id="paths" className="ed-section ed-section-alt">
-        <div className="container">
-          <div className="ed-section-head">
-            <p className="ed-section-label">Learning Paths</p>
-            <h2>Built around careers, not just courses.</h2>
-            <p className="ed-muted">
-              Follow a structured path from foundations to practice-ready, mapped to where you are in
-              your journey.
+          {/* Grouped programme rows */}
+          {PROGRAMME_ROWS.map((row) => (
+            <div key={row.label} className="ed-row">
+              <div className="ed-row-label">{row.label}</div>
+              <div className="ed-grid ed-grid--3">
+                {row.items.map((item) => (
+                  <article key={item.title} className={`ed-card ${item.featured ? 'ed-card--featured' : ''}`}>
+                    {item.featured && <span className="ed-card-badge">★ Featured</span>}
+                    <div className="ed-card-icon" aria-hidden="true">{item.icon}</div>
+                    <h3>{item.title}</h3>
+                    <p>{item.body}</p>
+                    {item.highlights && (
+                      <ul className="ed-card-highlights">
+                        {item.highlights.map((h) => <li key={h}>{h}</li>)}
+                      </ul>
+                    )}
+                    <p className="ed-card-cta">
+                      <Link className="ed-link" to={`/academy/program/${item.slug}`}>{item.cta} →</Link>
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          ))}
+
+          {/* Workforce vision banner */}
+          <div className="ed-workforce">
+            <h3>Building India&apos;s Mental Health Workforce for 2047</h3>
+            <p>
+              Training psychologists, counsellors, psychiatrists, researchers, and digital mental
+              health professionals through structured education pathways.
             </p>
-          </div>
-
-          <div className="ed-paths">
-            {LEARNING_PATHS.map((p) => (
-              <article key={p.title} className="ed-path">
-                <div className="ed-path-head">
-                  <span className="ed-path-icon" aria-hidden="true">{p.icon}</span>
-                  <h3>{p.title}</h3>
-                </div>
-                <ol className="ed-path-steps">
-                  {p.steps.map((step) => (
-                    <li key={step}>{step}</li>
-                  ))}
-                </ol>
-              </article>
-            ))}
           </div>
         </div>
       </section>

@@ -25,6 +25,7 @@ const ScreeningPage = lazy(() => import('./pages/ScreeningPage'));
 const ConsultationPage = lazy(() => import('./pages/ConsultationPage'));
 const PrescriptionPage = lazy(() => import('./pages/PrescriptionPage'));
 const AcademyAuthPage = lazy(() => import('./pages/AcademyAuthPage'));
+const AcademyProgramPage = lazy(() => import('./pages/AcademyProgramPage'));
 const DepressionPage = lazy(() => import('./pages/DepressionPage'));
 const AnxietyPage = lazy(() => import('./pages/AnxietyPage'));
 const AdhdPage = lazy(() => import('./pages/AdhdPage'));
@@ -107,6 +108,7 @@ export default function App() {
               clinician learning hub so old Academy deep-links keep working. */}
           <Route path="academy" element={<S><AcademyPage /></S>} />
           <Route path="academy/login" element={<S><AcademyAuthPage /></S>} />
+          <Route path="academy/program/:slug" element={<S><AcademyProgramPage /></S>} />
           <Route
             path="academy/learn"
             element={<Navigate to="/professionals/learning" replace />}

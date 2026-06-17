@@ -4892,6 +4892,83 @@ a.pro-hub-tile:hover .learning-card-aux {
   background: var(--ed-border);
 }
 
+/* Journey flow ------------------------------------------------ */
+.ed-journey {
+  list-style: none;
+  margin: 0 0 2.5rem;
+  padding: 16px 18px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 4px;
+  justify-content: center;
+  background: var(--ed-surface);
+  border: 1px solid var(--ed-border);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-xs);
+}
+.ed-journey li { display: inline-flex; align-items: center; gap: 4px; }
+.ed-journey-step {
+  font-size: 0.82rem; font-weight: 700; color: var(--ed-ink);
+  background: var(--ed-bg-alt); border: 1px solid var(--ed-border);
+  padding: 6px 12px; border-radius: 999px; white-space: nowrap;
+}
+.ed-journey-arrow { color: var(--ed-brand); font-weight: 700; padding: 0 2px; }
+
+/* Grouped programme rows ------------------------------------- */
+.ed-row { margin-bottom: 2rem; }
+.ed-row-label {
+  font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--ed-brand); margin-bottom: 12px;
+  padding-bottom: 6px; border-bottom: 2px solid var(--ed-bg-alt);
+}
+.ed-grid--3 { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+
+.ed-card-icon { font-size: 1.6rem; line-height: 1; margin-bottom: 10px; }
+
+.ed-card-highlights {
+  list-style: none; margin: 12px 0 0; padding: 0;
+  display: flex; flex-direction: column; gap: 6px;
+}
+.ed-card-highlights li {
+  position: relative; padding-left: 20px;
+  font-size: 0.86rem; color: var(--ed-ink-soft); font-weight: 500;
+}
+.ed-card-highlights li::before {
+  content: '✓'; position: absolute; left: 0; color: var(--ed-brand); font-weight: 800;
+}
+
+.ed-card--featured {
+  position: relative;
+  border: 1.5px solid var(--ed-brand);
+  box-shadow: 0 8px 28px rgba(60, 74, 44, 0.12);
+}
+.ed-card-badge {
+  position: absolute; top: 14px; right: 14px;
+  font-size: 0.62rem; font-weight: 800; letter-spacing: 0.04em;
+  text-transform: uppercase; color: #fff; background: var(--ed-brand);
+  padding: 3px 8px; border-radius: 999px;
+}
+
+/* Workforce vision banner ------------------------------------ */
+.ed-workforce {
+  margin-top: 2.5rem;
+  padding: clamp(1.75rem, 4vw, 2.75rem);
+  border-radius: var(--r-lg);
+  background: linear-gradient(165deg, #2a3320 0%, #1c2418 100%);
+  color: #fff;
+  text-align: center;
+}
+.ed-workforce h3 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 3vw, 1.95rem);
+  font-weight: 600; color: #fff; margin: 0 0 10px;
+}
+.ed-workforce p {
+  margin: 0 auto; max-width: 62ch;
+  font-size: 1rem; line-height: 1.65; color: rgba(255,255,255,0.72);
+}
+
 /* Academy Guide (embedded AI) --------------------------------- */
 .ed-guide-section {
   padding-top: clamp(2.5rem, 6vw, 3.5rem);
