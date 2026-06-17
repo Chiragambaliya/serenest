@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import { useAuth, signOut } from '../lib/useAuth';
 
 import AcademyGuide from '../components/AcademyGuide';
 
@@ -105,15 +106,27 @@ const INSTRUCTOR_MAILTO =
 
 export default function AcademyPage() {
   useSEO({ path: '/academy', ...ROUTE_SEO['/academy'] });
+  const { user } = useAuth();
+  const firstName = (user?.user_metadata?.full_name || user?.email || '').split(/[\s@]/)[0];
 
   return (
     <div className="ed-page">
       <section className="ed-hero">
         <div className="container">
-          <div className="ed-hero-brandline">
+          <div className="ed-hero-brandline" style={{ justifyContent: 'space-between', width: '100%' }}>
             <div className="ed-hero-brandstack">
               <span className="ed-brand-name">Serenest Academy</span>
               <span className="ed-brand-tag">Literacy &amp; learning · part of Serenest</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              {user ? (
+                <>
+                  <span className="ed-muted" style={{ fontSize: '0.9rem' }}>Hi, {firstName}</span>
+                  <button type="button" className="btn btn-ghost btn-sm" onClick={() => signOut()}>Log out</button>
+                </>
+              ) : (
+                <Link className="btn btn-ghost btn-sm" to="/academy/login">Log in / Sign up</Link>
+              )}
             </div>
           </div>
 

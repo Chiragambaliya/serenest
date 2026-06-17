@@ -95,6 +95,7 @@ const TABS = [
   { id: 'messages',      label: 'Messages' },
   { id: 'screenings',    label: 'Screenings' },
   { id: 'subscribers',   label: 'Subscribers' },
+  { id: 'learners',      label: 'Academy' },
   { id: 'signups',       label: 'Signups' },
 ];
 
@@ -109,6 +110,7 @@ const TAB_ICONS = {
   messages: '💬',
   screenings: '🧠',
   subscribers: '✉️',
+  learners: '🎓',
   signups: '📋',
 };
 
@@ -123,6 +125,7 @@ const TAB_HELP = {
   messages: 'Read incoming contact/enquiry messages.',
   screenings: 'Review self-screening submissions and callback leads.',
   subscribers: 'People who opted in to email updates — export and reach out.',
+  learners: 'Registered Serenest Academy accounts — your learner audience.',
   signups: 'View and export waitlist signups.',
 };
 
@@ -220,6 +223,7 @@ export default function AdminPage() {
   const [signups, setSignups]         = useState([]);
   const [traffic, setTraffic]         = useState(null);
   const [subscribers, setSubscribers] = useState([]);
+  const [learners, setLearners]       = useState([]);
   const [noteEdit, setNoteEdit]       = useState({});
   const [proFilter, setProFilter]     = useState('all');
   const [bookingFilter, setBookingFilter] = useState('all');
@@ -308,6 +312,10 @@ export default function AdminPage() {
         const r = await adminFetch('/api/subscribers', secret);
         setSubscribers(r.subscribers ?? []);
       }
+      if (which === 'all' || which === 'learners') {
+        const r = await adminFetch('/api/academy/learners', secret);
+        setLearners(r.learners ?? []);
+      }
     } catch (e) {
       setError(e.message);
     } finally {
@@ -379,6 +387,7 @@ export default function AdminPage() {
     setSignups([]);
     setTraffic(null);
     setSubscribers([]);
+    setLearners([]);
     setSiteHubFilter('');
     setSiteCopied('');
     setHealthProbe(null);
@@ -2021,6 +2030,51 @@ export default function AdminPage() {
         )}
 
         {/* ── SUBSCRIBERS ── */}
+        {tab === 'learners' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 8 }}>
+              <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>
+                Academy Learners <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({learners.length})</span>
+              </h2>
+              <button
+                onClick={() => {
+                  const csv = ['Name,Email,Role,Confirmed,Joined', ...learners.map((l) => `"${l.full_name ?? ''}","${l.email ?? ''}","${l.role ?? ''}","${l.confirmed ? 'yes' : 'no'}","${fmtDate(l.created_at)}"`)].join('\n');
+                  const a = document.createElement('a');
+                  a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+                  a.download = 'serenest-academy-learners.csv';
+                  a.click();
+                }}
+                className="btn btn-ghost btn-sm"
+              >
+                Export CSV
+              </button>
+            </div>
+
+            {learners.length === 0 ? (
+              <EmptyState icon="🎓" text="No Academy accounts yet — the /academy/login page feeds this list" />
+            ) : (
+              <div style={{ overflowX: 'auto' }}>
+                <table style={tableStyle}>
+                  <thead>
+                    <tr>{['Name', 'Email', 'Role', 'Status', 'Joined'].map((h) => <th key={h} style={thStyle}>{h}</th>)}</tr>
+                  </thead>
+                  <tbody>
+                    {learners.map((l) => (
+                      <tr key={l.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                        <td style={tdStyle}>{l.full_name || '—'}</td>
+                        <td style={tdStyle}><a href={`mailto:${l.email}`} style={{ color: 'var(--brand-600)' }}>{l.email}</a></td>
+                        <td style={tdStyle}>{l.role || '—'}</td>
+                        <td style={tdStyle}>{l.confirmed ? <Badge status="confirmed" /> : <Badge status="pending" />}</td>
+                        <td style={tdStyle}>{fmt(l.created_at)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
+
         {tab === 'subscribers' && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 8 }}>

@@ -1290,6 +1290,27 @@ app.post('/api/subscribe', async (req, res) => {
   return ok(res, { subscriber: data }, 201);
 });
 
+/** GET /api/academy/learners — admin only — registered Academy accounts. */
+app.get('/api/academy/learners', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1000 });
+  if (error) {
+    console.error('[GET /api/academy/learners]', error);
+    return err(res, 'Failed to fetch learners', 500);
+  }
+
+  const learners = (data?.users ?? []).map((u) => ({
+    id: u.id,
+    email: u.email,
+    full_name: u.user_metadata?.full_name ?? null,
+    role: u.user_metadata?.role ?? null,
+    created_at: u.created_at,
+    confirmed: Boolean(u.email_confirmed_at),
+  }));
+  return ok(res, { learners });
+});
+
 /** GET /api/subscribers — admin only — list opt-in emails. */
 app.get('/api/subscribers', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;
@@ -1384,6 +1405,7 @@ const VALID_ROUTES = new Set([
   '/patient/find-professional',
   '/screening',
   '/academy',
+  '/academy/login',
   '/academy/learn',
   '/academy/learn/pharmacology',
   '/academy/learn/psychology',
