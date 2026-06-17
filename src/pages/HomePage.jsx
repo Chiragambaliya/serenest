@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { HOME_FEATURED_GUIDES } from '../lib/guides';
+import EdIcon from '../components/EdIcon';
 
 function HomeIcon({ name }) {
   const icons = {
@@ -91,29 +92,29 @@ const STEPS = [
 
 const ECOSYSTEM = [
   {
-    icon: '🩺',
+    icon: 'stethoscope',
     title: 'Mental Healthcare Services',
     body: 'Verified psychiatrists and psychologists for video, audio, and chat consultations.',
     href: '/services',
   },
   {
-    icon: '🎓',
+    icon: 'cap',
     title: 'Serenest Academy',
     body: 'Clinically oriented education and certificate programs for the mental health workforce.',
     href: '/academy',
   },
   {
-    icon: '🏢',
+    icon: 'building',
     title: 'Corporate Mental Wellness',
     body: 'Workplace programmes and EAP-style support for organisations. Coming soon.',
   },
   {
-    icon: '💊',
+    icon: 'pill',
     title: 'De-addiction & Rehabilitation',
     body: 'Structured recovery support and continuity of care. Coming soon.',
   },
   {
-    icon: '🌐',
+    icon: 'globe',
     title: 'Digital Mental Health Solutions',
     body: 'Telepsychiatry infrastructure and tools built for Indian care delivery.',
     href: '/services',
@@ -217,13 +218,13 @@ export default function HomePage() {
             {ECOSYSTEM.map((item) =>
               item.href ? (
                 <Link key={item.title} className="home__card" to={item.href}>
-                  <span className="home__icon home__icon--emoji" aria-hidden="true">{item.icon}</span>
+                  <span className="home__icon home__icon--svg"><EdIcon name={item.icon} size={24} /></span>
                   <h3>{item.title}</h3>
                   <p>{item.body}</p>
                 </Link>
               ) : (
                 <div key={item.title} className="home__card home__card--soon">
-                  <span className="home__icon home__icon--emoji" aria-hidden="true">{item.icon}</span>
+                  <span className="home__icon home__icon--svg"><EdIcon name={item.icon} size={24} /></span>
                   <h3>{item.title}</h3>
                   <p>{item.body}</p>
                 </div>

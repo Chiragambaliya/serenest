@@ -79,6 +79,65 @@ const PATHS = {
       <circle cx="12" cy="12" r="0.6" fill="currentColor" stroke="none" />
     </>
   ),
+  search: (
+    <>
+      <circle cx="11" cy="11" r="6.5" />
+      <path d="M16 16l4.5 4.5" />
+    </>
+  ),
+  clipboard: (
+    <>
+      <rect x="6" y="4.5" width="12" height="16" rx="2" />
+      <path d="M9 4.5V3.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v1" />
+      <path d="M9 10h6M9 13.5h4" />
+    </>
+  ),
+  building: (
+    <>
+      <rect x="5" y="3.5" width="14" height="17" rx="1.5" />
+      <path d="M9 7h2M13 7h2M9 11h2M13 11h2M9 15h2M13 15h2" />
+      <path d="M5 20.5h14" />
+    </>
+  ),
+  folder: (
+    <>
+      <path d="M3.5 7a2 2 0 0 1 2-2h3l2 2.2h8a2 2 0 0 1 2 2V18a2 2 0 0 1-2 2H5.5a2 2 0 0 1-2-2Z" />
+    </>
+  ),
+  globe: (
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M3.5 12h17" />
+      <path d="M12 3.5c2.5 2.4 3.8 5.4 3.8 8.5S14.5 18.1 12 20.5C9.5 18.1 8.2 15.1 8.2 12S9.5 5.9 12 3.5Z" />
+    </>
+  ),
+  pill: (
+    <>
+      <rect x="3.5" y="8" width="17" height="8" rx="4" transform="rotate(-45 12 12)" />
+      <path d="M9 9l6 6" />
+    </>
+  ),
+  heart: (
+    <>
+      <path d="M12 20s-7-4.3-7-9.3A3.7 3.7 0 0 1 12 7a3.7 3.7 0 0 1 7 3.7C19 15.7 12 20 12 20Z" />
+    </>
+  ),
+  mail: (
+    <>
+      <rect x="3.5" y="5.5" width="17" height="13" rx="2" />
+      <path d="M4.5 7l7.5 5.5L19.5 7" />
+    </>
+  ),
+  phone: (
+    <>
+      <path d="M6.5 4h3l1.5 4-2 1.3a11 11 0 0 0 4.7 4.7L15 16l4 1.5v3a1.5 1.5 0 0 1-1.6 1.5C9.7 21.4 3.6 15.3 3 7.6A1.5 1.5 0 0 1 4.5 6Z" />
+    </>
+  ),
+  chat: (
+    <>
+      <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v8a1.5 1.5 0 0 1-1.5 1.5H9l-4 3.5.3-3.5H5.5A1.5 1.5 0 0 1 4 13.5Z" />
+    </>
+  ),
 };
 
 export default function EdIcon({ name, size = 22 }) {

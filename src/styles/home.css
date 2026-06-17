@@ -433,6 +433,14 @@
   background: rgba(60, 74, 44, 0.07);
 }
 
+.home__card .home__icon--svg {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--h-sage);
+  background: rgba(60, 74, 44, 0.08);
+}
+
 @media (min-width: 768px) {
   .home__cards--ecosystem {
     grid-template-columns: repeat(5, minmax(0, 1fr));

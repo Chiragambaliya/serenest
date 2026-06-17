@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
+import EdIcon from '../components/EdIcon';
 
 export default function SiteLayout() {
   const [scrolled, setScrolled]   = useState(false);
@@ -205,29 +206,29 @@ export default function SiteLayout() {
               <div>
                 <div className="footer-title2">Care</div>
                 <nav className="footer-nav2" aria-label="Care links">
-                  <Link to="/book"><span aria-hidden="true">🩺</span> Book appointment</Link>
-                  <Link to="/patient/find-professional"><span aria-hidden="true">🔍</span> Find a professional</Link>
-                  <Link to="/screening"><span aria-hidden="true">📋</span> Self screening</Link>
-                  <Link to="/services"><span aria-hidden="true">🏢</span> Corporate wellness</Link>
+                  <Link to="/book"><EdIcon name="stethoscope" size={17} /> Book appointment</Link>
+                  <Link to="/patient/find-professional"><EdIcon name="search" size={17} /> Find a professional</Link>
+                  <Link to="/screening"><EdIcon name="clipboard" size={17} /> Self screening</Link>
+                  <Link to="/services"><EdIcon name="building" size={17} /> Corporate wellness</Link>
                 </nav>
               </div>
               <div>
                 <div className="footer-title2">Academy</div>
                 <nav className="footer-nav2" aria-label="Academy links">
-                  <Link to="/academy"><span aria-hidden="true">🎓</span> Courses</Link>
-                  <Link to="/professionals/learning"><span aria-hidden="true">📚</span> Clinician learning</Link>
-                  <Link to="/professionals/resources"><span aria-hidden="true">📖</span> Resources</Link>
-                  <Link to="/academy#offer"><span aria-hidden="true">🏆</span> Certifications</Link>
+                  <Link to="/academy"><EdIcon name="cap" size={17} /> Courses</Link>
+                  <Link to="/professionals/learning"><EdIcon name="book" size={17} /> Clinician learning</Link>
+                  <Link to="/professionals/resources"><EdIcon name="folder" size={17} /> Resources</Link>
+                  <Link to="/academy#offer"><EdIcon name="award" size={17} /> Certifications</Link>
                 </nav>
               </div>
             </div>
 
             <div className="footer-contact-card">
               <a href="mailto:support@serenest.in">
-                <span aria-hidden="true">📧</span> support@serenest.in
+                <EdIcon name="mail" size={17} /> support@serenest.in
               </a>
               <a href="tel:917777936367">
-                <span aria-hidden="true">📞</span> +91 77779 36367
+                <EdIcon name="phone" size={17} /> +91 77779 36367
               </a>
               <a
                 className="footer-wa"
@@ -235,7 +236,7 @@ export default function SiteLayout() {
                 target="_blank"
                 rel="noreferrer"
               >
-                <span aria-hidden="true">🟢</span> WhatsApp support
+                <EdIcon name="chat" size={17} /> WhatsApp support
               </a>
             </div>
           </div>
