@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import crypto from 'crypto';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -44,6 +45,63 @@ function requireDb(res) {
   return true;
 }
 
+// ── Razorpay (payments) ──────────────────────────────────────
+const RZP_KEY_ID     = process.env.RAZORPAY_KEY_ID;
+const RZP_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
+const DEFAULT_FEE_INR = Number(process.env.DEFAULT_FEE_INR) || 499;
+
+/** Payments are enforced only once both Razorpay keys are present. */
+function paymentsEnabled() {
+  return Boolean(RZP_KEY_ID && RZP_KEY_SECRET);
+}
+
+/** Resolve the amount (in rupees) to charge for a booking, server-side. */
+async function resolveFeeInr(professionalId) {
+  if (professionalId && supabase) {
+    const { data } = await supabase
+      .from('professional_applications')
+      .select('fee_inr')
+      .eq('id', professionalId)
+      .maybeSingle();
+    const fee = Number(data?.fee_inr);
+    if (Number.isFinite(fee) && fee > 0) return Math.round(fee);
+  }
+  return DEFAULT_FEE_INR;
+}
+
+/** Create a Razorpay order via the REST API (Basic auth — secret stays server-side). */
+async function createRazorpayOrder(amountInr) {
+  const auth = Buffer.from(`${RZP_KEY_ID}:${RZP_KEY_SECRET}`).toString('base64');
+  const r = await fetch('https://api.razorpay.com/v1/orders', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Basic ${auth}` },
+    body: JSON.stringify({
+      amount: amountInr * 100, // paise
+      currency: 'INR',
+      payment_capture: 1,
+    }),
+  });
+  if (!r.ok) {
+    const detail = await r.text().catch(() => '');
+    console.error('[razorpay order]', r.status, detail.slice(0, 200));
+    return null;
+  }
+  return r.json();
+}
+
+/** Verify the Razorpay payment signature (HMAC-SHA256 of "order_id|payment_id"). */
+function verifyRazorpaySignature({ order_id, payment_id, signature }) {
+  if (!order_id || !payment_id || !signature) return false;
+  const expected = crypto
+    .createHmac('sha256', RZP_KEY_SECRET)
+    .update(`${order_id}|${payment_id}`)
+    .digest('hex');
+  // Constant-time compare
+  const a = Buffer.from(expected);
+  const b = Buffer.from(signature);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
 // ── Health ───────────────────────────────────────────────────
 app.get('/api/health', (_req, res) => {
   ok(res, {
@@ -54,6 +112,7 @@ app.get('/api/health', (_req, res) => {
     notifications: notify.isConfigured() ? 'enabled' : 'disabled',
     patient_email: notify.isPatientEmailEnabled() ? 'enabled' : 'disabled',
     team_whatsapp: notify.hasTeamWhatsApp() ? 'enabled' : 'disabled',
+    payments: paymentsEnabled() ? 'enabled' : 'disabled',
     ts: new Date().toISOString(),
   });
 });
@@ -63,8 +122,37 @@ app.get('/api/health', (_req, res) => {
 // ══════════════════════════════════════════════════════════════
 
 /**
+ * POST /api/payments/order
+ * Create a Razorpay order for a booking. The amount is computed server-side
+ * from the chosen professional's fee (never trusted from the client).
+ */
+app.post('/api/payments/order', async (req, res) => {
+  if (!paymentsEnabled()) return err(res, 'Payments are not enabled on this server.', 503);
+
+  const { professional_id } = req.body || {};
+  const amountInr = await resolveFeeInr(professional_id);
+
+  // Razorpay minimum is 100 paise (₹1).
+  if (!Number.isFinite(amountInr) || amountInr < 1) {
+    return err(res, 'Invalid consultation fee for this booking.');
+  }
+
+  const order = await createRazorpayOrder(amountInr);
+  if (!order?.id) return err(res, 'Could not start payment. Please try again.', 502);
+
+  return ok(res, {
+    order_id: order.id,
+    amount: amountInr,
+    currency: 'INR',
+    key_id: RZP_KEY_ID,
+  });
+});
+
+/**
  * POST /api/bookings
- * Create a new appointment booking request.
+ * Create a new appointment booking request. When payments are enabled the
+ * request must carry a verified Razorpay payment; the booking is only saved
+ * after the signature checks out.
  */
 app.post('/api/bookings', async (req, res) => {
   if (!requireDb(res)) return;
@@ -73,6 +161,7 @@ app.post('/api/bookings', async (req, res) => {
     patient_name, patient_phone, patient_email,
     practitioner_type, mode, preferred_date, preferred_time,
     language = 'English', notes = '', professional_id,
+    razorpay_order_id, razorpay_payment_id, razorpay_signature,
   } = req.body;
 
   if (!patient_name?.trim())  return err(res, 'patient_name is required');
@@ -84,6 +173,23 @@ app.post('/api/bookings', async (req, res) => {
   const phone = patient_phone.replace(/[^\d]/g, '');
   if (phone.length !== 10 || !/^[6-9]/.test(phone)) {
     return err(res, 'patient_phone must be a valid 10-digit Indian mobile number');
+  }
+
+  // Payment gate — only when Razorpay is configured.
+  let payment = { status: 'unpaid', id: null, order_id: null, amount: null };
+  if (paymentsEnabled()) {
+    const valid = verifyRazorpaySignature({
+      order_id: razorpay_order_id,
+      payment_id: razorpay_payment_id,
+      signature: razorpay_signature,
+    });
+    if (!valid) return err(res, 'Payment could not be verified. You have not been charged for an unconfirmed booking.', 402);
+    payment = {
+      status: 'paid',
+      id: razorpay_payment_id,
+      order_id: razorpay_order_id,
+      amount: await resolveFeeInr(professional_id),
+    };
   }
 
   const { data, error } = await supabase
@@ -100,6 +206,10 @@ app.post('/api/bookings', async (req, res) => {
       notes: notes.trim(),
       professional_id: professional_id || null,
       status: 'pending',
+      payment_status: payment.status,
+      payment_id: payment.id,
+      payment_order_id: payment.order_id,
+      amount_paid: payment.amount,
     })
     .select()
     .single();

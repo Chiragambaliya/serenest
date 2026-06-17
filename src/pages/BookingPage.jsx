@@ -1,9 +1,22 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { bookings, professionals as professionalsApi } from '../lib/api';
+import { bookings, professionals as professionalsApi, payments, health } from '../lib/api';
 import { CONSULTATION_MODES } from '../lib/consultationModes';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+
+const DEFAULT_FEE_INR = 499;
+
+function loadRazorpay() {
+  return new Promise((resolve) => {
+    if (window.Razorpay) return resolve(true);
+    const s = document.createElement('script');
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    s.onload = () => resolve(true);
+    s.onerror = () => resolve(false);
+    document.body.appendChild(s);
+  });
+}
 
 const PRACTITIONER_TYPES = [
   { id: 'psychiatrist', label: 'Psychiatrist' },
@@ -93,27 +106,91 @@ export default function BookingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [confirmation, setConfirmation] = useState(null);
+  const [paymentsOn, setPaymentsOn] = useState(false);
+
+  // Detect whether the server requires payment before booking.
+  useEffect(() => {
+    health()
+      .then((h) => setPaymentsOn(h.payments === 'enabled'))
+      .catch(() => setPaymentsOn(false));
+  }, []);
+
+  const payAmount = hasPro
+    ? (Number(preProFee) || DEFAULT_FEE_INR)
+    : (Number(selectedPro?.fee_inr) || DEFAULT_FEE_INR);
 
   async function handleSubmit() {
     setSubmitError(null);
     setSubmitting(true);
+
+    const bookingData = {
+      patient_name: name.trim(),
+      patient_phone: phoneClean,
+      patient_email: email.trim() || undefined,
+      practitioner_type: practitionerType,
+      ...(hasPro && { professional_id: preProId, professional_name: preProName }),
+      ...(!hasPro && selectedProId && { professional_id: selectedProId, professional_name: selectedPro?.full_name }),
+      mode,
+      preferred_date: dayKey,
+      preferred_time: time,
+      language,
+      notes: note.trim(),
+    };
+
     try {
-      const res = await bookings.create({
-        patient_name: name.trim(),
-        patient_phone: phoneClean,
-        patient_email: email.trim() || undefined,
-        practitioner_type: practitionerType,
-        ...(hasPro && { professional_id: preProId, professional_name: preProName }),
-        ...(!hasPro && selectedProId && { professional_id: selectedProId, professional_name: selectedPro?.full_name }),
-        mode,
-        preferred_date: dayKey,
-        preferred_time: time,
-        language,
-        notes: note.trim(),
+      // No payment required — create the booking directly.
+      if (!paymentsOn) {
+        const res = await bookings.create(bookingData);
+        setConfirmation(res.booking);
+        return;
+      }
+
+      // Payment required — pay first, then create the booking on success.
+      const ready = await loadRazorpay();
+      if (!ready) throw new Error('Could not load the payment gateway. Please try again.');
+
+      const proId = hasPro ? preProId : (selectedProId || undefined);
+      const order = await payments.order({ professional_id: proId });
+
+      await new Promise((resolve, reject) => {
+        const rzp = new window.Razorpay({
+          key: order.key_id,
+          amount: order.amount * 100,
+          currency: order.currency,
+          order_id: order.order_id,
+          name: 'Serenest',
+          description: `${selectedTypeLabel} consultation`,
+          prefill: {
+            name: name.trim(),
+            contact: phoneClean,
+            email: email.trim() || undefined,
+          },
+          theme: { color: '#3c4a2c' },
+          handler: async (resp) => {
+            try {
+              const res = await bookings.create({
+                ...bookingData,
+                razorpay_order_id: resp.razorpay_order_id,
+                razorpay_payment_id: resp.razorpay_payment_id,
+                razorpay_signature: resp.razorpay_signature,
+              });
+              setConfirmation(res.booking);
+              resolve();
+            } catch (e) {
+              reject(e);
+            }
+          },
+          modal: {
+            ondismiss: () => reject(new Error('Payment cancelled — you have not been charged.')),
+          },
+        });
+        rzp.on('payment.failed', (e) => {
+          reject(new Error(e?.error?.description || 'Payment failed. Please try again — you have not been charged.'));
+        });
+        rzp.open();
       });
-      setConfirmation(res.booking);
     } catch (err) {
-      setSubmitError(err.message || 'Could not submit your booking. Please try again.');
+      setSubmitError(err.message || 'Could not complete your booking. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -467,6 +544,12 @@ export default function BookingPage() {
                         {dayLabel} {time}
                       </span>
                     </div>
+                    {paymentsOn && (
+                      <div className="confirm-row">
+                        <span className="confirm-k">Amount</span>
+                        <span className="confirm-v"><strong>₹{payAmount}</strong></span>
+                      </div>
+                    )}
                   </div>
 
                   <div className="confirm-card">
@@ -524,12 +607,16 @@ export default function BookingPage() {
                     onClick={handleSubmit}
                     disabled={submitting}
                   >
-                    {submitting ? 'Submitting…' : 'Confirm booking →'}
+                    {submitting
+                      ? (paymentsOn ? 'Opening payment…' : 'Submitting…')
+                      : (paymentsOn ? `Pay ₹${payAmount} & confirm →` : 'Confirm booking →')}
                   </button>
                 </div>
 
                 <p className="fineprint" style={{ marginTop: 12 }}>
-                  We'll reach out on WhatsApp / phone with the next available verified practitioner and payment steps.
+                  {paymentsOn
+                    ? 'Secure payment via Razorpay. You are only charged once you complete payment, and your slot is confirmed instantly after.'
+                    : "We'll reach out on WhatsApp / phone with the next available verified practitioner and payment steps."}
                   {' '}
                   If urgent or in danger, contact emergency services.
                 </p>

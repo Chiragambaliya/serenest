@@ -1081,7 +1081,14 @@ export default function AdminPage() {
                         <td style={tdStyle}>{b.practitioner_type}</td>
                         <td style={tdStyle}>{b.mode}</td>
                         <td style={tdStyle}>{fmtDate(b.preferred_date)}<br /><small>{b.preferred_time}</small></td>
-                        <td style={tdStyle}><Badge status={b.status} /></td>
+                        <td style={tdStyle}>
+                          <Badge status={b.status} />
+                          {b.payment_status === 'paid' && (
+                            <span style={{ display: 'inline-block', marginTop: 4, background: '#d1e7dd', color: '#0a3622', padding: '1px 8px', borderRadius: 99, fontSize: '0.68rem', fontWeight: 700 }}>
+                              ✓ Paid{b.amount_paid ? ` ₹${b.amount_paid}` : ''}
+                            </span>
+                          )}
+                        </td>
                         <td style={tdStyle}>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                             {b.status === 'pending'   && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Confirm'}  onClick={() => updateBookingStatus(b.id, 'confirmed')}  color="#198754" disabled={bookingBusyId === b.id} />}

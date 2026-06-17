@@ -101,6 +101,12 @@ export const prescriptions = {
   get: (appointmentId) => get(`/api/prescriptions/${appointmentId}`),
 };
 
+// ── Payments (Razorpay) ─────────────────────────────────────
+export const payments = {
+  /** Create a Razorpay order; amount is computed server-side. */
+  order: (data) => post('/api/payments/order', data),
+};
+
 // ── Subscribers (opt-in email capture) ─────────────────────
 export const subscribers = {
   /** Save an opt-in email. @param {{ email: string, source?: string }} data */
@@ -128,4 +134,4 @@ export const assistant = {
   notifyGuideOpened: (payload) => post('/api/assistant/notify-open', payload),
 };
 
-export default { health, bookings, screening, professionals, rooms, contact, assistant, prescriptions, subscribers };
+export default { health, bookings, screening, professionals, rooms, contact, assistant, prescriptions, subscribers, payments };
