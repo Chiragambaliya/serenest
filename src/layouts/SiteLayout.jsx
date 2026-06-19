@@ -3,11 +3,18 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
 import EdIcon from '../components/EdIcon';
+import { useAuth } from '../lib/useAuth';
 
 export default function SiteLayout() {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
   const location                   = useLocation();
+  const { user }                   = useAuth();
+
+  const isPatient = user?.user_metadata?.role === 'patient';
+  const patientFirstName = isPatient
+    ? (user.user_metadata?.full_name || user.user_metadata?.name || '').split(' ')[0]
+    : '';
 
   // Close mobile menu on route change
   useEffect(() => {
@@ -78,6 +85,10 @@ export default function SiteLayout() {
             {/* Divider */}
             <span className="nav-divider" aria-hidden="true" />
 
+            <NavLink to="/patient/dashboard" className={navClass} style={{ fontWeight: 600 }}>
+              {isPatient && patientFirstName ? `Hi, ${patientFirstName}` : 'My bookings'}
+            </NavLink>
+
             <Link className="header-cta" to="/book">
               Book now
             </Link>
@@ -133,6 +144,7 @@ export default function SiteLayout() {
             {/* Nav links */}
             <nav className="menu-links" aria-label="Mobile navigation">
               <Link to="/"                          onClick={() => setMenuOpen(false)}>🏠 Home</Link>
+              <Link to="/patient/dashboard"         onClick={() => setMenuOpen(false)}>📅 {isPatient && patientFirstName ? `My bookings (${patientFirstName})` : 'My bookings'}</Link>
               <Link to="/patient/find-professional" onClick={() => setMenuOpen(false)}>🔍 Find a professional</Link>
               <Link to="/about"                     onClick={() => setMenuOpen(false)}>ℹ️ About us</Link>
               <Link to="/team"                      onClick={() => setMenuOpen(false)}>👥 Team</Link>

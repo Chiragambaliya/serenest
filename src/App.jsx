@@ -35,6 +35,8 @@ const Gad7Page = lazy(() => import('./pages/Gad7Page'));
 const OnlinePrescriptionPage = lazy(() => import('./pages/OnlinePrescriptionPage'));
 const GuidesPage = lazy(() => import('./pages/GuidesPage'));
 const AcademyPage = lazy(() => import('./pages/AcademyPage'));
+const PatientAuthPage = lazy(() => import('./pages/PatientAuthPage'));
+const PatientDashboardPage = lazy(() => import('./pages/PatientDashboardPage'));
 
 // FIX Bug 5: PageFallback is used per-route so only the content area spins,
 // not the entire app (navbar + footer stay visible during lazy-load transitions)
@@ -90,6 +92,8 @@ export default function App() {
           <Route path="privacy" element={<S><PrivacyPolicyPage /></S>} />
           <Route path="admin" element={<S><AdminPage /></S>} />
           <Route path="patient/find-professional" element={<S><PatientFindProfessionalPage /></S>} />
+          <Route path="patient/login"            element={<S><PatientAuthPage /></S>} />
+          <Route path="patient/dashboard"        element={<S><PatientDashboardPage /></S>} />
           <Route path="screening" element={<S><ScreeningPage /></S>} />
           <Route path="consultation/:appointmentId" element={<S><ConsultationPage /></S>} />
           <Route path="consultation/:appointmentId/prescription" element={<S><PrescriptionPage /></S>} />

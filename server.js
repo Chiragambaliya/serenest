@@ -260,6 +260,46 @@ app.get('/api/bookings', async (req, res) => {
 });
 
 /**
+ * GET /api/patient/bookings
+ * Return the authenticated patient's own appointments.
+ * Matches by email (from JWT) and phone stored in the patients table,
+ * so bookings made before account creation are also surfaced.
+ */
+app.get('/api/patient/bookings', async (req, res) => {
+  if (!requireDb(res)) return;
+
+  const token = (req.headers['authorization'] ?? '').replace(/^Bearer\s+/i, '');
+  if (!token) return err(res, 'Unauthorized', 401);
+
+  const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+  if (authError || !user) return err(res, 'Unauthorized', 401);
+
+  const email = user.email;
+
+  const { data: patient } = await supabase
+    .from('patients')
+    .select('phone')
+    .eq('auth_user_id', user.id)
+    .single();
+
+  const phone = patient?.phone ? patient.phone.replace(/[^\d]/g, '') : null;
+
+  const [byEmail, byPhone] = await Promise.all([
+    supabase.from('appointments').select('*').eq('patient_email', email).order('created_at', { ascending: false }),
+    phone
+      ? supabase.from('appointments').select('*').eq('patient_phone', phone).order('created_at', { ascending: false })
+      : Promise.resolve({ data: [] }),
+  ]);
+
+  const seen = new Set();
+  const bookings = [...(byEmail.data ?? []), ...(byPhone.data ?? [])]
+    .filter((b) => { if (seen.has(b.id)) return false; seen.add(b.id); return true; })
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+  return ok(res, { bookings });
+});
+
+/**
  * PATCH /api/bookings/:id/status
  * Update booking status (admin: confirm / cancel / complete).
  */
