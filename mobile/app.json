@@ -1,0 +1,28 @@
+{
+  "expo": {
+    "name": "Serenest",
+    "slug": "serenest",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "serenest",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "in.serenest.app"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#f4f6f0"
+      },
+      "package": "in.serenest.app"
+    },
+    "plugins": [
+      "expo-secure-store"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "your-eas-project-id"
+      }
+    }
+  }
+}
