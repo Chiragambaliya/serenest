@@ -4,6 +4,7 @@ import { bookings, professionals as professionalsApi, payments, health } from '.
 import { CONSULTATION_MODES } from '../lib/consultationModes';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import { useAuth } from '../lib/useAuth';
 
 const DEFAULT_FEE_INR = 499;
 
@@ -48,6 +49,8 @@ function makeSlots() {
 
 export default function BookingPage() {
   useSEO({ path: '/book', ...ROUTE_SEO['/book'] });
+  const { user } = useAuth();
+  const [guestMode, setGuestMode] = useState(false);
   const [searchParams] = useSearchParams();
   const preProId    = searchParams.get('pid') ?? '';
   const preProName  = searchParams.get('pname') ?? '';
@@ -244,6 +247,33 @@ export default function BookingPage() {
           )}
         </div>
       </section>
+
+      {/* Auth prompt banner — shown to unauthenticated guests only */}
+      {!user && !guestMode && (
+        <div style={{ background: 'var(--brand-50, #f4f6f0)', borderBottom: '1px solid var(--border)' }}>
+          <div className="container" style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem 1.25rem' }}>
+            <div style={{ flex: 1, minWidth: 220 }}>
+              <p style={{ fontWeight: 700, fontSize: '0.94rem', marginBottom: 2 }}>Save your booking to your account</p>
+              <p style={{ fontSize: '0.83rem', color: 'var(--text-muted)' }}>Sign in or create a free account to track appointments and view prescriptions.</p>
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+              <Link to="/patient/login" state={{ mode: 'signup', from: '/book' }} className="btn btn-primary btn-sm">
+                Create account
+              </Link>
+              <Link to="/patient/login" state={{ mode: 'login', from: '/book' }} className="btn btn-ghost btn-sm">
+                Sign in
+              </Link>
+              <button
+                type="button"
+                onClick={() => setGuestMode(true)}
+                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '0.83rem', padding: '4px 2px', whiteSpace: 'nowrap' }}
+              >
+                Continue as guest →
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <section className="section">
         <div className="container">

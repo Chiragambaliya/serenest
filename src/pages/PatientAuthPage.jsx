@@ -10,7 +10,7 @@ export default function PatientAuthPage() {
 
   const { user, loading: authLoading } = useAuth();
 
-  const [mode, setMode]         = useState('login'); // login | signup
+  const [mode, setMode]         = useState(location.state?.mode ?? 'login'); // login | signup
   const [fullName, setFullName] = useState('');
   const [phone, setPhone]       = useState('');
   const [email, setEmail]       = useState('');
