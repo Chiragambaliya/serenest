@@ -139,7 +139,7 @@ export default function AcademyAuthPage() {
             </p>
 
             <p style={{ textAlign: 'center', marginTop: 8 }}>
-              <Link className="muted" to="/academy" style={{ fontSize: '0.85rem' }}>← Back to Academy</Link>
+              <Link className="muted" to="/" style={{ fontSize: '0.85rem' }}>← Back to home</Link>
             </p>
           </div>
         </div>

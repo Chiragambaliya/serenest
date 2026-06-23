@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import SiteLayout from './layouts/SiteLayout';
+import RequireAcademyAuth from './components/RequireAcademyAuth';
 import { trackVisit } from './lib/visitTracker';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
@@ -110,9 +111,9 @@ export default function App() {
           {/* Serenest Academy — literacy/learning surface, merged in from the
               former standalone education-site. /academy/learn redirects to the
               clinician learning hub so old Academy deep-links keep working. */}
-          <Route path="academy" element={<S><AcademyPage /></S>} />
+          <Route path="academy" element={<S><RequireAcademyAuth><AcademyPage /></RequireAcademyAuth></S>} />
           <Route path="academy/login" element={<S><AcademyAuthPage /></S>} />
-          <Route path="academy/program/:slug" element={<S><AcademyProgramPage /></S>} />
+          <Route path="academy/program/:slug" element={<S><RequireAcademyAuth><AcademyProgramPage /></RequireAcademyAuth></S>} />
           <Route
             path="academy/learn"
             element={<Navigate to="/professionals/learning" replace />}
