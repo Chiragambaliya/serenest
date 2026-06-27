@@ -899,3 +899,171 @@
 
 .share-btn--wa:hover { background: rgba(37, 211, 102, 0.25); border-color: rgba(37, 211, 102, 0.5); }
 .share-btn--tw:hover { background: rgba(255,255,255, 0.14); }
+
+/* ── Exit-intent popup ───────────────────────────────────────── */
+.eip-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 10, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  z-index: 9000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: eip-fade-in 0.22s ease;
+}
+
+@keyframes eip-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.eip-card {
+  position: relative;
+  background: #faf7f1;
+  border-radius: 20px;
+  box-shadow: 0 24px 64px rgba(15, 23, 10, 0.22);
+  padding: 2.5rem 2rem 2rem;
+  max-width: 440px;
+  width: 100%;
+  text-align: center;
+  animation: eip-slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes eip-slide-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.eip-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(28, 36, 24, 0.07);
+  border: none;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #4a5568;
+  transition: background 0.15s;
+}
+.eip-close:hover { background: rgba(28, 36, 24, 0.14); }
+
+.eip-icon {
+  margin: 0 auto 1rem;
+  width: 56px;
+  height: 56px;
+}
+
+.eip-eyebrow {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #57683f;
+  margin: 0 0 0.5rem;
+}
+
+.eip-title {
+  font-size: clamp(1.2rem, 3vw, 1.5rem);
+  font-weight: 800;
+  color: #1c2418;
+  margin: 0 0 0.75rem;
+  line-height: 1.25;
+}
+
+.eip-sub {
+  font-size: 0.9rem;
+  color: rgba(28, 36, 24, 0.68);
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+}
+
+.eip-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.eip-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid rgba(28, 36, 24, 0.18);
+  border-radius: 10px;
+  font-size: 0.95rem;
+  background: #fff;
+  color: #1c2418;
+  outline: none;
+  transition: border-color 0.15s;
+  box-sizing: border-box;
+}
+.eip-input:focus { border-color: #3c4a2c; }
+.eip-input::placeholder { color: rgba(28, 36, 24, 0.38); }
+
+.eip-btn {
+  width: 100%;
+  padding: 0.8rem 1rem;
+  border-radius: 10px;
+  border: none;
+  background: #3c4a2c;
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: background 0.18s, transform 0.15s;
+}
+.eip-btn:hover:not(:disabled) { background: #2a3320; transform: translateY(-1px); }
+.eip-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.eip-skip {
+  margin-top: 0.85rem;
+  background: none;
+  border: none;
+  font-size: 0.8rem;
+  color: rgba(28, 36, 24, 0.48);
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+.eip-skip:hover { color: rgba(28, 36, 24, 0.72); }
+
+.eip-error {
+  font-size: 0.82rem;
+  color: #b91c1c;
+  margin: 0.4rem 0 0;
+}
+
+.eip-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.eip-success-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 1.4rem;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+.eip-success .eip-btn {
+  max-width: 160px;
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .eip-card { padding: 2rem 1.25rem 1.5rem; border-radius: 16px; }
+}
