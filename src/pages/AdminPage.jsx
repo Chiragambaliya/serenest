@@ -15,7 +15,11 @@ async function adminFetch(path, secret, opts = {}) {
     },
   });
   const json = await res.json().catch(() => ({ ok: false, error: 'Invalid response' }));
-  if (!json.ok) throw new Error(json.error ?? 'Request failed');
+  if (!json.ok) {
+    const e = new Error(json.error ?? 'Request failed');
+    e.status = res.status;
+    throw e;
+  }
   return json;
 }
 
@@ -265,24 +269,33 @@ export default function AdminPage() {
     if (!secret) return;
     setLoading(true);
     setError(null);
-    try {
-      if (which === 'all' || which === 'stats') {
+
+    const errors = [];
+    const safe = async (fn) => {
+      try { await fn(); } catch (e) {
+        if (e.status === 401) { signOut(); return; }
+        errors.push(e.message);
+      }
+    };
+
+    await Promise.all([
+      (which === 'all' || which === 'stats') && safe(async () => {
         const r = await adminFetch('/api/admin/stats', secret);
         setStats(r.stats);
-      }
-      if (which === 'all' || which === 'bookings') {
+      }),
+      (which === 'all' || which === 'bookings') && safe(async () => {
         const r = await adminFetch('/api/bookings', secret);
         setBookings(r.bookings ?? []);
-      }
-      if (which === 'all' || which === 'applications') {
+      }),
+      (which === 'all' || which === 'applications') && safe(async () => {
         const r = await adminFetch('/api/professionals/applications', secret);
         setApps(r.applications ?? []);
-      }
-      if (which === 'all' || which === 'professionals') {
+      }),
+      (which === 'all' || which === 'professionals') && safe(async () => {
         const r = await adminFetch('/api/professionals/list', secret);
         setProfessionals(r.professionals ?? []);
-      }
-      if (which === 'all' || which === 'hr') {
+      }),
+      (which === 'all' || which === 'hr') && safe(async () => {
         const [rApps, rPostings, rInterviews] = await Promise.all([
           adminFetch('/api/jobs/applications', secret),
           adminFetch('/api/jobs/all', secret),
@@ -291,36 +304,35 @@ export default function AdminPage() {
         setJobs(rApps.applications ?? []);
         setJobPostings(rPostings.jobs ?? []);
         setInterviews(rInterviews.interviews ?? []);
-      }
-      if (which === 'all' || which === 'messages') {
+      }),
+      (which === 'all' || which === 'messages') && safe(async () => {
         const r = await adminFetch('/api/contacts', secret);
         setMessages(r.messages ?? []);
-      }
-      if (which === 'all' || which === 'signups') {
+      }),
+      (which === 'all' || which === 'signups') && safe(async () => {
         const r = await adminFetch('/api/signups', secret);
         setSignups(r.signups ?? []);
-      }
-      if (which === 'all' || which === 'screenings') {
+      }),
+      (which === 'all' || which === 'screenings') && safe(async () => {
         const r = await adminFetch('/api/screening', secret);
         setScreenings(r.screenings ?? []);
-      }
-      if (which === 'all' || which === 'traffic') {
+      }),
+      (which === 'all' || which === 'traffic') && safe(async () => {
         const r = await adminFetch('/api/track/stats', secret);
         setTraffic(r);
-      }
-      if (which === 'all' || which === 'subscribers') {
+      }),
+      (which === 'all' || which === 'subscribers') && safe(async () => {
         const r = await adminFetch('/api/subscribers', secret);
         setSubscribers(r.subscribers ?? []);
-      }
-      if (which === 'all' || which === 'learners') {
+      }),
+      (which === 'all' || which === 'learners') && safe(async () => {
         const r = await adminFetch('/api/academy/learners', secret);
         setLearners(r.learners ?? []);
-      }
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
+      }),
+    ].filter(Boolean));
+
+    if (errors.length) setError(errors.join(' · '));
+    setLoading(false);
   }, [secret]);
 
   useEffect(() => {
