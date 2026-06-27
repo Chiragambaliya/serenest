@@ -1391,11 +1391,7 @@ app.post('/api/subscribe', async (req, res) => {
     return err(res, 'Could not save your email. Please try again.', 500);
   }
 
-  notify.custom(
-    `New subscriber — ${clean}`,
-    `<p style="margin:0 0 8px;font-size:16px"><strong>${clean}</strong> subscribed for updates.</p>`
-    + `<p style="margin:0;color:#64748b;font-size:13px">Source: ${source || '—'}</p>`,
-  );
+  notify.subscriber(clean, source);
 
   return ok(res, { subscriber: data }, 201);
 });

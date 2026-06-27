@@ -409,6 +409,18 @@ export const notify = {
       ${table([row('Phone', fmtPhone(s.mobile))])}
     `;
     fire(sendEmail({ subject: `Waitlist signup — ${s.email}`, html }));
+    fire(sendTeamWhatsApp(
+      `Serenest — Waitlist signup\n${s.email}${s.mobile ? `\n+91 ${String(s.mobile).replace(/\D/g, '')}` : ''}`,
+    ));
+  },
+
+  subscriber(email, source) {
+    fire(sendEmail({
+      subject: `New subscriber — ${email}`,
+      html: `<p style="margin:0 0 8px;font-size:16px"><strong>${esc(email)}</strong> subscribed for updates.</p>`
+        + `<p style="margin:0;color:#64748b;font-size:13px">Source: ${esc(source || '—')}</p>`,
+    }));
+    fire(sendTeamWhatsApp(`Serenest — New subscriber\n${email}${source ? `\nSource: ${source}` : ''}`));
   },
 
   /**
