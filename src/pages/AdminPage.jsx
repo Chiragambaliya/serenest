@@ -262,6 +262,12 @@ export default function AdminPage() {
   const [siteCopied, setSiteCopied]       = useState('');
   const [healthProbe, setHealthProbe]     = useState(null);
 
+  // read messages tracked client-side (localStorage) — no DB column needed
+  const [readMsgIds, setReadMsgIds] = useState(() => {
+    try { return new Set(JSON.parse(localStorage.getItem('adm_read_msgs') ?? '[]')); }
+    catch { return new Set(); }
+  });
+
   const authed = Boolean(secret);
 
   // ── fetch helpers ──────────────────────────────────────────
@@ -644,6 +650,50 @@ export default function AdminPage() {
       setError(e.message);
     } finally {
       setBookingBusyId(null);
+    }
+  }
+
+  // ── delete booking ─────────────────────────────────────────
+  async function deleteBooking(id) {
+    setBookingBusyId(id);
+    try {
+      await adminFetch(`/api/bookings/${id}`, secret, { method: 'DELETE' });
+      setBookings((prev) => prev.filter((b) => b.id !== id));
+      load('stats');
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBookingBusyId(null);
+    }
+  }
+
+  // ── CSV export helper ──────────────────────────────────────
+  function downloadCsv(rows, filename) {
+    const csv = rows.map((row) =>
+      row.map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`).join(','),
+    ).join('\n');
+    const a = document.createElement('a');
+    a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+    a.download = filename;
+    a.click();
+  }
+
+  // ── contact messages ───────────────────────────────────────
+  function markMessageRead(id) {
+    setReadMsgIds((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      localStorage.setItem('adm_read_msgs', JSON.stringify([...next]));
+      return next;
+    });
+  }
+
+  async function deleteMessage(id) {
+    try {
+      await adminFetch(`/api/contacts/${id}`, secret, { method: 'DELETE' });
+      setMessages((prev) => prev.filter((m) => m.id !== id));
+    } catch (e) {
+      setError(e.message);
     }
   }
 
@@ -1043,7 +1093,21 @@ export default function AdminPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem', flexWrap: 'wrap', gap: 8 }}>
               <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>Bookings <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({bookings.length})</span></h2>
-              <Link to="/book" className="btn btn-primary btn-sm">+ New booking</Link>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  onClick={() => downloadCsv(
+                    [
+                      ['Patient', 'Phone', 'Email', 'Type', 'Mode', 'Date', 'Time', 'Status', 'Paid', 'Amount', 'Created'],
+                      ...bookings.map((b) => [b.patient_name, b.patient_phone, b.patient_email, b.practitioner_type, b.mode, b.preferred_date, b.preferred_time, b.status, b.payment_status, b.amount_paid, fmt(b.created_at)]),
+                    ],
+                    'serenest-bookings.csv',
+                  )}
+                  className="btn btn-ghost btn-sm"
+                >
+                  Export CSV
+                </button>
+                <Link to="/book" className="btn btn-primary btn-sm">+ New booking</Link>
+              </div>
             </div>
 
             <div style={{
@@ -1152,6 +1216,12 @@ export default function AdminPage() {
                             {(b.status === 'confirmed' || b.status === 'completed') && (
                               <ActionBtn label="📋 Issue Rx" onClick={() => openPrescribe(b)} color="#6f42c1" />
                             )}
+                            <ActionBtn
+                              label="🗑"
+                              onClick={() => { if (window.confirm(`Delete booking for ${b.patient_name}? This cannot be undone.`)) deleteBooking(b.id); }}
+                              color="#6c757d"
+                              disabled={bookingBusyId === b.id}
+                            />
                           </div>
                         </td>
                       </tr>
@@ -1867,32 +1937,78 @@ export default function AdminPage() {
         {/* ── MESSAGES ── */}
         {tab === 'messages' && (
           <div>
-            <h2 style={{ fontWeight: 800, fontSize: '1.4rem', marginBottom: '1rem' }}>
-              Contact Messages <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({messages.length})</span>
-            </h2>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 8 }}>
+              <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>
+                Contact Messages <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({messages.length})</span>
+                {messages.filter((m) => !readMsgIds.has(m.id)).length > 0 && (
+                  <Pill n={messages.filter((m) => !readMsgIds.has(m.id)).length} />
+                )}
+              </h2>
+              <button
+                onClick={() => downloadCsv(
+                  [
+                    ['Name', 'Email', 'Phone', 'Subject', 'Message', 'Received'],
+                    ...messages.map((m) => [m.name, m.email, m.phone, m.subject, m.message, fmt(m.created_at)]),
+                  ],
+                  'serenest-messages.csv',
+                )}
+                className="btn btn-ghost btn-sm"
+              >
+                Export CSV
+              </button>
+            </div>
             {messages.length === 0 ? (
               <EmptyState icon="💬" text="No messages yet" />
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                {messages.map((m) => (
-                  <div key={m.id} style={{
-                    background: 'var(--surface)',
-                    border: '1px solid var(--border)',
-                    borderRadius: 10,
-                    padding: '1rem 1.25rem',
-                  }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
-                      <div>
-                        <strong>{m.name}</strong>
-                        {m.email && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginLeft: 8 }}>{m.email}</span>}
-                        {m.phone && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginLeft: 8 }}>{m.phone}</span>}
+                {messages.map((m) => {
+                  const isRead = readMsgIds.has(m.id);
+                  return (
+                    <div key={m.id} style={{
+                      background: isRead ? 'var(--surface)' : 'var(--bg-subtle, #f8f9fc)',
+                      border: `1px solid ${isRead ? 'var(--border)' : 'var(--brand-300, #8da86e)'}`,
+                      borderRadius: 10,
+                      padding: '1rem 1.25rem',
+                      opacity: isRead ? 0.75 : 1,
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                          {!isRead && <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--brand-500, #5a7a3a)', display: 'inline-block', flexShrink: 0 }} />}
+                          <strong>{m.name}</strong>
+                          {m.email && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{m.email}</span>}
+                          {m.phone && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{m.phone}</span>}
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <small style={{ color: 'var(--text-muted)' }}>{fmt(m.created_at)}</small>
+                          {m.email && (
+                            <a
+                              href={`mailto:${m.email}?subject=Re: ${encodeURIComponent(m.subject || 'Your enquiry to Serenest')}`}
+                              style={{ fontSize: '0.78rem', padding: '2px 10px', borderRadius: 99, border: '1px solid var(--border)', textDecoration: 'none', color: 'var(--text)', background: 'var(--surface)' }}
+                            >
+                              ↩ Reply
+                            </a>
+                          )}
+                          <button
+                            onClick={() => markMessageRead(m.id)}
+                            title={isRead ? 'Mark unread' : 'Mark as read'}
+                            style={{ fontSize: '0.78rem', padding: '2px 10px', borderRadius: 99, border: '1px solid var(--border)', cursor: 'pointer', background: 'var(--surface)', color: 'var(--text)' }}
+                          >
+                            {isRead ? '○ Unread' : '✓ Read'}
+                          </button>
+                          <button
+                            onClick={() => { if (window.confirm(`Delete message from ${m.name}?`)) deleteMessage(m.id); }}
+                            title="Delete message"
+                            style={{ fontSize: '0.78rem', padding: '2px 8px', borderRadius: 99, border: '1px solid #dc3545', cursor: 'pointer', background: 'transparent', color: '#dc3545' }}
+                          >
+                            🗑
+                          </button>
+                        </div>
                       </div>
-                      <small style={{ color: 'var(--text-muted)' }}>{fmt(m.created_at)}</small>
+                      {m.subject && <div style={{ fontWeight: 600, marginBottom: 4, fontSize: '0.9rem' }}>{m.subject}</div>}
+                      <p style={{ margin: 0, color: 'var(--text)', fontSize: '0.9rem', lineHeight: 1.6 }}>{m.message}</p>
                     </div>
-                    {m.subject && <div style={{ fontWeight: 600, marginBottom: 4, fontSize: '0.9rem' }}>{m.subject}</div>}
-                    <p style={{ margin: 0, color: 'var(--text)', fontSize: '0.9rem', lineHeight: 1.6 }}>{m.message}</p>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

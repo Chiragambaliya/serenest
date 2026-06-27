@@ -368,6 +368,19 @@ app.patch('/api/bookings/:id/status', async (req, res) => {
   return ok(res, { booking: data });
 });
 
+/** DELETE /api/bookings/:id — hard-delete a booking (admin only) */
+app.delete('/api/bookings/:id', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const { error } = await supabase
+    .from('appointments')
+    .delete()
+    .eq('id', req.params.id);
+
+  if (error) return err(res, 'Failed to delete booking', 500);
+  return ok(res, { deleted: true });
+});
+
 // ══════════════════════════════════════════════════════════════
 //  SCREENING
 // ══════════════════════════════════════════════════════════════
@@ -1176,6 +1189,19 @@ app.get('/api/contacts', async (req, res) => {
 
   if (error) return err(res, 'Failed to fetch messages', 500);
   return ok(res, { messages: data });
+});
+
+/** DELETE /api/contacts/:id — delete a contact message (admin only) */
+app.delete('/api/contacts/:id', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const { error } = await supabase
+    .from('contact_messages')
+    .delete()
+    .eq('id', req.params.id);
+
+  if (error) return err(res, 'Failed to delete message', 500);
+  return ok(res, { deleted: true });
 });
 
 /** GET /api/signups — list waitlist signups (admin only) */
