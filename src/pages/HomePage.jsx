@@ -5,6 +5,8 @@ import { ROUTE_SEO } from '../lib/seo';
 import { HOME_FEATURED_GUIDES } from '../lib/guides';
 import EdIcon from '../components/EdIcon';
 import { useAuth } from '../lib/useAuth';
+import EmailCapture from '../components/EmailCapture';
+import SharePanel from '../components/SharePanel';
 
 function HomeIcon({ name }) {
   const icons = {
@@ -379,6 +381,22 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Newsletter signup ──────────────────────────────────── */}
+      <section className="home__newsletter" aria-label="Newsletter">
+        <div className="home__shell">
+          <div className="home__newsletter-inner">
+            <div className="home__newsletter-copy">
+              <h2>Mental health insights in your inbox</h2>
+              <p>
+                Occasional, useful emails from Serenest — clinical updates, guides, and new
+                programs. No spam. Unsubscribe anytime.
+              </p>
+            </div>
+            <EmailCapture source="homepage_newsletter" />
+          </div>
+        </div>
+      </section>
+
       <section className="home__section" id="topics">
         <div className="home__shell">
           <header className="home__header home__header--center">
@@ -428,6 +446,7 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
+          <SharePanel className="home__share-panel" />
           <nav className="home__nav" aria-label="More on Serenest">
             {LINKS.map((l) => (
               <Link key={l.to} to={l.to}>
