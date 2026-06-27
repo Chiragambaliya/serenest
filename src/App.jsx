@@ -3,6 +3,7 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import SiteLayout from './layouts/SiteLayout';
 import RequireAcademyAuth from './components/RequireAcademyAuth';
 import { trackVisit } from './lib/visitTracker';
+import CookieConsent from './components/CookieConsent';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
@@ -69,6 +70,7 @@ export default function App() {
   return (
     <Suspense fallback={<PageFallback />}>
       <VisitTracker />
+      <CookieConsent />
       {/*
         Use an explicit layout route at "/" with relative child paths. Pathless layout + Outlet
         can fail to match in React Router v7 in some setups (blank main content).

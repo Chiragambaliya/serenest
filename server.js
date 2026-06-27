@@ -1,6 +1,9 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import compression from 'compression';
+import { rateLimit } from 'express-rate-limit';
 import crypto from 'crypto';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
@@ -20,7 +23,48 @@ const supabase = (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY)
   ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
   : null;
 
-// ── Middleware ───────────────────────────────────────────────
+// ── Security headers (Helmet) ────────────────────────────────
+app.use(helmet({
+  contentSecurityPolicy: false, // managed separately to allow inline scripts + Google Fonts
+  crossOriginEmbedderPolicy: false, // needed for Daily.co video
+}));
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  if (req.secure || req.headers['x-forwarded-proto'] === 'https') {
+    res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains; preload');
+  }
+  next();
+});
+
+// ── Compression (gzip / br) ──────────────────────────────────
+app.use(compression());
+
+// ── Rate limiting ────────────────────────────────────────────
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 200,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { ok: false, error: 'Too many requests — please try again in a few minutes.' },
+});
+const strictLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 30,
+  standardHeaders: 'draft-7',
+  legacyHeaders: false,
+  message: { ok: false, error: 'Submission limit reached. Please try again later.' },
+});
+app.use('/api/', limiter);
+app.use('/api/bookings', strictLimiter);
+app.use('/api/screening', strictLimiter);
+app.use('/api/professionals/apply', strictLimiter);
+app.use('/api/contact', strictLimiter);
+app.use('/api/subscribe', strictLimiter);
+
+// ── CORS ─────────────────────────────────────────────────────
 app.use(cors({
   origin: process.env.CORS_ORIGIN || '*',
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
@@ -1417,7 +1461,14 @@ app.post('/api/assistant/chat', (req, res, next) => {
 // ══════════════════════════════════════════════════════════════
 //  STATIC + SPA FALLBACK (with route-specific SEO injection)
 // ══════════════════════════════════════════════════════════════
-// Static for /assets, /favicon.svg, /sitemap.xml, etc. The {index:false} guard
+// Fingerprinted assets (/assets/*) get immutable caching — Vite content-hashes the filenames.
+app.use('/assets', express.static(join(dist, 'assets'), {
+  index: false,
+  maxAge: '1y',
+  immutable: true,
+}));
+
+// Static for /favicon.svg, /sitemap.xml, /manifest.json, etc. The {index:false} guard
 // prevents express.static from serving dist/index.html directly for "/" — we
 // want every HTML response (including "/") to go through the SEO injector.
 app.use(express.static(dist, { index: false }));
