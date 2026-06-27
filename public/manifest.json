@@ -1,0 +1,32 @@
+{
+  "name": "Serenest — Mental Health Care",
+  "short_name": "Serenest",
+  "description": "Online psychiatry, therapy, counselling and mental health screening across India.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f8f6f0",
+  "theme_color": "#3c4a2c",
+  "orientation": "portrait-primary",
+  "lang": "en-IN",
+  "categories": ["health", "medical"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Book a session",
+      "url": "/book",
+      "description": "Book a consultation with a psychiatrist or therapist"
+    },
+    {
+      "name": "Self-screening",
+      "url": "/screening",
+      "description": "Take a PHQ-9 / GAD-7 mental health screening"
+    }
+  ]
+}
