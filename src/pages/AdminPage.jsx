@@ -29,15 +29,17 @@ function StatCard({ label, value, sub, color = 'var(--brand-500)' }) {
     <div style={{
       background: 'var(--surface)',
       border: '1px solid var(--border)',
+      borderTop: `3px solid ${color}`,
       borderRadius: 12,
       padding: '1.25rem 1.5rem',
       display: 'flex',
       flexDirection: 'column',
       gap: 4,
+      boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
     }}>
-      <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{label}</span>
-      <span style={{ fontSize: '2rem', fontWeight: 800, color, lineHeight: 1 }}>{value ?? '—'}</span>
-      {sub && <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{sub}</span>}
+      <span style={{ fontSize: '0.72rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{label}</span>
+      <span style={{ fontSize: '2.1rem', fontWeight: 800, color, lineHeight: 1.1, letterSpacing: '-0.03em' }}>{value ?? '—'}</span>
+      {sub && <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: 2 }}>{sub}</span>}
     </div>
   );
 }
@@ -793,17 +795,22 @@ export default function AdminPage() {
         <div className="admin-main">
           <header className="admin-topbar">
             <div>
-              <h1 className="admin-topbar-title">{activeTabLabel}</h1>
+              <h1 className="admin-topbar-title">{TAB_ICONS[tab]} {activeTabLabel}</h1>
               <p className="admin-topbar-help">{TAB_HELP[tab]}</p>
             </div>
-            <button
-              type="button"
-              onClick={() => load(tab === 'overview' ? 'all' : tab)}
-              disabled={loading}
-              className="btn btn-ghost btn-sm admin-topbar-refresh"
-            >
-              {loading ? '↻ Loading…' : '↻ Refresh'}
-            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
+              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'none' }} id="adm-clock" />
+              <button
+                type="button"
+                onClick={() => load(tab === 'overview' ? 'all' : tab)}
+                disabled={loading}
+                className="btn btn-ghost btn-sm admin-topbar-refresh"
+                style={{ display: 'flex', alignItems: 'center', gap: 5 }}
+              >
+                <span style={{ display: 'inline-block', transition: 'transform 0.5s', transform: loading ? 'rotate(360deg)' : 'none' }}>↻</span>
+                {loading ? 'Loading…' : 'Refresh'}
+              </button>
+            </div>
           </header>
 
           <div className="admin-content">
@@ -816,7 +823,7 @@ export default function AdminPage() {
             {/* ── OVERVIEW ── */}
         {tab === 'overview' && (
           <div>
-            <h2 style={{ fontWeight: 800, fontSize: '1.4rem', marginBottom: '1rem' }}>Dashboard Overview</h2>
+            <h2 style={{ fontWeight: 800, fontSize: '1.3rem', marginBottom: '1rem', letterSpacing: '-0.02em', color: 'var(--text)' }}>Dashboard Overview</h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
               <StatCard label="Total Bookings"      value={stats?.bookings}           sub={`${stats?.pending_bookings ?? 0} pending`} />
               <StatCard label="Active Professionals" value={stats?.active_professionals} sub="approved & onboarded" color="var(--brand-600)" />
@@ -2418,16 +2425,17 @@ function ActionBtn({ label, onClick, color, disabled = false }) {
       onClick={onClick}
       disabled={disabled}
       style={{
-        padding: '3px 10px',
-        borderRadius: 6,
-        border: `1px solid ${color}`,
+        padding: '4px 11px',
+        borderRadius: 7,
+        border: `1.5px solid ${color}`,
         background: disabled ? '#f2f4f6' : 'transparent',
-        color,
-        fontSize: '0.75rem',
-        fontWeight: 600,
+        color: disabled ? '#aaa' : color,
+        fontSize: '0.74rem',
+        fontWeight: 700,
         cursor: disabled ? 'not-allowed' : 'pointer',
-        opacity: disabled ? 0.7 : 1,
-        transition: 'all 0.15s',
+        opacity: disabled ? 0.6 : 1,
+        transition: 'all 0.13s',
+        letterSpacing: '0.01em',
       }}
       onMouseEnter={(e) => {
         if (disabled) return;
