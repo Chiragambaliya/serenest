@@ -13,6 +13,7 @@ import { notify } from './src/server/notify.js';
 import { renderSeoHead, shouldNoindex, ROUTE_SEO, ROUTE_ALIASES, SITE_ORIGIN } from './src/lib/seo.js';
 import { handleAssistantChat } from './src/server/aiAssistant.js';
 import { publishPost, credentialStatus } from './src/server/socialPoster.js';
+import { generateWeekOfPosts } from './src/server/socialContentGen.js';
 import cron from 'node-cron';
 
 // ── Setup ────────────────────────────────────────────────────
@@ -1583,6 +1584,45 @@ app.post('/api/social/posts/:id/publish', async (req, res) => {
   }).eq('id', id);
 
   return ok(res, { status: newStatus, errors: result.errors });
+});
+
+/** POST /api/social/generate — admin — AI generates a week of posts */
+app.post('/api/social/generate', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  if (!process.env.ANTHROPIC_API_KEY) return err(res, 'ANTHROPIC_API_KEY not configured', 503);
+
+  const { weekNumber, startDate, recentTopics, focus } = req.body;
+  if (!startDate) return err(res, 'startDate is required');
+
+  try {
+    const result = await generateWeekOfPosts({
+      weekNumber: weekNumber ?? 1,
+      startDate,
+      recentTopics: recentTopics ?? [],
+      focus: focus ?? null,
+    });
+    return ok(res, result);
+  } catch (e) {
+    console.error('[POST /api/social/generate]', e.message);
+    return err(res, `Generation failed: ${e.message}`, 500);
+  }
+});
+
+/** POST /api/social/generate/save — admin — save AI-generated posts to DB */
+app.post('/api/social/generate/save', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  const { posts } = req.body;
+  if (!Array.isArray(posts) || posts.length === 0) return err(res, 'posts array required');
+
+  const rows = posts.map(({ platform, caption, hashtags, image_brief, scheduled_at }) => ({
+    platform, caption, hashtags: hashtags ?? null,
+    image_url: null,
+    scheduled_at, status: 'scheduled',
+  }));
+
+  const { data, error } = await supabase.from('social_posts').insert(rows).select();
+  if (error) return err(res, 'Could not save posts', 500);
+  return ok(res, { saved: data.length, posts: data });
 });
 
 // ─── Cron: publish due posts every minute ───────────────────────

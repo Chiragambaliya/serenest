@@ -320,6 +320,20 @@ export default function AdminPage() {
   const [socialEditing, setSocialEditing]   = useState(null);
   const [socialEditData, setSocialEditData] = useState({});
 
+  // AI content generation state
+  const [genOpen, setGenOpen]           = useState(false);
+  const [genLoading, setGenLoading]     = useState(false);
+  const [genError, setGenError]         = useState('');
+  const [genResult, setGenResult]       = useState(null);   // { theme, posts[] }
+  const [genSaved, setGenSaved]         = useState(false);
+  const [genFocus, setGenFocus]         = useState('');
+  const [genStartDate, setGenStartDate] = useState(() => {
+    const d = new Date();
+    const diff = (1 - d.getDay() + 7) % 7 || 7;
+    d.setDate(d.getDate() + diff);
+    return d.toISOString().slice(0, 10);
+  });
+
   const [siteHubFilter, setSiteHubFilter] = useState('');
   const [siteCopied, setSiteCopied]       = useState('');
   const [healthProbe, setHealthProbe]     = useState(null);
@@ -2628,15 +2642,116 @@ export default function AdminPage() {
           const posted   = socialPosts.filter((p) => p.status === 'posted');
           const failed   = socialPosts.filter((p) => ['failed','partial'].includes(p.status));
 
+          // ── AI generate helpers ──────────────────────────────
+          async function generatePosts() {
+            setGenLoading(true); setGenError(''); setGenResult(null); setGenSaved(false);
+            const recentTopics = socialPosts.slice(0, 20).map((p) => p.caption.slice(0, 60));
+            const weekNumber = Math.ceil((socialPosts.length + 1) / 6);
+            try {
+              const r = await adminFetch('/api/social/generate', secret, {
+                method: 'POST',
+                body: JSON.stringify({ weekNumber, startDate: genStartDate, recentTopics, focus: genFocus || null }),
+              });
+              setGenResult(r);
+            } catch (e) { setGenError(e.message); }
+            finally { setGenLoading(false); }
+          }
+
+          async function saveGeneratedPosts() {
+            if (!genResult?.posts) return;
+            setGenLoading(true); setGenError('');
+            try {
+              const r = await adminFetch('/api/social/generate/save', secret, {
+                method: 'POST',
+                body: JSON.stringify({ posts: genResult.posts }),
+              });
+              setSocialPosts((p) => [...r.posts, ...p]);
+              setGenSaved(true);
+              setGenResult(null);
+              setGenOpen(false);
+            } catch (e) { setGenError(e.message); }
+            finally { setGenLoading(false); }
+          }
+
           return (
             <div>
               {/* Header */}
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: 12 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 12 }}>
                 <h2 style={{ fontWeight: 800, fontSize: '1.4rem', margin: 0 }}>Social Media</h2>
-                <button className="btn btn-primary btn-sm" onClick={() => setSocialShowForm((v) => !v)}>
-                  {socialShowForm ? 'Cancel' : '+ Schedule post'}
-                </button>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button
+                    className="btn btn-primary btn-sm"
+                    style={{ background: 'linear-gradient(135deg,#5a8f40,#3a6028)', display: 'flex', alignItems: 'center', gap: 6 }}
+                    onClick={() => { setGenOpen((v) => !v); setSocialShowForm(false); }}
+                  >
+                    ✨ {genOpen ? 'Close AI generator' : 'Generate with AI'}
+                  </button>
+                  <button className="btn btn-ghost btn-sm" onClick={() => { setSocialShowForm((v) => !v); setGenOpen(false); }}>
+                    {socialShowForm ? 'Cancel' : '+ Manual post'}
+                  </button>
+                </div>
               </div>
+
+              {/* ── AI GENERATOR PANEL ── */}
+              {genOpen && (
+                <div style={{ background: 'linear-gradient(135deg,#f0fdf4,#f8fafc)', border: '1.5px solid #bbf7d0', borderRadius: 14, padding: '1.25rem', marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1rem' }}>
+                    <span style={{ fontSize: '1.3rem' }}>✨</span>
+                    <div>
+                      <div style={{ fontWeight: 700, fontSize: '1rem' }}>AI Content Generator</div>
+                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Claude writes 6 platform-native posts for next week. You review, edit if needed, then schedule.</div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 12 }}>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>Week starting (Monday)</span>
+                      <input className="admin-input" type="date" value={genStartDate}
+                        onChange={(e) => setGenStartDate(e.target.value)} />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>Theme / focus <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>(optional)</span></span>
+                      <input className="admin-input" placeholder="e.g. World Mental Health Day, Academy launch…"
+                        value={genFocus} onChange={(e) => setGenFocus(e.target.value)} />
+                    </label>
+                  </div>
+                  {genError && <div style={{ color: '#b91c1c', fontSize: '0.82rem', marginBottom: 10 }}>{genError}</div>}
+                  {!genResult ? (
+                    <button className="btn btn-primary" disabled={genLoading} onClick={generatePosts}
+                      style={{ width: '100%', justifyContent: 'center' }}>
+                      {genLoading ? '✨ Claude is writing your posts…' : '✨ Generate 6 posts'}
+                    </button>
+                  ) : (
+                    <div>
+                      <div style={{ background: '#dcfce7', borderRadius: 8, padding: '8px 12px', marginBottom: 12, fontSize: '0.85rem', fontWeight: 600, color: '#15803d' }}>
+                        ✓ Theme: {genResult.theme}
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+                        {genResult.posts.map((p, i) => (
+                          <div key={i} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '0.85rem' }}>
+                            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6, flexWrap: 'wrap' }}>
+                              <span style={{ fontSize: '0.75rem', fontWeight: 700, background: p.platform === 'instagram' ? '#fdf2f8' : '#eff6ff', color: p.platform === 'instagram' ? '#9d174d' : '#1d4ed8', padding: '2px 8px', borderRadius: 10 }}>
+                                {p.platform === 'instagram' ? '📷 Instagram' : '💼 LinkedIn'}
+                              </span>
+                              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{new Date(p.scheduled_at).toLocaleString('en-IN', { weekday:'short', day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' })}</span>
+                              <span style={{ fontSize: '0.72rem', color: '#5a8f40', fontWeight: 600 }}>{p.pillar}</span>
+                            </div>
+                            <p style={{ margin: '0 0 4px', fontSize: '0.85rem', whiteSpace: 'pre-wrap', lineHeight: 1.5, maxHeight: 120, overflow: 'hidden' }}>{p.caption.slice(0, 300)}{p.caption.length > 300 ? '…' : ''}</p>
+                            {p.hashtags && <p style={{ margin: 0, fontSize: '0.75rem', color: '#3b82f6' }}>{p.hashtags}</p>}
+                            {p.image_brief && <p style={{ margin: '4px 0 0', fontSize: '0.72rem', color: '#64748b', fontStyle: 'italic' }}>📸 {p.image_brief}</p>}
+                          </div>
+                        ))}
+                      </div>
+                      <div style={{ display: 'flex', gap: 8 }}>
+                        <button className="btn btn-ghost btn-sm" onClick={() => setGenResult(null)}>Regenerate</button>
+                        <button className="btn btn-primary" disabled={genLoading || genSaved} onClick={saveGeneratedPosts}
+                          style={{ flex: 1, justifyContent: 'center' }}>
+                          {genLoading ? 'Scheduling…' : genSaved ? '✓ Scheduled!' : '✅ Schedule all 6 posts'}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
 
               {/* Credential status */}
               {socialStatus && (
