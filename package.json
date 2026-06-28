@@ -12,6 +12,7 @@
     "verify:seo": "node scripts/verify-seo.mjs"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.106.0",
     "@daily-co/daily-js": "^0.66.0",
     "@supabase/supabase-js": "^2.99.3",
     "compression": "^1.8.1",
