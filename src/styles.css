@@ -5426,3 +5426,170 @@ a.pro-hub-tile:hover .learning-card-aux {
 .ed-guide-send {
   align-self: flex-end;
 }
+
+/* ══════════════════════════════════════════════════════════
+   SOCIAL SHARE BAR (blog posts)
+══════════════════════════════════════════════════════════ */
+.ss-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 2rem 0 1.5rem;
+  padding: 1rem 1.25rem;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.ss-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #94a3b8;
+  margin-right: 4px;
+}
+
+.ss-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  transition: background 0.13s, color 0.13s, transform 0.1s;
+  line-height: 1;
+}
+
+.ss-btn:active { transform: scale(0.97); }
+
+.ss-btn--li {
+  background: #0a66c2;
+  color: #fff;
+}
+.ss-btn--li:hover { background: #084f96; }
+
+.ss-btn--wa {
+  background: #25d366;
+  color: #fff;
+}
+.ss-btn--wa:hover { background: #1aad54; }
+
+.ss-btn--copy,
+.ss-btn--share {
+  background: #e2e8f0;
+  color: #334155;
+}
+.ss-btn--copy:hover,
+.ss-btn--share:hover { background: #cbd5e1; }
+
+/* ══════════════════════════════════════════════════════════
+   INSTAGRAM FEED STRIP (homepage)
+══════════════════════════════════════════════════════════ */
+.ig-feed-section {
+  padding: 4rem 0;
+  background: #fff;
+}
+
+.ig-feed-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.ig-handle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: #1a1a1a;
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.ig-handle:hover { color: #c13584; }
+
+.ig-feed-sub {
+  color: #94a3b8;
+  font-size: 0.88rem;
+  margin: 0;
+}
+
+.ig-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .ig-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (min-width: 900px) {
+  .ig-grid { grid-template-columns: repeat(9, 1fr); }
+}
+
+.ig-cell {
+  position: relative;
+  aspect-ratio: 1;
+  display: block;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+
+.ig-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.ig-cell:hover .ig-img { transform: scale(1.06); }
+
+.ig-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: flex-end;
+  padding: 8px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.ig-cell:hover .ig-overlay { opacity: 1; }
+
+.ig-caption {
+  color: #fff;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ig-video-badge,
+.ig-carousel-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  color: #fff;
+  font-size: 0.7rem;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+}
+
+.ig-feed-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.5rem;
+}

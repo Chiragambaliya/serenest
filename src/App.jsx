@@ -3,8 +3,11 @@ import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import SiteLayout from './layouts/SiteLayout';
 import RequireAcademyAuth from './components/RequireAcademyAuth';
 import { trackVisit } from './lib/visitTracker';
+import { captureUtm } from './lib/utm';
 import CookieConsent from './components/CookieConsent';
 import ExitIntentPopup from './components/ExitIntentPopup';
+
+captureUtm();
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));

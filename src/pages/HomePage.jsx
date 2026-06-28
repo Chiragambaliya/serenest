@@ -7,6 +7,7 @@ import EdIcon from '../components/EdIcon';
 import { useAuth } from '../lib/useAuth';
 import EmailCapture from '../components/EmailCapture';
 import SharePanel from '../components/SharePanel';
+import InstagramFeed from '../components/InstagramFeed';
 
 function HomeIcon({ name }) {
   const icons = {
@@ -421,6 +422,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <InstagramFeed />
 
       <section className="home__cta">
         <div className="home__shell">

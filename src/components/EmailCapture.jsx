@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { subscribers } from '../lib/api';
+import { getUtm } from '../lib/utm';
 
 /**
  * Opt-in email capture. Stores the email in `subscribers` so the team has
@@ -16,7 +17,12 @@ export default function EmailCapture({ source = 'footer', variant = 'dark' }) {
     setState('saving');
     setMessage('');
     try {
-      await subscribers.add({ email: email.trim(), source });
+      const utm = getUtm();
+      await subscribers.add({
+        email: email.trim(),
+        source: utm?.source ? `${source}__${utm.source}` : source,
+        ...(utm?.campaign ? { campaign: utm.campaign } : {}),
+      });
       setState('done');
       setMessage('Thanks — you’re on the list.');
       setEmail('');
