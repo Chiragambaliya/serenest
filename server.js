@@ -12,6 +12,8 @@ import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
 import { renderSeoHead, shouldNoindex, ROUTE_SEO, ROUTE_ALIASES, SITE_ORIGIN } from './src/lib/seo.js';
 import { handleAssistantChat } from './src/server/aiAssistant.js';
+import { publishPost, credentialStatus } from './src/server/socialPoster.js';
+import cron from 'node-cron';
 
 // ── Setup ────────────────────────────────────────────────────
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -1496,6 +1498,125 @@ app.delete('/api/academy/content/:id', async (req, res) => {
     return err(res, 'Failed to delete content item', 500);
   }
   return ok(res, { deleted: id });
+});
+
+// ─────────────────────────────────────────────────────────────────
+// SOCIAL MEDIA SCHEDULING
+// ─────────────────────────────────────────────────────────────────
+
+/** GET /api/social/status — admin — check credential config */
+app.get('/api/social/status', (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  return ok(res, credentialStatus());
+});
+
+/** GET /api/social/posts — admin — list all posts */
+app.get('/api/social/posts', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  const { data, error } = await supabase
+    .from('social_posts')
+    .select('*')
+    .order('scheduled_at', { ascending: false })
+    .limit(100);
+  if (error) return err(res, 'Could not load posts', 500);
+  return ok(res, { posts: data });
+});
+
+/** POST /api/social/posts — admin — create / schedule a post */
+app.post('/api/social/posts', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  const { platform, caption, hashtags, image_url, scheduled_at, status } = req.body;
+  if (!platform || !caption?.trim()) return err(res, 'platform and caption are required');
+  if (!scheduled_at) return err(res, 'scheduled_at is required');
+  const { data, error } = await supabase.from('social_posts').insert({
+    platform,
+    caption: caption.trim(),
+    hashtags: hashtags?.trim() || null,
+    image_url: image_url?.trim() || null,
+    scheduled_at,
+    status: status ?? 'scheduled',
+  }).select().single();
+  if (error) return err(res, 'Could not create post', 500);
+  return ok(res, { post: data });
+});
+
+/** PATCH /api/social/posts/:id — admin — edit a post */
+app.patch('/api/social/posts/:id', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  const { id } = req.params;
+  const allowed = ['platform','caption','hashtags','image_url','scheduled_at','status'];
+  const updates = {};
+  for (const k of allowed) if (req.body[k] !== undefined) updates[k] = req.body[k];
+  const { data, error } = await supabase.from('social_posts').update(updates).eq('id', id).select().single();
+  if (error) return err(res, 'Could not update post', 500);
+  return ok(res, { post: data });
+});
+
+/** DELETE /api/social/posts/:id — admin — delete a post */
+app.delete('/api/social/posts/:id', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  const { id } = req.params;
+  const { error } = await supabase.from('social_posts').delete().eq('id', id);
+  if (error) return err(res, 'Could not delete post', 500);
+  return ok(res, { deleted: id });
+});
+
+/** POST /api/social/posts/:id/publish — admin — publish immediately */
+app.post('/api/social/posts/:id/publish', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  const { id } = req.params;
+  const { data: post, error: fetchErr } = await supabase
+    .from('social_posts').select('*').eq('id', id).single();
+  if (fetchErr || !post) return err(res, 'Post not found', 404);
+  if (post.status === 'posted') return err(res, 'Already posted');
+
+  const result = await publishPost(post);
+  const newStatus = result.errors.length === 0 ? 'posted'
+    : (result.linkedin_post_id || result.instagram_post_id) ? 'partial' : 'failed';
+
+  await supabase.from('social_posts').update({
+    status: newStatus,
+    posted_at: newStatus !== 'failed' ? new Date().toISOString() : null,
+    linkedin_post_id: result.linkedin_post_id,
+    instagram_post_id: result.instagram_post_id,
+    error_message: result.errors.length ? result.errors.join(' | ') : null,
+  }).eq('id', id);
+
+  return ok(res, { status: newStatus, errors: result.errors });
+});
+
+// ─── Cron: publish due posts every minute ───────────────────────
+cron.schedule('* * * * *', async () => {
+  if (!supabase) return;
+  const { data: duePosts } = await supabase
+    .from('social_posts')
+    .select('*')
+    .eq('status', 'scheduled')
+    .lte('scheduled_at', new Date().toISOString())
+    .limit(10);
+
+  if (!duePosts?.length) return;
+
+  for (const post of duePosts) {
+    try {
+      const result = await publishPost(post);
+      const newStatus = result.errors.length === 0 ? 'posted'
+        : (result.linkedin_post_id || result.instagram_post_id) ? 'partial' : 'failed';
+      await supabase.from('social_posts').update({
+        status: newStatus,
+        posted_at: newStatus !== 'failed' ? new Date().toISOString() : null,
+        linkedin_post_id: result.linkedin_post_id,
+        instagram_post_id: result.instagram_post_id,
+        error_message: result.errors.length ? result.errors.join(' | ') : null,
+      }).eq('id', post.id);
+      console.log(`[social-cron] ${post.platform} post ${post.id} → ${newStatus}`);
+    } catch (e) {
+      console.error(`[social-cron] post ${post.id} failed:`, e.message);
+      await supabase.from('social_posts').update({
+        status: 'failed', error_message: e.message,
+      }).eq('id', post.id);
+    }
+  }
 });
 
 /** GET /api/subscribers — admin only — list opt-in emails. */
