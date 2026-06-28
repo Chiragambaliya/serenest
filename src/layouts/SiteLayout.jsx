@@ -327,6 +327,35 @@ export default function SiteLayout() {
               <p className="footer-tagline">
                 Doctor-led mental healthcare &amp; professional education.
               </p>
+              <div className="footer-social">
+                <a
+                  href="https://www.instagram.com/serenest.fit"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Follow Serenest on Instagram"
+                  className="footer-social-link"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="2" y="2" width="20" height="20" rx="5" />
+                    <circle cx="12" cy="12" r="4.5" />
+                    <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none" />
+                  </svg>
+                  <span>@serenest.fit</span>
+                </a>
+                <a
+                  href="https://www.linkedin.com/company/serenest-mind-pvt-ltd/"
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label="Serenest on LinkedIn"
+                  className="footer-social-link"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="2" y="2" width="20" height="20" rx="4" />
+                    <path d="M8 11v5M8 8v.5M12 16v-3a2 2 0 0 1 4 0v3M12 11v5" />
+                  </svg>
+                  <span>LinkedIn</span>
+                </a>
+              </div>
             </div>
 
             <div className="footer-links">
