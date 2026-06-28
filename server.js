@@ -14,6 +14,7 @@ import { renderSeoHead, shouldNoindex, ROUTE_SEO, ROUTE_ALIASES, SITE_ORIGIN } f
 import { handleAssistantChat } from './src/server/aiAssistant.js';
 import { publishPost, credentialStatus } from './src/server/socialPoster.js';
 import { generateWeekOfPosts } from './src/server/socialContentGen.js';
+import { generateAcademyContent } from './src/server/academyContentGen.js';
 import cron from 'node-cron';
 
 // ── Setup ────────────────────────────────────────────────────
@@ -1499,6 +1500,20 @@ app.delete('/api/academy/content/:id', async (req, res) => {
     return err(res, 'Failed to delete content item', 500);
   }
   return ok(res, { deleted: id });
+});
+
+/** POST /api/academy/content/generate — admin — AI generates a batch of academy content items */
+app.post('/api/academy/content/generate', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  if (!process.env.ANTHROPIC_API_KEY) return err(res, 'ANTHROPIC_API_KEY not configured', 503);
+  const { focus = null, count = 4, types } = req.body ?? {};
+  try {
+    const result = await generateAcademyContent({ focus, count: Math.min(count || 4, 6), types });
+    return ok(res, result);
+  } catch (e) {
+    console.error('[POST /api/academy/content/generate]', e.message);
+    return err(res, e.message, 500);
+  }
 });
 
 // ─────────────────────────────────────────────────────────────────
