@@ -2,6 +2,33 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { professionals as professionalsApi } from '../lib/api';
 
+function mapRichProfile(p) {
+  return {
+    id: p.id,
+    slug: p.slug,
+    created_at: new Date().toISOString(),
+    name: p.name,
+    role: p.role,
+    roleLabel: { psychiatrist: 'Psychiatrist', psychologist: 'Clinical Psychologist', therapist: 'Therapist', counsellor: 'Counsellor' }[p.role] ?? p.role,
+    photo_url: p.photo_url,
+    tagline: p.tagline,
+    qualifications: p.qualifications,
+    fee: p.session_fee,
+    duration: 50,
+    languages: p.languages ?? [],
+    specialities: p.specialties ?? [],
+    modes: p.session_types?.map((m) => m.charAt(0).toUpperCase() + m.slice(1)) ?? ['Video', 'Audio', 'Chat'],
+    rating: p.rating,
+    session_count: p.session_count,
+    experience_years: p.experience_years,
+    is_featured: p.is_featured,
+    city: '',
+    clinic: '',
+    degree: p.qualifications,
+    isRich: true,
+  };
+}
+
 const VALID_ROLES = ['psychiatrist', 'psychologist', 'therapist', 'counsellor'];
 
 const ROLES = [
@@ -78,9 +105,25 @@ function mapToProfessional(a) {
 }
 
 // ── Avatar component ───────────────────────────────────────────
-function Avatar({ name, role, size = 56 }) {
+function Avatar({ name, role, photoUrl, size = 56 }) {
   const initials = getInitials(name);
   const color = ROLE_COLORS[role] || '#4a5a30';
+  if (photoUrl) {
+    return (
+      <img
+        src={photoUrl}
+        alt={name}
+        style={{
+          width: size, height: size,
+          borderRadius: '50%',
+          objectFit: 'cover',
+          flexShrink: 0,
+          boxShadow: `0 4px 12px ${color}44`,
+          border: '3px solid #fff',
+        }}
+      />
+    );
+  }
   return (
     <div style={{
       width: size, height: size,
@@ -97,6 +140,16 @@ function Avatar({ name, role, size = 56 }) {
     }}>
       {initials}
     </div>
+  );
+}
+
+function StarRating({ rating }) {
+  const full = Math.floor(rating);
+  const half = rating - full >= 0.5;
+  return (
+    <span style={{ color: '#f59e0b', fontSize: '0.85rem', letterSpacing: 1 }}>
+      {'★'.repeat(full)}{half ? '½' : ''}{'☆'.repeat(5 - full - (half ? 1 : 0))}
+    </span>
   );
 }
 
@@ -119,16 +172,19 @@ export default function PatientFindProfessionalPage() {
   useEffect(() => {
     setLoading(true);
     setError(null);
-    professionalsApi
-      .directory()
-      .then((json) => {
-        setProfessionals((json.professionals ?? []).map(mapToProfessional));
-        setLoading(false);
-      })
-      .catch((e) => {
-        setError(e.message);
-        setLoading(false);
-      });
+    Promise.all([
+      professionalsApi.directory().catch(() => ({ professionals: [] })),
+      fetch('/api/professionals/profiles').then((r) => r.json()).catch(() => ({ professionals: [] })),
+    ]).then(([dir, rich]) => {
+      const richList = (rich.professionals ?? []).map(mapRichProfile);
+      const richIds = new Set(richList.map((p) => p.slug));
+      const dirList = (dir.professionals ?? []).map(mapToProfessional).filter((p) => !richIds.has(p.slug));
+      setProfessionals([...richList, ...dirList]);
+      setLoading(false);
+    }).catch((e) => {
+      setError(e.message);
+      setLoading(false);
+    });
   }, []);
 
   // ── Computed lists ─────────────────────────────────────────
@@ -398,20 +454,41 @@ function ProfessionalCard({ p }) {
       transition: 'all 0.2s ease',
       boxShadow: '0 2px 8px rgba(70, 85, 47, 0.05)',
       cursor: 'default',
+      position: 'relative',
     }}
     onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-3px)'; e.currentTarget.style.boxShadow = `0 12px 28px ${roleColor}25`; }}
     onMouseLeave={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(70, 85, 47, 0.05)'; }}
     >
+      {/* Featured badge */}
+      {p.is_featured && (
+        <span style={{
+          position: 'absolute', top: 12, right: 12,
+          background: '#fef3c7', color: '#92400e',
+          fontSize: '0.68rem', fontWeight: 700,
+          padding: '2px 8px', borderRadius: 99,
+          border: '1px solid #fde68a',
+        }}>⭐ Featured</span>
+      )}
+
       {/* Top: avatar + name + price */}
       <div style={{ display: 'flex', gap: 12, alignItems: 'flex-start', justifyContent: 'space-between' }}>
         <div style={{ display: 'flex', gap: 12, alignItems: 'center', minWidth: 0, flex: 1 }}>
-          <Avatar name={p.name} role={p.role} />
+          <Avatar name={p.name} role={p.role} photoUrl={p.photo_url} />
           <div style={{ minWidth: 0 }}>
             <h3 style={{ fontSize: '1.05rem', fontWeight: 800, marginBottom: 3, lineHeight: 1.2, color: 'var(--text)' }}>{p.name}</h3>
             <div style={{ fontSize: '0.78rem', color: roleColor, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em' }}>
               {p.roleLabel}
             </div>
             {p.degree && <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)', marginTop: 2 }}>{p.degree}</div>}
+            {p.rating > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 5, marginTop: 3 }}>
+                <StarRating rating={p.rating} />
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{p.rating.toFixed(1)}</span>
+                {p.session_count > 0 && (
+                  <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>· {p.session_count.toLocaleString('en-IN')}+ sessions</span>
+                )}
+              </div>
+            )}
           </div>
         </div>
         <div style={{ textAlign: 'right', flexShrink: 0 }}>
@@ -481,11 +558,28 @@ function ProfessionalCard({ p }) {
       )}
 
       {/* Actions */}
-      <div style={{ display: 'flex', gap: 8, marginTop: 'auto', paddingTop: 4 }}>
+      <div style={{ display: 'flex', gap: 8, marginTop: 'auto', paddingTop: 4, flexWrap: 'wrap' }}>
+        {p.isRich && p.slug && (
+          <Link
+            to={`/doctors/${p.slug}`}
+            style={{
+              display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+              background: 'var(--bg-subtle, #f8f9fa)', color: 'var(--text)',
+              border: '1px solid var(--border)', borderRadius: 8,
+              padding: '8px 14px', textDecoration: 'none',
+              fontSize: '0.82rem', fontWeight: 600, whiteSpace: 'nowrap',
+            }}
+          >
+            View profile
+          </Link>
+        )}
         <Link
-          to={`/book?pid=${encodeURIComponent(p.id)}&pname=${encodeURIComponent(p.name)}&prole=${encodeURIComponent(p.role)}&prolabel=${encodeURIComponent(p.roleLabel)}&pfee=${encodeURIComponent(p.fee ?? '')}&pduration=${encodeURIComponent(p.duration ?? '')}`}
+          to={p.isRich && p.slug
+            ? `/book?professional=${p.slug}`
+            : `/book?pid=${encodeURIComponent(p.id)}&pname=${encodeURIComponent(p.name)}&prole=${encodeURIComponent(p.role)}&prolabel=${encodeURIComponent(p.roleLabel)}&pfee=${encodeURIComponent(p.fee ?? '')}&pduration=${encodeURIComponent(p.duration ?? '')}`
+          }
           className="btn btn-primary"
-          style={{ flex: 1, justifyContent: 'center', display: 'flex' }}
+          style={{ flex: 1, justifyContent: 'center', display: 'flex', minWidth: 100 }}
         >
           Book session →
         </Link>

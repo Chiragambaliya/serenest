@@ -6,6 +6,8 @@ import { trackVisit } from './lib/visitTracker';
 import { captureUtm } from './lib/utm';
 import CookieConsent from './components/CookieConsent';
 import ExitIntentPopup from './components/ExitIntentPopup';
+import WhatsAppWidget from './components/WhatsAppWidget';
+const DoctorProfilePage = lazy(() => import('./pages/DoctorProfilePage'));
 
 captureUtm();
 
@@ -76,6 +78,7 @@ export default function App() {
       <VisitTracker />
       <CookieConsent />
       <ExitIntentPopup />
+      <WhatsAppWidget />
       {/*
         Use an explicit layout route at "/" with relative child paths. Pathless layout + Outlet
         can fail to match in React Router v7 in some setups (blank main content).
@@ -100,6 +103,7 @@ export default function App() {
           <Route path="privacy" element={<S><PrivacyPolicyPage /></S>} />
           <Route path="admin" element={<S><AdminPage /></S>} />
           <Route path="patient/find-professional" element={<S><PatientFindProfessionalPage /></S>} />
+          <Route path="doctors/:slug" element={<S><DoctorProfilePage /></S>} />
           <Route path="patient/login"            element={<S><PatientAuthPage /></S>} />
           <Route path="patient/dashboard"        element={<S><PatientDashboardPage /></S>} />
           <Route path="screening" element={<S><ScreeningPage /></S>} />
