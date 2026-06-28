@@ -616,32 +616,6 @@ app.patch('/api/professionals/:id', async (req, res) => {
   return ok(res, { professional: data });
 });
 
-/** GET /api/professionals/profiles — public — rich profiles for the doctor directory */
-app.get('/api/professionals/profiles', async (req, res) => {
-  if (!requireDb(res)) return;
-  const { data, error } = await supabase
-    .from('professionals')
-    .select('id,slug,name,role,photo_url,bio,qualifications,experience_years,specialties,languages,session_types,session_fee,rating,session_count,is_featured,tagline')
-    .eq('is_active', true)
-    .order('is_featured', { ascending: false })
-    .order('session_count', { ascending: false });
-  if (error) return err(res, 'Failed to load profiles', 500);
-  return ok(res, { professionals: data ?? [] });
-});
-
-/** GET /api/professionals/profiles/:slug — public — single doctor profile */
-app.get('/api/professionals/profiles/:slug', async (req, res) => {
-  if (!requireDb(res)) return;
-  const { data, error } = await supabase
-    .from('professionals')
-    .select('id,slug,name,role,photo_url,bio,qualifications,experience_years,specialties,languages,session_types,session_fee,rating,session_count,is_featured,tagline,linkedin_url')
-    .eq('slug', req.params.slug)
-    .eq('is_active', true)
-    .single();
-  if (error || !data) return err(res, 'Profile not found', 404);
-  return ok(res, { professional: data });
-});
-
 /** POST /api/bookings/:id/assign — assign a professional to a booking (admin) */
 app.post('/api/bookings/:id/assign', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;
