@@ -89,35 +89,66 @@ function fmtDate(dateStr) {
   });
 }
 
-// ── Tabs ────────────────────────────────────────────────────────────────────
-const TABS = [
-  { id: 'overview',      label: 'Overview' },
-  { id: 'traffic',       label: 'Traffic' },
-  { id: 'website',       label: 'Website' },
-  { id: 'bookings',      label: 'Bookings' },
-  { id: 'professionals', label: 'Professionals' },
-  { id: 'applications',  label: 'Applications' },
-  { id: 'hr',            label: 'HR / Hiring' },
-  { id: 'messages',      label: 'Messages' },
-  { id: 'screenings',    label: 'Screenings' },
-  { id: 'subscribers',   label: 'Subscribers' },
-  { id: 'learners',      label: 'Academy' },
-  { id: 'signups',       label: 'Signups' },
+// ── Tabs & nav groups ────────────────────────────────────────────────────────
+const TAB_GROUPS = [
+  {
+    label: null,
+    items: [{ id: 'overview', label: 'Overview', icon: '◈' }],
+  },
+  {
+    label: 'Patients',
+    items: [
+      { id: 'bookings',   label: 'Bookings',   icon: '◻' },
+      { id: 'screenings', label: 'Screenings', icon: '◻' },
+      { id: 'signups',    label: 'Signups',    icon: '◻' },
+    ],
+  },
+  {
+    label: 'Professionals',
+    items: [
+      { id: 'professionals', label: 'Professionals', icon: '◻' },
+      { id: 'applications',  label: 'Applications',  icon: '◻' },
+      { id: 'hr',            label: 'HR / Hiring',   icon: '◻' },
+    ],
+  },
+  {
+    label: 'Communications',
+    items: [
+      { id: 'messages',    label: 'Messages',    icon: '◻' },
+      { id: 'subscribers', label: 'Subscribers', icon: '◻' },
+    ],
+  },
+  {
+    label: 'Academy',
+    items: [
+      { id: 'learners', label: 'Academy', icon: '◻' },
+    ],
+  },
+  {
+    label: 'Analytics',
+    items: [
+      { id: 'traffic', label: 'Traffic', icon: '◻' },
+      { id: 'website', label: 'Website', icon: '◻' },
+    ],
+  },
 ];
 
+// Flat TABS array derived from groups (used for label lookups)
+const TABS = TAB_GROUPS.flatMap((g) => g.items);
+
 const TAB_ICONS = {
-  overview: '📊',
-  traffic: '📈',
-  website: '🌐',
-  bookings: '📅',
-  professionals: '🩺',
-  applications: '👩‍⚕️',
-  hr: '🧑‍💼',
-  messages: '💬',
-  screenings: '🧠',
-  subscribers: '✉️',
-  learners: '🎓',
-  signups: '📋',
+  overview: '◈',
+  traffic: '▲',
+  website: '◎',
+  bookings: '▷',
+  professionals: '◆',
+  applications: '◇',
+  hr: '◈',
+  messages: '◉',
+  screenings: '◌',
+  subscribers: '◦',
+  learners: '◈',
+  signups: '◌',
 };
 
 const TAB_HELP = {
@@ -771,25 +802,34 @@ export default function AdminPage() {
       <div className="admin-shell">
         <aside className="admin-sidebar">
           <div className="admin-sidebar-brand">
-            <span className="admin-sidebar-mark">🛡</span>
-            <strong>Serenest Admin</strong>
+            <div className="admin-sidebar-mark" aria-hidden="true">S</div>
+            <div>
+              <strong>Serenest</strong>
+              <span className="admin-sidebar-env">Admin</span>
+            </div>
           </div>
 
           <nav className="admin-nav" aria-label="Admin sections">
-            {TABS.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                className={`admin-nav-item ${tab === t.id ? 'is-active' : ''}`}
-                onClick={() => { setTab(t.id); if (t.id !== 'overview') load(t.id); }}
-              >
-                <span className="admin-nav-icon" aria-hidden="true">{TAB_ICONS[t.id]}</span>
-                <span className="admin-nav-label">{t.label}</span>
-                {t.id === 'bookings'      && stats?.pending_bookings     > 0 && <Pill n={stats.pending_bookings} />}
-                {t.id === 'professionals' && stats?.active_professionals > 0 && <Pill n={stats.active_professionals} color="#198754" />}
-                {t.id === 'applications'  && stats?.pending_applications > 0 && <Pill n={stats.pending_applications} />}
-                {t.id === 'hr'            && stats?.new_jobs             > 0 && <Pill n={stats.new_jobs} />}
-              </button>
+            {TAB_GROUPS.map((group) => (
+              <div key={group.label ?? '_root'} className="admin-nav-group">
+                {group.label && (
+                  <p className="admin-nav-group-label">{group.label}</p>
+                )}
+                {group.items.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    className={`admin-nav-item ${tab === t.id ? 'is-active' : ''}`}
+                    onClick={() => { setTab(t.id); if (t.id !== 'overview') load(t.id); }}
+                  >
+                    <span className="admin-nav-label">{t.label}</span>
+                    {t.id === 'bookings'      && stats?.pending_bookings     > 0 && <Pill n={stats.pending_bookings} />}
+                    {t.id === 'professionals' && stats?.active_professionals > 0 && <Pill n={stats.active_professionals} color="#198754" />}
+                    {t.id === 'applications'  && stats?.pending_applications > 0 && <Pill n={stats.pending_applications} />}
+                    {t.id === 'hr'            && stats?.new_jobs             > 0 && <Pill n={stats.new_jobs} />}
+                  </button>
+                ))}
+              </div>
             ))}
           </nav>
 
@@ -798,11 +838,14 @@ export default function AdminPage() {
               type="button"
               onClick={() => load(tab === 'overview' ? 'all' : tab)}
               disabled={loading}
-              className="btn btn-ghost btn-sm btn-full"
+              className="admin-footer-btn"
             >
-              {loading ? '↻ Loading…' : '↻ Refresh'}
+              <span style={{ display: 'inline-block', transition: 'transform 0.5s', transform: loading ? 'rotate(360deg)' : 'none' }}>↻</span>
+              {loading ? 'Refreshing…' : 'Refresh data'}
             </button>
-            <button type="button" onClick={signOut} className="btn btn-ghost btn-sm btn-full">Sign out</button>
+            <button type="button" onClick={signOut} className="admin-footer-btn admin-footer-btn--signout">
+              Sign out
+            </button>
           </div>
         </aside>
 

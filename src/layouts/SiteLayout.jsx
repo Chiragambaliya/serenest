@@ -1,9 +1,105 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
 import EdIcon from '../components/EdIcon';
 import { useAuth } from '../lib/useAuth';
+
+/* ── Navigation groups ───────────────────────────────────── */
+const NAV_GROUPS = [
+  {
+    id: 'services',
+    label: 'Services',
+    items: [
+      { to: '/book',                      label: 'Book a Consultation',  desc: 'Same-day online slots available' },
+      { to: '/patient/find-professional', label: 'Find a Professional',  desc: 'Browse our verified clinicians' },
+      { to: '/screening',                 label: 'Self-Screening',       desc: 'PHQ-9 & GAD-7 in 5 minutes' },
+      { to: '/pricing',                   label: 'Pricing',              desc: 'Transparent, no hidden fees' },
+    ],
+  },
+  {
+    id: 'learn',
+    label: 'Learn',
+    items: [
+      { to: '/academy', label: 'Serenest Academy', desc: 'CME & certification programs' },
+      { to: '/blog',    label: 'Blog',             desc: 'Clinical insights & patient guides' },
+      { to: '/guides',  label: 'Guides',           desc: 'Self-help & condition resources' },
+      { to: '/faq',     label: 'FAQ',              desc: 'Common questions answered' },
+    ],
+  },
+  {
+    id: 'professionals',
+    label: 'Professionals',
+    items: [
+      { to: '/professionals',            label: 'Join Serenest',  desc: 'Apply to practice with us' },
+      { to: '/professionals/learning',   label: 'Learning Hub',   desc: 'CPD, CME & clinical training' },
+      { to: '/professionals/resources',  label: 'Resources',      desc: 'Clinical tools & templates' },
+      { to: '/professionals/guidelines', label: 'Guidelines',     desc: 'Practice standards & compliance' },
+    ],
+  },
+  {
+    id: 'about',
+    label: 'About',
+    items: [
+      { to: '/about', label: 'About Serenest', desc: 'Our mission & approach' },
+      { to: '/team',  label: 'Our Team',       desc: 'Meet our clinicians & staff' },
+    ],
+  },
+];
+
+/* ── Desktop dropdown ────────────────────────────────────── */
+function NavGroup({ group, onClose }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDown(e) {
+      if (ref.current && !ref.current.contains(e.target)) setOpen(false);
+    }
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [open]);
+
+  return (
+    <div
+      ref={ref}
+      className={`nav-group${open ? ' is-open' : ''}`}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        className="nav-link nav-group-btn"
+        aria-expanded={open}
+        aria-haspopup="true"
+        onClick={() => setOpen((v) => !v)}
+      >
+        {group.label}
+        <svg className="nav-chevron" viewBox="0 0 12 12" fill="none" aria-hidden="true" width="10" height="10">
+          <path d="M2 4.5l4 4 4-4" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      </button>
+
+      <div className="nav-group-panel" role="menu">
+        <div className="nav-group-panel-inner">
+          {group.items.map((item) => (
+            <Link
+              key={item.to}
+              to={item.to}
+              className="nav-group-item"
+              role="menuitem"
+              onClick={() => { setOpen(false); onClose?.(); }}
+            >
+              <span className="nav-group-item-title">{item.label}</span>
+              <span className="nav-group-item-desc">{item.desc}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export default function SiteLayout() {
   const [scrolled, setScrolled]   = useState(false);
@@ -74,19 +170,14 @@ export default function SiteLayout() {
 
           {/* Desktop nav */}
           <nav className="header-links" aria-label="Main navigation">
-            <NavLink to="/about"         className={navClass}>About</NavLink>
-            <NavLink to="/team"          className={navClass}>Team</NavLink>
-            <NavLink to="/services"      className={navClass}>Services</NavLink>
-            <NavLink to="/pricing"       className={navClass}>Pricing</NavLink>
-            <NavLink to="/professionals" className={navClass}>Professionals</NavLink>
-            <NavLink to="/academy"       className={navClass}>Academy</NavLink>
-            <NavLink to="/blog"          className={navClass}>Blog</NavLink>
+            {NAV_GROUPS.map((group) => (
+              <NavGroup key={group.id} group={group} />
+            ))}
 
-            {/* Divider */}
             <span className="nav-divider" aria-hidden="true" />
 
             <NavLink to="/patient/dashboard" className={navClass} style={{ fontWeight: 600 }}>
-              {isPatient && patientFirstName ? `Hi, ${patientFirstName}` : 'My bookings'}
+              {isPatient && patientFirstName ? `Hi, ${patientFirstName}` : 'My account'}
             </NavLink>
 
             <Link className="header-cta" to="/book">
@@ -141,22 +232,46 @@ export default function SiteLayout() {
               </button>
             </div>
 
-            {/* Nav links */}
+            {/* Nav links — grouped */}
             <nav className="menu-links" aria-label="Mobile navigation">
-              <Link to="/"                          onClick={() => setMenuOpen(false)}>🏠 Home</Link>
-              <Link to="/patient/dashboard"         onClick={() => setMenuOpen(false)}>📅 {isPatient && patientFirstName ? `My bookings (${patientFirstName})` : 'My bookings'}</Link>
-              <Link to="/patient/find-professional" onClick={() => setMenuOpen(false)}>🔍 Find a professional</Link>
-              <Link to="/about"                     onClick={() => setMenuOpen(false)}>ℹ️ About us</Link>
-              <Link to="/team"                      onClick={() => setMenuOpen(false)}>👥 Team</Link>
-              <Link to="/services"                  onClick={() => setMenuOpen(false)}>🎯 Services</Link>
-              <Link to="/pricing"                   onClick={() => setMenuOpen(false)}>💳 Pricing</Link>
-              <Link to="/professionals"             onClick={() => setMenuOpen(false)}>🩺 For professionals</Link>
-              <Link to="/professionals/learning"    onClick={() => setMenuOpen(false)}>📚 Clinician learning</Link>
-              <Link to="/professionals/resources"   onClick={() => setMenuOpen(false)}>🗂️ Pro resources</Link>
-              <Link to="/professionals/guidelines"  onClick={() => setMenuOpen(false)}>⚖️ Pro guidelines</Link>
-              <Link to="/academy" onClick={() => setMenuOpen(false)}>Serenest Academy</Link>
-              <Link to="/faq"                       onClick={() => setMenuOpen(false)}>❓ FAQ</Link>
-              <Link to="/blog"                      onClick={() => setMenuOpen(false)}>📝 Blog</Link>
+              {isPatient && (
+                <div className="menu-section">
+                  <Link to="/patient/dashboard" className="menu-link menu-link--accent" onClick={() => setMenuOpen(false)}>
+                    {patientFirstName ? `Hi, ${patientFirstName}` : 'My account'}
+                    <span className="menu-link-arrow">→</span>
+                  </Link>
+                </div>
+              )}
+
+              <div className="menu-section">
+                <p className="menu-section-label">Patient Care</p>
+                <Link to="/book"                      className="menu-link" onClick={() => setMenuOpen(false)}>Book a Consultation</Link>
+                <Link to="/patient/find-professional" className="menu-link" onClick={() => setMenuOpen(false)}>Find a Professional</Link>
+                <Link to="/screening"                 className="menu-link" onClick={() => setMenuOpen(false)}>Self-Screening</Link>
+                <Link to="/pricing"                   className="menu-link" onClick={() => setMenuOpen(false)}>Pricing</Link>
+              </div>
+
+              <div className="menu-section">
+                <p className="menu-section-label">Learn</p>
+                <Link to="/academy" className="menu-link" onClick={() => setMenuOpen(false)}>Serenest Academy</Link>
+                <Link to="/blog"    className="menu-link" onClick={() => setMenuOpen(false)}>Blog</Link>
+                <Link to="/guides"  className="menu-link" onClick={() => setMenuOpen(false)}>Guides</Link>
+                <Link to="/faq"     className="menu-link" onClick={() => setMenuOpen(false)}>FAQ</Link>
+              </div>
+
+              <div className="menu-section">
+                <p className="menu-section-label">For Professionals</p>
+                <Link to="/professionals"            className="menu-link" onClick={() => setMenuOpen(false)}>Join Serenest</Link>
+                <Link to="/professionals/learning"   className="menu-link" onClick={() => setMenuOpen(false)}>Learning Hub</Link>
+                <Link to="/professionals/resources"  className="menu-link" onClick={() => setMenuOpen(false)}>Resources</Link>
+                <Link to="/professionals/guidelines" className="menu-link" onClick={() => setMenuOpen(false)}>Guidelines</Link>
+              </div>
+
+              <div className="menu-section">
+                <p className="menu-section-label">Company</p>
+                <Link to="/about" className="menu-link" onClick={() => setMenuOpen(false)}>About Serenest</Link>
+                <Link to="/team"  className="menu-link" onClick={() => setMenuOpen(false)}>Our Team</Link>
+              </div>
             </nav>
 
             {/* CTA */}
