@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { subscribers } from '../lib/api';
+import { getUtm } from '../lib/utm';
 
 const SESSION_KEY = 'serenest_exit_shown';
 const STORAGE_KEY = 'serenest_exit_ts';
@@ -55,7 +56,12 @@ export default function ExitIntentPopup() {
     setPhase('saving');
     setErrorMsg('');
     try {
-      await subscribers.add({ email: email.trim(), source: 'exit_intent' });
+      const utm = getUtm();
+      await subscribers.add({
+        email: email.trim(),
+        source: utm?.source ? `exit_intent__${utm.source}` : 'exit_intent',
+        ...(utm?.campaign ? { campaign: utm.campaign } : {}),
+      });
       setPhase('done');
     } catch (err) {
       setPhase('error');

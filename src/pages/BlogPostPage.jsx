@@ -2,11 +2,23 @@ import React, { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { BLOG_POSTS } from '../lib/blogPosts';
+import { useSEO } from '../lib/useSEO';
+import { SITE_ORIGIN } from '../lib/seo';
+import SocialShare from '../components/SocialShare';
 
 export default function BlogPostPage() {
   const { slug } = useParams();
 
   const post = useMemo(() => BLOG_POSTS.find((p) => p.slug === slug) ?? null, [slug]);
+
+  const postPath = `/blog/${slug}`;
+  useSEO(post ? {
+    path: postPath,
+    title: `${post.title} | Serenest Blog`,
+    description: post.excerpt,
+    ogTitle: post.title,
+    ogDescription: post.excerpt,
+  } : { path: postPath });
 
   if (!post) {
     return (
@@ -61,6 +73,12 @@ export default function BlogPostPage() {
               </p>
             ))}
           </article>
+
+          <SocialShare
+            url={`${SITE_ORIGIN}/blog/${post.slug}`}
+            title={post.title}
+            excerpt={post.excerpt}
+          />
 
           <div className="cta about-cta" style={{ marginTop: 16 }}>
             <div>
