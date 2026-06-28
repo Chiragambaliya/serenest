@@ -131,6 +131,12 @@ const TAB_GROUPS = [
       { id: 'website', label: 'Website', icon: '◻' },
     ],
   },
+  {
+    label: 'Social',
+    items: [
+      { id: 'social', label: 'Social Media', icon: '◻' },
+    ],
+  },
 ];
 
 // Flat TABS array derived from groups (used for label lookups)
@@ -301,6 +307,19 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError]     = useState(null);
 
+  // Social media state
+  const [socialPosts, setSocialPosts]     = useState([]);
+  const [socialStatus, setSocialStatus]   = useState(null);
+  const [socialForm, setSocialForm]       = useState({
+    platform: 'both', caption: '', hashtags: '', image_url: '',
+    scheduled_at: '', status: 'scheduled',
+  });
+  const [socialShowForm, setSocialShowForm] = useState(false);
+  const [socialBusy, setSocialBusy]         = useState(false);
+  const [socialError, setSocialError]       = useState('');
+  const [socialEditing, setSocialEditing]   = useState(null);
+  const [socialEditData, setSocialEditData] = useState({});
+
   const [siteHubFilter, setSiteHubFilter] = useState('');
   const [siteCopied, setSiteCopied]       = useState('');
   const [healthProbe, setHealthProbe]     = useState(null);
@@ -381,6 +400,14 @@ export default function AdminPage() {
       (which === 'all' || which === 'learners') && safe(async () => {
         const r = await adminFetch('/api/academy/content/all', secret);
         setAcContent(r.content ?? []);
+      }),
+      (which === 'all' || which === 'social') && safe(async () => {
+        const [r, s] = await Promise.all([
+          adminFetch('/api/social/posts', secret),
+          adminFetch('/api/social/status', secret),
+        ]);
+        setSocialPosts(r.posts ?? []);
+        setSocialStatus(s);
       }),
     ].filter(Boolean));
 
@@ -2538,9 +2565,273 @@ export default function AdminPage() {
             )}
           </div>
         )}
+
+        {/* ─── SOCIAL MEDIA TAB ─────────────────────────────────── */}
+        {tab === 'social' && (() => {
+          const STATUS_COLORS = {
+            scheduled: { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6' },
+            posted:    { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e' },
+            failed:    { bg: '#fef2f2', text: '#b91c1c', dot: '#ef4444' },
+            partial:   { bg: '#fffbeb', text: '#92400e', dot: '#f59e0b' },
+            draft:     { bg: '#f8fafc', text: '#64748b', dot: '#94a3b8' },
+          };
+
+          const fmtScheduled = (dt) => {
+            const d = new Date(dt);
+            return d.toLocaleString('en-IN', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+          };
+
+          const PLATFORM_LABELS = { instagram: '📷 Instagram', linkedin: '💼 LinkedIn', both: '📷+💼 Both' };
+
+          async function saveNewPost() {
+            setSocialBusy(true); setSocialError('');
+            try {
+              const r = await adminFetch('/api/social/posts', secret, {
+                method: 'POST', body: JSON.stringify(socialForm),
+              });
+              setSocialPosts((p) => [r.post, ...p]);
+              setSocialShowForm(false);
+              setSocialForm({ platform: 'both', caption: '', hashtags: '', image_url: '', scheduled_at: '', status: 'scheduled' });
+            } catch (e) { setSocialError(e.message); }
+            finally { setSocialBusy(false); }
+          }
+
+          async function saveEdit(id) {
+            setSocialBusy(true); setSocialError('');
+            try {
+              const r = await adminFetch(`/api/social/posts/${id}`, secret, {
+                method: 'PATCH', body: JSON.stringify(socialEditData),
+              });
+              setSocialPosts((p) => p.map((x) => x.id === id ? r.post : x));
+              setSocialEditing(null);
+            } catch (e) { setSocialError(e.message); }
+            finally { setSocialBusy(false); }
+          }
+
+          async function deletePost(id) {
+            if (!window.confirm('Delete this post?')) return;
+            await adminFetch(`/api/social/posts/${id}`, secret, { method: 'DELETE' });
+            setSocialPosts((p) => p.filter((x) => x.id !== id));
+          }
+
+          async function publishNow(id) {
+            setSocialBusy(true); setSocialError('');
+            try {
+              const r = await adminFetch(`/api/social/posts/${id}/publish`, secret, { method: 'POST' });
+              setSocialPosts((p) => p.map((x) => x.id === id ? { ...x, status: r.status, posted_at: new Date().toISOString() } : x));
+              if (r.errors?.length) setSocialError(r.errors.join(' | '));
+            } catch (e) { setSocialError(e.message); }
+            finally { setSocialBusy(false); }
+          }
+
+          const upcoming = socialPosts.filter((p) => p.status === 'scheduled');
+          const posted   = socialPosts.filter((p) => p.status === 'posted');
+          const failed   = socialPosts.filter((p) => ['failed','partial'].includes(p.status));
+
+          return (
+            <div>
+              {/* Header */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: 12 }}>
+                <h2 style={{ fontWeight: 800, fontSize: '1.4rem', margin: 0 }}>Social Media</h2>
+                <button className="btn btn-primary btn-sm" onClick={() => setSocialShowForm((v) => !v)}>
+                  {socialShowForm ? 'Cancel' : '+ Schedule post'}
+                </button>
+              </div>
+
+              {/* Credential status */}
+              {socialStatus && (
+                <div style={{ display: 'flex', gap: 10, marginBottom: '1.25rem', flexWrap: 'wrap' }}>
+                  {[['LinkedIn', socialStatus.linkedin], ['Instagram', socialStatus.instagram]].map(([name, ok]) => (
+                    <span key={name} style={{
+                      display: 'inline-flex', alignItems: 'center', gap: 6,
+                      padding: '4px 10px', borderRadius: 20, fontSize: '0.8rem', fontWeight: 600,
+                      background: ok ? '#f0fdf4' : '#fef2f2',
+                      color: ok ? '#15803d' : '#b91c1c',
+                      border: `1px solid ${ok ? '#bbf7d0' : '#fecaca'}`,
+                    }}>
+                      <span style={{ width: 7, height: 7, borderRadius: '50%', background: ok ? '#22c55e' : '#ef4444', display: 'inline-block' }} />
+                      {name}: {ok ? 'Connected' : 'Not configured'}
+                    </span>
+                  ))}
+                  {(!socialStatus.linkedin || !socialStatus.instagram) && (
+                    <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', alignSelf: 'center' }}>
+                      → Add missing env vars: LINKEDIN_ACCESS_TOKEN + LINKEDIN_ORG_URN · INSTAGRAM_ACCESS_TOKEN + INSTAGRAM_USER_ID
+                    </span>
+                  )}
+                </div>
+              )}
+
+              {socialError && <div className="admin-alert" style={{ marginBottom: '1rem' }}>{socialError}</div>}
+
+              {/* New post form */}
+              {socialShowForm && (
+                <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 12, padding: '1.25rem', marginBottom: '1.5rem' }}>
+                  <h3 style={{ fontWeight: 700, margin: '0 0 1rem' }}>Schedule new post</h3>
+                  <div style={{ display: 'grid', gap: 12 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                      <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>Platform</span>
+                        <select className="admin-input" value={socialForm.platform}
+                          onChange={(e) => setSocialForm((f) => ({ ...f, platform: e.target.value }))}>
+                          <option value="both">Both (Instagram + LinkedIn)</option>
+                          <option value="instagram">Instagram only</option>
+                          <option value="linkedin">LinkedIn only</option>
+                        </select>
+                      </label>
+                      <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                        <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>Schedule date &amp; time</span>
+                        <input className="admin-input" type="datetime-local" value={socialForm.scheduled_at}
+                          onChange={(e) => setSocialForm((f) => ({ ...f, scheduled_at: e.target.value }))} />
+                      </label>
+                    </div>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>Caption</span>
+                      <textarea className="admin-input" rows={4} placeholder="Write your post caption…" value={socialForm.caption}
+                        onChange={(e) => setSocialForm((f) => ({ ...f, caption: e.target.value }))}
+                        style={{ resize: 'vertical' }} />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>Hashtags</span>
+                      <input className="admin-input" placeholder="#mentalhealth #MentalHealthIndia" value={socialForm.hashtags}
+                        onChange={(e) => setSocialForm((f) => ({ ...f, hashtags: e.target.value }))} />
+                    </label>
+                    <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                      <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>Image URL <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>(public HTTPS URL — required for Instagram)</span></span>
+                      <input className="admin-input" placeholder="https://…/image.jpg" value={socialForm.image_url}
+                        onChange={(e) => setSocialForm((f) => ({ ...f, image_url: e.target.value }))} />
+                    </label>
+                    <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+                      <button className="btn btn-ghost btn-sm" onClick={() => setSocialShowForm(false)}>Cancel</button>
+                      <button className="btn btn-primary btn-sm" disabled={socialBusy || !socialForm.caption.trim() || !socialForm.scheduled_at}
+                        onClick={saveNewPost}>
+                        {socialBusy ? 'Saving…' : 'Schedule'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Upcoming */}
+              <h3 style={{ fontWeight: 700, fontSize: '1rem', margin: '0 0 0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>
+                Scheduled ({upcoming.length})
+              </h3>
+              {upcoming.length === 0 ? (
+                <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem' }}>No upcoming posts — schedule one above.</p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: '1.5rem' }}>
+                  {upcoming.map((post) => (
+                    <SocialPostCard key={post.id} post={post} statusColors={STATUS_COLORS}
+                      platformLabels={PLATFORM_LABELS} fmtScheduled={fmtScheduled}
+                      onPublish={publishNow} onDelete={deletePost}
+                      isEditing={socialEditing === post.id}
+                      editData={socialEditData}
+                      onEdit={() => { setSocialEditing(post.id); setSocialEditData({ caption: post.caption, hashtags: post.hashtags || '', image_url: post.image_url || '', scheduled_at: post.scheduled_at?.slice(0,16), platform: post.platform }); }}
+                      onCancelEdit={() => setSocialEditing(null)}
+                      onEditChange={(k, v) => setSocialEditData((d) => ({ ...d, [k]: v }))}
+                      onSaveEdit={() => saveEdit(post.id)}
+                      busy={socialBusy}
+                    />
+                  ))}
+                </div>
+              )}
+
+              {/* Failed */}
+              {failed.length > 0 && (
+                <>
+                  <h3 style={{ fontWeight: 700, fontSize: '0.75rem', margin: '0 0 0.75rem', color: '#b91c1c', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    Failed / Partial ({failed.length})
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: '1.5rem' }}>
+                    {failed.map((post) => (
+                      <SocialPostCard key={post.id} post={post} statusColors={STATUS_COLORS}
+                        platformLabels={PLATFORM_LABELS} fmtScheduled={fmtScheduled}
+                        onPublish={publishNow} onDelete={deletePost}
+                        isEditing={false} busy={socialBusy}
+                      />
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {/* Posted history */}
+              <h3 style={{ fontWeight: 700, fontSize: '0.75rem', margin: '0 0 0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                Posted ({posted.length})
+              </h3>
+              {posted.length === 0 ? (
+                <p style={{ color: 'var(--text-muted)' }}>Nothing posted yet.</p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  {posted.slice(0, 20).map((post) => (
+                    <SocialPostCard key={post.id} post={post} statusColors={STATUS_COLORS}
+                      platformLabels={PLATFORM_LABELS} fmtScheduled={fmtScheduled}
+                      onDelete={deletePost} isEditing={false} busy={false}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          );
+        })()}
+
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function SocialPostCard({ post, statusColors, platformLabels, fmtScheduled, onPublish, onDelete, isEditing, editData, onEdit, onCancelEdit, onEditChange, onSaveEdit, busy }) {
+  const sc = statusColors[post.status] ?? statusColors.draft;
+  return (
+    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, padding: '1rem', display: 'flex', flexDirection: 'column', gap: 10 }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+        <span style={{ background: sc.bg, color: sc.text, border: `1px solid ${sc.dot}40`, borderRadius: 20, padding: '2px 10px', fontSize: '0.75rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
+          <span style={{ width: 6, height: 6, borderRadius: '50%', background: sc.dot, display: 'inline-block' }} />
+          {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
+        </span>
+        <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>{platformLabels[post.platform]}</span>
+        <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginLeft: 'auto' }}>
+          {post.posted_at ? `Posted ${fmtScheduled(post.posted_at)}` : `Scheduled ${fmtScheduled(post.scheduled_at)}`}
+        </span>
+      </div>
+
+      {isEditing ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <textarea className="admin-input" rows={3} value={editData.caption ?? ''} onChange={(e) => onEditChange('caption', e.target.value)} style={{ resize: 'vertical' }} />
+          <input className="admin-input" placeholder="Hashtags" value={editData.hashtags ?? ''} onChange={(e) => onEditChange('hashtags', e.target.value)} />
+          <input className="admin-input" placeholder="Image URL" value={editData.image_url ?? ''} onChange={(e) => onEditChange('image_url', e.target.value)} />
+          <input className="admin-input" type="datetime-local" value={editData.scheduled_at ?? ''} onChange={(e) => onEditChange('scheduled_at', e.target.value)} />
+          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+            <button className="btn btn-ghost btn-sm" onClick={onCancelEdit}>Cancel</button>
+            <button className="btn btn-primary btn-sm" disabled={busy} onClick={onSaveEdit}>Save</button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <p style={{ margin: 0, fontSize: '0.9rem', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{post.caption}</p>
+          {post.hashtags && <p style={{ margin: 0, fontSize: '0.8rem', color: '#3b82f6' }}>{post.hashtags}</p>}
+          {post.image_url && (
+            <img src={post.image_url} alt="post" style={{ maxHeight: 120, borderRadius: 8, objectFit: 'cover', maxWidth: '100%' }} onError={(e) => { e.target.style.display='none'; }} />
+          )}
+          {post.error_message && <p style={{ margin: 0, fontSize: '0.78rem', color: '#b91c1c', background: '#fef2f2', padding: '4px 8px', borderRadius: 6 }}>{post.error_message}</p>}
+          {post.linkedin_post_id && <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>LinkedIn post ID: {post.linkedin_post_id}</p>}
+          {post.instagram_post_id && <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>Instagram post ID: {post.instagram_post_id}</p>}
+        </>
+      )}
+
+      {!isEditing && (
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+          {onPublish && post.status !== 'posted' && (
+            <button className="btn btn-primary btn-sm" disabled={busy} onClick={() => onPublish(post.id)}>Post now</button>
+          )}
+          {onEdit && post.status === 'scheduled' && (
+            <button className="btn btn-ghost btn-sm" onClick={onEdit}>Edit</button>
+          )}
+          {onDelete && (
+            <button className="btn btn-ghost btn-sm" style={{ color: '#ef4444' }} onClick={() => onDelete(post.id)}>Delete</button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
