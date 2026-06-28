@@ -90,6 +90,46 @@ export const ROUTE_SEO = {
     ogDescription:
       'Guides, learning programmes, and partnerships from Serenest Education — same site as clinical telepsychiatry.',
   },
+  '/professionals': {
+    title: 'For Mental Health Professionals | Join Serenest | India',
+    description:
+      'Serenest works with verified psychiatrists, psychologists, and counsellors across India. Learn how to join our clinical team, access learning resources, and grow your practice.',
+    ogTitle: 'For Mental Health Professionals | Serenest India',
+    ogDescription:
+      'Join Serenest as a verified clinician. Access clinical learning, resources, and guidelines for mental health professionals.',
+  },
+  '/professionals/learning': {
+    title: 'Clinical Learning Hub | Psychiatry & Psychology CPD | Serenest',
+    description:
+      'Continuing professional development for psychiatrists, psychologists, and counsellors. Pharmacology, psychology, and clinical practice modules from Serenest.',
+    ogTitle: 'Clinical Learning Hub | Serenest Professionals',
+    ogDescription:
+      'CPD-oriented learning modules in pharmacology, psychology, and clinical practice for mental health professionals.',
+  },
+  '/professionals/resources': {
+    title: 'Clinical Resources for Mental Health Professionals | Serenest',
+    description:
+      'Tools, templates, and clinical reference materials for psychiatrists, psychologists, and counsellors working with Serenest.',
+    ogTitle: 'Clinical Resources | Serenest Professionals',
+    ogDescription:
+      'Clinical reference materials, tools, and templates for verified mental health professionals.',
+  },
+  '/professionals/guidelines': {
+    title: 'Clinical Practice Guidelines | Serenest Professionals',
+    description:
+      'Evidence-informed practice guidelines for clinical documentation, telehealth, prescribing, and continuity of care at Serenest.',
+    ogTitle: 'Practice Guidelines | Serenest Professionals',
+    ogDescription:
+      'Practice guidelines for clinical documentation, telehealth, and continuity of care at Serenest.',
+  },
+  '/blog': {
+    title: 'Mental Health Blog | Clinical Insights & Patient Guides | Serenest',
+    description:
+      'Read the Serenest blog for clinical insights, patient guides, and mental health updates — covering depression, anxiety, ADHD, telepsychiatry, and more.',
+    ogTitle: 'Serenest Blog | Mental Health Clinical Insights',
+    ogDescription:
+      'Clinical insights, patient guides, and mental health updates from the Serenest team.',
+  },
   '/privacy': {
     title: 'Privacy Policy | Serenest Mental Health Platform India',
     description:
@@ -688,17 +728,64 @@ export const ROUTE_JSONLD = {
       ORG_SCHEMA,
       WEBSITE_SCHEMA,
       {
+        '@type': 'EducationalOrganization',
+        '@id': `${SITE_ORIGIN}/academy#educationalorg`,
+        name: 'Serenest Academy',
+        url: `${SITE_ORIGIN}/academy`,
+        description:
+          'Serenest Academy provides clinician-led mental health education programs in India, including certificate programs, fellowships, CPD, and mentorship.',
+        parentOrganization: { '@id': `${SITE_ORIGIN}/#organization` },
+        areaServed: { '@type': 'Country', name: 'India' },
+        knowsAbout: ['Psychiatry', 'Clinical Psychology', 'Counselling', 'Mental Health Education'],
+      },
+      {
         '@type': 'WebPage',
         '@id': `${SITE_ORIGIN}/academy#webpage`,
         url: `${SITE_ORIGIN}/academy`,
-        name: 'Serenest Academy',
+        name: 'Serenest Academy | Mental Health Education India',
         description:
-          'Mental health literacy, clinician learning tracks, and partnership programmes from Serenest Education Pvt Ltd.',
+          'Clinician-led mental health education: certificate programs, fellowships, CPD, and mentorship for India\'s mental health workforce.',
         inLanguage: 'en-IN',
         isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
         about: ['Mental health literacy', 'Health education', 'Psychiatry education'],
       },
       breadcrumbs('/academy', 'Serenest Academy'),
+    ],
+  },
+  '/professionals': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        '@type': 'WebPage',
+        '@id': `${SITE_ORIGIN}/professionals#webpage`,
+        url: `${SITE_ORIGIN}/professionals`,
+        name: 'For Mental Health Professionals | Serenest',
+        description:
+          'How verified psychiatrists, psychologists, and counsellors work with Serenest — join the clinical team, access CPD, and grow your practice.',
+        inLanguage: 'en-IN',
+        isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+      },
+      breadcrumbs('/professionals', 'For Professionals'),
+    ],
+  },
+  '/blog': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        '@type': 'Blog',
+        '@id': `${SITE_ORIGIN}/blog#blog`,
+        url: `${SITE_ORIGIN}/blog`,
+        name: 'Serenest Blog',
+        description:
+          'Clinical insights, patient guides, and mental health updates from the Serenest team.',
+        inLanguage: 'en-IN',
+        publisher: { '@id': `${SITE_ORIGIN}/#organization` },
+      },
+      breadcrumbs('/blog', 'Blog'),
     ],
   },
 

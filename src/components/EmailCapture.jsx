@@ -5,7 +5,7 @@ import { subscribers } from '../lib/api';
  * Opt-in email capture. Stores the email in `subscribers` so the team has
  * a contact to reach out to. Honest, consented — not visitor "harvesting".
  */
-export default function EmailCapture({ source = 'footer' }) {
+export default function EmailCapture({ source = 'footer', variant = 'dark' }) {
   const [email, setEmail] = useState('');
   const [state, setState] = useState('idle'); // idle | saving | done | error
   const [message, setMessage] = useState('');
@@ -27,7 +27,7 @@ export default function EmailCapture({ source = 'footer' }) {
   }
 
   return (
-    <form className="email-capture" onSubmit={handleSubmit}>
+    <form className={`email-capture${variant === 'light' ? ' email-capture--light' : ''}`} onSubmit={handleSubmit}>
       <div className="email-capture-title">Get mental-health tips &amp; updates</div>
       <p className="email-capture-sub">
         Occasional, useful emails from Serenest. No spam — unsubscribe anytime.

@@ -806,3 +806,96 @@
     flex: 1 1 100%;
   }
 }
+
+/* ── Newsletter signup section ──────────────────────────────── */
+.home__newsletter {
+  padding: clamp(3rem, 7vw, 4.5rem) 0;
+  background: linear-gradient(155deg, var(--h-sage-dark) 0%, var(--h-sage) 100%);
+  color: #fff;
+}
+
+.home__newsletter-inner {
+  display: grid;
+  gap: 2rem;
+  align-items: center;
+}
+
+@media (min-width: 720px) {
+  .home__newsletter-inner {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+}
+
+.home__newsletter-copy h2 {
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  font-weight: 700;
+  color: #fff;
+  margin: 0 0 10px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.home__newsletter-copy p {
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 0;
+  line-height: 1.65;
+}
+
+/* Give EmailCapture full width inside newsletter */
+.home__newsletter .email-capture {
+  max-width: none;
+  margin-left: 0;
+  flex: none;
+  width: 100%;
+}
+
+/* ── Share panel ────────────────────────────────────────────── */
+.home__share-panel {
+  margin: 1.75rem 0 0;
+  padding-top: 1.75rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.share-panel-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0 0 12px;
+}
+
+.share-panel-btns {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  border: 1.5px solid rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.14s, border-color 0.14s, color 0.14s, transform 0.14s;
+}
+
+.share-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: rgba(255, 255, 255, 0.4);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.share-btn--wa:hover { background: rgba(37, 211, 102, 0.25); border-color: rgba(37, 211, 102, 0.5); }
+.share-btn--tw:hover { background: rgba(255,255,255, 0.14); }
