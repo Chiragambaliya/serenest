@@ -107,6 +107,12 @@ export const payments = {
   order: (data) => post('/api/payments/order', data),
 };
 
+// ── Academy content (announcements / updates) ───────────────
+export const academyContent = {
+  /** Public — active items, pinned first. */
+  list: () => get('/api/academy/content'),
+};
+
 // ── Subscribers (opt-in email capture) ─────────────────────
 export const subscribers = {
   /** Save an opt-in email. @param {{ email: string, source?: string }} data */

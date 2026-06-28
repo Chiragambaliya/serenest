@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
@@ -8,6 +8,7 @@ import {
 } from '../lib/academyPrograms';
 import EdIcon from '../components/EdIcon';
 import AcademyGuide from '../components/AcademyGuide';
+import { academyContent } from '../lib/api';
 import '../styles/academy.css';
 
 /* ── Static data ─────────────────────────────────────────────────── */
@@ -112,11 +113,25 @@ function FaqItem({ q, a }) {
   );
 }
 
+const TYPE_COLORS = {
+  announcement:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6' },
+  program_update: { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e' },
+  event:          { bg: '#fef9c3', text: '#854d0e', dot: '#eab308' },
+};
+
 /* ── Page ────────────────────────────────────────────────────────── */
 export default function AcademyPage() {
   useSEO({ path: '/academy', ...ROUTE_SEO['/academy'] });
   const { user } = useAuth();
   const firstName = (user?.user_metadata?.full_name || user?.email || '').split(/[\s@]/)[0];
+
+  const [liveContent, setLiveContent] = useState([]);
+  useEffect(() => {
+    academyContent.list().then((r) => setLiveContent(r.content ?? [])).catch(() => {});
+  }, []);
+
+  const pinnedItems   = liveContent.filter((c) => c.pinned);
+  const regularItems  = liveContent.filter((c) => !c.pinned);
 
   return (
     <div className="eda-page">
@@ -219,6 +234,52 @@ export default function AcademyPage() {
 
       {/* ══ ACADEMY GUIDE ═════════════════════════════════════════ */}
       <AcademyGuide />
+
+      {/* ══ LIVE ANNOUNCEMENTS / UPDATES ══════════════════════════ */}
+      {liveContent.length > 0 && (
+        <section className="eda-updates" aria-label="Latest updates">
+          <div className="container">
+
+            {/* Pinned banner (one at a time — latest pinned item) */}
+            {pinnedItems.length > 0 && (
+              <div className="eda-pinned-banner">
+                <span className="eda-pinned-tag" aria-label="Pinned">📌</span>
+                <div className="eda-pinned-body">
+                  <strong>{pinnedItems[0].title}</strong>
+                  {pinnedItems[0].body && <span className="eda-pinned-text"> — {pinnedItems[0].body}</span>}
+                  {pinnedItems[0].link && (
+                    <a href={pinnedItems[0].link} className="eda-pinned-link">{pinnedItems[0].link_label || 'Learn more'} →</a>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Regular updates grid */}
+            {regularItems.length > 0 && (
+              <div className="eda-updates-grid">
+                <h2 className="eda-updates-heading">Latest from the Academy</h2>
+                <div className="eda-updates-list">
+                  {regularItems.map((item) => {
+                    const colors = TYPE_COLORS[item.type] ?? TYPE_COLORS.announcement;
+                    return (
+                      <div key={item.id} className="eda-update-card" style={{ '--uda-bg': colors.bg, '--uda-text': colors.text, '--uda-dot': colors.dot }}>
+                        <span className="eda-update-dot" aria-hidden="true" />
+                        <div className="eda-update-body">
+                          <p className="eda-update-title">{item.title}</p>
+                          {item.body && <p className="eda-update-desc">{item.body}</p>}
+                          {item.link && (
+                            <a href={item.link} className="eda-update-link">{item.link_label || 'Learn more'} →</a>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
 
       {/* ══ PROGRAMS ══════════════════════════════════════════════ */}
       <section id="programs" className="eda-section">
