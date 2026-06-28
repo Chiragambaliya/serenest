@@ -397,14 +397,6 @@ export default function SiteLayout() {
             </div>
           </div>
 
-          {/* Trust strip */}
-          <ul className="footer-trust" aria-label="Why Serenest">
-            <li>Doctor-led</li>
-            <li>Confidential</li>
-            <li>Evidence-based</li>
-            <li>Online across India</li>
-          </ul>
-
           <div className="footer-divider" aria-hidden="true" />
 
           {/* Bottom bar */}
