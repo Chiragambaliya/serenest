@@ -291,6 +291,15 @@ export default function AdminPage() {
   const [acError, setAcError]             = useState('');
   const [acShowForm, setAcShowForm]       = useState(false);
 
+  // Academy AI content generation state
+  const [acGenOpen, setAcGenOpen]       = useState(false);
+  const [acGenLoading, setAcGenLoading] = useState(false);
+  const [acGenError, setAcGenError]     = useState('');
+  const [acGenResult, setAcGenResult]   = useState(null); // { items[] }
+  const [acGenSaved, setAcGenSaved]     = useState(false);
+  const [acGenFocus, setAcGenFocus]     = useState('');
+  const [acGenCount, setAcGenCount]     = useState(4);
+
   // HR sub-state
   const [hrTab, setHrTab]               = useState('applications');
   const [jobPostings, setJobPostings]   = useState([]);
@@ -2340,6 +2349,35 @@ export default function AdminPage() {
                 setAcBusy(false);
               }
 
+              async function generateAcademyItems() {
+                setAcGenLoading(true); setAcGenError(''); setAcGenResult(null); setAcGenSaved(false);
+                try {
+                  const r = await adminFetch('/api/academy/content/generate', secret, {
+                    method: 'POST',
+                    body: JSON.stringify({ focus: acGenFocus || null, count: acGenCount }),
+                  });
+                  setAcGenResult(r);
+                } catch (e) { setAcGenError(e.message); }
+                finally { setAcGenLoading(false); }
+              }
+
+              async function saveGeneratedItems() {
+                if (!acGenResult?.items?.length) return;
+                setAcGenLoading(true); setAcGenError('');
+                try {
+                  const saved = [];
+                  for (const item of acGenResult.items) {
+                    const r = await adminFetch('/api/academy/content', secret, { method: 'POST', body: JSON.stringify({ ...item, is_active: true }) });
+                    saved.push(r.item);
+                  }
+                  setAcContent((prev) => [...saved.reverse(), ...prev]);
+                  setAcGenSaved(true);
+                  setAcGenResult(null);
+                  setAcGenOpen(false);
+                } catch (e) { setAcGenError(e.message); }
+                finally { setAcGenLoading(false); }
+              }
+
               async function saveEdit(id) {
                 setAcBusy(true); setAcError('');
                 try {
@@ -2370,15 +2408,96 @@ export default function AdminPage() {
               const fieldStyle = { width: '100%', padding: '0.55rem 0.75rem', borderRadius: 8, border: '1px solid var(--border)', fontSize: '0.88rem', background: 'var(--surface)', color: 'var(--text)', boxSizing: 'border-box' };
               const labelStyle = { fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4, display: 'block' };
 
+              const TYPE_BADGE = {
+                announcement:   { bg: '#eff6ff', color: '#1d4ed8' },
+                program_update: { bg: '#f0fdf4', color: '#15803d' },
+                event:          { bg: '#fff7ed', color: '#c2410c' },
+              };
+
               return (
                 <div>
                   {acError && <p style={{ color: '#dc3545', fontSize: '0.85rem', marginBottom: '0.75rem' }}>{acError}</p>}
 
-                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '1rem' }}>
-                    <button onClick={() => { setAcShowForm((v) => !v); setAcError(''); }} className="btn btn-primary btn-sm">
-                      {acShowForm ? 'Cancel' : '+ New Update'}
-                    </button>
+                  {/* Header */}
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 8 }}>
+                    <h2 style={{ fontWeight: 800, fontSize: '1.2rem', margin: 0 }}>Academy Content</h2>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <button
+                        className="btn btn-primary btn-sm"
+                        style={{ background: 'linear-gradient(135deg,#5a8f40,#3a6028)', display: 'flex', alignItems: 'center', gap: 6 }}
+                        onClick={() => { setAcGenOpen((v) => !v); setAcShowForm(false); setAcGenError(''); }}
+                      >
+                        ✨ {acGenOpen ? 'Close AI generator' : 'Generate with AI'}
+                      </button>
+                      <button className="btn btn-ghost btn-sm" onClick={() => { setAcShowForm((v) => !v); setAcGenOpen(false); setAcError(''); }}>
+                        {acShowForm ? 'Cancel' : '+ Manual entry'}
+                      </button>
+                    </div>
                   </div>
+
+                  {/* ── AI GENERATOR PANEL ── */}
+                  {acGenOpen && (
+                    <div style={{ background: 'linear-gradient(135deg,#f0fdf4,#f8fafc)', border: '1.5px solid #bbf7d0', borderRadius: 14, padding: '1.25rem', marginBottom: '1.5rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1rem' }}>
+                        <span style={{ fontSize: '1.3rem' }}>✨</span>
+                        <div>
+                          <div style={{ fontWeight: 700, fontSize: '1rem' }}>AI Academy Content Generator</div>
+                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Claude writes announcements, program updates, and events. You review, then publish.</div>
+                        </div>
+                      </div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10, marginBottom: 12 }}>
+                        <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                          <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>Theme / context <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>(optional)</span></span>
+                          <input className="admin-input" placeholder="e.g. New cohort opening, fellowship enrollment, guest lecture…"
+                            value={acGenFocus} onChange={(e) => setAcGenFocus(e.target.value)} />
+                        </label>
+                        <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                          <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>Count</span>
+                          <select className="admin-input" value={acGenCount} onChange={(e) => setAcGenCount(Number(e.target.value))}>
+                            <option value={3}>3 items</option>
+                            <option value={4}>4 items</option>
+                            <option value={5}>5 items</option>
+                            <option value={6}>6 items</option>
+                          </select>
+                        </label>
+                      </div>
+                      {acGenError && <div style={{ color: '#b91c1c', fontSize: '0.82rem', marginBottom: 10 }}>{acGenError}</div>}
+                      {!acGenResult ? (
+                        <button className="btn btn-primary" disabled={acGenLoading} onClick={generateAcademyItems}
+                          style={{ width: '100%', justifyContent: 'center' }}>
+                          {acGenLoading ? '✨ Claude is writing content…' : `✨ Generate ${acGenCount} content items`}
+                        </button>
+                      ) : (
+                        <div>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
+                            {acGenResult.items.map((item, i) => {
+                              const badge = TYPE_BADGE[item.type] ?? { bg: '#f1f5f9', color: '#475569' };
+                              return (
+                                <div key={i} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '0.85rem' }}>
+                                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6, flexWrap: 'wrap' }}>
+                                    <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: badge.bg, color: badge.color }}>
+                                      {item.type === 'announcement' ? '📢' : item.type === 'program_update' ? '📚' : '🗓'} {item.type.replace('_', ' ')}
+                                    </span>
+                                    {item.pinned && <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#fef9c3', color: '#854d0e' }}>📌 Will be pinned</span>}
+                                  </div>
+                                  <p style={{ margin: '0 0 4px', fontWeight: 700, fontSize: '0.9rem' }}>{item.title}</p>
+                                  {item.body && <p style={{ margin: '0 0 4px', fontSize: '0.83rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>{item.body}</p>}
+                                  {item.link && <p style={{ margin: 0, fontSize: '0.78rem', color: '#3b82f6' }}>{item.link_label || 'Link'} → {item.link}</p>}
+                                </div>
+                              );
+                            })}
+                          </div>
+                          <div style={{ display: 'flex', gap: 8 }}>
+                            <button className="btn btn-ghost btn-sm" onClick={() => { setAcGenResult(null); setAcGenSaved(false); }}>Regenerate</button>
+                            <button className="btn btn-primary" disabled={acGenLoading || acGenSaved} onClick={saveGeneratedItems}
+                              style={{ flex: 1, justifyContent: 'center' }}>
+                              {acGenLoading ? 'Publishing…' : acGenSaved ? '✓ Published!' : `✅ Publish all ${acGenResult.items.length} items`}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {/* New-item form */}
                   {acShowForm && (
