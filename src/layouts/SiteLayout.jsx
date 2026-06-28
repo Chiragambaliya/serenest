@@ -353,7 +353,7 @@ export default function SiteLayout() {
                     <rect x="2" y="2" width="20" height="20" rx="4" />
                     <path d="M8 11v5M8 8v.5M12 16v-3a2 2 0 0 1 4 0v3M12 11v5" />
                   </svg>
-                  <span>LinkedIn</span>
+                  <span>Serenest Mind</span>
                 </a>
               </div>
             </div>
