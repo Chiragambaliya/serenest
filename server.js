@@ -462,9 +462,8 @@ app.post('/api/professionals/apply', async (req, res) => {
   if (!requireDb(res)) return;
 
   const {
-    role, full_name, phone, email, registration,
-    degree, year, council, clinic, city,
-    languages, specialities, fee_inr, duration_min,
+    role, role_label, full_name, phone, email, registration,
+    degree, city, languages, specialities, fee_inr, duration_min,
     modes, availability,
   } = req.body;
 
@@ -475,15 +474,20 @@ app.post('/api/professionals/apply', async (req, res) => {
   const { data, error } = await supabase
     .from('professional_applications')
     .insert({
-      role, role_label: role,
+      role,
+      role_label: role_label?.trim() || role,
       full_name: full_name.trim(),
       phone: phone.trim(),
       email: email?.trim() || null,
-      registration, degree, year, council,
-      clinic, city, languages, specialities,
-      fee_inr,
+      registration: registration?.trim() || null,
+      degree: degree?.trim() || null,
+      city: city?.trim() || null,
+      languages: languages?.trim() || null,
+      specialities: specialities?.trim() || null,
+      fee_inr: fee_inr?.trim() || null,
       duration_min: duration_min ? Number(duration_min) : null,
-      modes, availability,
+      modes: modes || null,
+      availability: availability?.trim() || null,
       status: 'pending',
     })
     .select()

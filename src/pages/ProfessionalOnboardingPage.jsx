@@ -18,32 +18,27 @@ export default function ProfessionalOnboardingPage() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
+  // Step 1 — personal + credentials
   const [role, setRole] = useState('psychiatrist');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-
   const [registration, setRegistration] = useState('');
   const [degree, setDegree] = useState('');
-  const [year, setYear] = useState('');
-  const [council, setCouncil] = useState('');
 
-  const [clinic, setClinic] = useState('');
+  // Step 2 — practice + setup
   const [city, setCity] = useState('');
   const [languages, setLanguages] = useState('English, Hindi');
   const [specialities, setSpecialities] = useState('');
-
   const [fee, setFee] = useState('');
   const [duration, setDuration] = useState('45');
   const [modesOffered, setModesOffered] = useState(() => new Set(['video', 'audio', 'chat']));
-  const [availability, setAvailability] = useState('Mon–Sat, 6pm–9pm');
+  const [availability, setAvailability] = useState('');
   const [consent, setConsent] = useState(false);
 
   const phoneClean = phone.replace(/[^\d]/g, '');
   const isPhoneValid = phoneClean.length === 10 && /^[6-9]/.test(phoneClean);
   const isNameValid = fullName.trim().length >= 2;
-  const hasPracticeBasics = city.trim().length >= 2 && languages.trim().length >= 2;
-  const isStep4Valid = String(fee).trim().length > 0 && modesOffered.size > 0 && consent;
 
   function toggleMode(id) {
     setModesOffered((prev) => {
@@ -59,9 +54,7 @@ export default function ProfessionalOnboardingPage() {
   }
 
   const [step1Error, setStep1Error] = useState('');
-
   const [step2Error, setStep2Error] = useState('');
-  const [step3Error, setStep3Error] = useState('');
 
   function tryGoToStep2() {
     if (!isNameValid) {
@@ -69,67 +62,40 @@ export default function ProfessionalOnboardingPage() {
       return;
     }
     if (!isPhoneValid) {
-      setStep1Error('Please enter a valid 10-digit Indian mobile number starting with 6-9.');
+      setStep1Error('Please enter a valid 10-digit Indian mobile number starting with 6–9.');
+      return;
+    }
+    if (registration.trim().length < 4) {
+      setStep1Error('Please enter your registration / license number (minimum 4 characters).');
       return;
     }
     setStep1Error('');
     setStep(2);
   }
 
-  function credentialRegistrationError(forRole, regTrim) {
-    if (regTrim.length >= 4) return '';
-    switch (forRole) {
-      case 'psychiatrist':
-        return 'MCI/SMC registration number is required for psychiatrists (min 4 characters).';
-      case 'psychologist':
-        return 'RCI / professional registration is required for psychologists (min 4 characters).';
-      case 'therapist':
-      case 'counsellor':
-        return 'Professional registration (e.g. RCI or equivalent) is required (min 4 characters).';
-      default:
-        return '';
-    }
-  }
-
-  function tryGoToStep3() {
-    const regErr = credentialRegistrationError(role, registration.trim());
-    if (regErr) {
-      setStep2Error(regErr);
-      return;
-    }
-    setStep2Error('');
-    setStep(3);
-  }
-
-  function tryGoToStep4() {
-    if (!hasPracticeBasics) {
-      setStep3Error('Please enter at least city and languages to continue.');
-      return;
-    }
-    setStep3Error('');
-    setStep(4);
-  }
-
-  const [step4Error, setStep4Error] = useState('');
   function trySubmit() {
+    if (!city.trim()) {
+      setStep2Error('Please enter your city.');
+      return;
+    }
     if (!String(fee).trim()) {
-      setStep4Error('Please enter your consultation fee.');
+      setStep2Error('Please enter your consultation fee.');
       return;
     }
     if (modesOffered.size === 0) {
-      setStep4Error('Select at least one consultation mode (video, audio, or chat).');
+      setStep2Error('Select at least one consultation mode.');
       return;
     }
     if (!consent) {
-      setStep4Error('Please tick the consent checkbox to submit.');
+      setStep2Error('Please tick the consent checkbox to submit.');
       return;
     }
-    setStep4Error('');
+    setStep2Error('');
     handleSubmit();
   }
 
   const roleLabel = useMemo(() => ROLES.find((r) => r.id === role)?.label ?? 'Professional', [role]);
-  const progressPct = Math.round((step / 4) * 100);
+  const progressPct = Math.round((step / 2) * 100);
 
   const record = {
     role,
@@ -139,9 +105,6 @@ export default function ProfessionalOnboardingPage() {
     email: email.trim() || null,
     registration: registration.trim() || null,
     degree: degree.trim() || null,
-    year: year.trim() || null,
-    council: council.trim() || null,
-    clinic: clinic.trim() || null,
     city: city.trim() || null,
     languages: languages.trim() || null,
     specialities: specialities.trim() || null,
@@ -151,13 +114,11 @@ export default function ProfessionalOnboardingPage() {
       .map((id) => CONSULTATION_MODES.find((m) => m.id === id)?.label)
       .filter(Boolean)
       .join(', '),
-    availability: availability.trim(),
+    availability: availability.trim() || null,
     status: 'pending',
   };
 
-  async function handleSubmit(e) {
-    if (e?.preventDefault) e.preventDefault();
-    if (!isStep4Valid) return;
+  async function handleSubmit() {
     setSubmitting(true);
     setSubmitError(null);
     try {
@@ -186,16 +147,16 @@ export default function ProfessionalOnboardingPage() {
               <h1 className="page-title">Application received!</h1>
               <p className="about-subtext">
                 Thank you, <strong>{fullName.trim().split(' ')[0]}</strong>. Our team will verify your credentials
-                and reach out to you on <strong>+91 {phoneClean}</strong>{email ? <> or <strong>{email}</strong></> : ''} within 1–2 business days.
+                and reach out on <strong>+91 {phoneClean}</strong>{email ? <> or <strong>{email}</strong></> : ''} within 1–2 business days.
               </p>
               <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginTop: '1.5rem' }}>
                 <a
                   className="btn btn-primary"
-                  href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I just submitted my professional application for ${roleLabel} role.`)}`}
+                  href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I just submitted my professional application for the ${roleLabel} role.`)}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  💬 Chat on WhatsApp
+                  Chat on WhatsApp
                 </a>
                 <Link className="btn btn-ghost" to="/">
                   Back to home
@@ -216,7 +177,7 @@ export default function ProfessionalOnboardingPage() {
             <p className="kicker">Professional onboarding</p>
             <h1 className="page-title">Join Serenest as a mental health professional.</h1>
             <p className="about-subtext">
-              A structured application flow. Verification before going live. Built for clinical workflows.
+              Quick 2-step application. Verification before you go live. Built for clinical workflows.
             </p>
             <p className="muted" style={{ marginTop: 12 }}>
               New here?{' '}
@@ -235,19 +196,11 @@ export default function ProfessionalOnboardingPage() {
               <div className="booking-steps" aria-label="Onboarding steps">
                 <div className={`step-chip ${step === 1 ? 'is-active' : ''}`}>
                   <span className="step-dot" aria-hidden="true" />
-                  Personal
+                  About you
                 </div>
                 <div className={`step-chip ${step === 2 ? 'is-active' : ''}`}>
                   <span className="step-dot" aria-hidden="true" />
-                  Credentials
-                </div>
-                <div className={`step-chip ${step === 3 ? 'is-active' : ''}`}>
-                  <span className="step-dot" aria-hidden="true" />
-                  Practice
-                </div>
-                <div className={`step-chip ${step === 4 ? 'is-active' : ''}`}>
-                  <span className="step-dot" aria-hidden="true" />
-                  Setup
+                  Your practice
                 </div>
               </div>
 
@@ -275,11 +228,13 @@ export default function ProfessionalOnboardingPage() {
               </div>
             </div>
 
+            {/* Step 1: Personal + Credentials */}
             {step === 1 && (
               <div className="booking-body">
                 <div className="section-head" style={{ marginBottom: 14 }}>
-                  <p className="section-label">Step 1</p>
-                  <h2>Personal details</h2>
+                  <p className="section-label">Step 1 of 2</p>
+                  <h2>About you</h2>
+                  <p className="muted">Basic details and your professional registration.</p>
                 </div>
 
                 <div className="form-grid">
@@ -330,7 +285,7 @@ export default function ProfessionalOnboardingPage() {
                     )}
                   </label>
 
-                  <label className="field field-wide">
+                  <label className="field">
                     <span className="field-label">Email (optional)</span>
                     <input
                       className="input"
@@ -338,6 +293,31 @@ export default function ProfessionalOnboardingPage() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
                       autoComplete="email"
+                    />
+                  </label>
+
+                  <label className="field field-wide">
+                    <span className="field-label">Registration / License number</span>
+                    <input
+                      className="input"
+                      value={registration}
+                      onChange={(e) => setRegistration(e.target.value)}
+                      placeholder="MCI / SMC / RCI / equivalent"
+                    />
+                    <span className="field-hint">
+                      {role === 'psychiatrist' && 'MCI or State Medical Council number.'}
+                      {role === 'psychologist' && 'RCI registration or equivalent.'}
+                      {(role === 'therapist' || role === 'counsellor') && 'RCI or recognised counselling body registration.'}
+                    </span>
+                  </label>
+
+                  <label className="field">
+                    <span className="field-label">Highest degree (optional)</span>
+                    <input
+                      className="input"
+                      value={degree}
+                      onChange={(e) => setDegree(e.target.value)}
+                      placeholder="MBBS, MD, M.Phil, PsyD…"
                     />
                   </label>
                 </div>
@@ -349,7 +329,7 @@ export default function ProfessionalOnboardingPage() {
                     padding: '12px 14px', marginTop: 14,
                     fontSize: '0.9rem', fontWeight: 500,
                   }}>
-                    ⚠ {step1Error}
+                    {step1Error}
                   </div>
                 )}
 
@@ -364,106 +344,16 @@ export default function ProfessionalOnboardingPage() {
               </div>
             )}
 
+            {/* Step 2: Practice + Setup */}
             {step === 2 && (
               <div className="booking-body">
                 <div className="section-head" style={{ marginBottom: 14 }}>
-                  <p className="section-label">Step 2</p>
-                  <h2>Credentials</h2>
-                  <p className="muted">We verify credentials before you go live.</p>
+                  <p className="section-label">Step 2 of 2</p>
+                  <h2>Your practice</h2>
+                  <p className="muted">Where you work and how you want to offer sessions.</p>
                 </div>
 
                 <div className="form-grid">
-                  <label className="field field-wide">
-                    <span className="field-label">Registration / License number</span>
-                    <input
-                      className="input"
-                      value={registration}
-                      onChange={(e) => setRegistration(e.target.value)}
-                      placeholder="MCI/SMC/RCI/etc."
-                    />
-                    {role === 'psychiatrist' && (
-                      <span className="field-hint">Required: MCI/SMC registration.</span>
-                    )}
-                    {role === 'psychologist' && (
-                      <span className="field-hint">Required: RCI or recognised professional registration.</span>
-                    )}
-                    {(role === 'therapist' || role === 'counsellor') && (
-                      <span className="field-hint">Required: registration with RCI / relevant counselling body.</span>
-                    )}
-                  </label>
-
-                  <label className="field">
-                    <span className="field-label">Highest degree</span>
-                    <input
-                      className="input"
-                      value={degree}
-                      onChange={(e) => setDegree(e.target.value)}
-                      placeholder="MBBS, MD, M.Phil, PsyD…"
-                    />
-                  </label>
-
-                  <label className="field">
-                    <span className="field-label">Year of passing</span>
-                    <input
-                      className="input"
-                      value={year}
-                      onChange={(e) => setYear(e.target.value)}
-                      placeholder="e.g. 2018"
-                      inputMode="numeric"
-                    />
-                  </label>
-
-                  <label className="field field-wide">
-                    <span className="field-label">Council / Authority</span>
-                    <input
-                      className="input"
-                      value={council}
-                      onChange={(e) => setCouncil(e.target.value)}
-                      placeholder="State Medical Council / RCI / etc."
-                    />
-                  </label>
-                </div>
-
-                {step2Error && (
-                  <div style={{
-                    background: '#fdecea', border: '1px solid #f5c2c0',
-                    color: '#a02622', borderRadius: 10,
-                    padding: '12px 14px', marginTop: 14,
-                    fontSize: '0.9rem', fontWeight: 500,
-                  }}>
-                    ⚠ {step2Error}
-                  </div>
-                )}
-
-                <div className="booking-actions">
-                  <button className="btn btn-ghost" type="button" onClick={() => { setStep1Error(''); setStep2Error(''); setStep(1); }}>
-                    ← Back
-                  </button>
-                  <button className="btn btn-primary" type="button" onClick={tryGoToStep3}>
-                    Continue →
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {step === 3 && (
-              <div className="booking-body">
-                <div className="section-head" style={{ marginBottom: 14 }}>
-                  <p className="section-label">Step 3</p>
-                  <h2>Practice details</h2>
-                </div>
-
-                <div className="form-grid">
-                  <label className="field">
-                    <span className="field-label">Clinic / organisation</span>
-                    <input
-                      className="input"
-                      value={clinic}
-                      onChange={(e) => setClinic(e.target.value)}
-                      placeholder="Clinic / hospital / private practice"
-                    />
-                  </label>
-
                   <label className="field">
                     <span className="field-label">City</span>
                     <input className="input" value={city} onChange={(e) => setCity(e.target.value)} placeholder="City" />
@@ -479,7 +369,7 @@ export default function ProfessionalOnboardingPage() {
                     />
                   </label>
 
-                  <label className="field">
+                  <label className="field field-wide">
                     <span className="field-label">Specialities (optional)</span>
                     <input
                       className="input"
@@ -488,45 +378,14 @@ export default function ProfessionalOnboardingPage() {
                       placeholder="Anxiety, CBT, de-addiction, etc."
                     />
                   </label>
-                </div>
 
-                {step3Error && (
-                  <div style={{
-                    background: '#fdecea', border: '1px solid #f5c2c0',
-                    color: '#a02622', borderRadius: 10,
-                    padding: '12px 14px', marginTop: 14,
-                    fontSize: '0.9rem', fontWeight: 500,
-                  }}>
-                    ⚠ {step3Error}
-                  </div>
-                )}
-
-                <div className="booking-actions">
-                  <button className="btn btn-ghost" type="button" onClick={() => { setStep3Error(''); setStep(2); }}>
-                    ← Back
-                  </button>
-                  <button className="btn btn-primary" type="button" onClick={tryGoToStep4}>
-                    Continue →
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {step === 4 && (
-              <div className="booking-body">
-                <div className="section-head" style={{ marginBottom: 14 }}>
-                  <p className="section-label">Step 4</p>
-                  <h2>Consultation setup</h2>
-                </div>
-
-                <div className="form-grid">
                   <label className="field">
-                    <span className="field-label">Fee (₹)</span>
+                    <span className="field-label">Consultation fee (₹)</span>
                     <input
                       className="input"
                       value={fee}
                       onChange={(e) => setFee(e.target.value)}
-                      placeholder="e.g. 799"
+                      placeholder="e.g. 800"
                       inputMode="numeric"
                     />
                   </label>
@@ -535,18 +394,13 @@ export default function ProfessionalOnboardingPage() {
                     <span className="field-label">Session duration</span>
                     <select className="input" value={duration} onChange={(e) => setDuration(e.target.value)}>
                       {DURATIONS.map((d) => (
-                        <option key={d} value={d}>
-                          {d} min
-                        </option>
+                        <option key={d} value={d}>{d} min</option>
                       ))}
                     </select>
                   </label>
 
                   <div className="field field-wide">
-                    <span className="field-label">Consultation modes offered</span>
-                    <p className="muted" style={{ margin: '0 0 8px', fontSize: 13 }}>
-                      Select every channel you can deliver sessions on (same choices patients see when booking).
-                    </p>
+                    <span className="field-label">Consultation modes</span>
                     <div className="choice-grid choice-grid--modes">
                       {CONSULTATION_MODES.map((m) => (
                         <button
@@ -564,35 +418,35 @@ export default function ProfessionalOnboardingPage() {
                     </div>
                   </div>
 
-                  <label className="field">
-                    <span className="field-label">Availability (summary)</span>
+                  <label className="field field-wide">
+                    <span className="field-label">Availability (optional)</span>
                     <input
                       className="input"
                       value={availability}
                       onChange={(e) => setAvailability(e.target.value)}
-                      placeholder="Mon–Sat, 6pm–9pm"
+                      placeholder="e.g. Mon–Sat, 6pm–9pm"
                     />
                   </label>
 
                   <label className="consent">
                     <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                    <span>I confirm the information is accurate and I consent to verification checks.</span>
+                    <span>I confirm the information is accurate and I consent to credential verification.</span>
                   </label>
                 </div>
 
-                {(step4Error || submitError) && (
+                {(step2Error || submitError) && (
                   <div style={{
                     background: '#fdecea', border: '1px solid #f5c2c0',
                     color: '#a02622', borderRadius: 10,
                     padding: '12px 14px', marginTop: 14,
                     fontSize: '0.9rem', fontWeight: 500,
                   }}>
-                    ⚠ {step4Error || submitError}
+                    {step2Error || submitError}
                   </div>
                 )}
 
                 <div className="booking-actions">
-                  <button className="btn btn-ghost" type="button" onClick={() => { setStep4Error(''); setStep(3); }} disabled={submitting}>
+                  <button className="btn btn-ghost" type="button" onClick={() => { setStep2Error(''); setStep(1); }} disabled={submitting}>
                     ← Back
                   </button>
                   <button
