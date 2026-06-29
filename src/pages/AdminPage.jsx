@@ -4,6 +4,7 @@ import PrescriptionDocument from '../components/PrescriptionDocument';
 
 // ── API helper ──────────────────────────────────────────────────────────────
 const BASE = import.meta.env.VITE_API_URL ?? '';
+const WA_CHANNEL = import.meta.env.VITE_WA_CHANNEL_LINK ?? '';
 
 async function adminFetch(path, secret, opts = {}) {
   const res = await fetch(`${BASE}${path}`, {
@@ -1686,6 +1687,33 @@ export default function AdminPage() {
                             {a.status !== 'approved' && <ActionBtn label="Approve" onClick={() => updateAppStatus(a.id, 'approved')} color="#198754" />}
                             {a.status !== 'rejected' && <ActionBtn label="Reject"  onClick={() => updateAppStatus(a.id, 'rejected')} color="#dc3545" />}
                             {a.status !== 'pending'  && <ActionBtn label="Reset"   onClick={() => updateAppStatus(a.id, 'pending')}  color="#6c757d" />}
+                            {a.status === 'approved' && a.phone && (() => {
+                              const phone = String(a.phone).replace(/\D/g, '');
+                              const fullPhone = phone.length === 10 ? `91${phone}` : phone;
+                              const name = (a.full_name || '').split(' ')[0];
+                              const role = a.role_label ?? a.role ?? 'professional';
+                              const msg = `Hi ${name}! You've been approved as a ${role} on Serenest.\n\nJoin our professional community here: ${WA_CHANNEL}\n\nWelcome aboard! We'll be in touch with next steps.\n— Serenest Team`;
+                              return (
+                                <a
+                                  href={`https://wa.me/${fullPhone}?text=${encodeURIComponent(msg)}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  style={{
+                                    display: 'inline-block',
+                                    padding: '4px 10px',
+                                    borderRadius: 6,
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                    background: '#25d366',
+                                    color: '#fff',
+                                    textDecoration: 'none',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  WA Welcome
+                                </a>
+                              );
+                            })()}
                           </div>
                         </td>
                       </tr>
