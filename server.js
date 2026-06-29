@@ -462,9 +462,9 @@ app.post('/api/professionals/apply', async (req, res) => {
   if (!requireDb(res)) return;
 
   const {
-    role, role_label, full_name, phone, email, registration,
-    degree, city, languages, specialities, fee_inr, duration_min,
-    modes, availability,
+    role, role_label, full_name, phone, email, social_handle,
+    registration, degree, city, languages, specialities,
+    fee_inr, duration_min, modes, availability,
   } = req.body;
 
   if (!role?.trim())      return err(res, 'role is required');
@@ -479,6 +479,7 @@ app.post('/api/professionals/apply', async (req, res) => {
       full_name: full_name.trim(),
       phone: phone.trim(),
       email: email?.trim() || null,
+      social_handle: social_handle?.trim() || null,
       registration: registration?.trim() || null,
       degree: degree?.trim() || null,
       city: city?.trim() || null,

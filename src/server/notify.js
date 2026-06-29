@@ -375,6 +375,7 @@ export const notify = {
         row('Email',          esc(p.email)),
         row('Registration #', esc(p.registration)),
         row('Qualification',  esc(p.degree)),
+        row('Social',         p.social_handle ? `@${esc(p.social_handle)}` : ''),
         row('City',           esc(p.city)),
         row('Fee / duration', p.fee_inr ? `₹${esc(p.fee_inr)} / ${esc(p.duration_min || 45)} min` : ''),
         row('Modes',          esc(p.modes)),
