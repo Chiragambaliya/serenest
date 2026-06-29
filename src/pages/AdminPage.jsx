@@ -255,6 +255,7 @@ export default function AdminPage() {
   const [input, setInput]     = useState('');
   const [authErr, setAuthErr] = useState('');
   const [tab, setTab]         = useState('overview');
+  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
 
   const [stats, setStats]             = useState(null);
   const [bookings, setBookings]       = useState([]);
@@ -3010,6 +3011,79 @@ export default function AdminPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Mobile bottom tab bar ── */}
+      <nav className="admin-mobile-nav" aria-label="Mobile admin navigation">
+        {[
+          { id: 'overview',      label: 'Overview',  icon: '◈' },
+          { id: 'bookings',      label: 'Bookings',  icon: '▷' },
+          { id: 'professionals', label: 'Team',      icon: '◆' },
+          { id: 'messages',      label: 'Messages',  icon: '◉' },
+        ].map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            className={`admin-mobile-tab ${tab === t.id ? 'is-active' : ''}`}
+            onClick={() => { setTab(t.id); if (t.id !== 'overview') load(t.id); }}
+          >
+            <span className="admin-mobile-tab-icon">{t.icon}</span>
+            <span className="admin-mobile-tab-label">{t.label}</span>
+            {t.id === 'bookings' && stats?.pending_bookings > 0 && (
+              <span className="admin-mobile-badge">{stats.pending_bookings}</span>
+            )}
+          </button>
+        ))}
+        <button
+          type="button"
+          className="admin-mobile-tab"
+          onClick={() => setMobileSheetOpen(true)}
+        >
+          <span className="admin-mobile-tab-icon">☰</span>
+          <span className="admin-mobile-tab-label">More</span>
+        </button>
+      </nav>
+
+      {/* ── Mobile "More" sheet ── */}
+      {mobileSheetOpen && (
+        <div className="admin-mobile-overlay" onClick={() => setMobileSheetOpen(false)}>
+          <div className="admin-mobile-sheet" onClick={(e) => e.stopPropagation()}>
+            <div className="admin-mobile-sheet-head">
+              <strong style={{ fontSize: '1rem' }}>All sections</strong>
+              <button
+                type="button"
+                onClick={() => setMobileSheetOpen(false)}
+                style={{ background: 'none', border: 'none', fontSize: '1.3rem', cursor: 'pointer', color: 'var(--text-muted)', lineHeight: 1 }}
+              >✕</button>
+            </div>
+            {TAB_GROUPS.flatMap((g) => g.items).map((t) => (
+              <button
+                key={t.id}
+                type="button"
+                className={`admin-mobile-sheet-item ${tab === t.id ? 'is-active' : ''}`}
+                onClick={() => { setTab(t.id); if (t.id !== 'overview') load(t.id); setMobileSheetOpen(false); }}
+              >
+                <span>{t.label}</span>
+                {t.id === 'bookings'     && stats?.pending_bookings     > 0 && <Pill n={stats.pending_bookings} />}
+                {t.id === 'applications' && stats?.pending_applications > 0 && <Pill n={stats.pending_applications} />}
+                {t.id === 'hr'           && stats?.new_jobs             > 0 && <Pill n={stats.new_jobs} />}
+              </button>
+            ))}
+            <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button
+                type="button"
+                onClick={() => { load(tab === 'overview' ? 'all' : tab); setMobileSheetOpen(false); }}
+                disabled={loading}
+                className="admin-footer-btn"
+              >
+                {loading ? 'Refreshing…' : '↻ Refresh data'}
+              </button>
+              <button type="button" onClick={signOut} className="admin-footer-btn admin-footer-btn--signout">
+                Sign out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
