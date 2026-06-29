@@ -3955,7 +3955,7 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 /* â”€â”€ Admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.admin-layout {
+.admin-shell {
   display: grid;
   grid-template-columns: 220px 1fr;
   gap: 24px;
@@ -4171,11 +4171,8 @@ a.pro-hub-tile:hover .learning-card-aux {
     justify-content: center;
   }
 
-  .admin-layout {
-    grid-template-columns: 1fr;
-  }
-
   .admin-shell {
+    grid-template-columns: 1fr;
     padding-bottom: 72px;
   }
 
@@ -4554,7 +4551,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   }
   .cta { flex-direction: column; align-items: flex-start; }
   .footer-cols { grid-template-columns: 1fr 1fr; }
-  .admin-layout { grid-template-columns: 1fr; }
+  .admin-shell { grid-template-columns: 1fr; }
   .consult-layout { grid-template-columns: 1fr; height: auto; }
 }
 
