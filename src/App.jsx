@@ -44,6 +44,22 @@ const AcademyPage = lazy(() => import('./pages/AcademyPage'));
 const PatientAuthPage = lazy(() => import('./pages/PatientAuthPage'));
 const PatientDashboardPage = lazy(() => import('./pages/PatientDashboardPage'));
 
+// Legal pages
+const TermsPage = lazy(() => import('./pages/TermsPage'));
+const ProfessionalTermsPage = lazy(() => import('./pages/ProfessionalTermsPage'));
+const PatientTermsPage = lazy(() => import('./pages/PatientTermsPage'));
+const ConsentPage = lazy(() => import('./pages/ConsentPage'));
+const RefundPolicyPage = lazy(() => import('./pages/RefundPolicyPage'));
+const EmergencyDisclaimerPage = lazy(() => import('./pages/EmergencyDisclaimerPage'));
+const CookiePolicyPage = lazy(() => import('./pages/CookiePolicyPage'));
+const ProfessionalCodeOfConductPage = lazy(() => import('./pages/ProfessionalCodeOfConductPage'));
+const GrievancePolicyPage = lazy(() => import('./pages/GrievancePolicyPage'));
+const PaymentPolicyPage = lazy(() => import('./pages/PaymentPolicyPage'));
+const DataRetentionPage = lazy(() => import('./pages/DataRetentionPage'));
+const IntellectualPropertyPage = lazy(() => import('./pages/IntellectualPropertyPage'));
+const CommunityGuidelinesPage = lazy(() => import('./pages/CommunityGuidelinesPage'));
+const LegalPage = lazy(() => import('./pages/LegalPage'));
+
 // FIX Bug 5: PageFallback is used per-route so only the content area spins,
 // not the entire app (navbar + footer stay visible during lazy-load transitions)
 function PageFallback() {
@@ -98,6 +114,20 @@ export default function App() {
           <Route path="blog" element={<S><BlogIndexPage /></S>} />
           <Route path="blog/:slug" element={<S><BlogPostPage /></S>} />
           <Route path="privacy" element={<S><PrivacyPolicyPage /></S>} />
+          <Route path="terms" element={<S><TermsPage /></S>} />
+          <Route path="patient/terms" element={<S><PatientTermsPage /></S>} />
+          <Route path="consent" element={<S><ConsentPage /></S>} />
+          <Route path="refund-policy" element={<S><RefundPolicyPage /></S>} />
+          <Route path="emergency-disclaimer" element={<S><EmergencyDisclaimerPage /></S>} />
+          <Route path="cookie-policy" element={<S><CookiePolicyPage /></S>} />
+          <Route path="grievance-policy" element={<S><GrievancePolicyPage /></S>} />
+          <Route path="payment-policy" element={<S><PaymentPolicyPage /></S>} />
+          <Route path="data-retention" element={<S><DataRetentionPage /></S>} />
+          <Route path="intellectual-property" element={<S><IntellectualPropertyPage /></S>} />
+          <Route path="community-guidelines" element={<S><CommunityGuidelinesPage /></S>} />
+          <Route path="legal" element={<S><LegalPage /></S>} />
+          <Route path="professionals/terms" element={<S><ProfessionalTermsPage /></S>} />
+          <Route path="professionals/code-of-conduct" element={<S><ProfessionalCodeOfConductPage /></S>} />
           <Route path="admin" element={<S><AdminPage /></S>} />
           <Route path="patient/find-professional" element={<S><PatientFindProfessionalPage /></S>} />
           <Route path="patient/login"            element={<S><PatientAuthPage /></S>} />

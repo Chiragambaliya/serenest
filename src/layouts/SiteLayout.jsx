@@ -402,6 +402,17 @@ export default function SiteLayout() {
                   <Link to="/about"><EdIcon name="award" size={17} /> About Serenest</Link>
                 </nav>
               </div>
+              <div>
+                <div className="footer-title2">Legal</div>
+                <nav className="footer-nav2" aria-label="Legal links">
+                  <Link to="/legal"><EdIcon name="folder" size={17} /> All policies</Link>
+                  <Link to="/privacy"><EdIcon name="folder" size={17} /> Privacy policy</Link>
+                  <Link to="/terms"><EdIcon name="folder" size={17} /> Terms &amp; conditions</Link>
+                  <Link to="/grievance-policy"><EdIcon name="folder" size={17} /> Grievance policy</Link>
+                  <Link to="/refund-policy"><EdIcon name="folder" size={17} /> Refund policy</Link>
+                  <Link to="/emergency-disclaimer"><EdIcon name="folder" size={17} /> Emergency disclaimer</Link>
+                </nav>
+              </div>
             </div>
 
             <div className="footer-contact-card">
@@ -438,7 +449,11 @@ export default function SiteLayout() {
               © {new Date().getFullYear()} Serenest Education Pvt Ltd
             </p>
             <nav className="footer-mini-links" aria-label="Legal links">
-              <Link to="/privacy">Privacy policy</Link>
+              <Link to="/legal">Legal</Link>
+              <Link to="/privacy">Privacy</Link>
+              <Link to="/terms">Terms</Link>
+              <Link to="/cookie-policy">Cookies</Link>
+              <Link to="/grievance-policy">Grievances</Link>
               <a href="mailto:support@serenest.in?subject=Feedback">Feedback</a>
             </nav>
           </div>
