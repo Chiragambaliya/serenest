@@ -38,6 +38,15 @@ const NAV_GROUPS = [
     ],
   },
   {
+    id: 'business',
+    label: 'For Business',
+    items: [
+      { to: '/corporate', label: 'Corporate EAP',   desc: 'Mental health benefits for your team' },
+      { to: '/partner',   label: 'Partner with us', desc: 'Creators, clinics & platforms' },
+      { to: '/careers',   label: 'Careers',         desc: 'Join the Serenest team' },
+    ],
+  },
+  {
     id: 'about',
     label: 'About',
     items: [
@@ -268,6 +277,13 @@ export default function SiteLayout() {
               </div>
 
               <div className="menu-section">
+                <p className="menu-section-label">For Business</p>
+                <Link to="/corporate" className="menu-link" onClick={() => setMenuOpen(false)}>Corporate EAP</Link>
+                <Link to="/partner"   className="menu-link" onClick={() => setMenuOpen(false)}>Partner with us</Link>
+                <Link to="/careers"   className="menu-link" onClick={() => setMenuOpen(false)}>Careers</Link>
+              </div>
+
+              <div className="menu-section">
                 <p className="menu-section-label">Company</p>
                 <Link to="/about" className="menu-link" onClick={() => setMenuOpen(false)}>About Serenest</Link>
                 <Link to="/team"  className="menu-link" onClick={() => setMenuOpen(false)}>Our Team</Link>
@@ -365,7 +381,7 @@ export default function SiteLayout() {
                   <Link to="/book"><EdIcon name="stethoscope" size={17} /> Book appointment</Link>
                   <Link to="/patient/find-professional"><EdIcon name="search" size={17} /> Find a professional</Link>
                   <Link to="/screening"><EdIcon name="clipboard" size={17} /> Self screening</Link>
-                  <Link to="/services"><EdIcon name="building" size={17} /> Corporate wellness</Link>
+                  <Link to="/pricing"><EdIcon name="award" size={17} /> Pricing</Link>
                 </nav>
               </div>
               <div>
@@ -374,7 +390,16 @@ export default function SiteLayout() {
                   <Link to="/academy"><EdIcon name="cap" size={17} /> Courses</Link>
                   <Link to="/professionals/learning"><EdIcon name="book" size={17} /> Clinician learning</Link>
                   <Link to="/professionals/resources"><EdIcon name="folder" size={17} /> Resources</Link>
-                  <Link to="/academy#offer"><EdIcon name="award" size={17} /> Certifications</Link>
+                  <Link to="/professionals/guidelines"><EdIcon name="folder" size={17} /> Guidelines</Link>
+                </nav>
+              </div>
+              <div>
+                <div className="footer-title2">Business</div>
+                <nav className="footer-nav2" aria-label="Business links">
+                  <Link to="/corporate"><EdIcon name="building" size={17} /> Corporate EAP</Link>
+                  <Link to="/partner"><EdIcon name="chat" size={17} /> Partner with us</Link>
+                  <Link to="/careers"><EdIcon name="search" size={17} /> Careers</Link>
+                  <Link to="/about"><EdIcon name="award" size={17} /> About Serenest</Link>
                 </nav>
               </div>
             </div>
