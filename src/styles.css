@@ -4083,7 +4083,44 @@ a.pro-hub-tile:hover .learning-card-aux {
   background: var(--bg-subtle);
 }
 
+
+/* ── Admin sidebar close button (mobile-only toggle) ── */
+.admin-sidebar-close {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  cursor: pointer;
+  color: var(--text-muted);
+  padding: 2px 4px;
+  border-radius: 6px;
+  margin-left: auto;
+  line-height: 1;
+}
+
+.admin-sidebar-backdrop {
+  display: none;
+}
+
+.admin-topbar-menu-btn {
+  display: none;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
 @media (max-width: 768px) {
+  .admin-topbar-menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   .admin-mobile-nav {
     display: flex;
     position: fixed;
@@ -4097,8 +4134,41 @@ a.pro-hub-tile:hover .learning-card-aux {
     box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
   }
 
+  /* Sidebar becomes a slide-in drawer on mobile */
+  .admin-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    z-index: 1100;
+  }
+
   .admin-sidebar {
-    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    z-index: 1200;
+    border-radius: 0 16px 16px 0;
+    border-right: 1px solid var(--border);
+    border-top: none;
+    border-bottom: none;
+    border-left: none;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+    transform: translateX(-100%);
+    transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+  }
+
+  .admin-sidebar.is-open {
+    transform: translateX(0);
+  }
+
+  .admin-sidebar-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .admin-layout {
@@ -4115,9 +4185,8 @@ a.pro-hub-tile:hover .learning-card-aux {
   }
 
   .admin-topbar {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
+    align-items: center;
+    gap: 10px;
   }
 
   .admin-topbar-help {
@@ -4125,7 +4194,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   }
 
   .admin-topbar-title {
-    font-size: 1.1rem !important;
+    font-size: 1.05rem !important;
   }
 
   .admin-content table {
@@ -4140,6 +4209,7 @@ a.pro-hub-tile:hover .learning-card-aux {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
+
 
 
 /* â”€â”€ Professional cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
