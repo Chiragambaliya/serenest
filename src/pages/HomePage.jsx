@@ -255,6 +255,26 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Social proof numbers */}
+      <section style={{ background: '#1a2e1a', color: '#fff', padding: '2rem 1.5rem' }}>
+        <div className="home__shell">
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: 24, textAlign: 'center' }}>
+            {[
+              { value: '10,000+', label: 'Community followers', icon: '📱' },
+              { value: '500+',    label: 'Sessions completed',  icon: '🩺' },
+              { value: '4.9 ★',  label: 'Average rating',      icon: '⭐' },
+              { value: '15+',    label: 'Verified professionals', icon: '👩‍⚕️' },
+            ].map((s) => (
+              <div key={s.label}>
+                <div style={{ fontSize: '1.4rem', marginBottom: 4 }}>{s.icon}</div>
+                <div style={{ fontSize: '1.75rem', fontWeight: 800, color: '#a8d08d', lineHeight: 1 }}>{s.value}</div>
+                <div style={{ fontSize: '0.78rem', color: 'rgba(255,255,255,0.6)', marginTop: 5 }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="home__strip" aria-label="Consultation formats">
         <div className="home__shell">
           <ul className="home__modes">
