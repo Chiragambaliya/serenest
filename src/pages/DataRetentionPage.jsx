@@ -1,5 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 const UPDATED = 'June 2026';
 
@@ -14,6 +16,7 @@ const RETENTION = [
 ];
 
 export default function DataRetentionPage() {
+  useSEO({ path: '/data-retention', ...ROUTE_SEO['/data-retention'] });
   return (
     <div className="page">
       <section className="section about-hero">

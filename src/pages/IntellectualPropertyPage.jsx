@@ -1,8 +1,11 @@
 import React from 'react';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 const UPDATED = 'June 2026';
 
 export default function IntellectualPropertyPage() {
+  useSEO({ path: '/intellectual-property', ...ROUTE_SEO['/intellectual-property'] });
   return (
     <div className="page">
       <section className="section about-hero">
