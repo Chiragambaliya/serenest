@@ -293,10 +293,7 @@ app.get('/api/bookings/:id', async (req, res) => {
  * List all bookings (admin only — protect with ADMIN_SECRET in production).
  */
 app.get('/api/bookings', async (req, res) => {
-  if (!requireDb(res)) return;
-  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
-    return err(res, 'Unauthorized', 401);
-  }
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
 
   const { data, error } = await supabase
     .from('appointments')
@@ -352,10 +349,7 @@ app.get('/api/patient/bookings', async (req, res) => {
  * Update booking status (admin: confirm / cancel / complete).
  */
 app.patch('/api/bookings/:id/status', async (req, res) => {
-  if (!requireDb(res)) return;
-  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
-    return err(res, 'Unauthorized', 401);
-  }
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
 
   const VALID = ['pending', 'confirmed', 'cancelled', 'completed'];
   const { status } = req.body;
@@ -508,10 +502,7 @@ app.post('/api/professionals/apply', async (req, res) => {
  * List all professional applications (admin only).
  */
 app.get('/api/professionals/applications', async (req, res) => {
-  if (!requireDb(res)) return;
-  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
-    return err(res, 'Unauthorized', 401);
-  }
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
 
   const { status } = req.query;
   let query = supabase
@@ -531,10 +522,7 @@ app.get('/api/professionals/applications', async (req, res) => {
  * Approve or reject a professional application (admin only).
  */
 app.patch('/api/professionals/applications/:id', async (req, res) => {
-  if (!requireDb(res)) return;
-  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
-    return err(res, 'Unauthorized', 401);
-  }
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
 
   const VALID = ['pending', 'approved', 'rejected'];
   const { status } = req.body;
@@ -1138,7 +1126,9 @@ app.patch('/api/prescriptions/:id/lock', async (req, res) => {
 // ══════════════════════════════════════════════════════════════
 
 function requireAdmin(req, res) {
-  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
+  // Deny by default when ADMIN_SECRET isn't configured — otherwise
+  // `undefined !== undefined` would let an unauthenticated request through.
+  if (!process.env.ADMIN_SECRET || req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
     err(res, 'Unauthorized', 401);
     return false;
   }
@@ -1308,9 +1298,7 @@ app.post('/api/assistant/notify-open', (req, res) => {
 
 /** GET /api/track/today — admin only — quick traffic count. */
 app.get('/api/track/today', (req, res) => {
-  if (req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
-    return err(res, 'Unauthorized', 401);
-  }
+  if (!requireAdmin(req, res)) return;
   rolloverIfNeeded();
   return ok(res, { date: visitorDay, unique_visitors: seenVisitors.size });
 });
