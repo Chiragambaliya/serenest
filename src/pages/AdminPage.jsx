@@ -2999,7 +2999,7 @@ export default function AdminPage() {
               )}
 
               {/* Upcoming */}
-              <h3 style={{ fontWeight: 700, fontSize: '1rem', margin: '0 0 0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>
+              <h3 style={{ fontWeight: 700, margin: '0 0 0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>
                 Scheduled ({upcoming.length})
               </h3>
               {upcoming.length === 0 ? (
@@ -3094,62 +3094,6 @@ export default function AdminPage() {
           <span className="admin-mobile-tab-label">Menu</span>
         </button>
       </nav>
-    </div>
-  );
-}
-
-function SocialPostCard({ post, statusColors, platformLabels, fmtScheduled, onPublish, onDelete, isEditing, editData, onEdit, onCancelEdit, onEditChange, onSaveEdit, busy }) {
-  const sc = statusColors[post.status] ?? statusColors.draft;
-  return (
-    <div style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, padding: '1rem', display: 'flex', flexDirection: 'column', gap: 10 }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-        <span style={{ background: sc.bg, color: sc.text, border: `1px solid ${sc.dot}40`, borderRadius: 20, padding: '2px 10px', fontSize: '0.75rem', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: 5 }}>
-          <span style={{ width: 6, height: 6, borderRadius: '50%', background: sc.dot, display: 'inline-block' }} />
-          {post.status.charAt(0).toUpperCase() + post.status.slice(1)}
-        </span>
-        <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>{platformLabels[post.platform]}</span>
-        <span style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginLeft: 'auto' }}>
-          {post.posted_at ? `Posted ${fmtScheduled(post.posted_at)}` : `Scheduled ${fmtScheduled(post.scheduled_at)}`}
-        </span>
-      </div>
-
-      {isEditing ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-          <textarea className="admin-input" rows={3} value={editData.caption ?? ''} onChange={(e) => onEditChange('caption', e.target.value)} style={{ resize: 'vertical' }} />
-          <input className="admin-input" placeholder="Hashtags" value={editData.hashtags ?? ''} onChange={(e) => onEditChange('hashtags', e.target.value)} />
-          <input className="admin-input" placeholder="Image URL" value={editData.image_url ?? ''} onChange={(e) => onEditChange('image_url', e.target.value)} />
-          <input className="admin-input" type="datetime-local" value={editData.scheduled_at ?? ''} onChange={(e) => onEditChange('scheduled_at', e.target.value)} />
-          <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-            <button className="btn btn-ghost btn-sm" onClick={onCancelEdit}>Cancel</button>
-            <button className="btn btn-primary btn-sm" disabled={busy} onClick={onSaveEdit}>Save</button>
-          </div>
-        </div>
-      ) : (
-        <>
-          <p style={{ margin: 0, fontSize: '0.9rem', whiteSpace: 'pre-wrap', lineHeight: 1.6 }}>{post.caption}</p>
-          {post.hashtags && <p style={{ margin: 0, fontSize: '0.8rem', color: '#3b82f6' }}>{post.hashtags}</p>}
-          {post.image_url && (
-            <img src={post.image_url} alt="post" style={{ maxHeight: 120, borderRadius: 8, objectFit: 'cover', maxWidth: '100%' }} onError={(e) => { e.target.style.display='none'; }} />
-          )}
-          {post.error_message && <p style={{ margin: 0, fontSize: '0.78rem', color: '#b91c1c', background: '#fef2f2', padding: '4px 8px', borderRadius: 6 }}>{post.error_message}</p>}
-          {post.linkedin_post_id && <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>LinkedIn post ID: {post.linkedin_post_id}</p>}
-          {post.instagram_post_id && <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-muted)' }}>Instagram post ID: {post.instagram_post_id}</p>}
-        </>
-      )}
-
-      {!isEditing && (
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          {onPublish && post.status !== 'posted' && (
-            <button className="btn btn-primary btn-sm" disabled={busy} onClick={() => onPublish(post.id)}>Post now</button>
-          )}
-          {onEdit && post.status === 'scheduled' && (
-            <button className="btn btn-ghost btn-sm" onClick={onEdit}>Edit</button>
-          )}
-          {onDelete && (
-            <button className="btn btn-ghost btn-sm" style={{ color: '#ef4444' }} onClick={() => onDelete(post.id)}>Delete</button>
-          )}
-        </div>
-      )}
     </div>
   );
 }

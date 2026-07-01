@@ -9,12 +9,12 @@ const DOS = [
   'Attend or cancel sessions with reasonable notice so professionals and patients can plan their time.',
   'Keep your account credentials confidential and notify us immediately if you suspect unauthorised access.',
   'Provide feedback constructively — whether a review, a complaint, or a suggestion.',
-  'Follow your professional's clinical recommendations or ask questions if you disagree.',
+  'Follow your professional’s clinical recommendations or ask questions if you disagree.',
 ];
 
 const DONTS = [
   'Use the platform to harass, threaten, intimidate, or discriminate against anyone.',
-  'Share another user's personal information without their consent (doxxing).',
+  'Share another user’s personal information without their consent (doxxing).',
   'Impersonate a licensed professional, Serenest staff, or any other person.',
   'Upload or transmit malware, spam, or any content designed to disrupt the platform.',
   'Attempt to contact professionals or patients outside the platform to circumvent our booking system.',
