@@ -359,6 +359,8 @@ export const NOINDEX_ROUTES = new Set([
   '/admin',
   '/professionals/apply',
   '/patient/find-professional',
+  '/patient/login',
+  '/patient/dashboard',
 ]);
 
 export function shouldNoindex(pathname) {
