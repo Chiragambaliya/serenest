@@ -33,6 +33,7 @@ const NAV_GROUPS = [
     items: [
       { to: '/professionals',            label: 'For Professionals', desc: 'Why practice with us' },
       { to: '/professionals/apply',      label: 'Join Serenest',  desc: 'Apply to practice with us' },
+      { to: '/professionals/portal',     label: 'My profile',     desc: 'Sign in to manage your listing' },
       { to: '/professionals/learning',   label: 'Learning Hub',   desc: 'CPD, CME & clinical training' },
       { to: '/professionals/resources',  label: 'Resources',      desc: 'Clinical tools & templates' },
       { to: '/professionals/guidelines', label: 'Guidelines',     desc: 'Practice standards & compliance' },
@@ -273,6 +274,7 @@ export default function SiteLayout() {
                 <p className="menu-section-label">For Professionals</p>
                 <Link to="/professionals"            className="menu-link" onClick={() => setMenuOpen(false)}>For Professionals</Link>
                 <Link to="/professionals/apply"      className="menu-link" onClick={() => setMenuOpen(false)}>Join Serenest</Link>
+                <Link to="/professionals/portal"     className="menu-link" onClick={() => setMenuOpen(false)}>My profile</Link>
                 <Link to="/professionals/learning"   className="menu-link" onClick={() => setMenuOpen(false)}>Learning Hub</Link>
                 <Link to="/professionals/resources"  className="menu-link" onClick={() => setMenuOpen(false)}>Resources</Link>
                 <Link to="/professionals/guidelines" className="menu-link" onClick={() => setMenuOpen(false)}>Guidelines</Link>

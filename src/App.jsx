@@ -43,6 +43,8 @@ const GuidesPage = lazy(() => import('./pages/GuidesPage'));
 const AcademyPage = lazy(() => import('./pages/AcademyPage'));
 const PatientAuthPage = lazy(() => import('./pages/PatientAuthPage'));
 const PatientDashboardPage = lazy(() => import('./pages/PatientDashboardPage'));
+const ProfessionalAuthPage = lazy(() => import('./pages/ProfessionalAuthPage'));
+const ProfessionalPortalPage = lazy(() => import('./pages/ProfessionalPortalPage'));
 const CareersPage = lazy(() => import('./pages/CareersPage'));
 const CorporatePage = lazy(() => import('./pages/CorporatePage'));
 const PartnerPage = lazy(() => import('./pages/PartnerPage'));
@@ -144,6 +146,8 @@ export default function App() {
           <Route path="legal" element={<S><LegalPage /></S>} />
           <Route path="professionals/terms" element={<S><ProfessionalTermsPage /></S>} />
           <Route path="professionals/code-of-conduct" element={<S><ProfessionalCodeOfConductPage /></S>} />
+          <Route path="professionals/login" element={<S><ProfessionalAuthPage /></S>} />
+          <Route path="professionals/portal" element={<S><ProfessionalPortalPage /></S>} />
           <Route path="patient/find-professional" element={<S><PatientFindProfessionalPage /></S>} />
           <Route path="careers" element={<S><CareersPage /></S>} />
           <Route path="corporate" element={<S><CorporatePage /></S>} />
