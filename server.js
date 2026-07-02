@@ -1928,6 +1928,18 @@ app.post('/api/assistant/chat', (req, res, next) => {
 // ══════════════════════════════════════════════════════════════
 //  STATIC + SPA FALLBACK (with route-specific SEO injection)
 // ══════════════════════════════════════════════════════════════
+// Service worker: served from the origin root with an explicit broad scope and
+// no-cache so PWA updates roll out immediately (never let a stale SW pin users
+// to an old build). Placed before the static middleware to control its headers.
+app.get('/sw.js', (req, res) => {
+  res.set('Content-Type', 'application/javascript; charset=utf-8');
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.set('Service-Worker-Allowed', '/');
+  res.sendFile(join(dist, 'sw.js'), (err) => {
+    if (err && !res.headersSent) res.status(404).end();
+  });
+});
+
 // Fingerprinted assets (/assets/*) get immutable caching — Vite content-hashes the filenames.
 app.use('/assets', express.static(join(dist, 'assets'), {
   index: false,
