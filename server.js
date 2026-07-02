@@ -1928,6 +1928,47 @@ app.post('/api/assistant/chat', (req, res, next) => {
 // ══════════════════════════════════════════════════════════════
 //  STATIC + SPA FALLBACK (with route-specific SEO injection)
 // ══════════════════════════════════════════════════════════════
+// Service worker: served from the origin root with an explicit broad scope and
+// no-cache so PWA updates roll out immediately (never let a stale SW pin users
+// to an old build). Placed before the static middleware to control its headers.
+app.get('/sw.js', (req, res) => {
+  res.set('Content-Type', 'application/javascript; charset=utf-8');
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.set('Service-Worker-Allowed', '/');
+  res.sendFile(join(dist, 'sw.js'), (err) => {
+    if (err && !res.headersSent) res.status(404).end();
+  });
+});
+
+// Digital Asset Links — verifies domain ownership for the Android TWA (Play
+// Store) wrapper so the installed app runs full-screen without a browser
+// address bar. Configure via environment (e.g. in the Render dashboard):
+//   ANDROID_PACKAGE_NAME            e.g. in.serenest.app
+//   ANDROID_SHA256_CERT_FINGERPRINTS  comma-separated SHA-256 signing
+//     fingerprints from PWABuilder / Google Play App Signing
+// Until the fingerprint env var is set this serves a non-verifying placeholder.
+// A dot-segment path like /.well-known is skipped by express.static (dotfiles
+// are ignored), so it must be an explicit route.
+app.get('/.well-known/assetlinks.json', (req, res) => {
+  const packageName = process.env.ANDROID_PACKAGE_NAME || 'in.serenest.app';
+  const fingerprints = (process.env.ANDROID_SHA256_CERT_FINGERPRINTS || 'REPLACE_WITH_SHA256_FINGERPRINT')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  res.set('Content-Type', 'application/json; charset=utf-8');
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.json([
+    {
+      relation: ['delegate_permission/common.handle_all_urls'],
+      target: {
+        namespace: 'android_app',
+        package_name: packageName,
+        sha256_cert_fingerprints: fingerprints,
+      },
+    },
+  ]);
+});
+
 // Fingerprinted assets (/assets/*) get immutable caching — Vite content-hashes the filenames.
 app.use('/assets', express.static(join(dist, 'assets'), {
   index: false,
