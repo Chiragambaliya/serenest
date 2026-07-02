@@ -2000,7 +2000,7 @@ const VALID_ROUTES = new Set([
 ]);
 
 // Dynamic-route prefixes that the SPA legitimately serves.
-const VALID_PREFIXES = ['/blog/', '/consultation/', '/academy/program/'];
+const VALID_PREFIXES = ['/blog/', '/consultation/', '/academy/program/', '/screening/tool/'];
 
 // Known stale URLs surfaced in search from prior site contents. These have no
 // healthcare replacement, so return 410 Gone to ask Google to drop them.
