@@ -89,12 +89,25 @@ function VisitTracker() {
   return null;
 }
 
+// Visitor-facing widgets (cookie banner, exit-intent popup) belong on the
+// public marketing site only — never on the internal admin tool or inside a
+// live consultation, where they'd just be clutter.
+function MarketingWidgets() {
+  const { pathname } = useLocation();
+  if (pathname.startsWith('/admin') || pathname.startsWith('/consultation')) return null;
+  return (
+    <>
+      <CookieConsent />
+      <ExitIntentPopup />
+    </>
+  );
+}
+
 export default function App() {
   return (
     <Suspense fallback={<PageFallback />}>
       <VisitTracker />
-      <CookieConsent />
-      <ExitIntentPopup />
+      <MarketingWidgets />
       {/*
         Use an explicit layout route at "/" with relative child paths. Pathless layout + Outlet
         can fail to match in React Router v7 in some setups (blank main content).

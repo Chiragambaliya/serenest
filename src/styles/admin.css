@@ -28,6 +28,27 @@
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Native-app feel: no blue tap flash, no accidental text selection on
+     controls, crisp text, and no rubber-band scroll chaining to the page. */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Tactile press feedback on every admin control */
+.admin-page button,
+.admin-page .btn,
+.admin-page a[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .admin-nav-item:active,
+  .admin-footer-btn:active,
+  .admin-topbar-refresh:active,
+  .admin-topbar-menu-btn:active { transform: scale(0.97); }
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -348,9 +369,13 @@
 }
 
 .admin-topbar {
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid var(--border);
   padding: 0.9rem 1.75rem;
+  /* Respect the status-bar / notch area when installed as a PWA */
+  padding-top: calc(0.9rem + env(safe-area-inset-top, 0px));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -386,6 +411,20 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  overscroll-behavior-y: contain;
+}
+
+/* App-like screen transition: each tab fades/slides in.
+   Driven by keying the container on the active tab in AdminPage. */
+@media (prefers-reduced-motion: no-preference) {
+  .admin-content {
+    animation: adm-view-in 0.24s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+}
+
+@keyframes adm-view-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Alert banner ─────────────────────────────────────────── */
@@ -446,6 +485,11 @@
   transform: translateY(-2px);
 }
 
+.admin-content button[style*="text-align: left"]:active,
+.admin-content button[style*="text-align:left"]:active {
+  transform: translateY(0) scale(0.985);
+}
+
 /* Message + screening cards hover */
 .admin-content > div > div > div[style*="border-radius: 10"],
 .admin-content > div > div > div[style*="border-radius: 12"] {
@@ -480,7 +524,7 @@
   .admin-topbar-help { display: none; }
   .admin-topbar-title { font-size: 1.05rem !important; }
 
-  .admin-content { padding: 1rem; padding-bottom: calc(1rem + 68px + env(safe-area-inset-bottom, 0px)); }
+  .admin-content { padding: 1rem; padding-bottom: calc(1rem + 76px + env(safe-area-inset-bottom, 0px)); }
 
   /* Off-canvas drawer */
   .admin-sidebar-backdrop {
@@ -525,7 +569,7 @@
   }
 
   /* Sidebar nav keeps its vertical desktop layout inside the drawer */
-  .admin-nav { flex-direction: column; overflow-x: visible; }
+  .admin-nav { flex-direction: column; overflow-x: visible; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
   .admin-nav-group { flex-direction: column; }
   .admin-nav-group-label { display: block; }
   .admin-nav-item::before { display: block; }
@@ -538,7 +582,9 @@
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--surface);
+    background: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    backdrop-filter: saturate(180%) blur(16px);
     border-top: 1px solid var(--border);
     z-index: 1000;
     padding-bottom: env(safe-area-inset-bottom, 0px);
@@ -550,19 +596,42 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 3px;
+    gap: 4px;
     flex: 1;
+    min-height: 56px;
     padding: 8px 4px 6px;
     background: none;
     border: none;
     cursor: pointer;
     color: var(--text-muted);
     position: relative;
-    transition: color 0.15s;
+    transition: color 0.15s, transform 0.12s ease;
+  }
+
+  /* Animated top indicator bar for the active tab */
+  .admin-mobile-tab::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 30px;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: var(--adm-accent);
+    transform: translateX(-50%) scaleX(0);
+    transition: transform 0.22s cubic-bezier(0.33, 1, 0.68, 1);
   }
 
   .admin-mobile-tab.is-active { color: var(--adm-accent); }
-  .admin-mobile-tab-icon { font-size: 1.1rem; line-height: 1; }
+  .admin-mobile-tab.is-active::after { transform: translateX(-50%) scaleX(1); }
+  .admin-mobile-tab:active { transform: scale(0.9); }
+
+  .admin-mobile-tab-icon {
+    font-size: 1.15rem;
+    line-height: 1;
+    transition: transform 0.15s ease;
+  }
+  .admin-mobile-tab.is-active .admin-mobile-tab-icon { transform: scale(1.12); }
   .admin-mobile-tab-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.01em; }
 
   .admin-mobile-badge {
@@ -584,5 +653,13 @@
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
     white-space: nowrap;
+  }
+
+  /* Search + status filters stack instead of cramming into two columns */
+  .admin-filter-bar {
+    grid-template-columns: 1fr !important;
+  }
+  .admin-filter-bar > div {
+    justify-content: flex-start !important;
   }
 }

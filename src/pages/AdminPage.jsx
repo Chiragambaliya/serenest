@@ -275,6 +275,11 @@ export default function AdminPage() {
     return () => { document.body.style.overflow = ''; };
   }, [mobileSidebarOpen]);
 
+  // App-like: jump to the top of the screen when switching tabs
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [tab]);
+
   const [stats, setStats]             = useState(null);
   const [bookings, setBookings]       = useState([]);
   const [professionals, setProfessionals] = useState([]);
@@ -962,7 +967,7 @@ export default function AdminPage() {
             </div>
           </header>
 
-          <div className="admin-content">
+          <div className="admin-content" key={tab}>
             {error && (
               <div className="admin-alert">
                 ⚠ {error}
@@ -1266,7 +1271,7 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div style={{
+            <div className="admin-filter-bar" style={{
               background: 'var(--surface)',
               border: '1px solid var(--border)',
               borderRadius: 10,
