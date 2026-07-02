@@ -202,6 +202,103 @@ export const ROUTE_SEO = {
     ogDescription:
       'A clear, India-specific explainer on online psychiatric prescriptions: validity, regulations, limitations, and clinician judgment.',
   },
+  '/legal': {
+    title: 'Legal & Policies | Serenest',
+    description:
+      "All of Serenest's legal documents, policies, and guidelines — terms, privacy, refunds, consent, and more — in one place.",
+    ogTitle: 'Legal & Policies | Serenest',
+    ogDescription: "Serenest's terms, policies, and guidelines for patients, professionals, and visitors.",
+  },
+  '/terms': {
+    title: 'Terms & Conditions | Serenest',
+    description:
+      'The general terms governing your use of the Serenest platform, including account rules, service scope, and liability.',
+    ogTitle: 'Terms & Conditions | Serenest',
+    ogDescription: 'Terms governing use of the Serenest mental health platform.',
+  },
+  '/patient/terms': {
+    title: 'Patient Terms of Use | Serenest',
+    description:
+      "Your rights and responsibilities as a patient on Serenest, including booking, cancellation, and consultation conduct.",
+    ogTitle: 'Patient Terms of Use | Serenest',
+    ogDescription: 'Terms of use for patients booking consultations on Serenest.',
+  },
+  '/consent': {
+    title: 'Teleconsultation Consent | Serenest',
+    description:
+      'What you consent to when you attend an online consultation on Serenest, under the MCI Telemedicine Practice Guidelines 2020.',
+    ogTitle: 'Teleconsultation Consent | Serenest',
+    ogDescription: 'Informed consent for online psychiatry and counselling consultations in India.',
+  },
+  '/refund-policy': {
+    title: 'Refund & Cancellation Policy | Serenest',
+    description:
+      'When and how refunds are issued for cancelled, rescheduled, or disrupted sessions on Serenest.',
+    ogTitle: 'Refund & Cancellation Policy | Serenest',
+    ogDescription: 'How Serenest handles refunds and cancellations for online consultations.',
+  },
+  '/emergency-disclaimer': {
+    title: 'Emergency Disclaimer | Serenest',
+    description:
+      'Serenest is not an emergency service. Read our emergency disclaimer and find crisis helplines available across India.',
+    ogTitle: 'Emergency Disclaimer | Serenest',
+    ogDescription: 'Serenest is not an emergency or crisis service. Crisis helpline numbers for India.',
+  },
+  '/cookie-policy': {
+    title: 'Cookie Policy | Serenest',
+    description: 'What cookies Serenest uses, why we use them, and how you can control them.',
+    ogTitle: 'Cookie Policy | Serenest',
+    ogDescription: 'How Serenest uses cookies and how to manage your preferences.',
+  },
+  '/grievance-policy': {
+    title: 'Grievance Policy | Serenest',
+    description:
+      'How to raise a complaint with Serenest and our process for acknowledging and resolving grievances.',
+    ogTitle: 'Grievance Policy | Serenest',
+    ogDescription: 'How to file and track a grievance with Serenest.',
+  },
+  '/payment-policy': {
+    title: 'Payment & Billing Policy | Serenest',
+    description:
+      'Accepted payment methods, session fees, GST, professional payouts, and how billing disputes are handled on Serenest.',
+    ogTitle: 'Payment & Billing Policy | Serenest',
+    ogDescription: 'Payments, billing, and payout policy for the Serenest platform.',
+  },
+  '/data-retention': {
+    title: 'Data Retention Policy | Serenest',
+    description:
+      'How long Serenest retains account, session, and payment data, and how to request deletion under the DPDP Act 2023.',
+    ogTitle: 'Data Retention Policy | Serenest',
+    ogDescription: "Serenest's data retention schedule and deletion rights under India's DPDP Act.",
+  },
+  '/intellectual-property': {
+    title: 'Copyright & Intellectual Property Policy | Serenest',
+    description:
+      "Ownership of Serenest's platform content, permitted use, and how to report a copyright or trademark infringement.",
+    ogTitle: 'Copyright & IP Policy | Serenest',
+    ogDescription: "Serenest's copyright, trademark, and IP infringement reporting policy.",
+  },
+  '/community-guidelines': {
+    title: 'Community Guidelines | Serenest',
+    description:
+      'Conduct standards for everyone on Serenest — patients, professionals, and visitors — including safe messaging guidance.',
+    ogTitle: 'Community Guidelines | Serenest',
+    ogDescription: 'Conduct and safety standards for the Serenest community.',
+  },
+  '/professionals/terms': {
+    title: 'Professional Terms & Conditions | Serenest',
+    description:
+      'Terms for independent psychiatrists, psychologists, and other professionals listing services on Serenest.',
+    ogTitle: 'Professional Terms & Conditions | Serenest',
+    ogDescription: 'Terms for professionals offering consultations through Serenest.',
+  },
+  '/professionals/code-of-conduct': {
+    title: 'Professional Code of Conduct | Serenest',
+    description:
+      'Clinical ethics, patient safety, and conduct standards required of every professional on Serenest.',
+    ogTitle: 'Professional Code of Conduct | Serenest',
+    ogDescription: 'Ethics and conduct standards for clinicians on the Serenest platform.',
+  },
 };
 
 // Routes that redirect (301) to a canonical route. Used by server.js.
@@ -262,6 +359,10 @@ export const NOINDEX_ROUTES = new Set([
   '/admin',
   '/professionals/apply',
   '/patient/find-professional',
+  '/patient/login',
+  '/patient/dashboard',
+  '/professionals/login',
+  '/professionals/portal',
 ]);
 
 export function shouldNoindex(pathname) {

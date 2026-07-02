@@ -172,14 +172,17 @@ export default function ConsultationPage() {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const joinSession = useCallback(async () => {
+  // Stores the name chosen in the lobby so the Daily effect can read it
+  // synchronously without depending on a state value that may not have
+  // propagated yet when the effect first fires.
+  const pendingNameRef = useRef('');
+
+  const joinSession = useCallback(() => {
     const name = nameInput.trim();
     if (!name) return;
+    if (needsDailyCall && !roomUrl) return;
 
-    if (needsDailyCall) {
-      if (!roomUrl || !videoRef.current) return;
-    }
-
+    pendingNameRef.current = name;
     setUserName(name);
 
     if (!needsDailyCall) {
@@ -188,44 +191,52 @@ export default function ConsultationPage() {
       return;
     }
 
+    // For video/audio: just set joined=true. The useEffect below starts the
+    // Daily call once the video container is in the DOM (after the re-render).
     setJoined(true);
     setCallState('joining');
+  }, [needsDailyCall, roomUrl, nameInput]);
 
-    try {
-      const call = DailyIframe.createFrame(videoRef.current, {
-        showLeaveButton: true,
-        showFullscreenButton: true,
-        iframeStyle: { width: '100%', height: '100%', border: 'none', borderRadius: '12px' },
-      });
-      callRef.current = call;
+  // Start the Daily call after the video wrapper div has mounted.
+  useEffect(() => {
+    if (!joined || !needsDailyCall || !roomUrl || callRef.current) return;
 
-      call.on('joined-meeting', () => setCallState('joined'));
-      call.on('left-meeting', () => {
-        try {
-          call.destroy?.();
-        } finally {
-          callRef.current = null;
-        }
-        setCallState('idle');
-        navigate('/');
-      });
-      call.on('error', () => setCallState('error'));
+    const name = pendingNameRef.current || userName;
+    if (!name || !videoRef.current) return;
 
-      await call.join({
-        url: roomUrl,
-        userName: name,
-        startVideoOff: sessionMode === 'audio',
-      });
-    } catch {
+    let call;
+    async function startCall() {
       try {
-        callRef.current?.destroy?.();
-      } finally {
-        callRef.current = null;
+        call = DailyIframe.createFrame(videoRef.current, {
+          showLeaveButton: true,
+          showFullscreenButton: true,
+          iframeStyle: { width: '100%', height: '100%', border: 'none', borderRadius: '12px' },
+        });
+        callRef.current = call;
+
+        call.on('joined-meeting', () => setCallState('joined'));
+        call.on('left-meeting', () => {
+          try { call.destroy?.(); } finally { callRef.current = null; }
+          setCallState('idle');
+          navigate('/');
+        });
+        call.on('error', () => setCallState('error'));
+
+        await call.join({
+          url: roomUrl,
+          userName: name,
+          startVideoOff: sessionMode === 'audio',
+        });
+      } catch {
+        try { callRef.current?.destroy?.(); } finally { callRef.current = null; }
+        setCallState('error');
+        setJoined(false);
       }
-      setCallState('error');
-      setJoined(false);
     }
-  }, [needsDailyCall, roomUrl, nameInput, navigate, sessionMode]);
+
+    startCall();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [joined, needsDailyCall, roomUrl]);
 
   const joinBlockedHint = useMemo(() => {
     if (!nameInput.trim()) return null;

@@ -28,6 +28,27 @@
   background: var(--bg);
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Native-app feel: no blue tap flash, no accidental text selection on
+     controls, crisp text, and no rubber-band scroll chaining to the page. */
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Tactile press feedback on every admin control */
+.admin-page button,
+.admin-page .btn,
+.admin-page a[role="button"] {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .admin-nav-item:active,
+  .admin-footer-btn:active,
+  .admin-topbar-refresh:active,
+  .admin-topbar-menu-btn:active { transform: scale(0.97); }
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -331,10 +352,30 @@
   flex-direction: column;
 }
 
+/* ── Mobile-only chrome (hidden on desktop) ──────────────────
+   Sidebar becomes an off-canvas drawer, opened via the topbar's
+   hamburger button or the bottom tab bar's "Menu" button. */
+.admin-sidebar-close,
+.admin-topbar-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.admin-sidebar-backdrop,
+.admin-mobile-nav {
+  display: none;
+}
+
 .admin-topbar {
-  background: var(--surface);
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: saturate(180%) blur(12px);
+  backdrop-filter: saturate(180%) blur(12px);
   border-bottom: 1px solid var(--border);
   padding: 0.9rem 1.75rem;
+  /* Respect the status-bar / notch area when installed as a PWA */
+  padding-top: calc(0.9rem + env(safe-area-inset-top, 0px));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -370,6 +411,20 @@
   display: flex;
   flex-direction: column;
   gap: 0;
+  overscroll-behavior-y: contain;
+}
+
+/* App-like screen transition: each tab fades/slides in.
+   Driven by keying the container on the active tab in AdminPage. */
+@media (prefers-reduced-motion: no-preference) {
+  .admin-content {
+    animation: adm-view-in 0.24s cubic-bezier(0.33, 1, 0.68, 1);
+  }
+}
+
+@keyframes adm-view-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ── Alert banner ─────────────────────────────────────────── */
@@ -430,6 +485,11 @@
   transform: translateY(-2px);
 }
 
+.admin-content button[style*="text-align: left"]:active,
+.admin-content button[style*="text-align:left"]:active {
+  transform: translateY(0) scale(0.985);
+}
+
 /* Message + screening cards hover */
 .admin-content > div > div > div[style*="border-radius: 10"],
 .admin-content > div > div > div[style*="border-radius: 12"] {
@@ -442,84 +502,164 @@
 }
 
 /* ══════════════════════════════════════════════════════════
-   RESPONSIVE — horizontal scrollable nav on mobile
+   RESPONSIVE — sidebar becomes an off-canvas drawer, quick
+   actions move to a fixed bottom tab bar
 ══════════════════════════════════════════════════════════ */
 @media (max-width: 900px) {
-  .admin-shell { flex-direction: column; }
+  .admin-shell { flex-direction: column; min-height: 100vh; }
+
+  .admin-topbar-menu-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 1rem;
+    color: var(--text);
+    flex-shrink: 0;
+  }
+
+  .admin-topbar { flex-wrap: wrap; padding: 0.75rem 1rem; gap: 10px; }
+  .admin-topbar-help { display: none; }
+  .admin-topbar-title { font-size: 1.05rem !important; }
+
+  .admin-content { padding: 1rem; padding-bottom: calc(1rem + 76px + env(safe-area-inset-bottom, 0px)); }
+
+  /* Off-canvas drawer */
+  .admin-sidebar-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 1100;
+  }
 
   .admin-sidebar {
-    width: 100%;
-    height: auto;
-    position: static;
-    flex-direction: row;
-    align-items: center;
-    overflow-x: auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 1200;
+    flex-direction: column;
     border-right: none;
-    border-bottom: 1px solid var(--adm-sidebar-border);
+    border-radius: 0 16px 16px 0;
+    box-shadow: 4px 0 32px rgba(0,0,0,0.35);
+    transform: translateX(-100%);
+    transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: hidden;
   }
 
-  .admin-sidebar-brand {
-    border-bottom: none;
-    border-right: 1px solid var(--adm-sidebar-border);
-    padding: 0.6rem 0.75rem;
-    flex-shrink: 0;
+  .admin-sidebar.is-open {
+    transform: translateX(0);
   }
 
-  .admin-sidebar-env { display: none; }
-
-  .admin-nav {
-    flex-direction: row;
-    flex-wrap: nowrap;
-    overflow-x: auto;
-    padding: 0.4rem 0.25rem;
-    scrollbar-width: none;
-  }
-
-  .admin-nav::-webkit-scrollbar { display: none; }
-
-  .admin-nav-group {
-    display: flex;
-    flex-direction: row;
-    padding: 0 0.25rem;
-    margin-top: 0;
-    border-top: none;
-  }
-
-  .admin-nav-group + .admin-nav-group {
-    border-top: none;
-    border-left: 1px solid var(--adm-sidebar-border);
-    margin-top: 0;
-    padding-top: 0;
-  }
-
-  .admin-nav-group-label { display: none; }
-
-  .admin-nav-item {
-    white-space: nowrap;
-    padding: 0.4rem 0.65rem;
+  .admin-sidebar-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: var(--adm-sidebar-muted);
+    padding: 2px 4px;
     border-radius: 6px;
-    font-size: 0.78rem;
+    margin-left: auto;
+    line-height: 1;
   }
 
-  .admin-nav-item::before { display: none; }
+  /* Sidebar nav keeps its vertical desktop layout inside the drawer */
+  .admin-nav { flex-direction: column; overflow-x: visible; overscroll-behavior: contain; -webkit-overflow-scrolling: touch; }
+  .admin-nav-group { flex-direction: column; }
+  .admin-nav-group-label { display: block; }
+  .admin-nav-item::before { display: block; }
+  .admin-sidebar-footer { flex-direction: column; border-top: 1px solid var(--adm-sidebar-border); border-left: none; }
 
-  .admin-nav-item.is-active {
-    background: rgba(106,170,75,0.22);
+  /* Bottom quick-access tab bar */
+  .admin-mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    backdrop-filter: saturate(180%) blur(16px);
+    border-top: 1px solid var(--border);
+    z-index: 1000;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-shadow: 0 -2px 16px rgba(0,0,0,0.08);
   }
 
-  .admin-sidebar-footer {
-    flex-direction: row;
-    border-top: none;
-    border-left: 1px solid var(--adm-sidebar-border);
-    flex-shrink: 0;
-    padding: 0.5rem 0.6rem;
+  .admin-mobile-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    flex: 1;
+    min-height: 56px;
+    padding: 8px 4px 6px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    position: relative;
+    transition: color 0.15s, transform 0.12s ease;
   }
 
-  .admin-topbar { flex-wrap: wrap; padding: 0.75rem 1rem; }
+  /* Animated top indicator bar for the active tab */
+  .admin-mobile-tab::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 30px;
+    height: 3px;
+    border-radius: 0 0 3px 3px;
+    background: var(--adm-accent);
+    transform: translateX(-50%) scaleX(0);
+    transition: transform 0.22s cubic-bezier(0.33, 1, 0.68, 1);
+  }
 
-  .admin-content { padding: 1rem; }
-}
+  .admin-mobile-tab.is-active { color: var(--adm-accent); }
+  .admin-mobile-tab.is-active::after { transform: translateX(-50%) scaleX(1); }
+  .admin-mobile-tab:active { transform: scale(0.9); }
 
-@media (max-width: 600px) {
-  .admin-sidebar-brand strong { display: none; }
+  .admin-mobile-tab-icon {
+    font-size: 1.15rem;
+    line-height: 1;
+    transition: transform 0.15s ease;
+  }
+  .admin-mobile-tab.is-active .admin-mobile-tab-icon { transform: scale(1.12); }
+  .admin-mobile-tab-label { font-size: 0.65rem; font-weight: 600; letter-spacing: 0.01em; }
+
+  .admin-mobile-badge {
+    position: absolute;
+    top: 4px;
+    right: calc(50% - 18px);
+    background: #dc3545;
+    color: #fff;
+    border-radius: 99px;
+    font-size: 0.6rem;
+    font-weight: 700;
+    padding: 1px 5px;
+    min-width: 16px;
+    text-align: center;
+  }
+
+  .admin-content table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    white-space: nowrap;
+  }
+
+  /* Search + status filters stack instead of cramming into two columns */
+  .admin-filter-bar {
+    grid-template-columns: 1fr !important;
+  }
+  .admin-filter-bar > div {
+    justify-content: flex-start !important;
+  }
 }

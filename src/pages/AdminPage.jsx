@@ -4,6 +4,7 @@ import PrescriptionDocument from '../components/PrescriptionDocument';
 
 // ── API helper ──────────────────────────────────────────────────────────────
 const BASE = import.meta.env.VITE_API_URL ?? '';
+const WA_CHANNEL = import.meta.env.VITE_WA_CHANNEL_LINK ?? '';
 
 async function adminFetch(path, secret, opts = {}) {
   const res = await fetch(`${BASE}${path}`, {
@@ -255,6 +256,29 @@ export default function AdminPage() {
   const [input, setInput]     = useState('');
   const [authErr, setAuthErr] = useState('');
   const [tab, setTab]         = useState('overview');
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  // Close the mobile sidebar drawer on Escape
+  const handleSidebarKeyDown = useCallback((e) => {
+    if (e.key === 'Escape') setMobileSidebarOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileSidebarOpen) return;
+    window.addEventListener('keydown', handleSidebarKeyDown);
+    return () => window.removeEventListener('keydown', handleSidebarKeyDown);
+  }, [mobileSidebarOpen, handleSidebarKeyDown]);
+
+  // Lock body scroll while the drawer is open
+  useEffect(() => {
+    document.body.style.overflow = mobileSidebarOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileSidebarOpen]);
+
+  // App-like: jump to the top of the screen when switching tabs
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [tab]);
 
   const [stats, setStats]             = useState(null);
   const [bookings, setBookings]       = useState([]);
@@ -434,7 +458,7 @@ export default function AdminPage() {
       }),
     ].filter(Boolean));
 
-    if (errors.length) setError(errors.join(' · '));
+    if (errors.length) setError([...new Set(errors)].join(' · '));
     setLoading(false);
   }, [secret]);
 
@@ -850,13 +874,28 @@ export default function AdminPage() {
   return (
     <div className="admin-page admin-dashboard">
       <div className="admin-shell">
-        <aside className="admin-sidebar">
+        {/* Mobile sidebar overlay backdrop */}
+        {mobileSidebarOpen && (
+          <div
+            className="admin-sidebar-backdrop"
+            onClick={() => setMobileSidebarOpen(false)}
+            aria-hidden="true"
+          />
+        )}
+
+        <aside className={`admin-sidebar ${mobileSidebarOpen ? 'is-open' : ''}`}>
           <div className="admin-sidebar-brand">
             <div className="admin-sidebar-mark" aria-hidden="true">S</div>
             <div>
               <strong>Serenest</strong>
               <span className="admin-sidebar-env">Admin</span>
             </div>
+            <button
+              type="button"
+              className="admin-sidebar-close"
+              onClick={() => setMobileSidebarOpen(false)}
+              aria-label="Close navigation"
+            >✕</button>
           </div>
 
           <nav className="admin-nav" aria-label="Admin sections">
@@ -870,7 +909,7 @@ export default function AdminPage() {
                     key={t.id}
                     type="button"
                     className={`admin-nav-item ${tab === t.id ? 'is-active' : ''}`}
-                    onClick={() => { setTab(t.id); if (t.id !== 'overview') load(t.id); }}
+                    onClick={() => { setTab(t.id); if (t.id !== 'overview') load(t.id); setMobileSidebarOpen(false); }}
                   >
                     <span className="admin-nav-label">{t.label}</span>
                     {t.id === 'bookings'      && stats?.pending_bookings     > 0 && <Pill n={stats.pending_bookings} />}
@@ -901,9 +940,17 @@ export default function AdminPage() {
 
         <div className="admin-main">
           <header className="admin-topbar">
-            <div>
-              <h1 className="admin-topbar-title">{TAB_ICONS[tab]} {activeTabLabel}</h1>
-              <p className="admin-topbar-help">{TAB_HELP[tab]}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <button
+                type="button"
+                className="admin-topbar-menu-btn"
+                onClick={() => setMobileSidebarOpen(true)}
+                aria-label="Open navigation"
+              >☰</button>
+              <div>
+                <h1 className="admin-topbar-title">{TAB_ICONS[tab]} {activeTabLabel}</h1>
+                <p className="admin-topbar-help">{TAB_HELP[tab]}</p>
+              </div>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
               <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'none' }} id="adm-clock" />
@@ -920,7 +967,7 @@ export default function AdminPage() {
             </div>
           </header>
 
-          <div className="admin-content">
+          <div className="admin-content" key={tab}>
             {error && (
               <div className="admin-alert">
                 ⚠ {error}
@@ -1224,7 +1271,7 @@ export default function AdminPage() {
               </div>
             </div>
 
-            <div style={{
+            <div className="admin-filter-bar" style={{
               background: 'var(--surface)',
               border: '1px solid var(--border)',
               borderRadius: 10,
@@ -1287,7 +1334,10 @@ export default function AdminPage() {
               });
 
               return filteredBookings.length === 0 ? (
-              <EmptyState icon="📅" text="No bookings yet" />
+              <EmptyState
+                icon="📅"
+                text={bookings.length === 0 ? 'No bookings yet' : 'No bookings match your search or filter'}
+              />
             ) : (
               <div style={{ overflowX: 'auto' }}>
                 <table style={tableStyle}>
@@ -1661,6 +1711,33 @@ export default function AdminPage() {
                             {a.status !== 'approved' && <ActionBtn label="Approve" onClick={() => updateAppStatus(a.id, 'approved')} color="#198754" />}
                             {a.status !== 'rejected' && <ActionBtn label="Reject"  onClick={() => updateAppStatus(a.id, 'rejected')} color="#dc3545" />}
                             {a.status !== 'pending'  && <ActionBtn label="Reset"   onClick={() => updateAppStatus(a.id, 'pending')}  color="#6c757d" />}
+                            {a.status === 'approved' && a.phone && (() => {
+                              const phone = String(a.phone).replace(/\D/g, '');
+                              const fullPhone = phone.length === 10 ? `91${phone}` : phone;
+                              const name = (a.full_name || '').split(' ')[0];
+                              const role = a.role_label ?? a.role ?? 'professional';
+                              const msg = `Hi ${name}! You've been approved as a ${role} on Serenest.\n\nJoin our professional community here: ${WA_CHANNEL}\n\nWelcome aboard! We'll be in touch with next steps.\n— Serenest Team`;
+                              return (
+                                <a
+                                  href={`https://wa.me/${fullPhone}?text=${encodeURIComponent(msg)}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  style={{
+                                    display: 'inline-block',
+                                    padding: '4px 10px',
+                                    borderRadius: 6,
+                                    fontSize: '0.75rem',
+                                    fontWeight: 700,
+                                    background: '#25d366',
+                                    color: '#fff',
+                                    textDecoration: 'none',
+                                    whiteSpace: 'nowrap',
+                                  }}
+                                >
+                                  WA Welcome
+                                </a>
+                              );
+                            })()}
                           </div>
                         </td>
                       </tr>
@@ -2946,7 +3023,7 @@ export default function AdminPage() {
               )}
 
               {/* Upcoming */}
-              <h3 style={{ fontWeight: 700, fontSize: '1rem', margin: '0 0 0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>
+              <h3 style={{ fontWeight: 700, margin: '0 0 0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', fontSize: '0.75rem' }}>
                 Scheduled ({upcoming.length})
               </h3>
               {upcoming.length === 0 ? (
@@ -3010,6 +3087,37 @@ export default function AdminPage() {
           </div>
         </div>
       </div>
+
+      {/* ── Mobile bottom tab bar ── */}
+      <nav className="admin-mobile-nav" aria-label="Mobile admin navigation">
+        {[
+          { id: 'overview',      label: 'Overview',  icon: '◈' },
+          { id: 'bookings',      label: 'Bookings',  icon: '▷' },
+          { id: 'professionals', label: 'Team',      icon: '◆' },
+          { id: 'messages',      label: 'Messages',  icon: '◉' },
+        ].map((t) => (
+          <button
+            key={t.id}
+            type="button"
+            className={`admin-mobile-tab ${tab === t.id ? 'is-active' : ''}`}
+            onClick={() => { setTab(t.id); if (t.id !== 'overview') load(t.id); }}
+          >
+            <span className="admin-mobile-tab-icon">{t.icon}</span>
+            <span className="admin-mobile-tab-label">{t.label}</span>
+            {t.id === 'bookings' && stats?.pending_bookings > 0 && (
+              <span className="admin-mobile-badge">{stats.pending_bookings}</span>
+            )}
+          </button>
+        ))}
+        <button
+          type="button"
+          className="admin-mobile-tab"
+          onClick={() => setMobileSidebarOpen(true)}
+        >
+          <span className="admin-mobile-tab-icon">☰</span>
+          <span className="admin-mobile-tab-label">Menu</span>
+        </button>
+      </nav>
     </div>
   );
 }

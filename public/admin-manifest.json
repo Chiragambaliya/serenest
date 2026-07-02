@@ -1,0 +1,22 @@
+{
+  "id": "/admin",
+  "name": "Serenest Admin",
+  "short_name": "Serenest Admin",
+  "description": "Serenest admin dashboard — bookings, professionals, applications, messages and more.",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "display": "standalone",
+  "background_color": "#141c25",
+  "theme_color": "#141c25",
+  "orientation": "portrait-primary",
+  "lang": "en-IN",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

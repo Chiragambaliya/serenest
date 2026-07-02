@@ -365,25 +365,43 @@ export const notify = {
   },
 
   professionalApplication(p) {
-    const html = `
-      <p style="margin:0 0 8px;font-size:16px"><strong>${esc(p.full_name)}</strong> applied to join as a <strong>${esc(p.role)}</strong>.</p>
+    const roleLabel = p.role_label || p.role;
+
+    // Team alert email
+    const teamHtml = `
+      <p style="margin:0 0 8px;font-size:16px"><strong>${esc(p.full_name)}</strong> applied to join as a <strong>${esc(roleLabel)}</strong>.</p>
       ${table([
-        row('Phone',         fmtPhone(p.phone)),
-        row('Email',         esc(p.email)),
-        row('Qualification', p.degree ? `${esc(p.degree)}${p.year ? ` (${esc(p.year)})` : ''}` : ''),
-        row('Council',       esc(p.council)),
-        row('Registration #',esc(p.registration)),
-        row('City',          esc(p.city)),
-        row('Clinic',        esc(p.clinic)),
+        row('Phone',          fmtPhone(p.phone)),
+        row('Email',          esc(p.email)),
+        row('Registration #', esc(p.registration)),
+        row('Qualification',  esc(p.degree)),
+        row('Social',         p.social_handle ? `@${esc(p.social_handle)}` : ''),
+        row('City',           esc(p.city)),
         row('Fee / duration', p.fee_inr ? `₹${esc(p.fee_inr)} / ${esc(p.duration_min || 45)} min` : ''),
+        row('Modes',          esc(p.modes)),
       ])}
       ${callouts({ phone: p.phone, email: p.email })}
       <p style="margin:12px 0 0;color:#64748b;font-size:13px">Review this application in <a href="https://serenest.in/admin" style="color:#0f766e;font-weight:600">Admin → Applications</a>.</p>
     `;
-    fire(sendEmail({ subject: `New ${p.role} application — ${p.full_name}`, html }));
+    fire(sendEmail({ subject: `New ${roleLabel} application — ${p.full_name}`, html: teamHtml }));
     fire(sendTeamWhatsApp(
-      `Serenest — Clinician application\n${p.full_name} (${p.role})\n+91 ${String(p.phone || '').replace(/\D/g, '')}\n${p.city || ''}`.trim(),
+      `Serenest — Clinician application\n${p.full_name} (${roleLabel})\n+91 ${String(p.phone || '').replace(/\D/g, '')}\n${p.city || ''}`.trim(),
     ));
+
+    // Confirmation email to applicant
+    if (p.email?.trim()) {
+      const confirmHtml = `
+        <p style="font-size:16px;margin:0 0 12px">Hi <strong>${esc(p.full_name.split(' ')[0])}</strong>,</p>
+        <p style="margin:0 0 12px">We received your application to join Serenest as a <strong>${esc(roleLabel)}</strong>. Our team will verify your credentials and reach out within <strong>1–2 business days</strong>.</p>
+        <p style="margin:0 0 12px">If you have any questions in the meantime, you can reply to this email or WhatsApp us at <strong>+91 77779 36367</strong>.</p>
+        <p style="margin:0;color:#64748b;font-size:13px">— The Serenest team</p>
+      `;
+      fire(sendPatientEmail({
+        subject: 'We received your Serenest application',
+        html: confirmHtml,
+        to: p.email.trim(),
+      }));
+    }
   },
 
   jobApplication(j) {

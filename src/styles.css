@@ -3954,27 +3954,12 @@ a.pro-hub-tile:hover .learning-card-aux {
   gap: 14px;
 }
 
-/* â”€â”€ Admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
-.admin-layout {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 24px;
-  min-height: calc(100vh - 80px);
-}
+/* â”€â”€ Admin â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+   Admin dashboard layout, sidebar, and mobile nav all live in
+   src/styles/admin.css — kept as the single source of truth so the
+   two stylesheets stop fighting over the same class names. */
 
-.admin-sidebar {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 20px 14px;
-}
 
-.admin-main {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 28px;
-}
 
 /* â”€â”€ Professional cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
 .pro-card {
@@ -4318,7 +4303,6 @@ a.pro-hub-tile:hover .learning-card-aux {
   }
   .cta { flex-direction: column; align-items: flex-start; }
   .footer-cols { grid-template-columns: 1fr 1fr; }
-  .admin-layout { grid-template-columns: 1fr; }
   .consult-layout { grid-template-columns: 1fr; height: auto; }
 }
 

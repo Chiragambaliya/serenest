@@ -31,10 +31,21 @@ const NAV_GROUPS = [
     id: 'professionals',
     label: 'Professionals',
     items: [
-      { to: '/professionals',            label: 'Join Serenest',  desc: 'Apply to practice with us' },
+      { to: '/professionals',            label: 'For Professionals', desc: 'Why practice with us' },
+      { to: '/professionals/apply',      label: 'Join Serenest',  desc: 'Apply to practice with us' },
+      { to: '/professionals/portal',     label: 'My profile',     desc: 'Sign in to manage your listing' },
       { to: '/professionals/learning',   label: 'Learning Hub',   desc: 'CPD, CME & clinical training' },
       { to: '/professionals/resources',  label: 'Resources',      desc: 'Clinical tools & templates' },
       { to: '/professionals/guidelines', label: 'Guidelines',     desc: 'Practice standards & compliance' },
+    ],
+  },
+  {
+    id: 'business',
+    label: 'For Business',
+    items: [
+      { to: '/corporate', label: 'Corporate EAP',   desc: 'Mental health benefits for your team' },
+      { to: '/partner',   label: 'Partner with us', desc: 'Creators, clinics & platforms' },
+      { to: '/careers',   label: 'Careers',         desc: 'Join the Serenest team' },
     ],
   },
   {
@@ -261,10 +272,19 @@ export default function SiteLayout() {
 
               <div className="menu-section">
                 <p className="menu-section-label">For Professionals</p>
-                <Link to="/professionals"            className="menu-link" onClick={() => setMenuOpen(false)}>Join Serenest</Link>
+                <Link to="/professionals"            className="menu-link" onClick={() => setMenuOpen(false)}>For Professionals</Link>
+                <Link to="/professionals/apply"      className="menu-link" onClick={() => setMenuOpen(false)}>Join Serenest</Link>
+                <Link to="/professionals/portal"     className="menu-link" onClick={() => setMenuOpen(false)}>My profile</Link>
                 <Link to="/professionals/learning"   className="menu-link" onClick={() => setMenuOpen(false)}>Learning Hub</Link>
                 <Link to="/professionals/resources"  className="menu-link" onClick={() => setMenuOpen(false)}>Resources</Link>
                 <Link to="/professionals/guidelines" className="menu-link" onClick={() => setMenuOpen(false)}>Guidelines</Link>
+              </div>
+
+              <div className="menu-section">
+                <p className="menu-section-label">For Business</p>
+                <Link to="/corporate" className="menu-link" onClick={() => setMenuOpen(false)}>Corporate EAP</Link>
+                <Link to="/partner"   className="menu-link" onClick={() => setMenuOpen(false)}>Partner with us</Link>
+                <Link to="/careers"   className="menu-link" onClick={() => setMenuOpen(false)}>Careers</Link>
               </div>
 
               <div className="menu-section">
@@ -353,7 +373,7 @@ export default function SiteLayout() {
                     <rect x="2" y="2" width="20" height="20" rx="4" />
                     <path d="M8 11v5M8 8v.5M12 16v-3a2 2 0 0 1 4 0v3M12 11v5" />
                   </svg>
-                  <span>Serenest Mind</span>
+                  <span>LinkedIn</span>
                 </a>
               </div>
             </div>
@@ -365,7 +385,7 @@ export default function SiteLayout() {
                   <Link to="/book"><EdIcon name="stethoscope" size={17} /> Book appointment</Link>
                   <Link to="/patient/find-professional"><EdIcon name="search" size={17} /> Find a professional</Link>
                   <Link to="/screening"><EdIcon name="clipboard" size={17} /> Self screening</Link>
-                  <Link to="/services"><EdIcon name="building" size={17} /> Corporate wellness</Link>
+                  <Link to="/pricing"><EdIcon name="award" size={17} /> Pricing</Link>
                 </nav>
               </div>
               <div>
@@ -374,7 +394,27 @@ export default function SiteLayout() {
                   <Link to="/academy"><EdIcon name="cap" size={17} /> Courses</Link>
                   <Link to="/professionals/learning"><EdIcon name="book" size={17} /> Clinician learning</Link>
                   <Link to="/professionals/resources"><EdIcon name="folder" size={17} /> Resources</Link>
-                  <Link to="/academy#offer"><EdIcon name="award" size={17} /> Certifications</Link>
+                  <Link to="/professionals/guidelines"><EdIcon name="folder" size={17} /> Guidelines</Link>
+                </nav>
+              </div>
+              <div>
+                <div className="footer-title2">Business</div>
+                <nav className="footer-nav2" aria-label="Business links">
+                  <Link to="/corporate"><EdIcon name="building" size={17} /> Corporate EAP</Link>
+                  <Link to="/partner"><EdIcon name="chat" size={17} /> Partner with us</Link>
+                  <Link to="/careers"><EdIcon name="search" size={17} /> Careers</Link>
+                  <Link to="/about"><EdIcon name="award" size={17} /> About Serenest</Link>
+                </nav>
+              </div>
+              <div>
+                <div className="footer-title2">Legal</div>
+                <nav className="footer-nav2" aria-label="Legal links">
+                  <Link to="/legal"><EdIcon name="folder" size={17} /> All policies</Link>
+                  <Link to="/privacy"><EdIcon name="folder" size={17} /> Privacy policy</Link>
+                  <Link to="/terms"><EdIcon name="folder" size={17} /> Terms &amp; conditions</Link>
+                  <Link to="/grievance-policy"><EdIcon name="folder" size={17} /> Grievance policy</Link>
+                  <Link to="/refund-policy"><EdIcon name="folder" size={17} /> Refund policy</Link>
+                  <Link to="/emergency-disclaimer"><EdIcon name="folder" size={17} /> Emergency disclaimer</Link>
                 </nav>
               </div>
             </div>
@@ -405,7 +445,11 @@ export default function SiteLayout() {
               © {new Date().getFullYear()} Serenest Education Pvt Ltd
             </p>
             <nav className="footer-mini-links" aria-label="Legal links">
-              <Link to="/privacy">Privacy policy</Link>
+              <Link to="/legal">Legal</Link>
+              <Link to="/privacy">Privacy</Link>
+              <Link to="/terms">Terms</Link>
+              <Link to="/cookie-policy">Cookies</Link>
+              <Link to="/grievance-policy">Grievances</Link>
               <a href="mailto:support@serenest.in?subject=Feedback">Feedback</a>
             </nav>
           </div>
