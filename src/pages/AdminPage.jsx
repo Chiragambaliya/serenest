@@ -256,7 +256,6 @@ export default function AdminPage() {
   const [input, setInput]     = useState('');
   const [authErr, setAuthErr] = useState('');
   const [tab, setTab]         = useState('overview');
-  const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   const [stats, setStats]             = useState(null);
@@ -437,7 +436,7 @@ export default function AdminPage() {
       }),
     ].filter(Boolean));
 
-    if (errors.length) setError(errors.join(' · '));
+    if (errors.length) setError([...new Set(errors)].join(' · '));
     setLoading(false);
   }, [secret]);
 

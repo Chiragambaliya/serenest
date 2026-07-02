@@ -131,7 +131,6 @@ export default function App() {
           <Route path="legal" element={<S><LegalPage /></S>} />
           <Route path="professionals/terms" element={<S><ProfessionalTermsPage /></S>} />
           <Route path="professionals/code-of-conduct" element={<S><ProfessionalCodeOfConductPage /></S>} />
-          <Route path="admin" element={<S><AdminPage /></S>} />
           <Route path="patient/find-professional" element={<S><PatientFindProfessionalPage /></S>} />
           <Route path="careers" element={<S><CareersPage /></S>} />
           <Route path="corporate" element={<S><CorporatePage /></S>} />
@@ -173,6 +172,11 @@ export default function App() {
 
           <Route path="*" element={<S><NotFoundPage /></S>} />
         </Route>
+
+        {/* Admin dashboard is intentionally NOT nested under SiteLayout —
+            it has its own sidebar/topbar and must not be wrapped by the
+            public site header, mobile nav, and footer. */}
+        <Route path="admin" element={<S><AdminPage /></S>} />
       </Routes>
     </Suspense>
   );
