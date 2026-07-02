@@ -58,7 +58,8 @@ function isAssetRequest(url) {
     url.pathname === '/favicon.svg' ||
     url.pathname === '/manifest.json' ||
     url.pathname === '/admin-manifest.json' ||
-    url.pathname === '/icon-1024.jpg'
+    url.pathname === '/icon-1024.jpg' ||
+    url.pathname === '/icon-maskable.svg'
   );
 }
 

@@ -16,13 +16,19 @@
       "src": "/favicon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/icon-1024.jpg",
-      "sizes": "1024x1024",
+      "sizes": "512x512 1024x1024",
       "type": "image/jpeg",
       "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [

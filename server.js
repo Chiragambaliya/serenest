@@ -1940,6 +1940,35 @@ app.get('/sw.js', (req, res) => {
   });
 });
 
+// Digital Asset Links — verifies domain ownership for the Android TWA (Play
+// Store) wrapper so the installed app runs full-screen without a browser
+// address bar. Configure via environment (e.g. in the Render dashboard):
+//   ANDROID_PACKAGE_NAME            e.g. in.serenest.app
+//   ANDROID_SHA256_CERT_FINGERPRINTS  comma-separated SHA-256 signing
+//     fingerprints from PWABuilder / Google Play App Signing
+// Until the fingerprint env var is set this serves a non-verifying placeholder.
+// A dot-segment path like /.well-known is skipped by express.static (dotfiles
+// are ignored), so it must be an explicit route.
+app.get('/.well-known/assetlinks.json', (req, res) => {
+  const packageName = process.env.ANDROID_PACKAGE_NAME || 'in.serenest.app';
+  const fingerprints = (process.env.ANDROID_SHA256_CERT_FINGERPRINTS || 'REPLACE_WITH_SHA256_FINGERPRINT')
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  res.set('Content-Type', 'application/json; charset=utf-8');
+  res.set('Cache-Control', 'public, max-age=3600');
+  res.json([
+    {
+      relation: ['delegate_permission/common.handle_all_urls'],
+      target: {
+        namespace: 'android_app',
+        package_name: packageName,
+        sha256_cert_fingerprints: fingerprints,
+      },
+    },
+  ]);
+});
+
 // Fingerprinted assets (/assets/*) get immutable caching — Vite content-hashes the filenames.
 app.use('/assets', express.static(join(dist, 'assets'), {
   index: false,
