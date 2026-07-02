@@ -2068,7 +2068,18 @@ function buildHtmlForRequest(pathname, { status }) {
   // noindex,nofollow so search engines don't index the 404 UI.
   const renderPath = routeKey || '/';
   const replacement = `<!--SEO_HEAD_START-->\n    ${renderSeoHead(renderPath, { noindex })}\n    <!--SEO_HEAD_END-->`;
-  return tpl.replace(SEO_SENTINEL, replacement);
+  let html = tpl.replace(SEO_SENTINEL, replacement);
+
+  // Admin is a separate installable PWA: on /admin routes we swap the web app
+  // manifest, theme colour and title so it installs as its own "Serenest Admin"
+  // app that opens straight to the dashboard in full-screen (dark chrome).
+  if (pathname === '/admin' || pathname.startsWith('/admin/')) {
+    html = html
+      .replace('<link rel="manifest" href="/manifest.json" />', '<link rel="manifest" href="/admin-manifest.json" />')
+      .replace('<meta name="apple-mobile-web-app-title" content="Serenest" />', '<meta name="apple-mobile-web-app-title" content="Serenest Admin" />')
+      .replace('<meta name="theme-color" content="#3c4a2c" />', '<meta name="theme-color" content="#141c25" />');
+  }
+  return html;
 }
 
 function sendHtml(req, res, status) {
