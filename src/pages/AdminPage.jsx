@@ -258,6 +258,23 @@ export default function AdminPage() {
   const [tab, setTab]         = useState('overview');
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
+  // Close the mobile sidebar drawer on Escape
+  const handleSidebarKeyDown = useCallback((e) => {
+    if (e.key === 'Escape') setMobileSidebarOpen(false);
+  }, []);
+
+  useEffect(() => {
+    if (!mobileSidebarOpen) return;
+    window.addEventListener('keydown', handleSidebarKeyDown);
+    return () => window.removeEventListener('keydown', handleSidebarKeyDown);
+  }, [mobileSidebarOpen, handleSidebarKeyDown]);
+
+  // Lock body scroll while the drawer is open
+  useEffect(() => {
+    document.body.style.overflow = mobileSidebarOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileSidebarOpen]);
+
   const [stats, setStats]             = useState(null);
   const [bookings, setBookings]       = useState([]);
   const [professionals, setProfessionals] = useState([]);
@@ -1312,7 +1329,10 @@ export default function AdminPage() {
               });
 
               return filteredBookings.length === 0 ? (
-              <EmptyState icon="📅" text="No bookings yet" />
+              <EmptyState
+                icon="📅"
+                text={bookings.length === 0 ? 'No bookings yet' : 'No bookings match your search or filter'}
+              />
             ) : (
               <div style={{ overflowX: 'auto' }}>
                 <table style={tableStyle}>
