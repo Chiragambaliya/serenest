@@ -559,6 +559,12 @@ export default function BookingPage() {
                       <span className="confirm-v">{selectedTypeLabel}</span>
                     </div>
                     <div className="confirm-row">
+                      <span className="confirm-k">Counsellor</span>
+                      <span className="confirm-v">
+                        {hasPro ? preProName : (selectedPro?.full_name ?? 'Any available')}
+                      </span>
+                    </div>
+                    <div className="confirm-row">
                       <span className="confirm-k">Mode</span>
                       <span className="confirm-v">{selectedModeLabel}</span>
                     </div>
