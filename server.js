@@ -69,8 +69,20 @@ app.use('/api/contact', strictLimiter);
 app.use('/api/subscribe', strictLimiter);
 
 // ── CORS ─────────────────────────────────────────────────────
+// Same-origin requests (the SPA served by this server) never need CORS.
+// Cross-origin callers must be allow-listed via CORS_ORIGIN (comma-separated
+// for multiple origins). In production the default is the canonical site
+// origin — never `*`. In development it stays open for the Vite dev server.
+const corsAllowList = (process.env.CORS_ORIGIN ?? '')
+  .split(',')
+  .map((s) => s.trim())
+  .filter(Boolean);
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || '*',
+  origin: corsAllowList.length
+    ? corsAllowList
+    : (process.env.NODE_ENV === 'production'
+        ? [SITE_ORIGIN, SITE_ORIGIN.replace('://www.', '://')]
+        : true),
   methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'x-admin-secret'],
 }));
@@ -91,6 +103,72 @@ function requireDb(res) {
     return false;
   }
   return true;
+}
+
+/** True when the request carries the correct admin secret (no response sent). */
+function isAdmin(req) {
+  return Boolean(process.env.ADMIN_SECRET && req.headers['x-admin-secret'] === process.env.ADMIN_SECRET);
+}
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Last-10-digit phone normalisation (Indian mobiles, optional country code). */
+function normPhone(p) {
+  return String(p ?? '').replace(/\D/g, '').slice(-10);
+}
+
+/** Resolve the Supabase user from the Bearer token, or null. */
+async function resolveAuthUser(req) {
+  const token = bearer(req);
+  if (!token || !supabase) return null;
+  const { data: { user } = {}, error } = await supabase.auth.getUser(token);
+  return error ? null : (user ?? null);
+}
+
+/**
+ * Find an appointment by either its uuid `id` or its short human-readable
+ * `appointment_id` (e.g. APT-1A2B3C4D).
+ */
+async function findAppointmentByRef(ref) {
+  if (!supabase || !ref) return null;
+  if (UUID_RE.test(ref)) {
+    const { data } = await supabase
+      .from('appointments').select('*').eq('id', ref).maybeSingle();
+    if (data) return data;
+  }
+  const { data } = await supabase
+    .from('appointments').select('*').eq('appointment_id', ref).maybeSingle();
+  return data ?? null;
+}
+
+/**
+ * True when the authenticated user is the patient on this appointment
+ * (verified email or phone) or the professional assigned to it.
+ */
+async function userMayAccessAppointment(user, appt) {
+  if (!user || !appt || !supabase) return false;
+
+  const email = (user.email ?? '').toLowerCase();
+  if (email && (appt.patient_email ?? '').toLowerCase() === email) return true;
+
+  const apptPhone = normPhone(appt.patient_phone);
+  if (apptPhone && normPhone(user.phone) === apptPhone) return true;
+
+  if (apptPhone) {
+    const { data: patient } = await supabase
+      .from('patients').select('phone').eq('auth_user_id', user.id).maybeSingle();
+    if (normPhone(patient?.phone) === apptPhone) return true;
+  }
+
+  if (appt.professional_id && email) {
+    const { data: pro } = await supabase
+      .from('professional_applications')
+      .select('id').eq('id', appt.professional_id)
+      .ilike('email', user.email).eq('status', 'approved')
+      .maybeSingle();
+    if (pro) return true;
+  }
+  return false;
 }
 
 // ── Razorpay (payments) ──────────────────────────────────────
@@ -273,10 +351,17 @@ app.post('/api/bookings', async (req, res) => {
 
 /**
  * GET /api/bookings/:id
- * Get a single booking by ID.
+ * Get a single booking by ID. Restricted: admin, the patient on the
+ * booking (verified email/phone), or the assigned professional.
  */
 app.get('/api/bookings/:id', async (req, res) => {
   if (!requireDb(res)) return;
+
+  const admin = isAdmin(req);
+  const user = admin ? null : await resolveAuthUser(req);
+  if (!admin && !user) return err(res, 'Unauthorized', 401);
+
+  if (!UUID_RE.test(req.params.id)) return err(res, 'Booking not found', 404);
 
   const { data, error } = await supabase
     .from('appointments')
@@ -285,6 +370,10 @@ app.get('/api/bookings/:id', async (req, res) => {
     .single();
 
   if (error || !data) return err(res, 'Booking not found', 404);
+  // Same 404 for "exists but not yours" so existence isn't leaked.
+  if (!admin && !(await userMayAccessAppointment(user, data))) {
+    return err(res, 'Booking not found', 404);
+  }
   return ok(res, { booking: data });
 });
 
@@ -1078,6 +1167,13 @@ app.post('/api/rooms', async (req, res) => {
   const key = process.env.DAILY_API_KEY;
   if (!key) return err(res, 'Video rooms not configured on this server', 503);
 
+  // Only create rooms for appointments that actually exist — otherwise
+  // anyone could burn through the Daily.co account with arbitrary rooms.
+  if (supabase && !isAdmin(req)) {
+    const appt = await findAppointmentByRef(String(appointment_id));
+    if (!appt) return err(res, 'Appointment not found', 404);
+  }
+
   const roomName = `serenest-${appointment_id}`;
 
   // Return existing room if it already exists
@@ -1124,6 +1220,11 @@ app.get('/api/rooms/:appointmentId', async (req, res) => {
   const key = process.env.DAILY_API_KEY;
   if (!key) return err(res, 'Video rooms not configured on this server', 503);
 
+  if (supabase && !isAdmin(req)) {
+    const appt = await findAppointmentByRef(String(req.params.appointmentId));
+    if (!appt) return err(res, 'Room not found', 404);
+  }
+
   const roomName = `serenest-${req.params.appointmentId}`;
   const r = await fetch(`${DAILY_URL}/rooms/${roomName}`, {
     headers: { Authorization: `Bearer ${key}` },
@@ -1139,15 +1240,37 @@ app.get('/api/rooms/:appointmentId', async (req, res) => {
 
 /**
  * GET /api/prescriptions/:appointmentId
- * Public — a patient opens this from their consultation room link.
+ * A patient opens this from their private consultation link. The full
+ * appointment uuid acts as an unguessable capability, so the link keeps
+ * working without a login. Short refs (APT-XXXXXXXX) are enumerable, so
+ * they additionally require the admin secret or a matching patient /
+ * assigned-professional login.
  */
 app.get('/api/prescriptions/:appointmentId', async (req, res) => {
   if (!requireDb(res)) return;
 
+  const ref = req.params.appointmentId;
+  const appt = await findAppointmentByRef(ref);
+
+  // A full-uuid link is unguessable, so possession of it is proof enough —
+  // including when the appointment no longer exists (nothing to leak).
+  const hasUuidCapability =
+    UUID_RE.test(ref) && (!appt || appt.id === ref.toLowerCase());
+
+  if (!hasUuidCapability && !isAdmin(req)) {
+    const user = await resolveAuthUser(req);
+    if (!user) return err(res, 'Unauthorized', 401);
+    if (!appt || !(await userMayAccessAppointment(user, appt))) {
+      return err(res, 'Prescription not found', 404);
+    }
+  }
+
+  if (!appt) return ok(res, { prescription: null });
+
   const { data, error } = await supabase
     .from('prescriptions')
     .select('*')
-    .eq('appointment_id', req.params.appointmentId)
+    .eq('appointment_id', appt.id)
     .maybeSingle();
 
   if (error) {
@@ -1239,7 +1362,7 @@ app.patch('/api/prescriptions/:id/lock', async (req, res) => {
 function requireAdmin(req, res) {
   // Deny by default when ADMIN_SECRET isn't configured — otherwise
   // `undefined !== undefined` would let an unauthenticated request through.
-  if (!process.env.ADMIN_SECRET || req.headers['x-admin-secret'] !== process.env.ADMIN_SECRET) {
+  if (!isAdmin(req)) {
     err(res, 'Unauthorized', 401);
     return false;
   }

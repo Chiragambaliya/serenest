@@ -53,7 +53,13 @@ export default function ConsultationPage() {
 
   /** From booking row (`video` | `audio` | `chat`) */
   const [sessionMode, setSessionMode] = useState(() => normalizeSessionMode('video'));
-  /** Stable key for chat_messages + realtime filter */
+  /**
+   * Stable key for chat_messages, the video room, and the prescription link.
+   * Always the appointment's full uuid when resolvable — the uuid is the same
+   * for every participant (anonymous patient, logged-in patient, professional)
+   * and the server accepts it as an unguessable capability for the
+   * prescription endpoint, so no login is needed to follow the link.
+   */
   const [threadKey, setThreadKey] = useState(routeAppointmentId ?? '');
 
   const modeMeta = useMemo(
@@ -92,8 +98,8 @@ export default function ConsultationPage() {
         const effectiveMode = appt ? modeFromRow : modeFromQuery;
         setSessionMode(effectiveMode);
 
-        const key = appt?.appointment_id || appt?.id || routeAppointmentId;
-        setThreadKey(key || routeAppointmentId || '');
+        const key = appt?.id || routeAppointmentId;
+        setThreadKey(key || '');
 
         if (effectiveMode === 'chat') {
           setRoomUrl('');
@@ -104,8 +110,9 @@ export default function ConsultationPage() {
         if (appt?.daily_room_url) {
           setRoomUrl(appt.daily_room_url);
         } else {
-          const roomKey = appt?.appointment_id || routeAppointmentId;
-          const room = await makeRoom(roomKey);
+          // Same key as the chat thread, so every participant (patient link,
+          // professional portal, admin) lands in the same Daily room.
+          const room = await makeRoom(key);
           if (room?.url) {
             setRoomUrl(room.url);
             if (appt?.id) {

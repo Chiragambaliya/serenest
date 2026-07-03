@@ -22,14 +22,17 @@ export default function NotFoundPage() {
             </p>
 
             <div className="hero-actions" style={{ marginTop: 14 }}>
-              <Link className="btn btn-primary" to="/">
+              <Link className="btn btn-primary" to="/book">
+                Book a Consultation
+              </Link>
+              <Link className="btn btn-ghost" to="/">
                 Go to Home
               </Link>
               <Link className="btn btn-ghost" to="/services">
                 View Services
               </Link>
-              <Link className="btn btn-ghost" to="/professionals">
-                For Professionals
+              <Link className="btn btn-ghost" to="/screening">
+                Take a Self-Screening
               </Link>
             </div>
           </div>

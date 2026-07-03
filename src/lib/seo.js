@@ -363,6 +363,10 @@ export const NOINDEX_ROUTES = new Set([
   '/patient/dashboard',
   '/professionals/login',
   '/professionals/portal',
+  // The Academy landing (/academy) is public and indexed; login and the
+  // account-gated program pages are utility surfaces.
+  '/academy/login',
+  '/academy/program',
 ]);
 
 export function shouldNoindex(pathname) {
@@ -1110,6 +1114,13 @@ export function renderSeoHead(pathname, { noindex = false } = {}) {
     `<meta property="og:url" content="${escapeHtmlAttr(canonical)}" />`,
     `<meta property="og:type" content="${ogType}" />`,
     `<meta property="og:site_name" content="Serenest" />`,
+    `<meta property="og:image" content="${SITE_ORIGIN}/og-image.png" />`,
+    `<meta property="og:image:width" content="1200" />`,
+    `<meta property="og:image:height" content="630" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${escapeHtmlAttr(seo.ogTitle || seo.title)}" />`,
+    `<meta name="twitter:description" content="${escapeHtmlAttr(seo.ogDescription || seo.description)}" />`,
+    `<meta name="twitter:image" content="${SITE_ORIGIN}/og-image.png" />`,
   ];
 
   if (noindex) {
