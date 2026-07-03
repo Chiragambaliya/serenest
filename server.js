@@ -98,8 +98,13 @@ const RZP_KEY_ID     = process.env.RAZORPAY_KEY_ID;
 const RZP_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
 const DEFAULT_FEE_INR = Number(process.env.DEFAULT_FEE_INR) || 499;
 
-/** Payments are enforced only once both Razorpay keys are present. */
+/**
+ * Payments are enforced only once both Razorpay keys are present — and can be
+ * turned off with PAYMENTS_ENABLED=false as a kill-switch (e.g. if Razorpay is
+ * down or under review), so patients can still book and pay offline.
+ */
 function paymentsEnabled() {
+  if (String(process.env.PAYMENTS_ENABLED).toLowerCase() === 'false') return false;
   return Boolean(RZP_KEY_ID && RZP_KEY_SECRET);
 }
 
