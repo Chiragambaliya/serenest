@@ -588,10 +588,6 @@ export default function BookingPage() {
                       <span className="confirm-v">{name}</span>
                     </div>
                     <div className="confirm-row">
-                      <span className="confirm-k">Phone</span>
-                      <span className="confirm-v">+91 {phoneClean}</span>
-                    </div>
-                    <div className="confirm-row">
                       <span className="confirm-k">Email</span>
                       <span className="confirm-v">{email || '—'}</span>
                     </div>
