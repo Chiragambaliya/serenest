@@ -25,25 +25,38 @@ alter table public.professional_applications
 
 -- Onboarding allows optional email and does not require designation.
 alter table public.professional_applications alter column email drop not null;
-alter table public.professional_applications alter column designation drop not null;
 
--- Backfill new fields from older columns when possible.
-update public.professional_applications
-set
-  role         = coalesce(role, lower(designation)),
-  role_label   = coalesce(role_label, designation),
-  registration = coalesce(registration, medical_council_number),
-  clinic       = coalesce(clinic, clinic_name),
-  languages    = coalesce(languages, array_to_string(languages_spoken, ', ')),
-  specialities = coalesce(specialities, array_to_string(areas_of_focus, ', ')),
-  fee_inr      = coalesce(fee_inr, consultation_fee),
-  duration_min = coalesce(duration_min, 45),
-  modes        = coalesce(
-    modes,
-    trim(both ' /' from concat(
-      case when available_online then 'Video / Chat' else '' end,
-      case when available_in_person then ' / In-person' else '' end
-    ))
-  ),
-  availability = coalesce(availability, 'Mon-Sat')
-where true;
+-- The rest only applies to the legacy production shape (designation-focused
+-- columns). Fresh databases created from schema.sql never had them — skip.
+do $$
+begin
+  if exists (
+    select 1 from information_schema.columns
+    where table_schema = 'public'
+      and table_name = 'professional_applications'
+      and column_name = 'designation'
+  ) then
+    alter table public.professional_applications alter column designation drop not null;
+
+    -- Backfill new fields from older columns when possible.
+    update public.professional_applications
+    set
+      role         = coalesce(role, lower(designation)),
+      role_label   = coalesce(role_label, designation),
+      registration = coalesce(registration, medical_council_number),
+      clinic       = coalesce(clinic, clinic_name),
+      languages    = coalesce(languages, array_to_string(languages_spoken, ', ')),
+      specialities = coalesce(specialities, array_to_string(areas_of_focus, ', ')),
+      fee_inr      = coalesce(fee_inr, consultation_fee),
+      duration_min = coalesce(duration_min, 45),
+      modes        = coalesce(
+        modes,
+        trim(both ' /' from concat(
+          case when available_online then 'Video / Chat' else '' end,
+          case when available_in_person then ' / In-person' else '' end
+        ))
+      ),
+      availability = coalesce(availability, 'Mon-Sat')
+    where true;
+  end if;
+end $$;

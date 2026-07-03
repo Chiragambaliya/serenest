@@ -34,12 +34,32 @@ create table if not exists public.appointments (
   language         text not null default 'English',
   notes            text,
 
-  -- Assigned professional (set by admin after confirmation)
-  professional_id  uuid references public.professional_applications(id) on delete set null,
+  -- Assigned professional (set by admin after confirmation).
+  -- FK added below, after professional_applications is created.
+  professional_id  uuid,
+
+  -- Legacy human-readable reference (APT-XXXXXXXX), auto-filled by trigger.
+  appointment_id   text,
 
   -- Video room (Daily.co room name, set when session is confirmed)
   room_name        text
 );
+
+-- Auto-fill the short reference from the uuid when missing (kept in sync
+-- with supabase/migrations/2026_05_07_fix_appointments_legacy.sql).
+create or replace function public.set_appointment_id_default()
+returns trigger language plpgsql as $$
+begin
+  if new.appointment_id is null then
+    new.appointment_id := 'APT-' || upper(substr(replace(new.id::text, '-', ''), 1, 8));
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists trg_appointments_set_id on public.appointments;
+create trigger trg_appointments_set_id
+  before insert on public.appointments
+  for each row execute function public.set_appointment_id_default();
 
 -- ── Patients ─────────────────────────────────────────────────
 create table if not exists public.patients (
@@ -79,6 +99,24 @@ create table if not exists public.professional_applications (
   modes        text,
   availability text
 );
+
+-- FK from appointments (declared above, before this table existed)
+do $$
+begin
+  if not exists (
+    select 1
+    from information_schema.table_constraints
+    where table_schema = 'public'
+      and table_name = 'appointments'
+      and constraint_name = 'appointments_professional_id_fkey'
+  ) then
+    alter table public.appointments
+      add constraint appointments_professional_id_fkey
+      foreign key (professional_id)
+      references public.professional_applications(id)
+      on delete set null;
+  end if;
+end $$;
 
 -- ── Sign-ups (email capture / waitlist) ──────────────────────
 create table if not exists public.signups (
