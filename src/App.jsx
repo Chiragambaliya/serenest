@@ -28,6 +28,7 @@ const ProfessionalGuidelinesPage = lazy(() => import('./pages/ProfessionalGuidel
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const PatientFindProfessionalPage = lazy(() => import('./pages/PatientFindProfessionalPage'));
 const ScreeningPage = lazy(() => import('./pages/ScreeningPage'));
+const ScreeningToolPage = lazy(() => import('./pages/ScreeningToolPage'));
 const ConsultationPage = lazy(() => import('./pages/ConsultationPage'));
 const PrescriptionPage = lazy(() => import('./pages/PrescriptionPage'));
 const AcademyAuthPage = lazy(() => import('./pages/AcademyAuthPage'));
@@ -155,6 +156,7 @@ export default function App() {
           <Route path="patient/login"            element={<S><PatientAuthPage /></S>} />
           <Route path="patient/dashboard"        element={<S><PatientDashboardPage /></S>} />
           <Route path="screening" element={<S><ScreeningPage /></S>} />
+          <Route path="screening/tool/:toolId" element={<S><ScreeningToolPage /></S>} />
           <Route path="consultation/:appointmentId" element={<S><ConsultationPage /></S>} />
           <Route path="consultation/:appointmentId/prescription" element={<S><PrescriptionPage /></S>} />
           <Route path="online-psychiatrist-consultation-india" element={<Navigate to="/services" replace />} />

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { screening } from '../lib/api';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import { SCREENING_TOOLS } from '../lib/screeningTools';
 
 // ── Validated clinical screeners ──────────────────────────────────
 // PHQ-9 — Patient Health Questionnaire for depression (Kroenke et al.)
@@ -183,6 +184,33 @@ export default function ScreeningPage() {
               <Link to="/anxiety-counselling-online-india" style={{ color: 'var(--brand-700)' }}>online anxiety care</Link>.
             </p>
           </Card>
+        )}
+
+        {/* ── More self-checks ──────────────────────────────── */}
+        {step === 0 && (
+          <div style={{ marginTop: '1.75rem' }}>
+            <div style={{ textAlign: 'center', marginBottom: 14 }}>
+              <h2 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: 4 }}>Other quick self-checks</h2>
+              <p className="muted" style={{ fontSize: '0.88rem', margin: 0 }}>Free, confidential, and takes 1–2 minutes each.</p>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
+              {SCREENING_TOOLS.filter((t) => t.id !== 'phq9' && t.id !== 'gad7').map((t) => (
+                <Link key={t.id} to={`/screening/tool/${t.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 14, padding: '1.1rem 1.25rem', height: '100%', transition: 'box-shadow 0.15s, transform 0.15s' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                      <span style={{ fontSize: '1.5rem' }} aria-hidden>{t.icon}</span>
+                      <div>
+                        <div style={{ fontWeight: 800, fontSize: '0.98rem', color: 'var(--brand-700)' }}>{t.short}</div>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600 }}>{t.name}</div>
+                      </div>
+                    </div>
+                    <p className="muted" style={{ margin: 0, fontSize: '0.83rem', lineHeight: 1.5 }}>{t.blurb}</p>
+                    <div style={{ marginTop: 10, fontSize: '0.82rem', fontWeight: 700, color: 'var(--brand-600)' }}>Take the check →</div>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* ── PHQ-9 ─────────────────────────────────────────── */}
