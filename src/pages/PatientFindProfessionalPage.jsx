@@ -289,7 +289,7 @@ export default function PatientFindProfessionalPage() {
         }}>
           <div>
             <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Language</label>
-            <select value={language} onChange={(e) => setLanguage(e.target.value)} style={selectStyle}>
+            <select aria-label="Filter by language" value={language} onChange={(e) => setLanguage(e.target.value)} style={selectStyle}>
               {languages.map((l) => <option key={l} value={l}>{l}</option>)}
             </select>
           </div>
@@ -314,6 +314,7 @@ export default function PatientFindProfessionalPage() {
             </label>
             <input
               type="range"
+              aria-label="Maximum fee in rupees"
               min={500} max={5000} step={100}
               value={maxFee}
               onChange={(e) => setMaxFee(Number(e.target.value))}
@@ -323,7 +324,7 @@ export default function PatientFindProfessionalPage() {
 
           <div>
             <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Sort</label>
-            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)} style={selectStyle}>
+            <select aria-label="Sort results" value={sortBy} onChange={(e) => setSortBy(e.target.value)} style={selectStyle}>
               {SORT_OPTIONS.map((s) => <option key={s.id} value={s.id}>{s.label}</option>)}
             </select>
           </div>

@@ -161,14 +161,14 @@ export default function CareersPage() {
               </div>
 
               <Field label="Role applying for *">
-                <select value={form.role} onChange={set('role')} required style={inputStyle}>
+                <select aria-label="Role applying for" value={form.role} onChange={set('role')} required style={inputStyle}>
                   <option value="">Select a role…</option>
                   {ROLES.map((r) => <option key={r.id} value={r.id}>{r.label}</option>)}
                 </select>
               </Field>
 
               <Field label="Years of experience">
-                <select value={form.experience} onChange={set('experience')} style={inputStyle}>
+                <select aria-label="Years of experience" value={form.experience} onChange={set('experience')} style={inputStyle}>
                   <option value="">Select…</option>
                   <option>0–1</option>
                   <option>1–3</option>

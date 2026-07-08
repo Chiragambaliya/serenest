@@ -52,6 +52,7 @@ export default function Gad7Page() {
             <p>These bands are commonly cited in the literature for orientation only. They do not replace clinical judgment.</p>
           </div>
           <div style={{ maxWidth: 820, margin: '0 auto' }}>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: 12 }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: 12, overflow: 'hidden' }}>
               <thead>
                 <tr style={{ background: 'rgba(11,36,32,0.05)' }}>
@@ -70,6 +71,7 @@ export default function Gad7Page() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         </div>
       </section>

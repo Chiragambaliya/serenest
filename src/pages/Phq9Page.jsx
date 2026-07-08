@@ -53,6 +53,7 @@ export default function Phq9Page() {
             <p>These bands are commonly cited in the literature and are intended for orientation. They do not replace clinical judgment.</p>
           </div>
           <div style={{ maxWidth: 820, margin: '0 auto' }}>
+            <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', borderRadius: 12 }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', background: '#fff', borderRadius: 12, overflow: 'hidden' }}>
               <thead>
                 <tr style={{ background: 'rgba(11,36,32,0.05)' }}>
@@ -71,6 +72,7 @@ export default function Phq9Page() {
                 ))}
               </tbody>
             </table>
+            </div>
             <p style={{ marginTop: 12, fontSize: 13, color: 'rgba(11,36,32,0.65)' }}>
               Note: PHQ-9 item 9 asks about thoughts of self-harm. If you answered “several days” or higher on item 9, please speak to a clinician promptly. In an emergency, contact iCall (7777936367) or your nearest hospital.
             </p>
