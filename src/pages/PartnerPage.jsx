@@ -178,7 +178,7 @@ export default function PartnerPage() {
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                   <F label="Instagram / YouTube handle"><input style={inp} value={form.handle} onChange={setF('handle')} placeholder="@yourhandle" /></F>
                   <F label="Audience size">
-                    <select style={inp} value={form.audience_size} onChange={setF('audience_size')}>
+                    <select aria-label="Audience size" style={inp} value={form.audience_size} onChange={setF('audience_size')}>
                       <option value="">Select…</option>
                       <option>5k – 10k</option>
                       <option>10k – 50k</option>

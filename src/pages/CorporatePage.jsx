@@ -236,7 +236,7 @@ export default function CorporatePage() {
                 <F label="Phone"><input style={inp} type="tel" value={form.phone} onChange={set('phone')} placeholder="98765 43210" /></F>
               </div>
               <F label="Team size *">
-                <select style={inp} required value={form.size} onChange={set('size')}>
+                <select aria-label="Team size" style={inp} required value={form.size} onChange={set('size')}>
                   <option value="">Select…</option>
                   <option>25–50</option>
                   <option>50–200</option>
