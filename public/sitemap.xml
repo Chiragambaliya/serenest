@@ -59,6 +59,44 @@
     <changefreq>monthly</changefreq>
     <priority>0.85</priority>
   </url>
+
+  <!-- Interactive self-screening tools -->
+  <url>
+    <loc>https://www.serenest.in/screening/tool/pss-10</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.serenest.in/screening/tool/who-5-wellbeing</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.serenest.in/screening/tool/alcohol-audit-c</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.serenest.in/screening/tool/adhd-asrs</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.serenest.in/screening/tool/distress-k10</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.serenest.in/screening/tool/ptsd-pcl-5</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.serenest.in/screening/tool/eating-scoff</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <url>
     <loc>https://www.serenest.in/online-psychiatrist-prescription-india</loc>
     <changefreq>monthly</changefreq>
