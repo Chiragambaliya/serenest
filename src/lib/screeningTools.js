@@ -3,7 +3,8 @@
  *
  * A small, data-driven engine so each new validated questionnaire is just a
  * definition below. All instruments here are freely reproducible for clinical
- * / educational use (Pfizer PHQ/GAD, WHO ASRS & AUDIT, WHO-5, PSS).
+ * / educational use (Pfizer PHQ/GAD, WHO ASRS & AUDIT, WHO-5, PSS, Kessler
+ * K10, the public-domain PCL-5, and SCOFF).
  *
  * IMPORTANT: these are screening aids, not diagnoses. Scores only indicate
  * whether a professional conversation may help.
@@ -139,6 +140,8 @@ export const SCREENING_TOOLS = [
       { max: 26, label: 'Moderate stress', color: '#e67e22', desc: 'Moderate stress — some support or coping strategies may help.' },
       { max: 40, label: 'High stress',     color: '#dc3545', desc: 'High perceived stress — talking to a professional could really help.' },
     ],
+    seoTitle: 'Stress Test Online (PSS-10) | Serenest',
+    seoDescription: 'Take the free PSS-10 perceived stress self-check online from India. 10 validated questions on how overloaded and stretched life feels. Instant result — not a diagnosis.',
   },
 
   {
@@ -168,6 +171,8 @@ export const SCREENING_TOOLS = [
       { max: 75,  label: 'Moderate wellbeing', color: '#0d6efd', desc: 'Reasonable wellbeing, with room to feel better.' },
       { max: 100, label: 'Good wellbeing',     color: '#198754', desc: 'Your wellbeing is good right now — keep it up.' },
     ],
+    seoTitle: 'WHO-5 Wellbeing Test Online | Serenest',
+    seoDescription: 'Take the free WHO-5 wellbeing self-check online from India. 5 short, positive questions scored 0–100. Instant result — a screening aid, not a diagnosis.',
   },
 
   {
@@ -222,6 +227,8 @@ export const SCREENING_TOOLS = [
       { max: 12, label: 'Possible dependence', color: '#dc3545', desc: 'This pattern can point to alcohol dependence. Please speak to a professional.' },
     ],
     note: 'A “standard drink” ≈ 1 can of beer, 1 small glass of wine, or 1 measure (30 ml) of spirits.',
+    seoTitle: 'Alcohol Use Self-Test Online (AUDIT-C) | Serenest',
+    seoDescription: 'Take the free WHO AUDIT-C alcohol self-screening online from India. 3 quick questions on drinking patterns and risk. Confidential, instant result — not a diagnosis.',
   },
 
   {
@@ -247,6 +254,130 @@ export const SCREENING_TOOLS = [
     ],
     positiveBand: { label: 'Symptoms consistent with adult ADHD', color: '#e67e22', desc: 'Your answers are consistent with adult ADHD. This is not a diagnosis — a full assessment with a professional is the next step.' },
     negativeBand: { label: 'Unlikely to indicate ADHD', color: '#198754', desc: 'Your answers are not strongly consistent with adult ADHD. If concerns persist, a professional can still help.' },
+    seoTitle: 'Adult ADHD Self-Test Online (ASRS v1.1) | Serenest',
+    seoDescription: 'Take the free WHO ASRS v1.1 adult ADHD self-screening online from India. The standard 6-question screener for attention and hyperactivity. Instant result — not a diagnosis.',
+  },
+
+  {
+    id: 'k10',
+    slug: 'distress-k10',
+    name: 'K10',
+    short: 'Distress',
+    title: 'Psychological distress check (K10)',
+    icon: '🌊',
+    blurb: 'A 10-question check on overall emotional distress in the last month.',
+    timeframe: 'In the past 30 days, about how often did you feel…',
+    source: 'Kessler Psychological Distress Scale (Kessler et al.)',
+    options: [
+      { label: 'None of the time', value: 1 },
+      { label: 'A little of the time', value: 2 },
+      { label: 'Some of the time', value: 3 },
+      { label: 'Most of the time', value: 4 },
+      { label: 'All of the time', value: 5 },
+    ],
+    scoring: 'sum',
+    direction: 'higher_worse',
+    questions: [
+      { text: 'Tired out for no good reason' },
+      { text: 'Nervous' },
+      { text: 'So nervous that nothing could calm you down' },
+      { text: 'Hopeless' },
+      { text: 'Restless or fidgety' },
+      { text: 'So restless you could not sit still' },
+      { text: 'Depressed' },
+      { text: 'That everything was an effort' },
+      { text: 'So sad that nothing could cheer you up' },
+      { text: 'Worthless' },
+    ],
+    bands: [
+      { max: 19, label: 'Likely well',        color: '#198754', desc: 'Your distress levels appear to be in the healthy range.' },
+      { max: 24, label: 'Mild distress',      color: '#0d6efd', desc: 'Mild distress — self-care and monitoring may be enough, but support is available.' },
+      { max: 29, label: 'Moderate distress',  color: '#e67e22', desc: 'Moderate distress — talking to a professional is likely to help.' },
+      { max: 50, label: 'Severe distress',    color: '#dc3545', desc: 'Severe distress — please consider speaking to a professional soon.' },
+    ],
+    seoTitle: 'Psychological Distress Test Online (K10) | Serenest',
+    seoDescription: 'Take the free K10 psychological distress self-check online from India. 10 validated questions on stress, anxiety, and low mood in the last month. A screening tool, not a diagnosis.',
+  },
+
+  {
+    id: 'pcl5',
+    slug: 'ptsd-pcl-5',
+    name: 'PCL-5',
+    short: 'PTSD',
+    title: 'Post-traumatic stress check (PCL-5)',
+    icon: '🛡️',
+    blurb: 'The standard 20-question check for symptoms after a stressful or traumatic event.',
+    timeframe: 'Thinking of your most stressful experience: in the past month, how much were you bothered by…',
+    source: 'PTSD Checklist for DSM-5 (U.S. National Center for PTSD — public domain)',
+    note: 'Answer with one specific stressful experience in mind. Take a break at any time — some questions can bring up difficult feelings.',
+    options: [
+      { label: 'Not at all', value: 0 },
+      { label: 'A little bit', value: 1 },
+      { label: 'Moderately', value: 2 },
+      { label: 'Quite a bit', value: 3 },
+      { label: 'Extremely', value: 4 },
+    ],
+    scoring: 'sum',
+    direction: 'higher_worse',
+    questions: [
+      { text: 'Repeated, disturbing, and unwanted memories of the stressful experience' },
+      { text: 'Repeated, disturbing dreams of the stressful experience' },
+      { text: 'Suddenly feeling or acting as if the stressful experience were actually happening again (as if you were reliving it)' },
+      { text: 'Feeling very upset when something reminded you of the stressful experience' },
+      { text: 'Having strong physical reactions when something reminded you of the stressful experience (heart pounding, trouble breathing, sweating)' },
+      { text: 'Avoiding memories, thoughts, or feelings related to the stressful experience' },
+      { text: 'Avoiding external reminders of the stressful experience (people, places, conversations, activities, objects, or situations)' },
+      { text: 'Trouble remembering important parts of the stressful experience' },
+      { text: 'Having strong negative beliefs about yourself, other people, or the world (e.g. "I am bad", "no one can be trusted", "the world is completely dangerous")' },
+      { text: 'Blaming yourself or someone else for the stressful experience or what happened after it' },
+      { text: 'Having strong negative feelings such as fear, horror, anger, guilt, or shame' },
+      { text: 'Loss of interest in activities that you used to enjoy' },
+      { text: 'Feeling distant or cut off from other people' },
+      { text: 'Trouble experiencing positive feelings (e.g. being unable to feel happiness or have loving feelings for people close to you)' },
+      { text: 'Irritable behaviour, angry outbursts, or acting aggressively' },
+      { text: 'Taking too many risks or doing things that could cause you harm' },
+      { text: 'Being "super-alert", watchful, or on guard' },
+      { text: 'Feeling jumpy or easily startled' },
+      { text: 'Having difficulty concentrating' },
+      { text: 'Trouble falling or staying asleep' },
+    ],
+    bands: [
+      { max: 30, label: 'Below screening threshold', color: '#198754', desc: 'Your score is below the usual PTSD screening threshold. If these symptoms still trouble you, a professional can help regardless of score.' },
+      { max: 80, label: 'Consistent with PTSD symptoms', color: '#dc3545', desc: 'Your score is above the usual screening threshold (31+). This is not a diagnosis — a trauma-informed assessment with a professional is the right next step.' },
+    ],
+    seoTitle: 'PTSD Self-Screening Online (PCL-5) | Serenest',
+    seoDescription: 'Take the free PCL-5 PTSD self-screening online from India. The standard 20-item checklist for post-traumatic stress symptoms. Confidential, instant result — not a diagnosis.',
+  },
+
+  {
+    id: 'scoff',
+    slug: 'eating-scoff',
+    name: 'SCOFF',
+    short: 'Eating',
+    title: 'Eating patterns check (SCOFF)',
+    icon: '🍽️',
+    blurb: 'A quick 5-question check for possible eating-disorder patterns.',
+    timeframe: 'Please answer yes or no…',
+    source: 'SCOFF questionnaire (Morgan, Reid & Lacey)',
+    options: [
+      { label: 'No', value: 0 },
+      { label: 'Yes', value: 1 },
+    ],
+    scoring: 'sum',
+    direction: 'higher_worse',
+    questions: [
+      { text: 'Do you make yourself sick (vomit) because you feel uncomfortably full?' },
+      { text: 'Do you worry you have lost control over how much you eat?' },
+      { text: 'Have you recently lost more than 6 kg in a three-month period?' },
+      { text: 'Do you believe yourself to be fat when others say you are too thin?' },
+      { text: 'Would you say that food dominates your life?' },
+    ],
+    bands: [
+      { max: 1, label: 'Low likelihood',  color: '#198754', desc: 'Your answers do not suggest an eating disorder. If food or body image still worries you, a professional can help.' },
+      { max: 5, label: 'Positive screen', color: '#e67e22', desc: 'Two or more "yes" answers suggest a possible eating disorder. This is not a diagnosis — please consider a professional assessment.' },
+    ],
+    seoTitle: 'Eating Disorder Screening Online (SCOFF) | Serenest',
+    seoDescription: 'Take the free SCOFF eating-disorder self-screening online from India. 5 quick, validated yes/no questions. Confidential, instant result — a screening aid, not a diagnosis.',
   },
 ];
 

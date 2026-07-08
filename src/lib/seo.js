@@ -1,4 +1,5 @@
 import { TEAM_MEMBERS } from './team.js';
+import { SCREENING_TOOLS } from './screeningTools.js';
 
 // Production canonical host. Matches the live www-redirect target.
 export const SITE_ORIGIN = 'https://www.serenest.in';
@@ -300,6 +301,20 @@ export const ROUTE_SEO = {
     ogDescription: 'Ethics and conduct standards for clinicians on the Serenest platform.',
   },
 };
+
+// Interactive self-screening tool pages (/screening/tool/<slug>) — each
+// validated instrument that carries seoTitle/seoDescription gets its own
+// indexable entry. PHQ-9 / GAD-7 tool pages stay unlisted here: their
+// dedicated landing pages (/phq-9-depression-screening etc.) own that intent.
+for (const t of SCREENING_TOOLS) {
+  if (!t.seoTitle) continue;
+  ROUTE_SEO[`/screening/tool/${t.slug}`] = {
+    title: t.seoTitle,
+    description: t.seoDescription,
+    ogTitle: t.seoTitle,
+    ogDescription: t.seoDescription,
+  };
+}
 
 // Routes that redirect (301) to a canonical route. Used by server.js.
 // Useful for keyword variants of the same landing page so internal links and
