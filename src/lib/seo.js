@@ -51,6 +51,14 @@ export const ROUTE_SEO = {
     ogDescription:
       'A confidential 3-minute mental health check-in. Screening is not a diagnosis.',
   },
+  '/ai': {
+    title: 'Serenest AI Care Navigator | Nuclear-Powered Mental Health Guidance',
+    description:
+      'Ask Serenest AI for a clear next step — book a clinician, take PHQ-9/GAD-7 screening, find a professional, or explore Academy. Not medical advice.',
+    ogTitle: 'Serenest AI | Care Navigator',
+    ogDescription:
+      'Nuclear-powered clarity for mental health care in India — the right page and next step, instantly.',
+  },
   '/team': {
     title: 'Verified Psychiatrists & Mental Health Professionals | Serenest',
     description:
@@ -781,6 +789,27 @@ export const ROUTE_JSONLD = {
         ],
         medicalAudience: 'Patient',
       },
+    ],
+  },
+  '/ai': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        '@type': 'WebApplication',
+        '@id': `${SITE_ORIGIN}/ai#app`,
+        name: 'Serenest AI Care Navigator',
+        url: `${SITE_ORIGIN}/ai`,
+        applicationCategory: 'HealthApplication',
+        operatingSystem: 'Web',
+        description:
+          'AI-powered care navigator that helps visitors find the right next step on Serenest — booking, screening, professionals, or Academy. Not medical advice.',
+        isAccessibleForFree: true,
+        inLanguage: 'en-IN',
+        provider: { '@id': `${SITE_ORIGIN}/#organization` },
+      },
+      breadcrumbs('/ai', 'Serenest AI'),
     ],
   },
   '/team': {

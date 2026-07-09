@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 import { assistant, health } from '../lib/api';
 import { getVisitorId } from '../lib/visitTracker';
@@ -82,13 +82,13 @@ export default function SerenestAssistant() {
         className="srn-ai-fab"
         aria-expanded={open}
         aria-controls="srn-ai-panel"
-        aria-label={open ? 'Close Serenest Guide' : 'Open Serenest Guide'}
+        aria-label={open ? 'Close Serenest AI' : 'Open Serenest AI'}
         onClick={() => setOpen((v) => !v)}
       >
         <span className="srn-ai-fab-icon" aria-hidden="true">
-          ✨
+          ⚡
         </span>
-        <span className="srn-ai-fab-label">Guide</span>
+        <span className="srn-ai-fab-label">AI</span>
       </button>
 
       {open ? (
@@ -109,9 +109,14 @@ export default function SerenestAssistant() {
             <div className="srn-ai-head">
               <div>
                 <div id="srn-ai-title" className="srn-ai-title">
-                  Serenest Guide
+                  Serenest AI
                 </div>
-                <p className="srn-ai-sub">Helps you use this website correctly — step by step. Not medical advice.</p>
+                <p className="srn-ai-sub">
+                  Nuclear-powered site guide — not medical advice.{' '}
+                  <Link to="/ai" style={{ color: 'inherit', fontWeight: 700 }}>
+                    Open full Care Navigator →
+                  </Link>
+                </p>
               </div>
               <button
                 type="button"
@@ -126,8 +131,10 @@ export default function SerenestAssistant() {
             <div className="srn-ai-thread" role="log" aria-live="polite">
               <div className="srn-ai-msg srn-ai-msg-assistant">
                 <p className="srn-ai-bubble">
-                  Hi — tell me what you&apos;re trying to do or where you&apos;re stuck. I&apos;ll point you to the right page and clear steps (booking, screening, services, pricing, professionals, Academy). If something looks broken on your device, I&apos;ll suggest quick checks and how to reach our team.
-                  For emergencies, use local emergency services (e.g. 112 in India).
+                  Hi — tell me what you&apos;re trying to do. I&apos;ll point you to the right page
+                  (booking, screening, pricing, professionals, Academy) or open the full{' '}
+                  <Link to="/ai">Care Navigator</Link>. For emergencies, use local emergency
+                  services (e.g. 112 in India).
                 </p>
               </div>
               {guideOnline === false ? (

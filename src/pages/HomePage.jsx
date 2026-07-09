@@ -67,10 +67,10 @@ const PILLARS = [
 const CARE = [
   {
     icon: 'consult',
-    title: 'Book a consultation',
-    body: 'Secure video, audio, or chat with a verified clinician. Structured intake included.',
-    href: '/book',
-    cta: 'Book now',
+    title: 'Ask Serenest AI',
+    body: 'Nuclear-powered Care Navigator — tell us what you need and get the right next step in seconds.',
+    href: '/ai',
+    cta: 'Open Care Navigator',
   },
   {
     icon: 'screen',
@@ -81,10 +81,10 @@ const CARE = [
   },
   {
     icon: 'follow',
-    title: 'Continue your care',
-    body: 'Follow-ups and care plans in one place so treatment does not stop after one session.',
-    href: '/services',
-    cta: 'View services',
+    title: 'Book a consultation',
+    body: 'Secure video, audio, or chat with a verified clinician. Structured intake included.',
+    href: '/book',
+    cta: 'Book now',
   },
 ];
 
@@ -218,21 +218,22 @@ export default function HomePage() {
               <p className="home__eyebrow">
                 <span>Serenest</span>
                 <span className="home__eyebrow-dot" aria-hidden="true">·</span>
-                <span>Pan-India telepsychiatry</span>
+                <span>AI-powered · Pan-India care</span>
               </p>
               <h1 id="home-hero-title" className="home__title">
                 Private, clinical mental health care — wherever you are in India.
               </h1>
               <p className="home__lead">
-                Speak with verified psychiatrists and psychologists from home. Structured intake,
-                evidence-based screening, and care that continues beyond a single session.
+                Speak with verified psychiatrists and psychologists from home. Or ask{' '}
+                <strong>Serenest AI</strong> for a clear next step — nuclear-powered clarity,
+                clinician-backed when you need care.
               </p>
               <div className="home__actions">
-                <Link className="btn btn-primary btn-lg" to="/book">
-                  Book now
+                <Link className="btn btn-primary btn-lg" to="/ai">
+                  Ask Serenest AI
                 </Link>
-                <Link className="btn btn-ghost btn-lg" to="/screening">
-                  Take screening
+                <Link className="btn btn-ghost btn-lg" to="/book">
+                  Book now
                 </Link>
               </div>
               <p className="home__note">
@@ -244,6 +245,7 @@ export default function HomePage() {
             <aside className="home__hero-card" aria-label="What Serenest includes">
               <p className="home__hero-card-title">What you get on Serenest</p>
               <ul className="home__hero-card-list">
+                <li><HomeIcon name="check" />Serenest AI Care Navigator</li>
                 <li><HomeIcon name="check" />Verified psychiatrists and psychologists</li>
                 <li><HomeIcon name="check" />Video, audio, and chat consultations</li>
                 <li><HomeIcon name="check" />PHQ-9 / GAD-7 screening tools</li>
@@ -334,8 +336,8 @@ export default function HomePage() {
         <div className="home__shell">
           <header className="home__header home__header--center">
             <p className="home__eyebrow">Start here</p>
-            <h2>Three clear paths into care</h2>
-            <p>Built for privacy and continuity — not anonymous one-off chats.</p>
+            <h2>AI clarity, then clinical care</h2>
+            <p>Ask Serenest AI, screen yourself, or book a verified clinician — your path, your pace.</p>
           </header>
           <div className="home__cards">
             {CARE.map((item) => (
