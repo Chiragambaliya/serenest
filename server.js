@@ -2049,7 +2049,6 @@ const VALID_ROUTES = new Set([
   '/corporate',
   '/partner',
   '/screening',
-  '/ai',
   '/academy',
   '/academy/login',
   '/academy/learn',

@@ -12,7 +12,6 @@ const NAV_GROUPS = [
     label: 'Services',
     items: [
       { to: '/book',                      label: 'Book a Consultation',  desc: 'Same-day online slots available' },
-      { to: '/ai',                        label: 'Serenest AI',           desc: 'Nuclear-powered Care Navigator' },
       { to: '/patient/find-professional', label: 'Find a Professional',  desc: 'Browse our verified clinicians' },
       { to: '/screening',                 label: 'Self-Screening',       desc: 'PHQ-9 & GAD-7 in 5 minutes' },
       { to: '/pricing',                   label: 'Pricing',              desc: 'Transparent, no hidden fees' },
@@ -258,7 +257,6 @@ export default function SiteLayout() {
               <div className="menu-section">
                 <p className="menu-section-label">Patient Care</p>
                 <Link to="/book"                      className="menu-link" onClick={() => setMenuOpen(false)}>Book a Consultation</Link>
-                <Link to="/ai"                        className="menu-link" onClick={() => setMenuOpen(false)}>Serenest AI · Care Navigator</Link>
                 <Link to="/patient/find-professional" className="menu-link" onClick={() => setMenuOpen(false)}>Find a Professional</Link>
                 <Link to="/screening"                 className="menu-link" onClick={() => setMenuOpen(false)}>Self-Screening</Link>
                 <Link to="/pricing"                   className="menu-link" onClick={() => setMenuOpen(false)}>Pricing</Link>
@@ -385,7 +383,6 @@ export default function SiteLayout() {
                 <div className="footer-title2">Care</div>
                 <nav className="footer-nav2" aria-label="Care links">
                   <Link to="/book"><EdIcon name="stethoscope" size={17} /> Book appointment</Link>
-                  <Link to="/ai"><EdIcon name="chat" size={17} /> Serenest AI</Link>
                   <Link to="/patient/find-professional"><EdIcon name="search" size={17} /> Find a professional</Link>
                   <Link to="/screening"><EdIcon name="clipboard" size={17} /> Self screening</Link>
                   <Link to="/pricing"><EdIcon name="award" size={17} /> Pricing</Link>

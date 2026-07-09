@@ -6,7 +6,6 @@ import { trackVisit } from './lib/visitTracker';
 import { captureUtm } from './lib/utm';
 import CookieConsent from './components/CookieConsent';
 import ExitIntentPopup from './components/ExitIntentPopup';
-import SerenestAssistant from './components/SerenestAssistant';
 
 captureUtm();
 
@@ -42,7 +41,6 @@ const Phq9Page = lazy(() => import('./pages/Phq9Page'));
 const Gad7Page = lazy(() => import('./pages/Gad7Page'));
 const OnlinePrescriptionPage = lazy(() => import('./pages/OnlinePrescriptionPage'));
 const GuidesPage = lazy(() => import('./pages/GuidesPage'));
-const AiNavigatorPage = lazy(() => import('./pages/AiNavigatorPage'));
 const AcademyPage = lazy(() => import('./pages/AcademyPage'));
 const PatientAuthPage = lazy(() => import('./pages/PatientAuthPage'));
 const PatientDashboardPage = lazy(() => import('./pages/PatientDashboardPage'));
@@ -100,13 +98,10 @@ function VisitTracker() {
 function MarketingWidgets() {
   const { pathname } = useLocation();
   if (pathname.startsWith('/admin') || pathname.startsWith('/consultation')) return null;
-  // Full-page Care Navigator already owns the AI surface — skip the floating Guide there.
-  const hideGuide = pathname === '/ai' || pathname.startsWith('/ai/');
   return (
     <>
       <CookieConsent />
       <ExitIntentPopup />
-      {!hideGuide ? <SerenestAssistant /> : null}
     </>
   );
 }
@@ -162,7 +157,6 @@ export default function App() {
           <Route path="patient/dashboard"        element={<S><PatientDashboardPage /></S>} />
           <Route path="screening" element={<S><ScreeningPage /></S>} />
           <Route path="screening/tool/:toolId" element={<S><ScreeningToolPage /></S>} />
-          <Route path="ai" element={<S><AiNavigatorPage /></S>} />
           <Route path="consultation/:appointmentId" element={<S><ConsultationPage /></S>} />
           <Route path="consultation/:appointmentId/prescription" element={<S><PrescriptionPage /></S>} />
           <Route path="online-psychiatrist-consultation-india" element={<Navigate to="/services" replace />} />
