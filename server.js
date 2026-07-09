@@ -1783,6 +1783,67 @@ cron.schedule('* * * * *', async () => {
   }
 });
 
+// ─── Cron: appointment reminders (~24h before a confirmed session) ──────
+// Every 15 minutes: email each confirmed appointment happening within the
+// next 24 hours whose reminder hasn't been sent (reminder_sent_at is null).
+// The flag is set only after Resend accepts the patient email, so transient
+// failures retry on the next tick. Requires the reminder_sent_at column
+// (supabase/migrations/2026_07_09_add_appointment_reminder_sent_at.sql).
+function istDateString(offsetDays = 0) {
+  return new Date(Date.now() + offsetDays * 86400000)
+    .toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+}
+
+cron.schedule('4,19,34,49 * * * *', async () => {
+  if (!supabase || !notify.isPatientEmailEnabled()) return;
+
+  const { data: due, error } = await supabase
+    .from('appointments')
+    .select('*')
+    .eq('status', 'confirmed')
+    .is('reminder_sent_at', null)
+    .in('preferred_date', [istDateString(0), istDateString(1)])
+    .limit(25);
+
+  if (error) {
+    // Most likely the migration hasn't been applied yet — warn, don't crash.
+    console.warn('[reminder-cron] query failed (is reminder_sent_at migrated?):', error.message);
+    return;
+  }
+  if (!due?.length) return;
+
+  const now = Date.now();
+  for (const b of due) {
+    // Appointment times are IST wall-clock strings ("2026-07-10" + "13:00").
+    const at = Date.parse(`${b.preferred_date}T${b.preferred_time || '09:00'}:00+05:30`);
+    if (!Number.isFinite(at)) continue;
+    const msUntil = at - now;
+    if (msUntil <= 0 || msUntil > 24 * 3600000) continue; // only within the next 24h
+
+    let professionalEmail = null;
+    if (b.professional_id) {
+      const { data: pro } = await supabase
+        .from('professional_applications')
+        .select('email')
+        .eq('id', b.professional_id)
+        .maybeSingle();
+      professionalEmail = pro?.email ?? null;
+    }
+
+    try {
+      const sent = await notify.appointmentReminder(b, { professionalEmail });
+      if (sent) {
+        await supabase.from('appointments')
+          .update({ reminder_sent_at: new Date().toISOString() })
+          .eq('id', b.id);
+        console.log(`[reminder-cron] reminded ${b.id.slice(0, 8)} (${b.preferred_date} ${b.preferred_time})`);
+      }
+    } catch (e) {
+      console.error(`[reminder-cron] ${b.id} failed:`, e.message);
+    }
+  }
+});
+
 /** GET /api/subscribers — admin only — list opt-in emails. */
 app.get('/api/subscribers', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;
