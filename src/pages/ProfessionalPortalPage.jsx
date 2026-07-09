@@ -213,6 +213,23 @@ export default function ProfessionalPortalPage() {
                 </p>
               </div>
 
+              <div
+                className="tile"
+                style={{
+                  padding: '1.25rem 1.5rem',
+                  marginBottom: '1.5rem',
+                  background: 'linear-gradient(135deg, #f0f7ec, #e8f4e0)',
+                  border: '1px solid #c5ddb4',
+                }}
+              >
+                <p style={{ fontWeight: 800, marginBottom: 6 }}>Serenest Academy — free for you</p>
+                <p className="muted" style={{ fontSize: '0.88rem', marginBottom: 14, lineHeight: 1.5 }}>
+                  As an approved Serenest professional, Academy programs are included at no charge.
+                  Open Academy and claim a free seat for any track.
+                </p>
+                <Link className="btn btn-primary" to="/academy">Open Academy free →</Link>
+              </div>
+
               {/* Editable profile */}
               <form onSubmit={save} className="tile" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
                 <h2 style={{ fontWeight: 800, fontSize: '1.15rem', marginBottom: 4 }}>Your public profile</h2>

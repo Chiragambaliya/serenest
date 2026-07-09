@@ -86,18 +86,18 @@ export const ROUTE_SEO = {
   '/academy': {
     title: 'Serenest Academy | Mental Health Literacy & Learning India',
     description:
-      'Serenest Academy: stigma-aware mental health guides, clinician learning tracks (pharmacology and psychology), and school or workplace partnerships on serenest.in.',
-    ogTitle: 'Serenest Academy | Literacy & Learning',
+      'Serenest Academy programs for psychology, psychiatry, and counselling. Free for approved Serenest professionals; open enrollment for learners across India.',
+    ogTitle: 'Serenest Academy | Free for Serenest Professionals',
     ogDescription:
-      'Guides, learning programmes, and partnerships from Serenest Education — same site as clinical telepsychiatry.',
+      'Clinician-led learning programmes — included free for approved Serenest professionals.',
   },
   '/professionals': {
     title: 'For Mental Health Professionals | Join Serenest | India',
     description:
-      'Serenest works with verified psychiatrists, psychologists, and counsellors across India. Learn how to join our clinical team, access learning resources, and grow your practice.',
+      'Join Serenest as a verified clinician. Practice tools, learning resources, and free Serenest Academy access for approved professionals.',
     ogTitle: 'For Mental Health Professionals | Serenest India',
     ogDescription:
-      'Join Serenest as a verified clinician. Access clinical learning, resources, and guidelines for mental health professionals.',
+      'Join Serenest as a verified clinician. Clinical learning, resources, and free Academy access for approved professionals.',
   },
   '/professionals/learning': {
     title: 'Clinical Learning Hub | Psychiatry & Psychology CPD | Serenest',

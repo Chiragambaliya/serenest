@@ -59,7 +59,7 @@ export default function ProfessionalsPage() {
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap', marginBottom: '2rem' }}>
             <Link className="btn btn-primary btn-lg" to="/professionals/apply">Apply to join →</Link>
-            <Link className="btn btn-ghost btn-lg" to="/professionals/learning" style={{ border: '1px solid rgba(255,255,255,0.3)', color: '#fff' }}>Learning hub</Link>
+            <Link className="btn btn-ghost btn-lg" to="/academy" style={{ border: '1px solid rgba(255,255,255,0.3)', color: '#fff' }}>Academy · Free</Link>
           </div>
           <p style={{ fontSize: '0.82rem', color: 'rgba(255,255,255,0.45)' }}>
             Psychiatrist · Clinical Psychologist · Psychotherapist · Counsellor
@@ -177,10 +177,10 @@ export default function ProfessionalsPage() {
           </header>
           <div className="pros-hub">
             {[
+              { tag: 'Academy',    title: 'Serenest Academy · Free', body: 'Approved professionals get Academy programs at no charge — certificates, CPD, and fellowships included.', href: '/academy', cta: 'Open Academy free' },
               { tag: 'Learning',   title: 'Learning hub',  body: 'Clinical framing, pharmacology, and platform training for clinicians and trainees.', href: '/professionals/learning', cta: 'Explore learning' },
               { tag: 'Resources',  title: 'Resources',     body: 'Handouts, template requests, ops checklists, and partnership decks ready to share.',  href: '/professionals/resources', cta: 'Browse resources' },
               { tag: 'Guidelines', title: 'Guidelines',    body: 'Telemedicine, privacy, and prescribing — orientation, not legal advice.',              href: '/professionals/guidelines', cta: 'Read guidelines' },
-              { tag: 'Apply',      title: 'Apply to join', body: 'Credentials, fees, modes, and verification before you go live.',                       href: '/professionals/apply', cta: 'Start application' },
             ].map((item) => (
               <Link key={item.title} to={item.href} className="pros-hub__card">
                 <span className="pros-hub__tag">{item.tag}</span>

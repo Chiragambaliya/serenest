@@ -87,6 +87,31 @@ export default function AcademyAuthPage() {
                 : 'Log in to your Serenest Academy account.'}
             </p>
 
+            <div
+              style={{
+                background: '#f0f7ec',
+                border: '1px solid #c5ddb4',
+                borderRadius: 12,
+                padding: '12px 14px',
+                marginBottom: 18,
+                fontSize: '0.88rem',
+                lineHeight: 1.5,
+                color: '#2a3320',
+              }}
+            >
+              <strong>Serenest professionals — Academy is free.</strong>{' '}
+              If you practice with us, sign in with your professional email (magic link) and open Academy at no charge.
+              <div style={{ marginTop: 8 }}>
+                <Link
+                  to="/professionals/login"
+                  state={{ from: '/academy' }}
+                  style={{ color: 'var(--brand-600, #3c4a2c)', fontWeight: 700 }}
+                >
+                  Professional sign-in →
+                </Link>
+              </div>
+            </div>
+
             <form onSubmit={handleSubmit} className="form-grid" style={{ gridTemplateColumns: '1fr' }}>
               {isSignup && (
                 <>

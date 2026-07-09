@@ -16,6 +16,7 @@ export default function ProfessionalAuthPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from ?? '/professionals/portal';
+  const academyFree = typeof from === 'string' && from.startsWith('/academy');
 
   const { user, loading: authLoading } = useAuth();
 
@@ -39,7 +40,7 @@ export default function ProfessionalAuthPage() {
     try {
       const redirectTo =
         typeof window !== 'undefined'
-          ? `${window.location.origin}/professionals/portal`
+          ? `${window.location.origin}${academyFree ? from : '/professionals/portal'}`
           : undefined;
       const { error: e1 } = await supabase.auth.signInWithOtp({
         email: email.trim(),
@@ -72,10 +73,12 @@ export default function ProfessionalAuthPage() {
             {!sent ? (
               <>
                 <h1 style={{ fontSize: '1.6rem', fontWeight: 800, marginBottom: 6 }}>
-                  Sign in to your profile
+                  {academyFree ? 'Free Academy access' : 'Sign in to your profile'}
                 </h1>
                 <p className="muted" style={{ fontSize: '0.9rem', marginBottom: 20 }}>
-                  Use the email you applied with. We&rsquo;ll email you a secure sign-in link — no password needed.
+                  {academyFree
+                    ? 'Approved Serenest professionals get Serenest Academy free. Use the email you applied with — we\'ll send a secure sign-in link.'
+                    : 'Use the email you applied with. We\'ll email you a secure sign-in link — no password needed.'}
                 </p>
 
                 <form onSubmit={sendLink} className="form-grid" style={{ gridTemplateColumns: '1fr' }}>
