@@ -6,9 +6,50 @@
 
 export const ACADEMY_PROGRAMS = [
   {
+    slug: 'clinical-excellence',
+    category: 'Clinical Practice',
+    iconName: 'award', accent: 'teal', popular: true, featured: true,
+    title: 'Clinical Excellence',
+    subtitle: 'Flagship Course for Practicing Mental Health Professionals',
+    tagline: 'The flagship course for psychiatrists, psychologists, therapists & counsellors.',
+    body: 'Serenest Academy’s best course for working clinicians — assessment, evidence-based care, telepsychiatry, documentation, and measurement-based practice.',
+    overview:
+      'Our flagship program for practicing mental health professionals. Build clinical excellence across assessment, formulation, evidence-based interventions, telepsychiatry, documentation, ethics, and measurement-based care — designed for real Indian practice, free for approved Serenest professionals.',
+    metrics: [
+      { top: '12', sub: 'Weeks' },
+      { top: '8', sub: 'Clinical Modules' },
+      { top: 'Certificate', sub: 'Included' },
+    ],
+    highlights: [
+      'Flagship for practicing clinicians',
+      'Free for Serenest professionals',
+      'Case-based + live supervision',
+      'Certificate of completion',
+    ],
+    ctaLabel: 'Start Clinical Excellence',
+    learn: [
+      'Structured psychiatric & psychological assessment for common presentations',
+      'Case formulation and treatment planning you can use the same week',
+      'Evidence-based approaches for depression, anxiety, ADHD, OCD, and sleep',
+      'Measurement-based care with PHQ-9, GAD-7, and outcome tracking',
+      'Telepsychiatry excellence: consent, rapport, safety, and continuity online',
+      'SOAP notes, clinical documentation, and prescription-ready workflows',
+      'Risk assessment, escalation, and crisis boundaries in remote care',
+      'Ethics, confidentiality, DPDP-aware practice, and professional conduct',
+      'Peer case discussions and optional 1:1 clinical supervision',
+    ],
+    forWho: [
+      'Psychiatrists and psychiatry residents',
+      'Clinical psychologists and psychotherapists',
+      'Counsellors and therapists in active practice',
+      'Approved Serenest professionals (included free)',
+    ],
+    format: 'Online · 12 weeks · Self-paced modules + live case rounds · Certificate on completion',
+  },
+  {
     slug: 'student-training',
     category: 'Career Entry',
-    iconName: 'cap', accent: 'green', popular: true,
+    iconName: 'cap', accent: 'green',
     title: 'Student Training',
     subtitle: 'For Psychology, Psychiatry & Mental Health Students',
     tagline: 'For Psychology, Psychiatry & Mental Health students.',
@@ -238,6 +279,9 @@ export const ACADEMY_PROGRAMS = [
 ];
 
 export const PROGRAMS_BY_SLUG = Object.fromEntries(ACADEMY_PROGRAMS.map((p) => [p.slug, p]));
+
+/** Flagship course(s) featured above the category grid. */
+export const FEATURED_PROGRAMS = ACADEMY_PROGRAMS.filter((p) => p.featured);
 
 export const ACADEMY_CATEGORIES = [
   { label: 'Career Entry', tagline: 'Start strong. Build your foundation.' },

@@ -32,6 +32,8 @@ export const SITE_GUIDE_ROUTES = [
 
   { path: '/academy', label: 'Serenest Academy — literacy, learning, partnerships' },
 
+  { path: '/academy/program/clinical-excellence', label: 'Clinical Excellence — flagship course for practicing mental health professionals (free for Serenest pros)' },
+
   { path: '/academy#tracks', label: 'Academy programmes (pharmacology & psychology overview)' },
 
   { path: '/professionals', label: 'For clinicians — join or partner' },

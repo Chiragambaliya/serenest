@@ -5,7 +5,7 @@ import { ROUTE_SEO } from '../lib/seo';
 import { signOut } from '../lib/useAuth';
 import { useProfessionalAccess } from '../lib/useProfessionalAccess';
 import {
-  ACADEMY_PROGRAMS, ACADEMY_CATEGORIES, ACADEMY_JOURNEY, ACADEMY_STATS,
+  ACADEMY_PROGRAMS, ACADEMY_CATEGORIES, ACADEMY_JOURNEY, ACADEMY_STATS, FEATURED_PROGRAMS,
 } from '../lib/academyPrograms';
 import EdIcon from '../components/EdIcon';
 import AcademyGuide from '../components/AcademyGuide';
@@ -20,6 +20,7 @@ const FACULTY = [
 ];
 
 const CERTIFICATIONS = [
+  { title: 'Clinical Excellence Certificate', duration: '12 weeks', level: 'Flagship', modules: 8, accent: 'teal', icon: '🏅', href: '/academy/program/clinical-excellence' },
   { title: 'Certificate in Counselling Skills', duration: '6 weeks', level: 'Foundation', modules: 12, accent: 'purple', icon: '🎓' },
   { title: 'Certificate in Clinical Psychology', duration: '8 weeks', level: 'Intermediate', modules: 16, accent: 'green', icon: '🧠' },
   { title: 'Certificate in Digital Mental Health', duration: '4 weeks', level: 'Foundation', modules: 8, accent: 'teal', icon: '💻' },
@@ -80,6 +81,10 @@ const FAQ = [
   {
     q: 'How do I enrol?',
     a: 'Create a Serenest Academy account, choose your program, and follow the enrollment steps. Some programs have specific entry requirements listed on their detail page.',
+  },
+  {
+    q: 'What is the best Academy course for practicing professionals?',
+    a: 'Clinical Excellence is our flagship course for psychiatrists, psychologists, therapists, and counsellors — assessment, evidence-based care, telepsychiatry, documentation, and measurement-based practice. Approved Serenest professionals get it free.',
   },
   {
     q: 'Is Academy free for Serenest professionals?',
@@ -193,11 +198,11 @@ export default function AcademyPage() {
                 </div>
               ) : null}
               <div className="eda-hero-actions">
-                <a className="eda-btn eda-btn-primary eda-btn-lg" href="#programs">
-                  Explore Programs
-                </a>
-                <a className="eda-btn eda-btn-outline eda-btn-lg" href={INSTRUCTOR_MAILTO}>
-                  Become an Instructor
+                <Link className="eda-btn eda-btn-primary eda-btn-lg" to="/academy/program/clinical-excellence">
+                  Flagship: Clinical Excellence
+                </Link>
+                <a className="eda-btn eda-btn-outline eda-btn-lg" href="#programs">
+                  All programs
                 </a>
               </div>
               <div className="eda-hero-stats" aria-label="Academy at a glance">
@@ -212,18 +217,18 @@ export default function AcademyPage() {
 
             {/* Floating card */}
             <aside className="eda-hero-card" aria-label="Live programs preview">
-              <div className="eda-hcard-badge">Live Programs</div>
+              <div className="eda-hcard-badge">Flagship + Live Programs</div>
               <div className="eda-hcard-list">
                 {ACADEMY_PROGRAMS.slice(0, 4).map((p) => (
-                  <div key={p.slug} className="eda-hcard-item">
+                  <Link key={p.slug} className="eda-hcard-item" to={`/academy/program/${p.slug}`}>
                     <span className={`eda-hcard-dot eda-acc-${p.accent}`} aria-hidden="true" />
                     <span className="eda-hcard-title">{p.title}</span>
-                    <span className="eda-hcard-level">{p.category}</span>
-                  </div>
+                    <span className="eda-hcard-level">{p.featured ? 'Flagship' : p.category}</span>
+                  </Link>
                 ))}
-                <div className="eda-hcard-more" aria-hidden="true">
+                <a className="eda-hcard-more" href="#programs">
                   +{ACADEMY_PROGRAMS.length - 4} more programs →
-                </div>
+                </a>
               </div>
             </aside>
 
@@ -308,6 +313,36 @@ export default function AcademyPage() {
               From student to specialist — structured programs at every stage of your journey.
             </p>
           </div>
+
+          {FEATURED_PROGRAMS.map((p) => (
+            <article key={p.slug} className="eda-flagship">
+              <div className="eda-flagship-copy">
+                <p className="eda-flagship-kicker">Best for practicing professionals</p>
+                <h3 className="eda-flagship-title">{p.title}</h3>
+                <p className="eda-flagship-lead">{p.overview}</p>
+                <ul className="eda-flagship-points">
+                  {(p.highlights || []).map((h) => (
+                    <li key={h}>{h}</li>
+                  ))}
+                </ul>
+                <div className="eda-flagship-actions">
+                  <Link className="eda-btn eda-btn-primary" to={`/academy/program/${p.slug}`}>
+                    {p.ctaLabel} →
+                  </Link>
+                  <span className="eda-flagship-meta">{p.format}</span>
+                </div>
+              </div>
+              <div className="eda-flagship-side" aria-label="Course snapshot">
+                {p.metrics.map((m) => (
+                  <div key={m.sub} className="eda-flagship-metric">
+                    <span className="eda-flagship-metric-top">{m.top}</span>
+                    <span className="eda-flagship-metric-sub">{m.sub}</span>
+                  </div>
+                ))}
+                <p className="eda-flagship-free">Free for approved Serenest professionals</p>
+              </div>
+            </article>
+          ))}
 
           {/* Learning journey roadmap */}
           <div className="eda-roadmap" role="list" aria-label="Learning journey">
@@ -408,7 +443,11 @@ export default function AcademyPage() {
                   <span>⏱ {c.duration}</span>
                   <span>📖 {c.modules} modules</span>
                 </div>
-                <a href="#programs" className="eda-cert-cta">View program →</a>
+                {c.href ? (
+                  <Link to={c.href} className="eda-cert-cta">View program →</Link>
+                ) : (
+                  <a href="#programs" className="eda-cert-cta">View program →</a>
+                )}
               </div>
             ))}
           </div>

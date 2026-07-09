@@ -86,10 +86,10 @@ export const ROUTE_SEO = {
   '/academy': {
     title: 'Serenest Academy | Mental Health Literacy & Learning India',
     description:
-      'Serenest Academy programs for psychology, psychiatry, and counselling. Free for approved Serenest professionals; open enrollment for learners across India.',
-    ogTitle: 'Serenest Academy | Free for Serenest Professionals',
+      'Flagship Clinical Excellence course for practicing professionals, plus certificates and fellowships. Free for approved Serenest professionals.',
+    ogTitle: 'Serenest Academy | Clinical Excellence Flagship Course',
     ogDescription:
-      'Clinician-led learning programmes — included free for approved Serenest professionals.',
+      'Best course for mental health professionals — assessment, telepsychiatry, documentation, and measurement-based care. Free for Serenest pros.',
   },
   '/professionals': {
     title: 'For Mental Health Professionals | Join Serenest | India',
