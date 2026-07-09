@@ -10,8 +10,6 @@ export const SITE_GUIDE_ROUTES = [
 
   { path: '/', label: 'Home — overview and main CTAs' },
 
-  { path: '/ai', label: 'Serenest AI Care Navigator — ask for the right next step' },
-
   { path: '/book', label: 'Book an online psychiatry or counselling appointment' },
 
   { path: '/screening', label: 'Self-screening (PHQ-9 & GAD-7) — not a diagnosis' },
