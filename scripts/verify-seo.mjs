@@ -28,6 +28,7 @@ const ROUTES_200 = [
   '/pricing',
   '/book',
   '/screening',
+  '/ai',
   '/team',
   '/about',
   '/faq',
