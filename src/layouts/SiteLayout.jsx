@@ -35,6 +35,7 @@ const NAV_GROUPS = [
       { to: '/professionals/apply',      label: 'Join Serenest',  desc: 'Apply to practice with us' },
       { to: '/professionals/portal',     label: 'My profile',     desc: 'Sign in to manage your listing' },
       { to: '/professionals/learning',   label: 'Learning Hub',   desc: 'CPD, CME & clinical training' },
+      { to: '/academy',                  label: 'Academy · Free', desc: 'Free for Serenest professionals' },
       { to: '/professionals/resources',  label: 'Resources',      desc: 'Clinical tools & templates' },
       { to: '/professionals/guidelines', label: 'Guidelines',     desc: 'Practice standards & compliance' },
     ],
@@ -276,6 +277,7 @@ export default function SiteLayout() {
                 <Link to="/professionals/apply"      className="menu-link" onClick={() => setMenuOpen(false)}>Join Serenest</Link>
                 <Link to="/professionals/portal"     className="menu-link" onClick={() => setMenuOpen(false)}>My profile</Link>
                 <Link to="/professionals/learning"   className="menu-link" onClick={() => setMenuOpen(false)}>Learning Hub</Link>
+                <Link to="/academy"                  className="menu-link" onClick={() => setMenuOpen(false)}>Academy · Free for professionals</Link>
                 <Link to="/professionals/resources"  className="menu-link" onClick={() => setMenuOpen(false)}>Resources</Link>
                 <Link to="/professionals/guidelines" className="menu-link" onClick={() => setMenuOpen(false)}>Guidelines</Link>
               </div>
@@ -391,7 +393,7 @@ export default function SiteLayout() {
               <div>
                 <div className="footer-title2">Academy</div>
                 <nav className="footer-nav2" aria-label="Academy links">
-                  <Link to="/academy"><EdIcon name="cap" size={17} /> Courses</Link>
+                  <Link to="/academy"><EdIcon name="cap" size={17} /> Academy · Free for pros</Link>
                   <Link to="/professionals/learning"><EdIcon name="book" size={17} /> Clinician learning</Link>
                   <Link to="/professionals/resources"><EdIcon name="folder" size={17} /> Resources</Link>
                   <Link to="/professionals/guidelines"><EdIcon name="folder" size={17} /> Guidelines</Link>

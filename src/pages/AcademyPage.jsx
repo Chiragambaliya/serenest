@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
-import { useAuth, signOut } from '../lib/useAuth';
+import { signOut } from '../lib/useAuth';
+import { useProfessionalAccess } from '../lib/useProfessionalAccess';
 import {
   ACADEMY_PROGRAMS, ACADEMY_CATEGORIES, ACADEMY_JOURNEY, ACADEMY_STATS,
 } from '../lib/academyPrograms';
@@ -80,6 +81,10 @@ const FAQ = [
     q: 'How do I enrol?',
     a: 'Create a Serenest Academy account, choose your program, and follow the enrollment steps. Some programs have specific entry requirements listed on their detail page.',
   },
+  {
+    q: 'Is Academy free for Serenest professionals?',
+    a: 'Yes. Approved Serenest professionals get full Academy access at no charge — sign in with your professional email and enroll without a program fee. External learners may still request seats through the usual enrollment flow.',
+  },
 ];
 
 const WHY_ITEMS = [
@@ -122,8 +127,13 @@ const TYPE_COLORS = {
 /* ── Page ────────────────────────────────────────────────────────── */
 export default function AcademyPage() {
   useSEO({ path: '/academy', ...ROUTE_SEO['/academy'] });
-  const { user } = useAuth();
-  const firstName = (user?.user_metadata?.full_name || user?.email || '').split(/[\s@]/)[0];
+  const { user, professional, isProfessional } = useProfessionalAccess();
+  const firstName = (
+    professional?.full_name
+    || user?.user_metadata?.full_name
+    || user?.email
+    || ''
+  ).split(/[\s@]/)[0];
 
   const [liveContent, setLiveContent] = useState([]);
   useEffect(() => {
@@ -176,6 +186,12 @@ export default function AcademyPage() {
                 Clinician-led programs in psychology, psychiatry, counselling, and digital mental
                 health — from foundational certificates to advanced fellowships.
               </p>
+              {isProfessional ? (
+                <div className="eda-pro-free-banner" role="status">
+                  <strong>Free for Serenest professionals.</strong>{' '}
+                  Your approved practice account includes Academy at no charge — explore programs and request a free seat.
+                </div>
+              ) : null}
               <div className="eda-hero-actions">
                 <a className="eda-btn eda-btn-primary eda-btn-lg" href="#programs">
                   Explore Programs

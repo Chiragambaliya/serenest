@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link, useParams, Navigate } from 'react-router-dom';
 import { PROGRAMS_BY_SLUG, ACADEMY_PROGRAMS } from '../lib/academyPrograms';
-import { useAuth } from '../lib/useAuth';
+import { useProfessionalAccess } from '../lib/useProfessionalAccess';
 import { useSEO } from '../lib/useSEO';
 
 export default function AcademyProgramPage() {
   const { slug } = useParams();
   const program = PROGRAMS_BY_SLUG[slug];
-  const { user } = useAuth();
+  const { user, isProfessional } = useProfessionalAccess();
 
   useSEO({
     path: `/academy/program/${slug}`,
@@ -18,7 +18,13 @@ export default function AcademyProgramPage() {
   if (!program) return <Navigate to="/academy" replace />;
 
   const related = ACADEMY_PROGRAMS.filter((p) => p.slug !== program.slug).slice(0, 3);
-  const enquiry = `mailto:support@serenest.in?subject=${encodeURIComponent(`Serenest Academy — ${program.title}`)}`;
+  const enquirySubject = isProfessional
+    ? `Serenest Academy FREE seat — ${program.title}`
+    : `Serenest Academy — ${program.title}`;
+  const enquiry = `mailto:support@serenest.in?subject=${encodeURIComponent(enquirySubject)}`;
+  const enrollLabel = isProfessional
+    ? 'Claim free seat'
+    : 'Enroll — request a seat';
 
   return (
     <div className="ed-page">
@@ -32,9 +38,14 @@ export default function AcademyProgramPage() {
           </div>
           <h1 className="ed-hero-title">{program.title}</h1>
           <p className="ed-hero-lead">{program.overview}</p>
+          {isProfessional ? (
+            <p className="muted" style={{ marginBottom: 16, maxWidth: 36 * 16 }}>
+              <strong style={{ color: 'var(--ed-ink, #0F172A)' }}>Included free</strong> with your Serenest professional account — no program fee.
+            </p>
+          ) : null}
           <div className="ed-hero-actions">
             {user ? (
-              <a className="btn btn-primary btn-lg" href={enquiry}>Enroll — request a seat</a>
+              <a className="btn btn-primary btn-lg" href={enquiry}>{enrollLabel}</a>
             ) : (
               <Link className="btn btn-primary btn-lg" to="/academy/login">Log in to enroll</Link>
             )}
