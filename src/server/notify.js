@@ -488,6 +488,46 @@ export const notify = {
     fire(sendTeamWhatsApp(`Serenest — AI Guide opened\nPage: ${p}`));
   },
 
+  /**
+   * Appointment reminder (~24h before a confirmed session).
+   * Awaited by the reminder cron: resolves true only when the patient email
+   * was accepted by Resend, so the cron can safely mark the reminder as sent
+   * (and retry on the next tick otherwise). The professional's copy is
+   * fire-and-forget — it must not block the patient's reminder flag.
+   */
+  async appointmentReminder(b, { professionalEmail } = {}) {
+    const ref = b.id ? String(b.id).slice(0, 8).toUpperCase() : '';
+    const joinPath = `/consultation/${b.appointment_id || b.id}?mode=${encodeURIComponent(b.mode || 'video')}`;
+    const when = `${b.preferred_date} at ${b.preferred_time}`;
+
+    if (professionalEmail?.trim()) {
+      const proFirst = esc((b.professional_name || 'there').trim().split(/\s+/)[0]);
+      fire(sendPatientEmail({
+        subject: `Reminder: session tomorrow — ${b.preferred_time} (${b.patient_name})`,
+        html:
+          `<p style="margin:0 0 12px">Hi ${proFirst},</p>`
+          + `<p style="margin:0 0 12px">Reminder: you have a <strong>${esc(b.mode)}</strong> session with <strong>${esc(b.patient_name)}</strong> on <strong>${esc(when)}</strong>.</p>`
+          + `<p style="margin:0 0 12px"><a href="https://serenest.in${joinPath}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">Open consultation room</a></p>`
+          + (ref ? `<p style="margin:0;color:#64748b;font-size:13px">Reference: <code style="font-family:monospace">${ref}</code></p>` : ''),
+        to: professionalEmail.trim(),
+      }));
+    }
+
+    const to = b.patient_email?.trim();
+    if (!to) return false;
+    const first = esc((b.patient_name || 'there').trim().split(/\s+/)[0]);
+    return sendPatientEmail({
+      subject: `Reminder: your Serenest session — ${b.preferred_date} at ${b.preferred_time}`,
+      html:
+        `<p style="margin:0 0 12px">Hi ${first},</p>`
+        + `<p style="margin:0 0 12px">A gentle reminder about your upcoming <strong>${esc(b.mode)}</strong> consultation (${esc(b.practitioner_type)}) on <strong>${esc(when)}</strong>.</p>`
+        + `<p style="margin:0 0 12px"><a href="https://serenest.in${joinPath}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">Join your session</a></p>`
+        + `<p style="margin:0 0 12px;font-size:13px;color:#64748b">Please be ready a few minutes early, in a quiet place with a stable connection.${ref ? ` Reference: <code style="font-family:monospace">${ref}</code>.` : ''}</p>`
+        + `<p style="margin:0;font-size:13px;color:#64748b">Need to reschedule? WhatsApp <a href="https://wa.me/917777936367" style="color:#0f766e">+91 77779 36367</a>.</p>`,
+      to,
+    });
+  },
+
   custom(subject, html, opts) {
     fire(sendEmail({ subject, html, ...opts }));
   },
