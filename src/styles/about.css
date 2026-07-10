@@ -1,14 +1,14 @@
 /* ── About page — matches home / services calm clinical ─────── */
 .about-page {
-  --a-ink: #1c2418;
-  --a-muted: rgba(28, 36, 24, 0.62);
-  --a-subtle: rgba(28, 36, 24, 0.45);
-  --a-line: rgba(28, 36, 24, 0.1);
-  --a-sage: #3c4a2c;
-  --a-sage-mid: #57683f;
-  --a-sage-dark: #2a3320;
-  --a-cream: #faf7f1;
-  --a-cream-2: #f1ebe1;
+  --a-ink: var(--ink);
+  --a-muted: var(--muted);
+  --a-subtle: var(--subtle);
+  --a-line: var(--border);
+  --a-sage: var(--teal-800);
+  --a-sage-mid: var(--sage-deep);
+  --a-sage-dark: var(--teal-900);
+  --a-cream: var(--palette-cream-light);
+  --a-cream-2: var(--palette-sage-light);
   --a-white: #ffffff;
   --a-radius: 1.125rem;
   --a-section: clamp(4rem, 8vw, 5.5rem);

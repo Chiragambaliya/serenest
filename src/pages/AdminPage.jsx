@@ -219,9 +219,9 @@ const SITE_PAGE_GROUPS = [
     title: 'Professionals hub',
     pages: [
       { label: 'For professionals', path: '/professionals', hint: 'Clinician landing' },
-      { label: 'Clinician learning', path: '/professionals/learning', hint: 'All modules' },
-      { label: 'Learning — pharmacology', path: '/professionals/learning#learning-pharmacology', hint: 'Deep link' },
-      { label: 'Learning — psychology', path: '/professionals/learning#learning-psychology', hint: 'Deep link' },
+      { label: 'Academy learning hub', path: '/academy/learn', hint: 'Pharmacology & psychology tracks' },
+      { label: 'Learning — pharmacology', path: '/academy/learn#learning-pharmacology', hint: 'Deep link' },
+      { label: 'Learning — psychology', path: '/academy/learn#learning-psychology', hint: 'Deep link' },
       { label: 'Pro resources', path: '/professionals/resources', hint: 'Downloads & links' },
       { label: 'Clinical guidelines', path: '/professionals/guidelines', hint: 'Practice expectations' },
       { label: 'Apply as professional', path: '/professionals/apply', hint: 'Onboarding wizard' },
@@ -234,7 +234,7 @@ const SITE_PAGE_GROUPS = [
       { label: 'Academy → tracks', path: '/academy#tracks', hint: 'Anchor: programmes overview' },
       { label: 'Academy → audiences', path: '/academy#audiences', hint: 'Public / clinicians / orgs' },
       { label: 'Academy → contact', path: '/academy#contact', hint: 'Partnerships & collaboration' },
-      { label: 'Academy → learn (legacy redirect)', path: '/academy/learn', hint: 'Redirects to /professionals/learning' },
+      { label: 'Academy → learning hub', path: '/academy/learn', hint: 'Clinician pharmacology & psychology tracks' },
     ],
   },
   {

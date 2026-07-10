@@ -679,6 +679,29 @@ app.get('/api/professionals/directory', async (req, res) => {
   return ok(res, { professionals: data ?? [] });
 });
 
+/**
+ * GET /api/professionals/verify?email= — is this email a joined (approved) professional?
+ * Used to gate Academy clinician content. Returns only a boolean, no profile data.
+ */
+app.get('/api/professionals/verify', async (req, res) => {
+  if (!requireDb(res)) return;
+
+  const email = String(req.query.email ?? '').trim().toLowerCase();
+  if (!email) return err(res, 'email is required');
+
+  const { count, error } = await supabase
+    .from('professional_applications')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'approved')
+    .ilike('email', email);
+
+  if (error) {
+    console.error('[GET /api/professionals/verify]', error);
+    return err(res, 'Failed to verify professional', 500);
+  }
+  return ok(res, { joined: (count ?? 0) > 0 });
+});
+
 /** GET /api/professionals/list — all approved professionals with booking counts */
 app.get('/api/professionals/list', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;

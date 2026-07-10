@@ -2,6 +2,7 @@ import React, { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import SiteLayout from './layouts/SiteLayout';
 import RequireAcademyAuth from './components/RequireAcademyAuth';
+import RequireJoinedProfessional from './components/RequireJoinedProfessional';
 import { trackVisit } from './lib/visitTracker';
 import { captureUtm } from './lib/utm';
 import CookieConsent from './components/CookieConsent';
@@ -122,7 +123,7 @@ export default function App() {
           <Route path="team" element={<S><TeamPage /></S>} />
           <Route path="services" element={<S><ServicesPage /></S>} />
           <Route path="professionals" element={<S><ProfessionalsPage /></S>} />
-          <Route path="professionals/learning" element={<S><ProfessionalLearningPage /></S>} />
+          <Route path="professionals/learning" element={<Navigate to="/academy/learn" replace />} />
           <Route path="professionals/resources" element={<S><ProfessionalResourcesPage /></S>} />
           <Route path="professionals/guidelines" element={<S><ProfessionalGuidelinesPage /></S>} />
           <Route path="professionals/apply" element={<S><ProfessionalOnboardingPage /></S>} />
@@ -169,23 +170,18 @@ export default function App() {
           <Route path="gad-7-anxiety-screening" element={<S><Gad7Page /></S>} />
           <Route path="online-psychiatrist-prescription-india" element={<S><OnlinePrescriptionPage /></S>} />
 
-          {/* Serenest Academy — literacy/learning surface, merged in from the
-              former standalone education-site. /academy/learn redirects to the
-              clinician learning hub so old Academy deep-links keep working. */}
+          {/* Serenest Academy — literacy + clinician learning hub */}
           <Route path="academy" element={<S><RequireAcademyAuth><AcademyPage /></RequireAcademyAuth></S>} />
           <Route path="academy/login" element={<S><AcademyAuthPage /></S>} />
           <Route path="academy/program/:slug" element={<S><RequireAcademyAuth><AcademyProgramPage /></RequireAcademyAuth></S>} />
-          <Route
-            path="academy/learn"
-            element={<Navigate to="/professionals/learning" replace />}
-          />
+          <Route path="academy/learn" element={<S><RequireJoinedProfessional><ProfessionalLearningPage /></RequireJoinedProfessional></S>} />
           <Route
             path="academy/learn/pharmacology"
-            element={<Navigate to="/professionals/learning#learning-pharmacology" replace />}
+            element={<Navigate to="/academy/learn#learning-pharmacology" replace />}
           />
           <Route
             path="academy/learn/psychology"
-            element={<Navigate to="/professionals/learning#learning-psychology" replace />}
+            element={<Navigate to="/academy/learn#learning-psychology" replace />}
           />
 
 

@@ -20,8 +20,8 @@ export default function ProfessionalResourcesPage() {
               <Link className="btn btn-primary" to="/professionals/apply">
                 Apply to join →
               </Link>
-              <Link className="btn btn-ghost" to="/professionals/learning">
-                Learning hub →
+              <Link className="btn btn-ghost" to="/academy/learn">
+                Academy learning hub →
               </Link>
             </div>
           </div>
@@ -55,12 +55,12 @@ export default function ProfessionalResourcesPage() {
                 Looking for CME-style deep dives?
               </h2>
               <p className="muted" style={{ margin: '6px 0 0' }}>
-                Start with the learning hub for curated clinical reads aligned with Serenest workflows.
+                Start with the Academy learning hub for curated clinical reads aligned with Serenest workflows.
               </p>
             </div>
             <div className="stack about-cta-actions">
-              <Link className="btn btn-primary btn-full" to="/professionals/learning">
-                Open learning hub →
+              <Link className="btn btn-primary btn-full" to="/academy/learn">
+                Open Academy learning hub →
               </Link>
               <Link className="btn btn-ghost btn-full" to="/professionals/guidelines">
                 Compliance guidelines →

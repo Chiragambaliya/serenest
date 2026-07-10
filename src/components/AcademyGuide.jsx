@@ -73,7 +73,7 @@ export default function AcademyGuide() {
             </p>
             <ul className="ed-guide-points">
               <li>Articles, blog, and public mental health literacy</li>
-              <li>Clinician pharmacology &amp; psychology learning paths</li>
+              <li>Clinician pharmacology &amp; psychology tracks in the Academy learning hub</li>
               <li>School, college &amp; workplace partnership conversations</li>
             </ul>
             {guideOnline === false ? (

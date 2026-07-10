@@ -1,14 +1,14 @@
 /* ── Professionals page — calm clinical to match home/services/about/team ── */
 .pros-page {
-  --pr-ink: #1c2418;
-  --pr-muted: rgba(28, 36, 24, 0.62);
-  --pr-subtle: rgba(28, 36, 24, 0.45);
-  --pr-line: rgba(28, 36, 24, 0.1);
-  --pr-sage: #3c4a2c;
-  --pr-sage-mid: #57683f;
-  --pr-sage-dark: #2a3320;
-  --pr-cream: #faf7f1;
-  --pr-cream-2: #f1ebe1;
+  --pr-ink: var(--ink);
+  --pr-muted: var(--muted);
+  --pr-subtle: var(--subtle);
+  --pr-line: var(--border);
+  --pr-sage: var(--teal-800);
+  --pr-sage-mid: var(--sage-deep);
+  --pr-sage-dark: var(--teal-900);
+  --pr-cream: var(--palette-cream-light);
+  --pr-cream-2: var(--palette-sage-light);
   --pr-white: #ffffff;
   --pr-radius: 1.125rem;
   --pr-section: clamp(4rem, 8vw, 5.5rem);

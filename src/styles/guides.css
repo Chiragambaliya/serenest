@@ -1,12 +1,12 @@
 /* ── Guides index (/guides) ─────────────────────────────────── */
 .guides {
-  --g-ink: #1c2418;
-  --g-muted: rgba(28, 36, 24, 0.62);
-  --g-line: rgba(28, 36, 24, 0.1);
-  --g-sage: #3c4a2c;
-  --g-sage-dark: #2a3320;
-  --g-cream: #faf7f1;
-  --g-cream-2: #f1ebe1;
+  --g-ink: var(--ink);
+  --g-muted: var(--muted);
+  --g-line: var(--border);
+  --g-sage: var(--teal-800);
+  --g-sage-dark: var(--teal-900);
+  --g-cream: var(--palette-cream-light);
+  --g-cream-2: var(--palette-sage-light);
   --g-white: #ffffff;
   --g-radius: 1.125rem;
   --g-shadow: 0 1px 2px rgba(28, 36, 24, 0.04), 0 12px 32px rgba(28, 36, 24, 0.06);

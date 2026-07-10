@@ -1,14 +1,14 @@
 /* ── Pricing page — calm clinical to match home/services/about/team ── */
 .pricing-page {
-  --p-ink: #1c2418;
-  --p-muted: rgba(28, 36, 24, 0.62);
-  --p-subtle: rgba(28, 36, 24, 0.45);
-  --p-line: rgba(28, 36, 24, 0.1);
-  --p-sage: #3c4a2c;
-  --p-sage-mid: #57683f;
-  --p-sage-dark: #2a3320;
-  --p-cream: #faf7f1;
-  --p-cream-2: #f1ebe1;
+  --p-ink: var(--ink);
+  --p-muted: var(--muted);
+  --p-subtle: var(--subtle);
+  --p-line: var(--border);
+  --p-sage: var(--teal-800);
+  --p-sage-mid: var(--sage-deep);
+  --p-sage-dark: var(--teal-900);
+  --p-cream: var(--palette-cream-light);
+  --p-cream-2: var(--palette-sage-light);
   --p-white: #ffffff;
   --p-radius: 1.125rem;
   --p-section: clamp(4rem, 8vw, 5.5rem);

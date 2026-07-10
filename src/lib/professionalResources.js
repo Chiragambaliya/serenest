@@ -85,7 +85,7 @@ export const PROFESSIONAL_RESOURCES = [
     icon: '📎',
     title: 'Brand one-pager (sample PDF link)',
     summary:
-      'Same mechanism as the learning hub: host your real PDF in Storage, then point `href` here.',
+      'Same mechanism as the Academy learning hub: host your real PDF in Storage, then point `href` here.',
     pill: 'PDF',
     kind: 'pdf',
     href: 'https://www.w3.org/WAI/WCAG21/working-examples/pdf-note/note.pdf',

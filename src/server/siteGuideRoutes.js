@@ -36,13 +36,13 @@ export const SITE_GUIDE_ROUTES = [
 
   { path: '/academy#tracks', label: 'Academy programmes (pharmacology & psychology overview)' },
 
+  { path: '/academy/learn', label: 'Academy learning hub (clinician tracks)' },
+
+  { path: '/academy/learn#learning-pharmacology', label: 'Pharmacology learning track' },
+
+  { path: '/academy/learn#learning-psychology', label: 'Psychology learning track' },
+
   { path: '/professionals', label: 'For clinicians — join or partner' },
-
-  { path: '/professionals/learning', label: 'Clinician learning hub' },
-
-  { path: '/professionals/learning#learning-pharmacology', label: 'Pharmacology learning track' },
-
-  { path: '/professionals/learning#learning-psychology', label: 'Psychology learning track' },
 
   { path: '/professionals/resources', label: 'Professional resources and downloads' },
 

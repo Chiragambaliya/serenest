@@ -178,7 +178,7 @@ export default function ProfessionalsPage() {
           <div className="pros-hub">
             {[
               { tag: 'Academy',    title: 'Serenest Academy · Free', body: 'Approved professionals get Academy programs at no charge — certificates, CPD, and fellowships included.', href: '/academy', cta: 'Open Academy free' },
-              { tag: 'Learning',   title: 'Learning hub',  body: 'Clinical framing, pharmacology, and platform training for clinicians and trainees.', href: '/professionals/learning', cta: 'Explore learning' },
+              { tag: 'Learning',   title: 'Learning hub',  body: 'Clinical framing, pharmacology, and platform training for clinicians and trainees.', href: '/academy/learn', cta: 'Explore learning' },
               { tag: 'Resources',  title: 'Resources',     body: 'Handouts, template requests, ops checklists, and partnership decks ready to share.',  href: '/professionals/resources', cta: 'Browse resources' },
               { tag: 'Guidelines', title: 'Guidelines',    body: 'Telemedicine, privacy, and prescribing — orientation, not legal advice.',              href: '/professionals/guidelines', cta: 'Read guidelines' },
             ].map((item) => (

@@ -1,14 +1,14 @@
 /* ── Team page — calm clinical to match home/services/about ── */
 .team-page {
-  --t-ink: #1c2418;
-  --t-muted: rgba(28, 36, 24, 0.62);
-  --t-subtle: rgba(28, 36, 24, 0.45);
-  --t-line: rgba(28, 36, 24, 0.1);
-  --t-sage: #3c4a2c;
-  --t-sage-mid: #57683f;
-  --t-sage-dark: #2a3320;
-  --t-cream: #faf7f1;
-  --t-cream-2: #f1ebe1;
+  --t-ink: var(--ink);
+  --t-muted: var(--muted);
+  --t-subtle: var(--subtle);
+  --t-line: var(--border);
+  --t-sage: var(--teal-800);
+  --t-sage-mid: var(--sage-deep);
+  --t-sage-dark: var(--teal-900);
+  --t-cream: var(--palette-cream-light);
+  --t-cream-2: var(--palette-sage-light);
   --t-white: #ffffff;
   --t-radius: 1.125rem;
   --t-section: clamp(4rem, 8vw, 5.5rem);

@@ -80,6 +80,9 @@ export const professionals = {
 
   /** Public directory: approved professionals (sanitized fields). */
   directory: () => get('/api/professionals/directory'),
+
+  /** Is this email a joined (approved) professional? Gates Academy clinician content. */
+  verify: (email) => get(`/api/professionals/verify?email=${encodeURIComponent(email)}`),
 };
 
 // ── Video rooms ──────────────────────────────────────────────

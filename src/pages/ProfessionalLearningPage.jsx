@@ -48,13 +48,14 @@ export default function ProfessionalLearningPage() {
       <section className="section about-hero">
         <div className="container">
           <div className="section-head about-hero-head">
-            <p className="kicker">For Professionals</p>
+            <p className="kicker">Serenest Academy</p>
             <h1 className="page-title">Learning hub — pharmacology &amp; psychology tracks</h1>
             <p className="about-subtext">
-              Materials are grouped into two tracks: <strong>{LEARNING_TRACK_LABELS.pharmacology}</strong>{' '}
-              (prescribing, documentation, telemedicine norms, continuity) and{' '}
-              <strong>{LEARNING_TRACK_LABELS.psychology}</strong> (assessment tools, psychoeducation, behavioural
-              health topics). Use <strong>Mark done</strong> to track progress on this device.
+              Part of Serenest Academy. Materials are grouped into two tracks:{' '}
+              <strong>{LEARNING_TRACK_LABELS.pharmacology}</strong> (prescribing, documentation, telemedicine
+              norms, continuity) and <strong>{LEARNING_TRACK_LABELS.psychology}</strong> (assessment tools,
+              psychoeducation, behavioural health topics). Use <strong>Mark done</strong> to track progress on
+              this device.
             </p>
             {trackableCount > 0 ? (
               <p className="fineprint" style={{ marginTop: 10, maxWidth: '52ch' }}>
@@ -68,17 +69,14 @@ export default function ProfessionalLearningPage() {
               <a className="btn btn-ghost" href="#learning-psychology">
                 {LEARNING_TRACK_LABELS.psychology} →
               </a>
+              <Link className="btn btn-ghost" to="/academy">
+                ← Academy home
+              </Link>
               <Link className="btn btn-ghost" to="/professionals/apply">
                 Apply to join →
               </Link>
               <Link className="btn btn-ghost" to="/professionals/resources">
                 Resources →
-              </Link>
-              <Link className="btn btn-ghost" to="/professionals/guidelines">
-                Guidelines →
-              </Link>
-              <Link className="btn btn-ghost" to="/professionals">
-                ← Overview
               </Link>
             </div>
           </div>

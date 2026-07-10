@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import { useSectionReveal } from '../hooks/useReveal';
 
 const HERO_NAV = [
   { label: 'Sessions', href: '#plans' },
@@ -149,9 +150,10 @@ function FaqItem({ q, a }) {
 
 export default function PricingPage() {
   useSEO({ path: '/pricing', ...ROUTE_SEO['/pricing'] });
+  const revealRef = useSectionReveal();
 
   return (
-    <div className="pricing-page">
+    <div className="pricing-page" ref={revealRef}>
       <section className="pr-hero">
         <div className="container pr-hero__inner">
           <p className="pr-eyebrow">Pricing · Pan-India</p>

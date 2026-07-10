@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import { useSectionReveal } from '../hooks/useReveal';
 
 const HERO_NAV = [
   { label: 'Clinical care', href: '#core-services' },
@@ -93,15 +94,15 @@ const ACADEMY_SERVICES = [
     title: 'Clinician pharmacology',
     body: 'Telemedicine norms, prescribing, and Rx workflow for prescribers and trainees.',
     features: ['Telemedicine guidelines context', 'SOAP and documentation', 'Continuity of care'],
-    href: '/professionals/learning#learning-pharmacology',
+    href: '/academy/learn#learning-pharmacology',
     cta: 'Pharmacology track',
   },
   {
     tag: 'Psychology',
     title: 'Clinician psychology',
-    body: 'Assessment tools, psychoeducation, and carer skills on the learning hub.',
+    body: 'Assessment tools, psychoeducation, and carer skills in the Academy learning hub.',
     features: ['PHQ-9 / GAD-7 in practice', 'Psychoeducation modules', 'Stigma-aware communication'],
-    href: '/professionals/learning#learning-psychology',
+    href: '/academy/learn#learning-psychology',
     cta: 'Psychology track',
   },
   {
@@ -239,9 +240,10 @@ function ServiceCard({ tag, badge, title, lead, detail, included, forWho, price,
 
 export default function ServicesPage() {
   useSEO({ path: '/services', ...ROUTE_SEO['/services'] });
+  const revealRef = useSectionReveal();
 
   return (
-    <div className="services-page">
+    <div className="services-page" ref={revealRef}>
       <section className="svc-hero">
         <div className="container svc-hero__inner">
           <p className="svc-eyebrow">Serenest · Pan-India</p>
@@ -319,7 +321,7 @@ export default function ServicesPage() {
             </div>
             <ul className="svc-academy__links">
               <li><Link to="/guides">Patient guides</Link></li>
-              <li><Link to="/professionals/learning">Clinician learning hub</Link></li>
+              <li><Link to="/academy/learn">Academy learning hub</Link></li>
               <li><Link to="/academy#contact">Partnerships</Link></li>
             </ul>
           </div>

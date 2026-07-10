@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import { useSectionReveal } from '../hooks/useReveal';
 
 const HERO_NAV = [
   { label: 'The gap', href: '#problem' },
@@ -107,9 +108,10 @@ const TRUST = [
 
 export default function AboutPage() {
   useSEO({ path: '/about', ...ROUTE_SEO['/about'] });
+  const revealRef = useSectionReveal();
 
   return (
-    <div className="about-page">
+    <div className="about-page" ref={revealRef}>
       <section className="abt-hero">
         <div className="container abt-hero__inner">
           <p className="abt-eyebrow">About Serenest</p>
