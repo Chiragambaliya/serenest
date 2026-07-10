@@ -21,7 +21,7 @@ export default function HomePage() {
   useEffect(() => {
     if (authLoading || user) return;
     if (localStorage.getItem('serenest_portal_seen')) return;
-    const t = setTimeout(() => setModalOpen(true), 2400);
+    const t = setTimeout(() => setModalOpen(true), 2800);
     return () => clearTimeout(t);
   }, [authLoading, user]);
 
@@ -49,26 +49,50 @@ export default function HomePage() {
         </div>
       ) : null}
 
-      <section className="odd-hero odd-hero-clean">
+      <section className="odd-hero odd-hero-clean odd-hero-cinematic">
         <div className="odd-hero-bg" aria-hidden="true">
-          <img src="/serenest-hero-atmosphere.png" alt="" className="odd-hero-img-anim" />
-          <div className="odd-hero-grain" />
+          <picture>
+            <source
+              type="image/webp"
+              srcSet="/serenest-hero-atmosphere-sm.webp 1280w, /serenest-hero-atmosphere.webp 1920w"
+              sizes="100vw"
+            />
+            <img
+              src="/serenest-hero-atmosphere.jpg"
+              alt=""
+              width={1920}
+              height={1080}
+              decoding="async"
+              fetchPriority="high"
+              className="odd-hero-img-anim"
+            />
+          </picture>
+          <div className="odd-hero-veil" />
+          <div className="odd-hero-glow" />
         </div>
+
         <div className="odd-hero-stage">
-          <p className="odd-hero-brand odd-hero-enter" style={{ '--d': '0ms' }}>Serenest</p>
-          <h1 className="odd-hero-h odd-hero-enter" style={{ '--d': '90ms' }}>
+          <p className="odd-hero-brand odd-hero-enter" style={{ '--d': '40ms' }}>
+            Serenest
+          </p>
+          <h1 className="odd-hero-h odd-hero-enter" style={{ '--d': '140ms' }}>
             Clinical mental health care, online across India.
           </h1>
-          <p className="odd-hero-sub odd-hero-enter" style={{ '--d': '170ms' }}>
+          <p className="odd-hero-sub odd-hero-enter" style={{ '--d': '240ms' }}>
             Verified psychiatrists and psychologists. Private sessions. Care that continues after the first visit.
           </p>
-          <div className="odd-hero-row odd-hero-enter" style={{ '--d': '250ms' }}>
+          <div className="odd-hero-row odd-hero-enter" style={{ '--d': '340ms' }}>
             <Link className="odd-btn odd-btn-light odd-btn-lift" to="/book">Book a session</Link>
             <Link className="odd-btn odd-btn-ghost odd-btn-lift" to="/screening">Take a screening</Link>
           </div>
-          <p className="odd-hero-warn odd-hero-enter" style={{ '--d': '320ms' }}>
+          <p className="odd-hero-warn odd-hero-enter" style={{ '--d': '440ms' }}>
             Not for emergencies. Use local emergency services if you are at immediate risk.
           </p>
+        </div>
+
+        <div className="odd-hero-scroll odd-hero-enter" style={{ '--d': '560ms' }} aria-hidden="true">
+          <span>Scroll</span>
+          <i />
         </div>
       </section>
 
@@ -84,7 +108,7 @@ export default function HomePage() {
                 key={p.to}
                 to={p.to}
                 className="odd-path-card odd-card-lift"
-                style={{ '--stagger': `${i * 80}ms` }}
+                style={{ '--stagger': `${i * 70}ms` }}
                 data-reveal
               >
                 <span className="odd-path-n">0{i + 1}</span>
@@ -104,8 +128,8 @@ export default function HomePage() {
           </header>
           <ul className="odd-why-list">
             <li data-reveal style={{ '--stagger': '0ms' }}>Clinicians are reviewed before they practise here</li>
-            <li data-reveal style={{ '--stagger': '70ms' }}>Sessions are private, with careful clinical records</li>
-            <li data-reveal style={{ '--stagger': '140ms' }}>Follow-ups stay connected after the first visit</li>
+            <li data-reveal style={{ '--stagger': '60ms' }}>Sessions are private, with careful clinical records</li>
+            <li data-reveal style={{ '--stagger': '120ms' }}>Follow-ups stay connected after the first visit</li>
           </ul>
         </div>
       </section>
@@ -121,15 +145,15 @@ export default function HomePage() {
               <strong>Clinical care</strong>
               <span>Psychiatry, therapy, counselling</span>
             </Link>
-            <Link to="/professionals" className="odd-link-row" data-reveal style={{ '--stagger': '60ms' }}>
+            <Link to="/professionals" className="odd-link-row" data-reveal style={{ '--stagger': '50ms' }}>
               <strong>For professionals</strong>
               <span>Join Serenest and practise online</span>
             </Link>
-            <Link to="/academy" className="odd-link-row" data-reveal style={{ '--stagger': '120ms' }}>
+            <Link to="/academy" className="odd-link-row" data-reveal style={{ '--stagger': '100ms' }}>
               <strong>Academy</strong>
               <span>Learning hub for joined clinicians</span>
             </Link>
-            <Link to="/about" className="odd-link-row" data-reveal style={{ '--stagger': '180ms' }}>
+            <Link to="/about" className="odd-link-row" data-reveal style={{ '--stagger': '150ms' }}>
               <strong>About</strong>
               <span>Doctor-led care from Serenest Education Pvt Ltd</span>
             </Link>
@@ -151,7 +175,7 @@ export default function HomePage() {
                   to={g.path}
                   className="odd-guide-clean odd-card-lift"
                   data-reveal
-                  style={{ '--stagger': `${i * 80}ms` }}
+                  style={{ '--stagger': `${i * 70}ms` }}
                 >
                   <h3>{g.title}</h3>
                   <p>{g.description}</p>
