@@ -44,12 +44,34 @@ export const ROUTE_SEO = {
       'Book a confidential online psychiatry or counselling appointment in minutes.',
   },
   '/screening': {
-    title: 'Free PHQ-9 & GAD-7 Mental Health Screening | Serenest',
+    title: 'Mental Health Center — Mood, Anxiety & Stress Checks | Serenest',
     description:
-      'Take a confidential 3-minute self-screening check-in using PHQ-9 and GAD-7 tools. Screening is not a diagnosis.',
-    ogTitle: 'Free PHQ-9 & GAD-7 Self-Screening | Serenest',
+      'Understand how you’ve been feeling with free, validated mental health checks (PHQ-9, GAD-7, stress, ADHD screener, and more). Educational results — not a diagnosis. Part of Serenest Care.',
+    ogTitle: 'Serenest Mental Health Center | Understand Yourself',
     ogDescription:
-      'A confidential 3-minute mental health check-in. Screening is not a diagnosis.',
+      'Human-language mental health checks with education and clear next steps. Screening aids — not diagnoses.',
+  },
+  '/burnout-check': {
+    title: 'Burnout Check (BAT-12) Online India | Serenest Mental Health Center',
+    description:
+      'Free Burnout Check using the validated BAT-12. Understand exhaustion and detachment — education first, not a diagnosis. Private by default.',
+    ogTitle: 'Burnout Check | Serenest',
+    ogDescription:
+      'Clinically responsible burnout self-check with evidence, privacy, and clear next steps — never a sales funnel.',
+  },
+  '/evidence': {
+    title: 'Evidence Center — Mental Health Checks | Serenest',
+    description:
+      'Instruments, validation papers, licensing, and limitations for Serenest Mental Health Checks. Clinical integrity before conversion.',
+    ogTitle: 'Serenest Evidence Center',
+    ogDescription: 'Why each Mental Health Check exists — and what it is not.',
+  },
+  '/evidence/bat-12': {
+    title: 'Burnout Check (BAT-12) — Evidence Report | Serenest',
+    description:
+      'Validation, licensing, scoring bands, and limitations for the Serenest Burnout Check (BAT-12 general). Screening aid — not a diagnosis.',
+    ogTitle: 'BAT-12 Evidence Report | Serenest',
+    ogDescription: 'Official instrument, cut-offs, licensing, and clinical limitations.',
   },
   '/team': {
     title: 'Verified Psychiatrists & Mental Health Professionals | Serenest',
@@ -760,6 +782,55 @@ export const ROUTE_JSONLD = {
   },
   '/pricing': { '@context': 'https://schema.org', '@graph': [ORG_SCHEMA, WEBSITE_SCHEMA] },
   '/book': { '@context': 'https://schema.org', '@graph': [ORG_SCHEMA, WEBSITE_SCHEMA] },
+  '/burnout-check': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        '@type': 'MedicalWebPage',
+        '@id': `${SITE_ORIGIN}/burnout-check#webpage`,
+        url: `${SITE_ORIGIN}/burnout-check`,
+        name: 'Serenest Burnout Check (BAT-12)',
+        description:
+          'Free Burnout Check using the validated BAT-12. Education-first results — not a diagnosis.',
+        inLanguage: 'en-IN',
+        isAccessibleForFree: true,
+      },
+    ],
+  },
+  '/evidence': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        '@type': 'CollectionPage',
+        '@id': `${SITE_ORIGIN}/evidence#webpage`,
+        url: `${SITE_ORIGIN}/evidence`,
+        name: 'Serenest Evidence Center',
+        description:
+          'Instruments, validation papers, licensing, and limitations for Serenest Mental Health Checks.',
+        inLanguage: 'en-IN',
+      },
+    ],
+  },
+  '/evidence/bat-12': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        '@type': 'MedicalWebPage',
+        '@id': `${SITE_ORIGIN}/evidence/bat-12#webpage`,
+        url: `${SITE_ORIGIN}/evidence/bat-12`,
+        name: 'BAT-12 Burnout Check — Evidence Report',
+        description:
+          'Validation, licensing, scoring, and limitations for the Serenest Burnout Check (BAT-12).',
+        inLanguage: 'en-IN',
+      },
+    ],
+  },
   '/screening': {
     '@context': 'https://schema.org',
     '@graph': [
@@ -769,15 +840,16 @@ export const ROUTE_JSONLD = {
         '@type': 'MedicalWebPage',
         '@id': `${SITE_ORIGIN}/screening#webpage`,
         url: `${SITE_ORIGIN}/screening`,
-        name: 'Free PHQ-9 & GAD-7 Mental Health Screening',
+        name: 'Serenest Mental Health Center',
         description:
-          'A confidential 3-minute self-screening check-in using PHQ-9 and GAD-7. This screening is not a diagnosis and does not replace evaluation by a qualified clinician.',
+          'Free validated mental health checks with educational guidance. Screening aids — not diagnoses — and not a replacement for evaluation by a qualified clinician.',
         inLanguage: 'en-IN',
         isAccessibleForFree: true,
         audience: { '@type': 'PeopleAudience', geographicArea: { '@type': 'Country', name: 'India' } },
         about: [
           { '@type': 'MedicalCondition', name: 'Depression' },
           { '@type': 'MedicalCondition', name: 'Anxiety' },
+          { '@type': 'MedicalCondition', name: 'Stress' },
         ],
         medicalAudience: 'Patient',
       },

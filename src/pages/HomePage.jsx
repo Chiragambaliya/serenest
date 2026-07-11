@@ -1,54 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { HOME_FEATURED_GUIDES } from '../lib/guides';
-import { useAuth } from '../lib/useAuth';
 import { useReveal } from '../hooks/useReveal';
 
 const PATHS = [
+  { title: 'Understand yourself', body: 'Short mental health checks — education first, no pressure to book.', to: '/screening' },
   { title: 'Book a session', body: 'Video, audio, or chat with a verified clinician.', to: '/book' },
-  { title: 'Self-screening', body: 'PHQ-9 and GAD-7 before you decide to book.', to: '/screening' },
   { title: 'Find a clinician', body: 'Browse approved professionals by role and language.', to: '/patient/find-professional' },
 ];
 
 export default function HomePage() {
   useSEO({ path: '/', ...ROUTE_SEO['/'] });
-  const { user, loading: authLoading } = useAuth();
-  const [modalOpen, setModalOpen] = useState(false);
   const revealRef = useReveal();
-
-  useEffect(() => {
-    if (authLoading || user) return;
-    if (localStorage.getItem('serenest_portal_seen')) return;
-    const t = setTimeout(() => setModalOpen(true), 2800);
-    return () => clearTimeout(t);
-  }, [authLoading, user]);
-
-  function closeModal() {
-    localStorage.setItem('serenest_portal_seen', '1');
-    setModalOpen(false);
-  }
 
   return (
     <div className="odd odd-clean" ref={revealRef}>
-      {modalOpen ? (
-        <div className="odd-modal-bg" onClick={closeModal} role="presentation">
-          <div className="odd-modal odd-modal-anim" role="dialog" aria-labelledby="odd-portal-title" onClick={(e) => e.stopPropagation()}>
-            <button type="button" className="odd-x" aria-label="Close" onClick={closeModal}>×</button>
-            <p className="odd-eyebrow">Patient portal</p>
-            <h2 id="odd-portal-title">Your care file</h2>
-            <p>Appointments and follow-ups in one place.</p>
-            <div className="odd-modal-actions">
-              <Link to="/patient/login" state={{ mode: 'signup' }} onClick={closeModal} className="odd-btn odd-btn-dark">
-                Create account
-              </Link>
-              <button type="button" className="odd-textlink" onClick={closeModal}>Continue browsing</button>
-            </div>
-          </div>
-        </div>
-      ) : null}
-
       <section className="odd-hero odd-hero-clean odd-hero-cinematic">
         <div className="odd-hero-bg" aria-hidden="true">
           <picture>
@@ -82,8 +50,8 @@ export default function HomePage() {
             Verified psychiatrists and psychologists. Private sessions. Care that continues after the first visit.
           </p>
           <div className="odd-hero-row odd-hero-enter" style={{ '--d': '340ms' }}>
-            <Link className="odd-btn odd-btn-light odd-btn-lift" to="/book">Book a session</Link>
-            <Link className="odd-btn odd-btn-ghost odd-btn-lift" to="/screening">Take a screening</Link>
+            <Link className="odd-btn odd-btn-light odd-btn-lift" to="/screening">Understand yourself</Link>
+            <Link className="odd-btn odd-btn-ghost odd-btn-lift" to="/book">Book a session</Link>
           </div>
           <p className="odd-hero-warn odd-hero-enter" style={{ '--d': '440ms' }}>
             Not for emergencies. Use local emergency services if you are at immediate risk.
@@ -190,10 +158,10 @@ export default function HomePage() {
       <section className="odd-end odd-end-clean" data-reveal>
         <div className="odd-wrap">
           <h2 className="odd-h2 odd-h2-light">Ready when you are</h2>
-          <p className="odd-end-copy">Book a verified clinician, or start with a short screening.</p>
+          <p className="odd-end-copy">Start by understanding how you’ve been feeling — or book when you already know you want care.</p>
           <div className="odd-hero-row">
-            <Link className="odd-btn odd-btn-light odd-btn-lift" to="/book">Book now</Link>
-            <Link className="odd-btn odd-btn-ghost odd-btn-lift" to="/professionals">Join as a professional</Link>
+            <Link className="odd-btn odd-btn-light odd-btn-lift" to="/screening">Open Mental Health Center</Link>
+            <Link className="odd-btn odd-btn-ghost odd-btn-lift" to="/book">Book a session</Link>
           </div>
         </div>
       </section>

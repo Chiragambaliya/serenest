@@ -115,8 +115,8 @@ export default function AcademyGuide() {
               <div className="ed-guide-msg ed-guide-msg-assistant">
                 <p className="ed-guide-bubble">
                   Ask me about Academy programmes, clinician learning tracks, or how to collaborate with
-                  Serenest. For an appointment or screening, I&apos;ll point you to{' '}
-                  <Link to="/book">Book</Link> or <Link to="/screening">Screening</Link>. Emergencies:
+                  Serenest. For an appointment or a mental health check, I&apos;ll point you to{' '}
+                  <Link to="/book">Book</Link> or <Link to="/screening">Mental Health Center</Link>. Emergencies:
                   call <strong>112</strong> or <strong>108</strong> in India.
                 </p>
               </div>

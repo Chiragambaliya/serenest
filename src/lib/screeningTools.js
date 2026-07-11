@@ -8,6 +8,9 @@
  *
  * IMPORTANT: these are screening aids, not diagnoses. Scores only indicate
  * whether a professional conversation may help.
+ *
+ * BAT-12 (Burnout Assessment Tool) is non-proprietary (Schaufeli et al.);
+ * items must not be modified. Cite Schaufeli, Desart & De Witte (2020).
  */
 
 // Shared 0–3 "over the last 2 weeks" frequency options (PHQ-9 / GAD-7)
@@ -43,6 +46,15 @@ const WHO5_OPTS = [
   { label: 'More than half the time', value: 3 },
   { label: 'Most of the time', value: 4 },
   { label: 'All of the time', value: 5 },
+];
+
+// BAT frequency scale (official 1–5; Never → Always)
+const BAT_1_5 = [
+  { label: 'Never', value: 1 },
+  { label: 'Rarely', value: 2 },
+  { label: 'Sometimes', value: 3 },
+  { label: 'Often', value: 4 },
+  { label: 'Always', value: 5 },
 ];
 
 export const SCREENING_TOOLS = [
@@ -379,19 +391,467 @@ export const SCREENING_TOOLS = [
     seoTitle: 'Eating Disorder Screening Online (SCOFF) | Serenest',
     seoDescription: 'Take the free SCOFF eating-disorder self-screening online from India. 5 quick, validated yes/no questions. Confidential, instant result — a screening aid, not a diagnosis.',
   },
+
+  {
+    id: 'bat12',
+    slug: 'burnout-bat-12',
+    name: 'BAT-12',
+    short: 'Burnout',
+    title: 'Burnout check (BAT-12)',
+    icon: '🔥',
+    blurb: 'A short, modern check for exhaustion, mental distance, and cognitive or emotional strain.',
+    timeframe:
+      'The following statements are related to how you feel. Please state how often each statement applies to you.',
+    source:
+      'Burnout Assessment Tool (BAT-12), general version — Schaufeli, Desart & De Witte (2020); short form Hadžibajramović, Schaufeli & De Witte (2022). Non-proprietary; free to use; items must not be modified. Official site: burnoutassessmenttool.be',
+    note:
+      'A few items mention work or your job (mental distance), as in the official general BAT. Guidance ranges use published BAT-12 clinical cut-offs from European employed samples (Schaufeli et al., 2023); they are not India-specific norms and are not a diagnosis. The BAT manual notes that a total-score cut-off table for the shortened non-work (general) BAT-12 is not available.',
+    options: BAT_1_5,
+    scoring: 'mean',
+    direction: 'higher_worse',
+    questions: [
+      // Exhaustion (short form *) — exact English general BAT wording
+      { text: 'I feel mentally exhausted', subscale: 'exhaustion' },
+      { text: 'At the end of the day, I find it hard to recover my energy', subscale: 'exhaustion' },
+      { text: 'I feel physically exhausted', subscale: 'exhaustion' },
+      // Mental distance (short form *)
+      { text: 'I struggle to find any enthusiasm for my work', subscale: 'mental_distance' },
+      { text: 'I feel a strong aversion towards my job', subscale: 'mental_distance' },
+      { text: 'I’m cynical about what my work means to others', subscale: 'mental_distance' },
+      // Cognitive impairment (short form *)
+      { text: 'I have trouble staying focused', subscale: 'cognitive' },
+      { text: 'I have trouble concentrating', subscale: 'cognitive' },
+      { text: 'I make mistakes because I have my mind on other things', subscale: 'cognitive' },
+      // Emotional impairment (short form *)
+      { text: 'I feel unable to control my emotions', subscale: 'emotional' },
+      { text: 'I do not recognize myself in the way I react emotionally', subscale: 'emotional' },
+      { text: 'I may overreact unintentionally', subscale: 'emotional' },
+    ],
+    // Mean score (1–5). Pooled BAT-12 traffic-light cut-offs (Schaufeli et al., 2023, SJWEH):
+    // orange (at risk) ≥ 2.54; red (severe burnout range) ≥ 2.96. Developed on employed samples
+    // in NL / Flanders / Finland — provisional elsewhere; not a diagnosis.
+    bands: [
+      {
+        max: 2.53,
+        label: 'Lower concern',
+        color: '#198754',
+        desc: 'Your average is below the published “at risk” cut-off for the BAT-12 in European research samples. This is not a clean bill of health — recovery, sleep, and workload still matter.',
+      },
+      {
+        max: 2.95,
+        label: 'Elevated',
+        color: '#e67e22',
+        desc: 'Your average is at or above the published “at risk” BAT-12 cut-off (and below the higher cut-off) in European research samples. Rest and reducing demands are commonly discussed in burnout care; a counsellor or psychologist can help if this persists or impairs functioning.',
+      },
+      {
+        max: 5,
+        label: 'Higher concern',
+        color: '#dc3545',
+        desc: 'Your average is at or above the published higher BAT-12 cut-off used in European research to flag severe burnout risk. This is not a diagnosis. Clinical guidance recommends professional assessment — especially when exhaustion, detachment, or concentration problems affect daily life, or when depression or anxiety may also be present.',
+      },
+    ],
+    seoTitle: 'Burnout Check Online (BAT-12) | Serenest Mental Health Center',
+    seoDescription:
+      'Free BAT-12 burnout check on Serenest — exhaustion, mental distance, and cognitive or emotional strain. Educational results, not a diagnosis. Private by default.',
+  },
 ];
 
+/**
+ * Human-facing Care experience metadata (Mental Health Center).
+ * Keeps validated item banks untouched; enriches discovery, education, and next steps.
+ */
+const EXPERIENCE_BY_ID = {
+  phq9: {
+    category: 'mood',
+    dimensionId: 'mood',
+    humanTitle: 'Check your mood',
+    audience: 'Anyone noticing low mood, loss of interest, or changes in sleep, appetite, or energy',
+    whatItChecks: 'Common signs of depression over the last two weeks, using the PHQ-9.',
+    whatItDoesNotMean: [
+      'A diagnosis of depression',
+      'That you need medication',
+      'That nothing is wrong if your score is low — context still matters',
+    ],
+    commonSigns: [
+      'Low interest or pleasure in usual activities',
+      'Feeling down or hopeless',
+      'Sleep or appetite changes',
+      'Trouble concentrating',
+      'Feeling tired or worthless',
+    ],
+    selfCare: [
+      'Keep a simple daily routine for sleep and meals',
+      'Gentle movement or time outdoors, if you can',
+      'Tell one trusted person how you have been feeling',
+      'Reduce alcohol while mood is low',
+    ],
+    learnLinks: [
+      { to: '/online-psychiatrist-for-depression-india', label: 'Depression care online' },
+      { to: '/phq-9-depression-screening', label: 'What the PHQ-9 is' },
+      { to: '/blog/sleep-mood-stress-loop', label: 'Sleep, mood, and stress' },
+      { to: '/academy', label: 'Serenest Academy' },
+    ],
+    careGuidance: {
+      mild: 'Self-care and learning may be enough for now. Consider a counsellor if this lasts more than a few weeks.',
+      moderate: 'A psychologist or therapist is often a good next step. A psychiatrist can help if symptoms are intense or long-standing.',
+      high: 'Speaking with a psychiatrist soon is reasonable — especially if daily life, work, or safety feels affected.',
+    },
+  },
+  gad7: {
+    category: 'anxiety',
+    dimensionId: 'anxiety',
+    humanTitle: 'Understand your anxiety',
+    audience: 'Anyone dealing with worry, restlessness, or feeling on edge',
+    whatItChecks: 'Common signs of generalized anxiety over the last two weeks, using the GAD-7.',
+    whatItDoesNotMean: [
+      'A diagnosis of an anxiety disorder',
+      'That anxiety is “all in your head”',
+      'That you must start medication',
+    ],
+    commonSigns: [
+      'Trouble controlling worry',
+      'Feeling nervous or on edge',
+      'Difficulty relaxing',
+      'Restlessness or irritability',
+      'Fear that something awful will happen',
+    ],
+    selfCare: [
+      'Short breathing or grounding breaks during the day',
+      'Limit late-night news and stimulating screens',
+      'Caffeine cut-back if it worsens jitters',
+      'Write worries down once, then return to one next step',
+    ],
+    learnLinks: [
+      { to: '/anxiety-counselling-online-india', label: 'Anxiety counselling online' },
+      { to: '/gad-7-anxiety-screening', label: 'What the GAD-7 is' },
+      { to: '/blog/screens-stimulation-and-anxiety', label: 'Screens, stimulation, and anxiety' },
+      { to: '/academy', label: 'Serenest Academy' },
+    ],
+    careGuidance: {
+      mild: 'Self-care and psychoeducation often help. Book counselling if worry keeps returning.',
+      moderate: 'Talk therapy (for example CBT-informed care) is commonly helpful. A psychiatrist can assess if symptoms are severe.',
+      high: 'Consider a psychiatrist or psychologist promptly — especially if panic, avoidance, or sleep loss is escalating.',
+    },
+  },
+  pss10: {
+    category: 'stress',
+    dimensionId: 'stress',
+    humanTitle: 'Understand your stress',
+    audience: 'People who feel overloaded, stretched, or unable to catch up',
+    whatItChecks: 'How unpredictable, uncontrollable, and overloaded life has felt in the last month (PSS-10).',
+    whatItDoesNotMean: [
+      'A medical diagnosis',
+      'That you are “failing” at life',
+      'That stress is only work-related',
+    ],
+    commonSigns: [
+      'Feeling unable to control important things',
+      'Nervousness or irritability',
+      'Sense that difficulties are piling up',
+      'Trouble coping with daily demands',
+    ],
+    selfCare: [
+      'Protect one non-negotiable rest block this week',
+      'Say no to one optional demand',
+      'Sleep and meal timing before productivity hacks',
+      'Talk to someone who will not minimize your load',
+    ],
+    learnLinks: [
+      { to: '/blog/work-stress-without-the-hustle-narrative', label: 'Work stress without hustle culture' },
+      { to: '/blog/sleep-mood-stress-loop', label: 'Sleep, mood, and stress' },
+    ],
+    careGuidance: {
+      mild: 'Adjust load and recovery first. Counselling helps if stress is chronic.',
+      moderate: 'A counsellor or psychologist can help with coping and boundaries.',
+      high: 'If stress comes with low mood, panic, or burnout, professional care is worth prioritizing.',
+    },
+  },
+  who5: {
+    category: 'stress',
+    dimensionId: 'wellbeing',
+    humanTitle: 'Check your wellbeing',
+    audience: 'Anyone wanting a short, positive check on how life feels lately',
+    whatItChecks: 'General wellbeing over the last two weeks using the WHO-5 (higher scores suggest better wellbeing).',
+    whatItDoesNotMean: [
+      'A diagnosis',
+      'That low wellbeing always means depression',
+      'That high wellbeing means you never need support',
+    ],
+    commonSigns: [
+      'Less cheerfulness or calm',
+      'Low energy or freshness on waking',
+      'Fewer things that feel interesting',
+    ],
+    selfCare: [
+      'One enjoyable activity you have postponed',
+      'Daylight and movement early in the day',
+      'Protect sleep window for a few nights',
+    ],
+    learnLinks: [
+      { to: '/blog/stigma-and-reaching-out', label: 'Stigma and reaching out' },
+      { to: '/guides', label: 'Patient guides' },
+    ],
+    careGuidance: {
+      mild: 'Keep habits that support wellbeing; re-check in two weeks.',
+      moderate: 'Consider counselling if low wellbeing lasts or worsens.',
+      high: 'Low wellbeing can travel with depression — a clinical conversation is appropriate.',
+    },
+  },
+  auditc: {
+    category: 'substance',
+    dimensionId: 'substance',
+    humanTitle: 'Check alcohol use',
+    audience: 'Adults who drink and want a private sense of risk patterns',
+    whatItChecks: 'Drinking frequency and intensity using the WHO AUDIT-C.',
+    whatItDoesNotMean: [
+      'A diagnosis of alcohol dependence',
+      'Moral judgment about drinking',
+      'That cutting down is impossible without help — though help can make it easier',
+    ],
+    commonSigns: [
+      'Drinking more days than intended',
+      'Higher amounts on drinking days',
+      'Frequent heavy drinking occasions',
+    ],
+    selfCare: [
+      'Set drink-free days each week',
+      'Switch to smaller measures or slower pacing',
+      'Avoid drinking to manage sleep or anxiety alone',
+    ],
+    learnLinks: [
+      { to: '/services', label: 'Clinical care on Serenest' },
+      { to: '/blog/privacy-first-mental-health', label: 'Privacy-first care' },
+    ],
+    careGuidance: {
+      mild: 'Keep an eye on patterns; cut back if use is creeping up.',
+      moderate: 'A professional can help you cut down safely.',
+      high: 'Please speak with a clinician — higher-risk patterns deserve structured support.',
+    },
+  },
+  asrs: {
+    category: 'attention',
+    dimensionId: 'attention',
+    humanTitle: 'Check adult attention',
+    audience: 'Adults wondering about focus, organization, or restlessness over months',
+    whatItChecks: 'WHO ASRS v1.1 Part A — a brief screener for adult ADHD-related patterns.',
+    whatItDoesNotMean: [
+      'An ADHD diagnosis',
+      'That you should start stimulant medication',
+      'That childhood history is irrelevant — full assessment still matters',
+    ],
+    commonSigns: [
+      'Trouble finishing details',
+      'Disorganization or forgotten obligations',
+      'Avoiding tasks that need sustained thought',
+      'Fidgeting or feeling driven',
+    ],
+    selfCare: [
+      'Externalize tasks (lists, timers, one priority)',
+      'Reduce multitasking during deep work',
+      'Sleep and screen hygiene before self-labeling',
+    ],
+    learnLinks: [
+      { to: '/adhd-assessment-online-india', label: 'Adult ADHD assessment' },
+      { to: '/blog/prepare-first-online-consultation', label: 'Prepare for a first consultation' },
+    ],
+    careGuidance: {
+      mild: 'If concerns persist, an assessment can still clarify other causes (sleep, anxiety, mood).',
+      moderate: 'A structured adult ADHD assessment with a psychiatrist is the right clinical path.',
+      high: 'Book a structured assessment — screening alone cannot confirm ADHD.',
+    },
+  },
+  k10: {
+    category: 'stress',
+    dimensionId: 'distress',
+    humanTitle: 'Check emotional distress',
+    audience: 'Anyone feeling worn down, nervous, or low across the last month',
+    whatItChecks: 'Overall psychological distress in the past 30 days (K10).',
+    whatItDoesNotMean: [
+      'A specific diagnosis',
+      'That distress is permanent',
+      'That only “severe” scores deserve care',
+    ],
+    commonSigns: [
+      'Tiredness without clear reason',
+      'Nervousness or hopelessness',
+      'Restlessness',
+      'Feeling that everything is an effort',
+    ],
+    selfCare: [
+      'Reduce unnecessary decisions for a few days',
+      'Reach out before isolating',
+      'Basic sleep and nutrition before big life changes',
+    ],
+    learnLinks: [
+      { to: '/blog/family-friends-support-without-burnout', label: 'Support without burnout' },
+      { to: '/screening', label: 'Mental Health Center' },
+    ],
+    careGuidance: {
+      mild: 'Monitor and use self-care; re-check if things worsen.',
+      moderate: 'Counselling or therapy can help unpack load and coping.',
+      high: 'Please consider a psychiatrist or psychologist soon.',
+    },
+  },
+  pcl5: {
+    category: 'trauma',
+    dimensionId: 'trauma',
+    humanTitle: 'Check after a stressful event',
+    audience: 'Adults with symptoms after a traumatic or highly stressful experience',
+    whatItChecks: 'PTSD-related symptom burden in the past month (PCL-5), thinking of one stressful experience.',
+    whatItDoesNotMean: [
+      'A PTSD diagnosis',
+      'That you must recount every detail to get help',
+      'That delayed symptoms are “not real”',
+    ],
+    commonSigns: [
+      'Intrusive memories or nightmares',
+      'Avoidance of reminders',
+      'Negative beliefs or blame',
+      'Feeling on guard, jumpy, or cut off',
+    ],
+    selfCare: [
+      'Go slowly — pause this check if it feels overwhelming',
+      'Use grounding (5 things you see/hear) if memories surge',
+      'Prefer trauma-informed clinicians for next steps',
+    ],
+    learnLinks: [
+      { to: '/emergency-disclaimer', label: 'Crisis and emergency guidance' },
+      { to: '/blog/stigma-and-reaching-out', label: 'Reaching out for care' },
+    ],
+    careGuidance: {
+      mild: 'If symptoms still trouble you, trauma-informed therapy can help regardless of score.',
+      moderate: 'A trauma-informed psychologist or psychiatrist is appropriate.',
+      high: 'Please seek trauma-informed professional care — you do not have to manage this alone.',
+    },
+  },
+  scoff: {
+    category: 'eating',
+    dimensionId: 'eating',
+    humanTitle: 'Check eating patterns',
+    audience: 'Anyone worried about control, bingeing, purging, or body image around food',
+    whatItChecks: 'Possible eating-disorder patterns using the SCOFF questionnaire.',
+    whatItDoesNotMean: [
+      'A diagnosis of an eating disorder',
+      'That body size alone defines the problem',
+      'That you must wait until things are “severe”',
+    ],
+    commonSigns: [
+      'Feeling out of control with eating',
+      'Vomiting after fullness',
+      'Rapid weight change',
+      'Food dominating daily life',
+    ],
+    selfCare: [
+      'Avoid extreme restriction as “discipline”',
+      'Eat regular meals where possible',
+      'Seek help early — earlier support is easier',
+    ],
+    learnLinks: [
+      { to: '/services', label: 'Clinical care options' },
+      { to: '/blog/prepare-first-online-consultation', label: 'Prepare for a consultation' },
+    ],
+    careGuidance: {
+      mild: 'If food or body image still worries you, a professional can help.',
+      moderate: 'Please consider a clinical assessment — eating concerns deserve specialist care.',
+      high: 'Seek professional assessment promptly.',
+    },
+  },
+  bat12: {
+    category: 'stress',
+    dimensionId: 'burnout',
+    humanTitle: 'Check your burnout',
+    minutes: 3,
+    audience:
+      'Adults who feel exhausted, detached from work or their role, cognitively foggy, or emotionally reactive in the context of sustained overload',
+    whatItChecks:
+      'Core burnout symptoms using the BAT-12 general version: exhaustion, mental distance, cognitive impairment, and emotional impairment (Schaufeli et al., 2020; Hadžibajramović et al., 2022). Your result is the mean of 12 items scored from 1 (Never) to 5 (Always).',
+    whatItDoesNotMean: [
+      'A medical diagnosis — WHO classifies burn-out as an occupational phenomenon, not a medical condition (ICD-11)',
+      'That you must quit your job or role',
+      'That India-specific population norms were used — cut-offs come from European employed samples (Schaufeli et al., 2023)',
+      'That a score replaces a clinician’s judgment or a full assessment that may also consider depression, anxiety, or medical causes of fatigue',
+    ],
+    commonSigns: [
+      'Energy depletion or exhaustion',
+      'Mental distance, negativism, or cynicism related to work or one’s role',
+      'Trouble staying focused or concentrating; mistakes when the mind is elsewhere',
+      'Difficulty controlling or recognizing one’s emotional reactions',
+    ],
+    selfCare: [
+      'Prioritize sleep and recovery — sleep quality is linked to burnout recovery in clinical literature',
+      'Reduce exposure to ongoing overload where possible; recovery typically requires lowering demand, not adding productivity tactics',
+      'Use social support — talk with someone who will not minimize the load',
+      'If functioning is impaired, seek a clinical conversation rather than waiting for collapse',
+    ],
+    learnLinks: [
+      { to: '/blog/work-stress-without-the-hustle-narrative', label: 'Work stress without hustle culture' },
+      { to: '/blog/sleep-mood-stress-loop', label: 'Sleep, mood, and stress' },
+      { to: '/blog/family-friends-support-without-burnout', label: 'Support without burning out' },
+      { to: '/screening/tool/pss-10', label: 'Related: stress check (PSS-10)' },
+      { to: '/screening/tool/phq-9', label: 'Related: mood check (PHQ-9)' },
+      { to: '/screening/tool/who-5', label: 'Related: wellbeing check (WHO-5)' },
+    ],
+    careGuidance: {
+      mild: 'Focus on recovery and workload. Re-check later, or use the stress (PSS-10) and mood (PHQ-9) checks if low mood or overload feel more central.',
+      moderate: 'Psychological support (counselling/psychology) is commonly used for recovery, boundaries, and coping. Consider psychiatric assessment if low mood, anxiety, insomnia, or functional decline is severe — burnout and depression can overlap and need clinical differentiation.',
+      high: 'Clinical literature recommends professional assessment for severe burnout complaints. Please consider a psychiatrist or psychologist soon — especially if you cannot recover with rest, concentration is collapsing, or depression/anxiety may also be present.',
+    },
+  },
+};
+
+function estimateMinutes(tool) {
+  return Math.max(1, Math.round((tool.questions.length * 12) / 60));
+}
+
+function enrich(tool) {
+  const exp = EXPERIENCE_BY_ID[tool.id] || {};
+  return {
+    ...tool,
+    ...exp,
+    minutes: exp.minutes || estimateMinutes(tool),
+    humanTitle: exp.humanTitle || tool.title,
+  };
+}
+
+/** @type {typeof SCREENING_TOOLS} */
+export const SCREENING_TOOLS_ENRICHED = SCREENING_TOOLS.map(enrich);
+
 export function getTool(slug) {
-  return SCREENING_TOOLS.find((t) => t.slug === slug || t.id === slug) || null;
+  const raw = SCREENING_TOOLS.find((t) => t.slug === slug || t.id === slug);
+  return raw ? enrich(raw) : null;
+}
+
+export function getAllTools() {
+  return SCREENING_TOOLS_ENRICHED;
+}
+
+export function toolsForCategory(categoryId) {
+  if (!categoryId || categoryId === 'all') return SCREENING_TOOLS_ENRICHED;
+  return SCREENING_TOOLS_ENRICHED.filter((t) => t.category === categoryId);
+}
+
+/** Map numeric/threshold results to mild | moderate | high for care copy */
+export function careTier(tool, result) {
+  if (!result?.band) return 'mild';
+  if (tool.scoring === 'threshold_count') return result.positive ? 'high' : 'mild';
+  const label = result.band.label || '';
+  if (/severe|higher risk|higher concern|possible dependence|positive screen|consistent with|very low/i.test(label))
+    return 'high';
+  if (/moderate|increased|mild distress|low wellbeing|elevated|at risk/i.test(label)) return 'moderate';
+  return 'mild';
 }
 
 function optsFor(tool, q) {
   return q.options || tool.options || [];
 }
 
-/** Maximum possible numeric score (for the progress bar). */
+/** Maximum possible numeric score (for the progress bar / result scale). */
 export function maxScore(tool) {
   if (tool.scoring === 'threshold_count') return tool.questions.length;
+  if (tool.scoring === 'mean') {
+    const vals = tool.questions.flatMap((q) => optsFor(tool, q).map((o) => o.value));
+    return vals.length ? Math.max(...vals) : 5;
+  }
   const raw = tool.questions.reduce((sum, q) => {
     const vals = optsFor(tool, q).map((o) => o.value);
     return sum + (vals.length ? Math.max(...vals) : 0);
@@ -428,6 +888,13 @@ export function scoreTool(tool, answers) {
       raw += v;
     }
   });
+
+  if (tool.scoring === 'mean') {
+    const score = raw / tool.questions.length;
+    const band = tool.bands.find((b) => score <= b.max) || tool.bands[tool.bands.length - 1];
+    return { score, band, complete };
+  }
+
   const score = tool.scale ? raw * tool.scale : raw;
   const band = tool.bands.find((b) => score <= b.max) || tool.bands[tool.bands.length - 1];
   return { score, band, complete };

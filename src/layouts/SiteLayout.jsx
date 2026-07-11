@@ -71,6 +71,9 @@ export default function SiteLayout() {
           </Link>
 
           <nav className="srn-nav" aria-label="Main navigation">
+            <NavLink to="/screening" className={navClass}>
+              Understand
+            </NavLink>
             <NavLink to="/services" className={navClass}>
               Care
             </NavLink>
@@ -78,13 +81,7 @@ export default function SiteLayout() {
               Pricing
             </NavLink>
             <NavLink to="/patient/find-professional" className={navClass}>
-              Find a clinician
-            </NavLink>
-            <NavLink to="/professionals" className={navClass}>
-              For professionals
-            </NavLink>
-            <NavLink to="/academy" className={navClass}>
-              Academy
+              Clinicians
             </NavLink>
             <NavLink to="/about" className={navClass}>
               About
@@ -92,9 +89,15 @@ export default function SiteLayout() {
           </nav>
 
           <div className="srn-topbar-actions">
-            <NavLink to="/patient/dashboard" className="srn-nav-link srn-nav-account">
-              {isPatient && patientFirstName ? patientFirstName : 'My care'}
-            </NavLink>
+            {isPatient ? (
+              <NavLink to="/patient/dashboard" className="srn-nav-link srn-nav-account">
+                {patientFirstName || 'My care'}
+              </NavLink>
+            ) : (
+              <NavLink to="/patient/login" className="srn-nav-link srn-nav-account">
+                Sign in
+              </NavLink>
+            )}
             <Link className="srn-book-btn" to="/book">
               Book
             </Link>
@@ -124,11 +127,11 @@ export default function SiteLayout() {
               </button>
             </div>
             <nav className="srn-drawer-nav">
+              <Link to="/screening" onClick={() => setMenuOpen(false)}>
+                Understand yourself
+              </Link>
               <Link to="/book" onClick={() => setMenuOpen(false)}>
                 Book a session
-              </Link>
-              <Link to="/screening" onClick={() => setMenuOpen(false)}>
-                Self-screening
               </Link>
               <Link to="/patient/find-professional" onClick={() => setMenuOpen(false)}>
                 Find a clinician
@@ -139,41 +142,30 @@ export default function SiteLayout() {
               <Link to="/pricing" onClick={() => setMenuOpen(false)}>
                 Pricing
               </Link>
+              <Link to="/about" onClick={() => setMenuOpen(false)}>
+                About
+              </Link>
+              <Link to="/blog" onClick={() => setMenuOpen(false)}>
+                Guides
+              </Link>
+              <Link to="/patient/login" onClick={() => setMenuOpen(false)}>
+                Patient sign in
+              </Link>
+              <hr className="srn-drawer-rule" />
               <Link to="/professionals" onClick={() => setMenuOpen(false)}>
                 For professionals
-              </Link>
-              <Link to="/professionals/apply" onClick={() => setMenuOpen(false)}>
-                Join Serenest
-              </Link>
-              <Link to="/professionals/portal" onClick={() => setMenuOpen(false)}>
-                Professional portal
               </Link>
               <Link to="/academy" onClick={() => setMenuOpen(false)}>
                 Academy
               </Link>
-              <Link to="/academy/learn" onClick={() => setMenuOpen(false)}>
-                Learning hub
-              </Link>
               <Link to="/corporate" onClick={() => setMenuOpen(false)}>
                 Corporate EAP
-              </Link>
-              <Link to="/partner" onClick={() => setMenuOpen(false)}>
-                Partner with us
               </Link>
               <Link to="/careers" onClick={() => setMenuOpen(false)}>
                 Careers
               </Link>
-              <Link to="/about" onClick={() => setMenuOpen(false)}>
-                About
-              </Link>
-              <Link to="/team" onClick={() => setMenuOpen(false)}>
-                Team
-              </Link>
-              <Link to="/blog" onClick={() => setMenuOpen(false)}>
-                Guides &amp; blog
-              </Link>
-              <Link to="/patient/dashboard" onClick={() => setMenuOpen(false)}>
-                My care portal
+              <Link to="/privacy" onClick={() => setMenuOpen(false)}>
+                Privacy
               </Link>
             </nav>
           </aside>
@@ -194,7 +186,9 @@ export default function SiteLayout() {
             <div>
               <h4>Care</h4>
               <Link to="/book">Book</Link>
-              <Link to="/screening">Screening</Link>
+              <Link to="/screening">Mental Health Center</Link>
+              <Link to="/burnout-check">Burnout Check</Link>
+              <Link to="/evidence">Evidence Center</Link>
               <Link to="/patient/find-professional">Find a clinician</Link>
               <Link to="/pricing">Pricing</Link>
             </div>

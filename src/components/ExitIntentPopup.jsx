@@ -35,18 +35,15 @@ export default function ExitIntentPopup() {
   useEffect(() => {
     if (!shouldShow()) return;
 
-    // Desktop: mouse leaving toward browser chrome
+    // Desktop only: mouse leaving toward browser chrome.
+    // No timed popup on mobile — hostile for anxious first visits.
     function onMouseLeave(e) {
       if (e.clientY <= 8) open();
     }
     document.addEventListener('mouseleave', onMouseLeave);
 
-    // Mobile / fallback: 30s idle
-    const fallback = setTimeout(open, 30_000);
-
     return () => {
       document.removeEventListener('mouseleave', onMouseLeave);
-      clearTimeout(fallback);
     };
   }, []);
 

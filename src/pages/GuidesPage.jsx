@@ -24,7 +24,7 @@ export default function GuidesPage() {
               Book now
             </Link>
             <Link className="btn btn-ghost btn-lg" to="/screening">
-              Take screening
+              Mental Health Center
             </Link>
           </div>
         </div>
@@ -58,13 +58,13 @@ export default function GuidesPage() {
           <div>
             <h2>Not sure where to start?</h2>
             <p>
-              Try a free PHQ-9 or GAD-7 screening, or book a consultation and we will match you with
+              Try a free mental health check, or book a consultation and we will match you with
               the right clinician.
             </p>
           </div>
           <div className="guides__cta-actions">
             <Link className="btn btn-primary btn-lg" to="/screening">
-              Start screening
+              Understand yourself
             </Link>
             <Link className="btn btn-ghost btn-lg" to="/faq">
               Read FAQ

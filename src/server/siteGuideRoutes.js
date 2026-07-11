@@ -12,7 +12,12 @@ export const SITE_GUIDE_ROUTES = [
 
   { path: '/book', label: 'Book an online psychiatry or counselling appointment' },
 
-  { path: '/screening', label: 'Self-screening (PHQ-9 & GAD-7) — not a diagnosis' },
+  { path: '/screening', label: 'Mental Health Center — mood, anxiety, burnout & other checks (not a diagnosis)' },
+  { path: '/screening/pathway/mood-anxiety', label: 'Guided mood & anxiety check (PHQ-9 + GAD-7)' },
+  { path: '/burnout-check', label: 'Burnout Check product page (BAT-12) — education before care' },
+  { path: '/screening/tool/burnout-bat-12', label: 'Burnout check assessment (BAT-12) — not a diagnosis' },
+  { path: '/evidence', label: 'Evidence Center — instruments, licensing, limitations' },
+  { path: '/evidence/bat-12', label: 'BAT-12 Burnout Check evidence report' },
 
   { path: '/patient/find-professional', label: 'Find a verified professional' },
 

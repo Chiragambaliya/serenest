@@ -6221,6 +6221,28 @@ a.pro-hub-tile:hover .learning-card-aux {
   text-decoration: none;
 }
 
+.srn-drawer-rule {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 0.75rem 0;
+}
+
+.srn-page-fallback {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.85rem;
+  min-height: 60vh;
+  color: var(--muted);
+}
+
+.srn-page-fallback p {
+  margin: 0;
+  font-size: 0.9rem;
+  letter-spacing: 0.02em;
+}
+
 .srn-foot {
   background: #041f1b;
   color: rgba(244, 250, 248, 0.78);
