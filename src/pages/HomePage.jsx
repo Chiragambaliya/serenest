@@ -8,7 +8,6 @@ import { useReveal } from '../hooks/useReveal';
 const PATHS = [
   { title: 'Understand yourself', body: 'Short mental health checks — education first, no pressure to book.', to: '/screening' },
   { title: 'Book a session', body: 'Video, audio, or chat with a verified clinician.', to: '/book' },
-  { title: 'Find a clinician', body: 'Browse approved professionals by role and language.', to: '/patient/find-professional' },
 ];
 
 export default function HomePage() {

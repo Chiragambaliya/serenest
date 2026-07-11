@@ -2065,7 +2065,6 @@ const VALID_ROUTES = new Set([
   '/community-guidelines',
   '/legal',
   '/admin',
-  '/patient/find-professional',
   '/patient/login',
   '/patient/dashboard',
   '/careers',

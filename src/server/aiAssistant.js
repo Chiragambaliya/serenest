@@ -20,7 +20,6 @@ const ACADEMY_ROUTES = `
 - **/burnout-check** — Burnout Check product landing (BAT-12). Assessment: /screening/tool/burnout-bat-12
 - **/evidence** — Evidence Center (instruments, licensing, limitations). BAT-12 report: /evidence/bat-12
 - **/book** — Book a clinical consultation when care is needed
-- **/patient/find-professional** — Find a verified professional
 - **/services** · **/pricing** · **/faq** — Clinical Serenest info when users outgrow literacy content
 `.trim();
 

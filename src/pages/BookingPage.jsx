@@ -240,9 +240,6 @@ export default function BookingPage() {
                   {preProDur ? ` · ${preProDur} min session` : ''}
                 </div>
               </div>
-              <Link to="/patient/find-professional" className="btn btn-ghost" style={{ marginLeft: 'auto' }}>
-                Change
-              </Link>
             </div>
           )}
         </div>

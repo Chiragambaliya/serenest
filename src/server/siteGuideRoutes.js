@@ -19,8 +19,6 @@ export const SITE_GUIDE_ROUTES = [
   { path: '/evidence', label: 'Evidence Center — instruments, licensing, limitations' },
   { path: '/evidence/bat-12', label: 'BAT-12 Burnout Check evidence report' },
 
-  { path: '/patient/find-professional', label: 'Find a verified professional' },
-
   { path: '/services', label: 'Services and conditions we support' },
 
   { path: '/pricing', label: 'Fees and session pricing' },

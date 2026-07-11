@@ -80,9 +80,6 @@ export default function SiteLayout() {
             <NavLink to="/pricing" className={navClass}>
               Pricing
             </NavLink>
-            <NavLink to="/patient/find-professional" className={navClass}>
-              Clinicians
-            </NavLink>
             <NavLink to="/about" className={navClass}>
               About
             </NavLink>
@@ -132,9 +129,6 @@ export default function SiteLayout() {
               </Link>
               <Link to="/book" onClick={() => setMenuOpen(false)}>
                 Book a session
-              </Link>
-              <Link to="/patient/find-professional" onClick={() => setMenuOpen(false)}>
-                Find a clinician
               </Link>
               <Link to="/services" onClick={() => setMenuOpen(false)}>
                 Care &amp; services
@@ -189,7 +183,6 @@ export default function SiteLayout() {
               <Link to="/screening">Mental Health Center</Link>
               <Link to="/burnout-check">Burnout Check</Link>
               <Link to="/evidence">Evidence Center</Link>
-              <Link to="/patient/find-professional">Find a clinician</Link>
               <Link to="/pricing">Pricing</Link>
             </div>
             <div>

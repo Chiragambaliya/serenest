@@ -109,8 +109,7 @@ export default function TeamPage() {
 
           <p className="tm-links">
             Read the fuller story on{' '}
-            <Link to="/about">About Serenest</Link>{' '}— or browse{' '}
-            <Link to="/patient/find-professional">verified professionals</Link>.
+            <Link to="/about">About Serenest</Link>.
             To book, see our{' '}
             <Link to="/services">services overview</Link>.
           </p>

@@ -2,7 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /admin
 Disallow: /consultation/
-Disallow: /patient/find-professional
 Disallow: /patient/login
 Disallow: /patient/dashboard
 Disallow: /professionals/apply

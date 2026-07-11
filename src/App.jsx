@@ -27,7 +27,6 @@ const ProfessionalLearningPage = lazy(() => import('./pages/ProfessionalLearning
 const ProfessionalResourcesPage = lazy(() => import('./pages/ProfessionalResourcesPage'));
 const ProfessionalGuidelinesPage = lazy(() => import('./pages/ProfessionalGuidelinesPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
-const PatientFindProfessionalPage = lazy(() => import('./pages/PatientFindProfessionalPage'));
 const ScreeningPage = lazy(() => import('./pages/ScreeningPage'));
 const ScreeningToolPage = lazy(() => import('./pages/ScreeningToolPage'));
 const MoodAnxietyPathwayPage = lazy(() => import('./pages/MoodAnxietyPathwayPage'));
@@ -163,7 +162,6 @@ export default function App() {
           <Route path="professionals/code-of-conduct" element={<S><ProfessionalCodeOfConductPage /></S>} />
           <Route path="professionals/login" element={<S><ProfessionalAuthPage /></S>} />
           <Route path="professionals/portal" element={<S><ProfessionalPortalPage /></S>} />
-          <Route path="patient/find-professional" element={<S><PatientFindProfessionalPage /></S>} />
           <Route path="careers" element={<S><CareersPage /></S>} />
           <Route path="corporate" element={<S><CorporatePage /></S>} />
           <Route path="partner" element={<S><PartnerPage /></S>} />

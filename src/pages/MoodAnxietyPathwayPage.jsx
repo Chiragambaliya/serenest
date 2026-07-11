@@ -240,9 +240,6 @@ export default function MoodAnxietyPathwayPage() {
                     <Link className="btn btn-primary" to="/book">
                       Talk to a clinician
                     </Link>
-                    <Link className="btn btn-ghost" to="/patient/find-professional">
-                      Find a professional
-                    </Link>
                   </div>
                 </section>
 

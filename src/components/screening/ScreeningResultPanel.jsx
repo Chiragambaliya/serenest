@@ -195,9 +195,6 @@ export default function ScreeningResultPanel({
             <Link className="btn btn-primary" to="/book">
               Talk to a clinician
             </Link>
-            <Link className="btn btn-ghost" to="/patient/find-professional">
-              Find a professional
-            </Link>
             <button type="button" className="btn btn-ghost" onClick={onRetake}>
               Retake this check
             </button>

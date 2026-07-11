@@ -3,7 +3,7 @@
 The Serenest React app connects to Supabase for:
 
 - **Professional applications** — submitted via `/professionals/apply`, managed in `/admin`
-- **Patient find professional** — approved professionals shown at `/patient/find-professional`
+- **Professional directory** — approved professionals shown in the booking flow at `/book`
 - **Screening responses** — saved when users complete the quick screening at `/screening`
 
 ## 1. Create a Supabase project
