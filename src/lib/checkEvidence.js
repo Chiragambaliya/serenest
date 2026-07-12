@@ -1,13 +1,326 @@
 /**
  * Mental Health Check evidence registry.
- * Each launched check adds an entry — Evidence Center + result pages read from here.
- * Clinical claims must cite published sources; never invent.
+ * Every live check must have an entry — Evidence Center + result pages read from here.
+ * Clinical claims must cite published sources; never invent. Where a licensing or
+ * permission status could not be independently verified, say so explicitly
+ * (licensingStatus + permissionVerified: false) instead of guessing.
  */
 
 /** @typedef {{ statement: string; source: string; url?: string }} EvidenceClaim */
 
+/** Shown on every evidence surface until a formal clinical review is recorded. */
+export const PENDING_REVIEW_NOTICE =
+  'Evidence summary prepared from published and official instrument sources. Formal Serenest clinical review pending.';
+
 /** @type {Record<string, object>} */
 export const CHECK_EVIDENCE = {
+  phq9: {
+    toolId: 'phq9',
+    evidenceSlug: 'phq-9',
+    productTitle: 'Depression Check',
+    officialName: 'Patient Health Questionnaire-9 (PHQ-9)',
+    authors: 'Kurt Kroenke, Robert L. Spitzer, Janet B. W. Williams (PHQ developed with an educational grant from Pfizer Inc.)',
+    year: 2001,
+    primaryPaper: {
+      citation:
+        'Kroenke, K., Spitzer, R. L., & Williams, J. B. W. (2001). The PHQ-9: validity of a brief depression severity measure. Journal of General Internal Medicine, 16(9), 606–613.',
+      doi: '10.1046/j.1525-1497.2001.016009606.x',
+      url: 'https://doi.org/10.1046/j.1525-1497.2001.016009606.x',
+    },
+    licensingStatus:
+      'The PHQ family of measures is free to use; per the official PHQ screener materials, no permission is required to reproduce, translate, display, or distribute.',
+    permissionRequired: false,
+    permissionVerified: true,
+    wordingStatus: 'exact',
+    scoringMethod:
+      'Sum of 9 items, each scored 0 (Not at all) to 3 (Nearly every day). Total range 0–27.',
+    thresholdSource:
+      'Severity bands 0–4 minimal, 5–9 mild, 10–14 moderate, 15–19 moderately severe, 20–27 severe (Kroenke et al., 2001).',
+    ageGroup: 'Adults (18+). A separate adolescent adaptation (PHQ-A) exists and is not used here.',
+    indianNorms:
+      'No India-specific norms are used; severity bands come from international primary-care samples. PHQ-9 has been used in Indian studies, but Serenest has not adopted India-specific cut-offs.',
+    limitations: [
+      'A screening and severity-tracking tool, not a diagnostic test — diagnosis requires clinical interview.',
+      'Somatic items (sleep, energy, appetite) can be elevated by physical illness.',
+      'Item 9 flags self-harm thoughts but does not assess risk; any positive answer needs human follow-up.',
+      'A low score does not rule out depression or other mental-health concerns.',
+    ],
+    whyNotDiagnosis:
+      'The PHQ-9 screens for symptoms of depression; only a qualified clinician can diagnose depression after a full clinical evaluation.',
+    lastClinicalReview: null,
+    reviewer: null,
+    clinicalReviewStatus: 'pending',
+    clinicalReviewNotice: PENDING_REVIEW_NOTICE,
+  },
+
+  gad7: {
+    toolId: 'gad7',
+    evidenceSlug: 'gad-7',
+    productTitle: 'Anxiety Check',
+    officialName: 'Generalized Anxiety Disorder 7-item scale (GAD-7)',
+    authors: 'Robert L. Spitzer, Kurt Kroenke, Janet B. W. Williams, Bernd Löwe (developed with an educational grant from Pfizer Inc.)',
+    year: 2006,
+    primaryPaper: {
+      citation:
+        'Spitzer, R. L., Kroenke, K., Williams, J. B. W., & Löwe, B. (2006). A brief measure for assessing generalized anxiety disorder: the GAD-7. Archives of Internal Medicine, 166(10), 1092–1097.',
+      doi: '10.1001/archinte.166.10.1092',
+      url: 'https://doi.org/10.1001/archinte.166.10.1092',
+    },
+    licensingStatus:
+      'Free to use; per the official PHQ/GAD screener materials, no permission is required to reproduce, translate, display, or distribute.',
+    permissionRequired: false,
+    permissionVerified: true,
+    wordingStatus: 'exact',
+    scoringMethod:
+      'Sum of 7 items, each scored 0 (Not at all) to 3 (Nearly every day). Total range 0–21.',
+    thresholdSource:
+      'Severity bands 0–4 minimal, 5–9 mild, 10–14 moderate, 15–21 severe (Spitzer et al., 2006).',
+    ageGroup: 'Adults (18+).',
+    indianNorms:
+      'No India-specific norms are used; bands come from international primary-care samples.',
+    limitations: [
+      'Screens for generalized anxiety symptoms; less sensitive to panic, social anxiety, OCD, or PTSD presentations.',
+      'A low score does not rule out an anxiety disorder or other concerns.',
+      'Diagnosis requires a structured clinical assessment.',
+    ],
+    whyNotDiagnosis:
+      'The GAD-7 estimates anxiety symptom severity; it cannot distinguish anxiety disorders from each other or from medical causes. Only a clinician can diagnose.',
+    lastClinicalReview: null,
+    reviewer: null,
+    clinicalReviewStatus: 'pending',
+    clinicalReviewNotice: PENDING_REVIEW_NOTICE,
+  },
+
+  who5: {
+    toolId: 'who5',
+    evidenceSlug: 'who-5',
+    productTitle: 'Wellbeing Check',
+    officialName: 'WHO-5 Well-Being Index (1998 version)',
+    authors: 'World Health Organization Regional Office for Europe; maintained by the Psychiatric Research Unit, Mental Health Centre North Zealand, Denmark',
+    year: 1998,
+    primaryPaper: {
+      citation:
+        'Topp, C. W., Østergaard, S. D., Søndergaard, S., & Bech, P. (2015). The WHO-5 Well-Being Index: a systematic review of the literature. Psychotherapy and Psychosomatics, 84(3), 167–176.',
+      doi: '10.1159/000376585',
+      url: 'https://doi.org/10.1159/000376585',
+    },
+    licensingStatus:
+      'Free to use. Per the official WHO-5 distribution materials, the questionnaire may be used without permission provided the source is acknowledged.',
+    permissionRequired: false,
+    permissionVerified: true,
+    wordingStatus: 'exact',
+    scoringMethod:
+      'Sum of 5 items, each scored 0 (At no time) to 5 (All of the time); raw 0–25 multiplied by 4 to give a 0–100 percentage score. Higher is better.',
+    thresholdSource:
+      'A score of ≤ 50 suggests reduced wellbeing and ≤ 28 suggests possible depression, warranting further assessment (Topp et al., 2015). Serenest bands follow these published guides.',
+    ageGroup: 'Adults; the WHO-5 has also been used in research with adolescents aged 9+.',
+    indianNorms: 'No India-specific norms are used.',
+    limitations: [
+      'A wellbeing measure, not a depression scale — low scores are a prompt for further assessment, not a diagnosis.',
+      'Five items cannot capture the full picture of mental health.',
+      'A high score does not rule out difficulties in areas the scale does not cover.',
+    ],
+    whyNotDiagnosis:
+      'WHO-5 measures subjective wellbeing over two weeks. Low wellbeing can accompany many conditions or none; only clinical assessment can determine what it means.',
+    lastClinicalReview: null,
+    reviewer: null,
+    clinicalReviewStatus: 'pending',
+    clinicalReviewNotice: PENDING_REVIEW_NOTICE,
+  },
+
+  auditc: {
+    toolId: 'auditc',
+    evidenceSlug: 'audit-c',
+    productTitle: 'Alcohol Use Check',
+    officialName: 'Alcohol Use Disorders Identification Test — Consumption (AUDIT-C), derived from the WHO AUDIT',
+    authors: 'AUDIT: World Health Organization (Babor et al.). AUDIT-C: Kristen Bush et al., Ambulatory Care Quality Improvement Project (ACQUIP).',
+    year: 1998,
+    primaryPaper: {
+      citation:
+        'Bush, K., Kivlahan, D. R., McDonell, M. B., Fihn, S. D., & Bradley, K. A. (1998). The AUDIT alcohol consumption questions (AUDIT-C): an effective brief screening test for problem drinking. Archives of Internal Medicine, 158(16), 1789–1795.',
+      doi: '10.1001/archinte.158.16.1789',
+      url: 'https://doi.org/10.1001/archinte.158.16.1789',
+    },
+    licensingStatus:
+      'The WHO AUDIT is distributed by WHO for screening use, and the three AUDIT-C items are reproduced widely in public health practice. Serenest has not independently verified a formal WHO permission statement for commercial public-web reproduction — flagged for review.',
+    permissionRequired: false,
+    permissionVerified: false,
+    wordingStatus: 'exact',
+    scoringMethod:
+      'Sum of 3 items, each scored 0–4. Total range 0–12.',
+    thresholdSource:
+      'Commonly used screening thresholds: ≥ 4 for men and ≥ 3 for women suggests hazardous drinking (Bush et al., 1998; US VA guidance). Serenest bands are a plain-language presentation of these published guides.',
+    ageGroup: 'Adults (18+).',
+    indianNorms:
+      'No India-specific norms are used. Standard-drink sizes differ by country; the note below the check approximates an Indian standard measure.',
+    limitations: [
+      'Screens consumption patterns only; it does not assess dependence, withdrawal, or harm.',
+      'Self-reported drinking is often under-estimated.',
+      'Thresholds differ by sex and population; a single banding cannot capture that fully.',
+    ],
+    whyNotDiagnosis:
+      'AUDIT-C flags potentially risky drinking patterns. Diagnosis of an alcohol use disorder requires clinical assessment.',
+    lastClinicalReview: null,
+    reviewer: null,
+    clinicalReviewStatus: 'pending',
+    clinicalReviewNotice: PENDING_REVIEW_NOTICE,
+  },
+
+  asrs: {
+    toolId: 'asrs',
+    evidenceSlug: 'asrs-v1-1',
+    productTitle: 'Adult ADHD Screen',
+    officialName: 'Adult ADHD Self-Report Scale (ASRS-v1.1) Symptom Checklist — Part A (6-item screener)',
+    authors:
+      'Developed with the World Health Organization and the Workgroup on Adult ADHD (Ronald C. Kessler, Lenard Adler, and colleagues).',
+    year: 2005,
+    primaryPaper: {
+      citation:
+        'Kessler, R. C., Adler, L., Ames, M., Demler, O., Faraone, S., Hiripi, E., Howes, M. J., Jin, R., Secnik, K., Spencer, T., Ustun, T. B., & Walters, E. E. (2005). The World Health Organization Adult ADHD Self-Report Scale (ASRS): a short screening scale for use in the general population. Psychological Medicine, 35(2), 245–256.',
+      doi: '10.1017/S0033291704002892',
+      url: 'https://doi.org/10.1017/S0033291704002892',
+    },
+    copyrightNotice:
+      '© World Health Organization. The ASRS-v1.1 Symptom Checklist is reproduced without modification of the official question wording or scoring thresholds.',
+    licensingStatus:
+      'The ASRS-v1.1 Symptom Checklist is copyrighted by the World Health Organization and distributed free of charge for clinical and research screening use. Serenest has not independently verified permission for commercial public-web reproduction — flagged for review.',
+    permissionRequired: null,
+    permissionVerified: false,
+    wordingStatus: 'exact',
+    scoringMethod:
+      'Part A: 6 items rated Never / Rarely / Sometimes / Often / Very often. Each item has an official shaded-response threshold; the screen is positive when 4 or more of the 6 responses fall in the shaded range.',
+    thresholdSource:
+      'Official ASRS-v1.1 Part A shaded-box scoring (Kessler et al., 2005; WHO ASRS-v1.1 Symptom Checklist instructions).',
+    ageGroup: 'Adults aged 18 years and above.',
+    indianNorms: 'No India-specific norms are used.',
+    limitations: [
+      'A positive screen is not an ADHD diagnosis.',
+      'A full assessment should consider childhood history, daily functioning, sleep, anxiety, mood, substance use and other possible explanations.',
+      'Part A alone is a screener; the full ASRS Symptom Checklist has 18 items.',
+    ],
+    whyNotDiagnosis:
+      'ADHD diagnosis requires a structured clinical assessment including developmental history; a six-question screen cannot establish it.',
+    lastClinicalReview: null,
+    reviewer: null,
+    clinicalReviewStatus: 'pending',
+    clinicalReviewNotice: PENDING_REVIEW_NOTICE,
+  },
+
+  k10: {
+    toolId: 'k10',
+    evidenceSlug: 'k10',
+    productTitle: 'Psychological Distress Check',
+    officialName: 'Kessler Psychological Distress Scale (K10)',
+    authors: 'Ronald C. Kessler and colleagues',
+    year: 2002,
+    primaryPaper: {
+      citation:
+        'Kessler, R. C., Andrews, G., Colpe, L. J., Hiripi, E., Mroczek, D. K., Normand, S.-L. T., Walters, E. E., & Zaslavsky, A. M. (2002). Short screening scales to monitor population prevalences and trends in non-specific psychological distress. Psychological Medicine, 32(6), 959–976.',
+      doi: '10.1017/S0033291702006074',
+      url: 'https://doi.org/10.1017/S0033291702006074',
+    },
+    licensingStatus:
+      'The K10 is distributed free of charge and is widely reproduced in population health surveys. Serenest has not independently verified a formal permission statement for commercial public-web reproduction — flagged for review.',
+    permissionRequired: null,
+    permissionVerified: false,
+    wordingStatus: 'exact',
+    scoringMethod:
+      'Sum of 10 items, each scored 1 (None of the time) to 5 (All of the time). Total range 10–50.',
+    thresholdSource:
+      'Bands 10–19, 20–24, 25–29, 30–50 follow the commonly used Australian (Andrews & Slade, 2001; Victorian Population Health Survey) K10 groupings. Multiple scoring conventions exist for the K10.',
+    ageGroup: 'Adults (18+).',
+    indianNorms: 'No India-specific norms are used; bands come from Australian population survey conventions.',
+    limitations: [
+      'Measures non-specific distress; it cannot say which condition, if any, is present.',
+      'Several banding conventions exist; the one used here is a common but not universal choice.',
+      'A low score does not rule out a mental-health concern.',
+    ],
+    whyNotDiagnosis:
+      'K10 measures overall distress in the past 30 days. Distress can come from many sources; only clinical assessment can determine cause and diagnosis.',
+    lastClinicalReview: null,
+    reviewer: null,
+    clinicalReviewStatus: 'pending',
+    clinicalReviewNotice: PENDING_REVIEW_NOTICE,
+  },
+
+  pcl5: {
+    toolId: 'pcl5',
+    evidenceSlug: 'pcl-5',
+    productTitle: 'Post-Traumatic Stress Check',
+    officialName: 'PTSD Checklist for DSM-5 (PCL-5), standard 20-item version without Criterion A assessment',
+    authors:
+      'Frank W. Weathers, Brett T. Litz, Terence M. Keane, Patrick A. Palmieri, Brian P. Marx, Paula P. Schnurr — U.S. National Center for PTSD',
+    year: 2013,
+    primaryPaper: {
+      citation:
+        'Weathers, F. W., Litz, B. T., Keane, T. M., Palmieri, P. A., Marx, B. P., & Schnurr, P. P. (2013). The PTSD Checklist for DSM-5 (PCL-5). U.S. National Center for PTSD. Blevins, C. A., et al. (2015). The Posttraumatic Stress Disorder Checklist for DSM-5 (PCL-5): development and initial psychometric evaluation. Journal of Traumatic Stress, 28(6), 489–498.',
+      doi: '10.1002/jts.22059',
+      url: 'https://doi.org/10.1002/jts.22059',
+    },
+    licensingStatus:
+      'Developed by staff of the U.S. National Center for PTSD; available free of charge from ptsd.va.gov and in the public domain as a U.S. government work.',
+    permissionRequired: false,
+    permissionVerified: true,
+    wordingStatus: 'exact',
+    scoringMethod:
+      'Sum of 20 items, each scored 0 (Not at all) to 4 (Extremely). Total range 0–80.',
+    thresholdSource:
+      'The U.S. National Center for PTSD notes that scores in the 31–33 range or higher suggest probable PTSD and that optimal cut-points vary by population and setting. This page uses 31+ as a provisional screening threshold.',
+    ageGroup: 'Adults (18+).',
+    indianNorms:
+      'No India-specific norms are used; cut-point research comes mainly from U.S. veteran and civilian samples.',
+    limitations: [
+      'A structured clinical interview is required for diagnosis. The most suitable threshold may vary according to the population and purpose of screening.',
+      'This page does not assess Criterion A (the nature of the traumatic event), which the DSM-5 diagnosis requires.',
+      'Symptoms overlap with depression, anxiety, and other conditions.',
+    ],
+    whyNotDiagnosis:
+      'A score above a screening threshold indicates symptom burden, not PTSD. Diagnosis requires a trauma-informed structured clinical interview.',
+    lastClinicalReview: null,
+    reviewer: null,
+    clinicalReviewStatus: 'pending',
+    clinicalReviewNotice: PENDING_REVIEW_NOTICE,
+  },
+
+  scoff: {
+    toolId: 'scoff',
+    evidenceSlug: 'scoff',
+    productTitle: 'Eating Patterns Check',
+    officialName: 'SCOFF questionnaire (5 items)',
+    authors: 'John F. Morgan, Fiona Reid, J. Hubert Lacey (St George’s Hospital Medical School, London)',
+    year: 1999,
+    primaryPaper: {
+      citation:
+        'Morgan, J. F., Reid, F., & Lacey, J. H. (1999). The SCOFF questionnaire: assessment of a new screening tool for eating disorders. BMJ, 319(7223), 1467–1468.',
+      doi: '10.1136/bmj.319.7223.1467',
+      url: 'https://doi.org/10.1136/bmj.319.7223.1467',
+    },
+    licensingStatus:
+      'Published in the BMJ and widely reproduced in clinical screening practice. Serenest has not independently verified a formal permission statement for commercial public-web reproduction — flagged for review.',
+    permissionRequired: null,
+    permissionVerified: false,
+    wordingStatus: 'adapted',
+    wordingNotes:
+      'Items follow the published SCOFF; the weight-loss item uses a metric approximation ("more than 6 kg in a three-month period") of the original "one stone" wording.',
+    scoringMethod:
+      'Five yes/no items; each "yes" scores 1 point. Total range 0–5.',
+    thresholdSource:
+      'Two or more "yes" answers indicate a positive screen warranting further assessment (Morgan, Reid & Lacey, 1999). The original UK item references "one stone" (6.35 kg); this page uses the common metric adaptation of more than 6 kg.',
+    ageGroup: 'Adults; also studied in older adolescents.',
+    indianNorms: 'No India-specific norms are used.',
+    limitations: [
+      'A brief screen — it cannot distinguish between eating disorders or assess severity.',
+      'The weight-loss item uses a metric approximation of the original "one stone" wording.',
+      'A negative screen does not rule out an eating concern.',
+    ],
+    whyNotDiagnosis:
+      'SCOFF flags possible eating-disorder patterns. Diagnosis requires specialist clinical assessment.',
+    lastClinicalReview: null,
+    reviewer: null,
+    clinicalReviewStatus: 'pending',
+    clinicalReviewNotice: PENDING_REVIEW_NOTICE,
+  },
+
   bat12: {
     toolId: 'bat12',
     evidenceSlug: 'bat-12',
@@ -44,6 +357,12 @@ export const CHECK_EVIDENCE = {
     copyrightRestrictions: 'Do not modify item wording. Attribution required.',
     commercialPublicWebAllowed: true,
     permissionRequired: false,
+    permissionVerified: true,
+    thresholdSource:
+      'Pooled BAT-12 cut-offs — at risk ≥ 2.54, higher/severe-risk flag ≥ 2.96 — from Schaufeli et al. (2023), Scandinavian Journal of Work, Environment & Health.',
+    ageGroup: 'Working-age adults (18+).',
+    indianNorms:
+      'No India-specific norms are available; cut-offs come from employed samples in the Netherlands, Flanders, and Finland.',
     wordingStatus: 'exact',
     wordingNotes:
       'Serenest reproduces the official English general BAT-12 item stems and 1–5 Never–Always scale without paraphrase. Product titles, band labels, and educational copy are Serenest UI — not instrument adaptations.',
@@ -124,8 +443,7 @@ export const CHECK_EVIDENCE = {
     ],
     lastClinicalReview: null,
     clinicalReviewStatus: 'pending',
-    clinicalReviewNotice:
-      'Evidence summary based on official instrument sources and peer-reviewed literature. Clinical review pending.',
+    clinicalReviewNotice: PENDING_REVIEW_NOTICE,
     reviewer: null,
     privacy: {
       browser:

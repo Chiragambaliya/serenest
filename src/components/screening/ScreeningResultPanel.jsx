@@ -59,6 +59,7 @@ export default function ScreeningResultPanel({
   crisisFlag,
   crisisAcknowledged,
   onRetake,
+  onClearAnswers,
   hideCareUntilReady = false,
   includeCareOptions = true,
 }) {
@@ -101,6 +102,17 @@ export default function ScreeningResultPanel({
         <p style={{ margin: '12px auto 0', maxWidth: 440, fontSize: '0.92rem', lineHeight: 1.55, color: 'var(--muted)' }}>
           {band.desc}
         </p>
+        {tool.limitationNote ? (
+          <p style={{ margin: '12px auto 0', maxWidth: 440, fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--muted)' }}>
+            <strong>Important limitation:</strong> {tool.limitationNote}
+          </p>
+        ) : null}
+        {tool.attribution ? (
+          <p style={{ margin: '12px auto 0', maxWidth: 440, fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--muted)' }}>
+            {tool.attribution}
+            {tool.copyrightNotice ? <> {tool.copyrightNotice}</> : null}
+          </p>
+        ) : null}
       </div>
 
       <ScribaInsight insight={insight} />
@@ -108,7 +120,7 @@ export default function ScreeningResultPanel({
       <section className="mhc-edu" aria-labelledby="suggests-title">
         <h2 id="suggests-title">What this suggests</h2>
         <p style={{ margin: 0, fontSize: '0.9rem', lineHeight: 1.55, color: 'var(--muted)' }}>
-          {tool.whatItChecks} Your responses fall in the “{band.label}” range for this validated check ({tool.name}).
+          {tool.whatItChecks} Your responses fall in the “{band.label}” range for this evidence-based screening check ({tool.name}).
         </p>
       </section>
 
@@ -201,8 +213,21 @@ export default function ScreeningResultPanel({
             <button type="button" className="btn btn-ghost" onClick={onRetake}>
               Retake this check
             </button>
+            {onClearAnswers ? (
+              <button type="button" className="btn btn-ghost" onClick={onClearAnswers}>
+                Clear my answers
+              </button>
+            ) : null}
           </div>
         </section>
+      ) : null}
+
+      {!showCare && onClearAnswers ? (
+        <p style={{ textAlign: 'center', marginTop: '1rem' }}>
+          <button type="button" className="btn btn-ghost" onClick={onClearAnswers}>
+            Clear my answers
+          </button>
+        </p>
       ) : null}
     </div>
   );

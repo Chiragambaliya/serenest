@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { getTool, scoreTool } from '../lib/screeningTools';
@@ -40,6 +40,14 @@ export default function MoodAnxietyPathwayPage() {
   const phqResult = useMemo(() => scoreTool(phq, phqAnswers), [phq, phqAnswers]);
   const gadResult = useMemo(() => scoreTool(gad, gadAnswers), [gad, gadAnswers]);
   const crisisFlag = (phqAnswers[phq.crisisItem] ?? 0) >= 1;
+
+  // Safety interruption must be seen, not just rendered off-screen.
+  useEffect(() => {
+    if (!liveCrisis) return;
+    requestAnimationFrame(() => {
+      document.querySelector('.mhc-crisis')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, [liveCrisis]);
 
   const phoneClean = phone.replace(/[^\d]/g, '');
   const phoneOk = phoneClean.length === 10 && /^[6-9]/.test(phoneClean);
@@ -90,14 +98,14 @@ export default function MoodAnxietyPathwayPage() {
     setSubmitting(true);
     setSubmitError(null);
     try {
+      // Privacy-first: only opt-in summary scores/severity leave the browser —
+      // never the item-level questionnaire answers.
       await screening.submit({
         name: name.trim(),
         phone: phoneClean,
         email: email.trim() || null,
-        phq9_answers: phqAnswers,
         phq9_score: phqResult.score,
         phq9_severity: phqResult.band.label,
-        gad7_answers: gadAnswers,
         gad7_score: gadResult.score,
         gad7_severity: gadResult.band.label,
         wants_callback: callback,
@@ -146,8 +154,10 @@ export default function MoodAnxietyPathwayPage() {
               <li>Educational results for both — then optional follow-up</li>
             </ul>
             <p className="mhc-disclaimer" style={{ marginTop: '1rem' }}>
-              In a crisis, call <a href={CRISIS_RESOURCES.emergency.href}>{CRISIS_RESOURCES.emergency.number}</a> or{' '}
-              <a href={CRISIS_RESOURCES.icall.href}>{CRISIS_RESOURCES.icall.label}</a>.
+              In a crisis, call <a href={CRISIS_RESOURCES.emergency.href}>{CRISIS_RESOURCES.emergency.number}</a>. For
+              free mental-health support in India, call Tele-MANAS at{' '}
+              <a href={CRISIS_RESOURCES.telemanas.href}>{CRISIS_RESOURCES.telemanas.number}</a> or{' '}
+              <a href={CRISIS_RESOURCES.telemanasAlt.href}>{CRISIS_RESOURCES.telemanasAlt.number}</a>.
             </p>
             <button type="button" className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => setStep(1)}>
               Start with mood →

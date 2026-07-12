@@ -16,6 +16,7 @@ export default function CheckEvidencePanel({ toolId }) {
         Authors: {ev.authors} · Primary paper: {ev.year}
       </p>
       <ul>
+        {ev.copyrightNotice ? <li>{ev.copyrightNotice}</li> : null}
         <li>
           <strong>Licensing:</strong> {ev.licensingStatus}
         </li>
@@ -31,7 +32,7 @@ export default function CheckEvidencePanel({ toolId }) {
         <li>
           <strong>Clinical review:</strong>{' '}
           {ev.clinicalReviewNotice ||
-            'Evidence summary based on official instrument sources and peer-reviewed literature. Clinical review pending.'}
+            'Evidence summary prepared from published and official instrument sources. Formal Serenest clinical review pending.'}
         </li>
       </ul>
       <p style={{ margin: '0.75rem 0 0', fontSize: '0.88rem' }}>

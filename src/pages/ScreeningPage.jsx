@@ -25,8 +25,8 @@ export default function ScreeningPage() {
           <p className="mhc-eyebrow">Serenest Care · Mental Health Center</p>
           <h1>Understand how you’ve been feeling</h1>
           <p className="mhc-hero-lead">
-            Short, validated checks in plain language. You’ll learn what your answers may suggest — and what they
-            do not mean — before any care options appear.
+            Short, evidence-based screening checks in plain language. You’ll learn what your answers may suggest —
+            and what they do not mean — before any care options appear.
           </p>
 
           <Link to={pathway.href} className="mhc-pathway mhc-pathway-hero">
@@ -38,8 +38,10 @@ export default function ScreeningPage() {
           <p className="mhc-disclaimer">
             <strong>Private by default · not a diagnosis.</strong> Checks run in your browser. Contact details are
             optional and only after results. If you are in immediate danger, call{' '}
-            <a href={CRISIS_RESOURCES.emergency.href}>{CRISIS_RESOURCES.emergency.number}</a>
-            {' '}or see our{' '}
+            <a href={CRISIS_RESOURCES.emergency.href}>{CRISIS_RESOURCES.emergency.number}</a>. For free
+            mental-health support in India, call Tele-MANAS at{' '}
+            <a href={CRISIS_RESOURCES.telemanas.href}>{CRISIS_RESOURCES.telemanas.number}</a> or{' '}
+            <a href={CRISIS_RESOURCES.telemanasAlt.href}>{CRISIS_RESOURCES.telemanasAlt.number}</a>, or see our{' '}
             <Link to={CRISIS_RESOURCES.emergencyPage}>emergency guidance</Link>.
           </p>
         </header>
@@ -58,7 +60,7 @@ export default function ScreeningPage() {
         <section className="mhc-section" aria-labelledby="browse-title">
           <div className="mhc-section-head">
             <h2 id="browse-title">Or choose a specific check</h2>
-            <p>Each uses a validated scale. Pick what matches what you’re wondering about.</p>
+            <p>Each uses a published, evidence-based scale. Pick what matches what you’re wondering about.</p>
           </div>
 
           <ul className="mhc-cats" aria-label="Filter by concern">

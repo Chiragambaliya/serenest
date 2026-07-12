@@ -6,7 +6,9 @@ const UPDATED = 'June 2026';
 
 const CRISIS_LINES = [
   { name: 'Emergency Services', number: '112', desc: 'Police, ambulance, fire — India' },
-  { name: 'iCall (TISS)', number: '9152987821', desc: 'Mon–Sat, 8am–10pm' },
+  { name: 'Tele-MANAS (Govt. of India)', number: '14416', desc: 'Free national mental-health support, 24/7' },
+  { name: 'Tele-MANAS (toll-free)', number: '1800-891-4416', desc: 'Alternate Tele-MANAS number' },
+  { name: 'iCall (TISS)', number: '9152987821', desc: 'Mon–Sat, 8am–10pm · additional support' },
   { name: 'Vandrevala Foundation', number: '1860-2662-345', desc: '24/7 mental health helpline' },
   { name: 'NIMHANS Helpline', number: '080-46110007', desc: 'National Institute of Mental Health' },
   { name: 'Snehi', number: '044-24640050', desc: 'Emotional support & suicide prevention' },
@@ -50,7 +52,9 @@ export default function EmergencyDisclaimerPage() {
                 {CRISIS_LINES.map((c) => (
                   <div key={c.name} style={{ background: 'var(--bg-subtle)', borderRadius: 12, padding: '1rem 1.1rem' }}>
                     <div style={{ fontWeight: 700, fontSize: '0.9rem', marginBottom: 2 }}>{c.name}</div>
-                    <div style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--brand-500)', marginBottom: 2 }}>{c.number}</div>
+                    <div style={{ fontSize: '1.25rem', fontWeight: 800, marginBottom: 2 }}>
+                      <a href={`tel:${c.number.replace(/-/g, '')}`} style={{ color: 'var(--brand-500)', textDecoration: 'none' }}>{c.number}</a>
+                    </div>
                     <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{c.desc}</div>
                   </div>
                 ))}

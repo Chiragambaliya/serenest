@@ -2,8 +2,8 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
-import { getTool, getAllTools, scoreTool } from '../lib/screeningTools';
-import { saveSnapshotDimension, CRISIS_RESOURCES } from '../lib/mentalHealthCenter';
+import { getTool, getAllTools, scoreTool, isToolPaused } from '../lib/screeningTools';
+import { saveSnapshotDimension, clearSnapshotDimension, CRISIS_RESOURCES } from '../lib/mentalHealthCenter';
 import { getCheckEvidence, getLandingPathForTool } from '../lib/checkEvidence';
 import { loadCheckDraft, saveCheckDraft, clearCheckDraft } from '../lib/checkSession';
 import CrisisSafetyPanel from '../components/screening/CrisisSafetyPanel';
@@ -42,6 +42,7 @@ export default function ScreeningToolPage() {
   });
   const [crisisAck, setCrisisAck] = useState(false);
   const [liveCrisis, setLiveCrisis] = useState(false);
+  const [cleared, setCleared] = useState(false);
 
   useEffect(() => {
     if (!tool) return;
@@ -58,11 +59,21 @@ export default function ScreeningToolPage() {
   }, [tool?.id]);
 
   useEffect(() => {
-    if (!tool) return;
+    if (!tool || isToolPaused(tool)) return;
+    // Don't re-create a draft record for an untouched (or just-cleared) questionnaire.
+    if (!submitted && answers.every((a) => a === undefined || a === null)) return;
     saveCheckDraft(tool.id, { answers, submitted });
   }, [tool?.id, answers, submitted]);
 
   const result = useMemo(() => (tool ? scoreTool(tool, answers) : null), [tool, answers]);
+
+  // Safety interruption must be seen, not just rendered off-screen.
+  useEffect(() => {
+    if (!liveCrisis) return;
+    requestAnimationFrame(() => {
+      document.querySelector('.mhc-crisis')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, [liveCrisis]);
 
   if (!tool) {
     return (
@@ -71,6 +82,24 @@ export default function ScreeningToolPage() {
           <h1>Check not found</h1>
           <p className="mhc-hero-lead" style={{ margin: '0 auto 1.25rem' }}>
             That mental health check doesn’t exist or has moved.
+          </p>
+          <Link to="/screening" className="btn btn-primary">
+            Back to Mental Health Center
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Paused instrument: never show questions or scores on the direct URL.
+  if (isToolPaused(tool)) {
+    return (
+      <div className="mhc">
+        <div className="mhc-wrap" style={{ textAlign: 'center' }}>
+          <h1>Check temporarily unavailable</h1>
+          <p className="mhc-hero-lead" style={{ margin: '0 auto 1.25rem' }}>
+            {tool.pausedMessage ||
+              'This check is temporarily unavailable while Serenest reviews instrument permissions and interpretation guidance.'}
           </p>
           <Link to="/screening" className="btn btn-primary">
             Back to Mental Health Center
@@ -123,6 +152,18 @@ export default function ScreeningToolPage() {
     setSubmitted(false);
     setCrisisAck(false);
     setLiveCrisis(false);
+    setCleared(false);
+  }
+
+  /** Privacy control: remove draft, submitted result, and snapshot entry from this browser session. */
+  function clearMyAnswers() {
+    clearCheckDraft(tool.id);
+    if (tool.dimensionId) clearSnapshotDimension(tool.dimensionId);
+    setAnswers(Array(tool.questions.length).fill(undefined));
+    setSubmitted(false);
+    setCrisisAck(false);
+    setLiveCrisis(false);
+    setCleared(true);
   }
 
   const others = getAllTools().filter((t) => t.id !== tool.id).slice(0, 6);
@@ -134,7 +175,7 @@ export default function ScreeningToolPage() {
           <Link to="/screening" className="mhc-back">
             ← Mental Health Center
           </Link>
-          <p className="mhc-eyebrow">{tool.name} · validated check</p>
+          <p className="mhc-eyebrow">{tool.name} · evidence-based screening check</p>
           <h1 style={{ fontSize: 'clamp(1.45rem, 3vw, 1.85rem)', margin: '0 0 0.5rem' }}>{tool.humanTitle}</h1>
           <p style={{ margin: 0, color: 'var(--muted)', fontSize: '0.95rem', lineHeight: 1.5, maxWidth: '42ch' }}>
             {tool.whatItChecks}
@@ -162,8 +203,20 @@ export default function ScreeningToolPage() {
           />
         ) : null}
 
+        {cleared ? (
+          <div className="mhc-disclaimer" role="status" style={{ marginTop: 0, marginBottom: '1rem' }}>
+            <strong>Your answers and result were removed from this browser session.</strong>
+          </div>
+        ) : null}
+
         {!submitted ? (
           <>
+            {tool.ageNote ? (
+              <div className="mhc-disclaimer" style={{ marginTop: 0, marginBottom: '1rem' }}>
+                <strong>{tool.ageNote}</strong>
+              </div>
+            ) : null}
+
             <div className="mhc-disclaimer" style={{ marginTop: 0, marginBottom: '1rem' }}>
               <strong>Not a diagnosis.</strong> {tool.timeframe}
               {tool.note ? ` ${tool.note}` : ''} Progress is saved in this browser session only.
@@ -237,6 +290,14 @@ export default function ScreeningToolPage() {
                 {canSubmit ? 'See my result & guidance' : `Answer all questions (${answered}/${total})`}
               </button>
             </div>
+
+            {answered > 0 ? (
+              <p style={{ textAlign: 'center', marginTop: '1rem' }}>
+                <button type="button" className="btn btn-ghost" onClick={clearMyAnswers}>
+                  Clear my answers
+                </button>
+              </p>
+            ) : null}
           </>
         ) : (
           <>
@@ -252,6 +313,7 @@ export default function ScreeningToolPage() {
                 crisisAcknowledged={crisisAck}
                 hideCareUntilReady={crisisFlag}
                 onRetake={retake}
+                onClearAnswers={clearMyAnswers}
               />
             )}
           </>
@@ -266,7 +328,10 @@ export default function ScreeningToolPage() {
             lineHeight: 1.5,
           }}
         >
-          In a crisis, call <strong>{CRISIS_RESOURCES.emergency.number}</strong> or{' '}
+          In a crisis, call <a href={CRISIS_RESOURCES.emergency.href}><strong>{CRISIS_RESOURCES.emergency.number}</strong></a>. For free
+          mental-health support in India, call Tele-MANAS at{' '}
+          <a href={CRISIS_RESOURCES.telemanas.href}>{CRISIS_RESOURCES.telemanas.number}</a> or{' '}
+          <a href={CRISIS_RESOURCES.telemanasAlt.href}>{CRISIS_RESOURCES.telemanasAlt.number}</a>, or{' '}
           <Link to={CRISIS_RESOURCES.emergencyPage}>see emergency guidance</Link>. Results are screening aids — not
           diagnoses.
         </p>

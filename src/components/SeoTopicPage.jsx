@@ -44,11 +44,13 @@ export function EmergencyCallout({ note }) {
       <div>
         <div className="callout-box-title">Not for psychiatric emergencies</div>
         <p className="callout-box-text">
-          Serenest is not an emergency service. If you, or someone you know, is in immediate danger
-          — including thoughts of self-harm or suicide — please contact a local emergency
-          number, go to your nearest hospital, or call iCall:{' '}
-          <a href="tel:7777936367" style={{ fontWeight: 700 }}>7777936367</a>. In India, you can
-          also reach iCall at icallhelp.in or AASRA at +91-9820466726.
+          Serenest is not an emergency service, and online appointments are not emergency care.
+          If you may act on thoughts of harming yourself, cannot stay safe, or are in immediate
+          danger, call <a href="tel:112" style={{ fontWeight: 700 }}>112</a> or go to the nearest
+          emergency department. For free mental-health support in India, call Tele-MANAS at{' '}
+          <a href="tel:14416" style={{ fontWeight: 700 }}>14416</a> or{' '}
+          <a href="tel:18008914416" style={{ fontWeight: 700 }}>1800-891-4416</a>. iCALL
+          (<a href="tel:9152987821">9152987821</a>) is an additional support option.
           {note ? <><br /><br />{note}</> : null}
         </p>
       </div>

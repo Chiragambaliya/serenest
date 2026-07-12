@@ -44,7 +44,7 @@ export default function EvidenceCenterPage() {
                 <p className="mhc-card-scale">{e.officialName}</p>
                 <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--muted)', lineHeight: 1.45 }}>
                   {e.clinicalReviewNotice ||
-                    'Evidence summary based on official instrument sources and peer-reviewed literature. Clinical review pending.'}
+                    'Evidence summary prepared from published and official instrument sources. Formal Serenest clinical review pending.'}
                 </p>
                 <span className="mhc-card-cta">Open evidence report →</span>
               </Link>

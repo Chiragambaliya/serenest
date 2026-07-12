@@ -330,6 +330,8 @@ export const ROUTE_SEO = {
 // dedicated landing pages (/phq-9-depression-screening etc.) own that intent.
 for (const t of SCREENING_TOOLS) {
   if (!t.seoTitle) continue;
+  if (t.status === 'paused') continue; // paused instruments are withdrawn from public navigation
+
   ROUTE_SEO[`/screening/tool/${t.slug}`] = {
     title: t.seoTitle,
     description: t.seoDescription,

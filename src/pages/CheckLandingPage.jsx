@@ -89,7 +89,10 @@ export default function CheckLandingPage({ toolId }) {
           </Link>
           <p className="mhc-disclaimer" style={{ marginTop: '1rem' }}>
             <strong>Screening aid, not a diagnosis.</strong> If you are in immediate danger, call{' '}
-            <a href={CRISIS_RESOURCES.emergency.href}>{CRISIS_RESOURCES.emergency.number}</a> or see{' '}
+            <a href={CRISIS_RESOURCES.emergency.href}>{CRISIS_RESOURCES.emergency.number}</a>. For free
+            mental-health support in India, call Tele-MANAS at{' '}
+            <a href={CRISIS_RESOURCES.telemanas.href}>{CRISIS_RESOURCES.telemanas.number}</a> or{' '}
+            <a href={CRISIS_RESOURCES.telemanasAlt.href}>{CRISIS_RESOURCES.telemanasAlt.number}</a>, or see{' '}
             <Link to={CRISIS_RESOURCES.emergencyPage}>emergency guidance</Link>.
           </p>
         </header>

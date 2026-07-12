@@ -27,7 +27,7 @@ export default function PatientTermsPage() {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
 
             <div className="callout" style={{ borderRadius: 12, padding: '1rem 1.25rem', marginBottom: 0 }}>
-              <strong>Not an emergency service.</strong> Serenest is not equipped to handle psychiatric emergencies. If you or someone you know is in immediate danger, call <strong>112</strong> or go to the nearest hospital emergency department. For crisis support, contact iCall at <strong>9152987821</strong> or Vandrevala Foundation at <strong>1860-2662-345</strong>.
+              <strong>Not an emergency service.</strong> Serenest is not equipped to handle psychiatric emergencies. If you or someone you know is in immediate danger, call <strong>112</strong> or go to the nearest hospital emergency department. For free mental-health support in India, call Tele-MANAS at <strong>14416</strong> or <strong>1800-891-4416</strong>. Additional support: iCall at <strong>9152987821</strong> or Vandrevala Foundation at <strong>1860-2662-345</strong>.
             </div>
 
             <div className="tile" style={{ padding: '1.5rem' }}>

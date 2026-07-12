@@ -6,10 +6,27 @@
 /** India crisis resources — single source of truth for Care surfaces */
 export const CRISIS_RESOURCES = {
   emergency: { label: 'Emergency', number: '112', href: 'tel:112' },
-  icall: { label: 'iCall', number: '9152987821', href: 'tel:9152987821', note: 'Psychosocial helpline' },
+  telemanas: {
+    label: 'Tele-MANAS',
+    number: '14416',
+    href: 'tel:14416',
+    note: 'Free national mental-health support (Government of India), 24/7',
+  },
+  telemanasAlt: {
+    label: 'Tele-MANAS (alternate)',
+    number: '1800-891-4416',
+    href: 'tel:18008914416',
+    note: 'Alternate toll-free Tele-MANAS number',
+  },
+  // Additional support option — not the primary national crisis resource.
+  icall: { label: 'iCALL', number: '9152987821', href: 'tel:9152987821', note: 'Psychosocial helpline (additional support)' },
   serenest: { label: 'Serenest support', number: '+91 77779 36367', href: 'tel:+917777936367' },
   emergencyPage: '/emergency-disclaimer',
 };
+
+/** Canonical crisis-panel statement — keep wording consistent across all crisis surfaces. */
+export const CRISIS_STATEMENT =
+  'If you may act on thoughts of harming yourself, cannot stay safe, or are in immediate danger, call 112 or go to the nearest emergency department. For free mental-health support in India, call Tele-MANAS at 14416 or 1800-891-4416.';
 
 /** Snapshot dimensions — architecture for many future checks without redesign */
 export const SNAPSHOT_DIMENSIONS = [
@@ -32,7 +49,8 @@ export const SNAPSHOT_DIMENSIONS = [
     label: 'Stress',
     question: 'How overloaded does life feel?',
     toolId: 'pss10',
-    status: 'live',
+    // PSS-10 paused: instrument permission and interpretation bands under review.
+    status: 'paused',
   },
   {
     id: 'wellbeing',
@@ -152,6 +170,25 @@ export function saveSnapshotDimension(dimensionId, payload) {
   }
 }
 
+/** Remove one dimension's snapshot result from this browser session ("Clear my answers"). */
+export function clearSnapshotDimension(dimensionId) {
+  if (!dimensionId) return loadSnapshotSession();
+  try {
+    const prev = loadSnapshotSession();
+    if (!(dimensionId in prev)) return prev;
+    const next = { ...prev };
+    delete next[dimensionId];
+    if (Object.keys(next).length === 0) {
+      sessionStorage.removeItem(SESSION_KEY);
+    } else {
+      sessionStorage.setItem(SESSION_KEY, JSON.stringify(next));
+    }
+    return next;
+  } catch {
+    return {};
+  }
+}
+
 /**
  * Scriba Insight — calm, non-diagnostic copy from tool + band.
  * Template-based now; swap body for model output later without UI redesign.
@@ -172,7 +209,7 @@ export function buildScribaInsight(tool, result) {
     body = `Your ${name} check suggests wellbeing may be lower than you’d like right now. Many people feel this way during hard seasons. Understanding that pattern is a first step — a professional can help if it persists or feels heavy.`;
   } else if (tool.scoring === 'threshold_count' && result.positive) {
     body = `Your answers on the ${scale} are consistent with patterns people discuss in a full assessment. That does not mean you have a diagnosis. It means a structured conversation with a clinician is a reasonable next step if these experiences affect your life.`;
-  } else if (/severe|higher risk|higher concern|possible dependence|positive screen|consistent with/i.test(label)) {
+  } else if (/severe|higher risk|higher concern|possible dependence|positive screen|consistent with|above a provisional/i.test(label)) {
     body = `Your ${name} result suggests this may be affecting you more than mildly. Many people in this range benefit from talking with a psychiatrist or psychologist — not because a form decided your future, but because support can make the next weeks easier.`;
   } else if (/moderate|increased|mild distress|elevated|at risk/i.test(label)) {
     body = `Your ${name} result sits in a middle range. That often means self-care and learning help, and a professional conversation is worth considering if symptoms last, worsen, or interfere with work, sleep, or relationships.`;

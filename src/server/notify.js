@@ -242,9 +242,11 @@ function patientScreeningBody(s) {
   const first = esc(firstToken);
   const crisis = safety
     ? '<div style="background:#fee2e2;border:1px solid #fecaca;border-radius:10px;padding:14px 16px;margin:0 0 16px;color:#991b1b">'
-      + '<strong>If you are in crisis or thinking about hurting yourself, please reach out now.</strong><br/>'
-      + 'iCall: <a href="tel:9152987821" style="color:#991b1b;font-weight:700">9152987821</a> · '
-      + 'Vandrevala: <a href="tel:7777936367" style="color:#991b1b;font-weight:700">7777936367</a>'
+      + '<strong>If you may act on thoughts of harming yourself, cannot stay safe, or are in immediate danger, call 112 or go to the nearest emergency department.</strong><br/>'
+      + 'Emergency: <a href="tel:112" style="color:#991b1b;font-weight:700">112</a> · '
+      + 'Tele-MANAS: <a href="tel:14416" style="color:#991b1b;font-weight:700">14416</a> · '
+      + 'Tele-MANAS toll-free: <a href="tel:18008914416" style="color:#991b1b;font-weight:700">1800-891-4416</a> · '
+      + 'iCall (additional support): <a href="tel:9152987821" style="color:#991b1b;font-weight:700">9152987821</a>'
       + '</div>'
     : '';
   return (
