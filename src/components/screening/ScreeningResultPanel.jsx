@@ -99,16 +99,14 @@ export default function ScreeningResultPanel({
           </div>
         )}
         <div className="mhc-band-pill">{band.label}</div>
-        <p style={{ margin: '12px auto 0', maxWidth: 440, fontSize: '0.92rem', lineHeight: 1.55, color: 'var(--muted)' }}>
-          {band.desc}
-        </p>
+        <p className="mhc-result-desc">{band.desc}</p>
         {tool.limitationNote ? (
-          <p style={{ margin: '12px auto 0', maxWidth: 440, fontSize: '0.88rem', lineHeight: 1.55, color: 'var(--muted)' }}>
+          <p className="mhc-result-note">
             <strong>Important limitation:</strong> {tool.limitationNote}
           </p>
         ) : null}
         {tool.attribution ? (
-          <p style={{ margin: '12px auto 0', maxWidth: 440, fontSize: '0.82rem', lineHeight: 1.5, color: 'var(--muted)' }}>
+          <p className="mhc-result-attribution">
             {tool.attribution}
             {tool.copyrightNotice ? <> {tool.copyrightNotice}</> : null}
           </p>
@@ -206,9 +204,6 @@ export default function ScreeningResultPanel({
           <div className="mhc-care-actions">
             <Link className="btn btn-primary" to="/book">
               Talk to a clinician
-            </Link>
-            <Link className="btn btn-ghost" to="/patient/find-professional">
-              Find a professional
             </Link>
             <button type="button" className="btn btn-ghost" onClick={onRetake}>
               Retake this check
