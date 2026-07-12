@@ -52,13 +52,46 @@ services:
       - key: CALLMEBOT_WHATSAPP_PHONE
         sync: false
 
+      # ── Razorpay payments (optional — bookings stay free-flow until set) ──
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      # - key: DEFAULT_FEE_INR
+      #   value: "499"
+
+      # ── Anthropic: Academy & social content generation (optional) ──
+      - key: ANTHROPIC_API_KEY
+        sync: false
+
+      # ── Telegram team alerts (optional) ──────────────────────
+      # - key: TELEGRAM_BOT_TOKEN
+      #   sync: false
+      # - key: TELEGRAM_CHAT_ID
+      #   sync: false
+
+      # ── Social auto-posting (optional; Admin → Social Media) ─
+      # - key: INSTAGRAM_ACCESS_TOKEN
+      #   sync: false
+      # - key: INSTAGRAM_USER_ID
+      #   sync: false
+      # - key: LINKEDIN_ACCESS_TOKEN
+      #   sync: false
+      # - key: LINKEDIN_ORG_URN
+      #   sync: false
+
+      # ── WhatsApp channel link for approved professionals (optional) ──
+      # - key: VITE_WA_CHANNEL_LINK
+      #   sync: false
+
       # ── Visitor alerts: email each unique visitor (optional; WhatsApp pings always when CallMeBot set)
       # - key: NOTIFY_EACH_UNIQUE_VISITOR_EMAIL
       #   value: "true"
 
-      # ── CORS (set to your custom domain after first deploy) ──
+      # ── CORS allow-list (optional — production already defaults to
+      #    https://www.serenest.in + https://serenest.in, never `*`) ──
       # - key: CORS_ORIGIN
-      #   value: https://serenest.in
+      #   value: https://www.serenest.in,https://serenest.in
 
   # NOTE: Serenest Academy used to be a second static service (rootDir:
   # education-site). It's now merged into the main app at /academy and served

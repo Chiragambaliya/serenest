@@ -317,7 +317,7 @@ export default function ProfessionalPortalPage() {
                         <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', fontStyle: 'italic', marginBottom: 12 }}>&ldquo;{b.notes}&rdquo;</p>
                       )}
                       {b.status === 'confirmed' && (
-                        <Link to={`/consultation/${b.appointment_id || b.id}?mode=${b.mode}`} className="btn btn-primary btn-sm">
+                        <Link to={`/consultation/${b.id}?mode=${b.mode}`} className="btn btn-primary btn-sm">
                           🎥 Join consultation
                         </Link>
                       )}

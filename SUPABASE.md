@@ -13,11 +13,13 @@ The Serenest React app connects to Supabase for:
    - **Project URL**
    - **anon public** key
 
-## 2. Run the schema
+## 2. Run the schema + migrations
 
 1. In the Supabase dashboard, open **SQL Editor**.
-2. Paste and run the contents of **`supabase/schema.sql`**.
-3. This creates `professional_applications`, `signups`, `professionals`, `screening_responses`, and RLS policies.
+2. Paste and run the contents of **`supabase/schema.sql`** (idempotent — safe to re-run).
+3. Run each file in **`supabase/migrations/`** in filename order (also idempotent).
+   For an existing database, at minimum run **`2026_07_03_tighten_rls.sql`** — it
+   replaces early `using (true)` RLS policies with own-row access.
 
 ## 3. Configure environment variables
 
@@ -26,8 +28,10 @@ The Serenest React app connects to Supabase for:
    cp .env.example .env
    ```
 2. Edit **`.env`** and set:
-   - `VITE_SUPABASE_URL` — your Project URL
-   - `VITE_SUPABASE_ANON_KEY` — your anon public key
+   - `VITE_SUPABASE_URL` — your Project URL (browser client)
+   - `VITE_SUPABASE_ANON_KEY` — your anon public key (browser client)
+   - `SUPABASE_URL` — same Project URL (server)
+   - `SUPABASE_SERVICE_KEY` — your **service_role** key (server only — never expose it to the browser)
 
 ## 4. Deploy (Render)
 
@@ -37,5 +41,7 @@ Add these environment variables in Render:
 |----------|-------|
 | `VITE_SUPABASE_URL` | Your Supabase project URL |
 | `VITE_SUPABASE_ANON_KEY` | Your Supabase anon key |
+| `SUPABASE_URL` | Your Supabase project URL |
+| `SUPABASE_SERVICE_KEY` | Your service-role key |
 
-Without these, the app falls back to `localStorage` for professional applications and screening responses.
+Without the server pair, every `/api/*` data endpoint returns 503 (`Database not configured`); without the `VITE_` pair, login and consultation chat are disabled in the browser.

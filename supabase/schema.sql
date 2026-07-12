@@ -34,12 +34,32 @@ create table if not exists public.appointments (
   language         text not null default 'English',
   notes            text,
 
-  -- Assigned professional (set by admin after confirmation)
-  professional_id  uuid references public.professional_applications(id) on delete set null,
+  -- Assigned professional (set by admin after confirmation).
+  -- FK added below, after professional_applications is created.
+  professional_id  uuid,
+
+  -- Legacy human-readable reference (APT-XXXXXXXX), auto-filled by trigger.
+  appointment_id   text,
 
   -- Video room (Daily.co room name, set when session is confirmed)
   room_name        text
 );
+
+-- Auto-fill the short reference from the uuid when missing (kept in sync
+-- with supabase/migrations/2026_05_07_fix_appointments_legacy.sql).
+create or replace function public.set_appointment_id_default()
+returns trigger language plpgsql as $$
+begin
+  if new.appointment_id is null then
+    new.appointment_id := 'APT-' || upper(substr(replace(new.id::text, '-', ''), 1, 8));
+  end if;
+  return new;
+end $$;
+
+drop trigger if exists trg_appointments_set_id on public.appointments;
+create trigger trg_appointments_set_id
+  before insert on public.appointments
+  for each row execute function public.set_appointment_id_default();
 
 -- ── Patients ─────────────────────────────────────────────────
 create table if not exists public.patients (
@@ -79,6 +99,24 @@ create table if not exists public.professional_applications (
   modes        text,
   availability text
 );
+
+-- FK from appointments (declared above, before this table existed)
+do $$
+begin
+  if not exists (
+    select 1
+    from information_schema.table_constraints
+    where table_schema = 'public'
+      and table_name = 'appointments'
+      and constraint_name = 'appointments_professional_id_fkey'
+  ) then
+    alter table public.appointments
+      add constraint appointments_professional_id_fkey
+      foreign key (professional_id)
+      references public.professional_applications(id)
+      on delete set null;
+  end if;
+end $$;
 
 -- ── Sign-ups (email capture / waitlist) ──────────────────────
 create table if not exists public.signups (
@@ -211,17 +249,44 @@ begin
   end loop;
 end $$;
 
+-- ── Helper: last-10-digit phone comparison ────────────────────
+-- Indian mobiles are stored as 10 digits; JWT phone claims may
+-- carry a country code. Empty values never match.
+create or replace function public.phones_match(a text, b text)
+returns boolean
+language sql
+immutable
+as $$
+  select coalesce(a, '') <> ''
+     and coalesce(b, '') <> ''
+     and right(regexp_replace(a, '\D', '', 'g'), 10)
+       = right(regexp_replace(b, '\D', '', 'g'), 10)
+     and length(regexp_replace(a, '\D', '', 'g')) >= 10
+     and length(regexp_replace(b, '\D', '', 'g')) >= 10;
+$$;
+
 -- ── Appointments ─────────────────────────────────────────────
 -- Anon can insert (booking form); read/update only via service role (server.js)
 create policy "anon_insert_appointments"
   on public.appointments for insert
   with check (true);
 
--- Authenticated patients see only their own appointments (matched by phone)
+-- Authenticated patients see only their own appointments,
+-- matched by the verified email/phone on their JWT or the phone
+-- stored on their patients row.
 create policy "auth_select_own_appointments"
   on public.appointments for select
   to authenticated
-  using (true); -- Refine per patient_id once auth is wired
+  using (
+    (coalesce(patient_email, '') <> ''
+      and lower(patient_email) = lower(coalesce(auth.jwt() ->> 'email', '')))
+    or public.phones_match(patient_phone, auth.jwt() ->> 'phone')
+    or exists (
+      select 1 from public.patients p
+      where p.auth_user_id = (select auth.uid())
+        and public.phones_match(p.phone, patient_phone)
+    )
+  );
 
 -- ── Patients ─────────────────────────────────────────────────
 create policy "patient_select_own"
@@ -240,87 +305,62 @@ create policy "patient_update_own"
   using (auth.uid() = auth_user_id);
 
 -- ── Professional applications ─────────────────────────────────
+-- Anyone can apply; a professional can read/update only the row
+-- matching the verified email on her JWT. Admin review happens
+-- through server.js (service role).
 create policy "anon_insert_prof_apps"
   on public.professional_applications for insert
   with check (true);
 
-create policy "auth_select_prof_apps"
+create policy "auth_select_own_application"
   on public.professional_applications for select
   to authenticated
-  using (true);
+  using (
+    coalesce(email, '') <> ''
+    and lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+  );
 
-create policy "auth_update_prof_apps"
+create policy "auth_update_own_application"
   on public.professional_applications for update
   to authenticated
-  using (true) with check (true);
+  using (
+    coalesce(email, '') <> ''
+    and lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+  )
+  with check (
+    coalesce(email, '') <> ''
+    and lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+  );
 
--- ── Sign-ups ──────────────────────────────────────────────────
+-- ── Sign-ups (insert-only; read via service role) ─────────────
 create policy "anon_insert_signups"
   on public.signups for insert
   with check (true);
 
-create policy "auth_select_signups"
-  on public.signups for select
-  to authenticated
-  using (true);
-
--- ── Professionals ─────────────────────────────────────────────
+-- ── Professionals (insert-only; read via service role) ────────
 create policy "anon_insert_professionals"
   on public.professionals for insert
   with check (true);
 
-create policy "auth_select_professionals"
-  on public.professionals for select
-  to authenticated
-  using (true);
-
--- ── Screening responses ───────────────────────────────────────
+-- ── Screening responses (insert-only; read via service role) ──
 create policy "anon_insert_screening"
   on public.screening_responses for insert
   with check (true);
 
-create policy "auth_select_screening"
-  on public.screening_responses for select
-  to authenticated
-  using (true);
-
--- ── Contact messages ──────────────────────────────────────────
+-- ── Contact messages (insert-only; read via service role) ─────
 create policy "anon_insert_contact"
   on public.contact_messages for insert
   with check (true);
 
-create policy "auth_select_contact"
-  on public.contact_messages for select
-  to authenticated
-  using (true);
-
 -- ── Session notes ─────────────────────────────────────────────
-create policy "auth_select_notes"
-  on public.session_notes for select
-  to authenticated
-  using (true);
-
-create policy "auth_insert_notes"
-  on public.session_notes for insert
-  to authenticated
-  with check (true);
-
--- Locked notes cannot be updated (enforced by application logic + this policy)
-create policy "auth_update_unlocked_notes"
-  on public.session_notes for update
-  to authenticated
-  using (is_locked = false)
-  with check (true);
+-- Clinical notes are managed exclusively by server.js (service
+-- role bypasses RLS). No client policies = deny-all for clients.
 
 -- ── Assessments ───────────────────────────────────────────────
+-- Insert-only for clients; reads happen via the service role.
 create policy "anon_insert_assessments"
   on public.assessments for insert
   with check (true);
-
-create policy "auth_select_assessments"
-  on public.assessments for select
-  to authenticated
-  using (true);
 
 -- ── Professional learning progress ────────────────────────────
 create policy "pro_learning_select_own"
