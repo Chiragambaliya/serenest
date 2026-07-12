@@ -81,7 +81,7 @@ export default function AnxietyPage() {
             <h2>What online anxiety care can — and cannot — do</h2>
           </div>
           <EmergencyCallout note={
-            <>If you are experiencing severe panic, dissociation, suicidal thoughts, or you cannot keep yourself safe, please contact local emergency services or iCall (7777936367) immediately. Online booking is not a substitute for emergency care.</>
+            <>If you are experiencing severe panic, dissociation, suicidal thoughts, or you cannot keep yourself safe, please call 112 or go to the nearest emergency department, or call Tele-MANAS at 14416 or 1800-891-4416. Online booking is not a substitute for emergency care.</>
           } />
           <div className="grid-2" style={{ marginTop: 24 }}>
             <article className="tile">

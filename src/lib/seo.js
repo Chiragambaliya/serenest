@@ -308,6 +308,7 @@ export const ROUTE_SEO = {
 // dedicated landing pages (/phq-9-depression-screening etc.) own that intent.
 for (const t of SCREENING_TOOLS) {
   if (!t.seoTitle) continue;
+  if (t.status === 'paused') continue; // paused instruments are withdrawn from public navigation
   ROUTE_SEO[`/screening/tool/${t.slug}`] = {
     title: t.seoTitle,
     description: t.seoDescription,
@@ -556,7 +557,7 @@ export const DEPRESSION_FAQS = [
   },
   {
     q: 'I am having thoughts of suicide. What should I do?',
-    a: 'Please do not use an online booking flow in an emergency. Contact a local emergency number, go to your nearest hospital, or call iCall on 7777936367 or AASRA on +91-9820466726. Serenest is not an emergency service.',
+    a: 'Please do not use an online booking flow in an emergency. Contact a local emergency number, go to your nearest hospital, or call 112, or call Tele-MANAS at 14416 or 1800-891-4416 for free mental-health support in India. Serenest is not an emergency service.',
   },
   {
     q: 'Do I need a referral to consult a psychiatrist for depression?',
@@ -587,7 +588,7 @@ export const ANXIETY_FAQS = [
   },
   {
     q: 'What if I have panic attacks during a session?',
-    a: 'Sessions can be paused. Your clinician is trained to help you ground and stabilize. If you experience severe distress, end the session and contact local emergency services or iCall (7777936367). Serenest is not an emergency service.',
+    a: 'Sessions can be paused. Your clinician is trained to help you ground and stabilize. If you experience severe distress, end the session and call 112, or call Tele-MANAS at 14416 or 1800-891-4416. Serenest is not an emergency service.',
   },
 ];
 
@@ -687,7 +688,7 @@ export const PHQ9_FAQS = [
   },
   {
     q: 'I scored high on the PHQ-9 — what should I do next?',
-    a: 'A higher score suggests it may be useful to speak with a clinician. You can book an online psychiatry consultation or counselling session. If the PHQ-9 item on self-harm thoughts is positive — and especially in an emergency — contact local emergency services or iCall (7777936367) immediately.',
+    a: 'A higher score suggests it may be useful to speak with a clinician. You can book an online psychiatry consultation or counselling session. If the PHQ-9 item on self-harm thoughts is positive — and especially in an emergency — call 112 or go to the nearest emergency department, or call Tele-MANAS at 14416 or 1800-891-4416.',
   },
   {
     q: 'How often should I retake the PHQ-9?',
@@ -714,7 +715,7 @@ export const GAD7_FAQS = [
   },
   {
     q: 'I scored high on the GAD-7 — what next?',
-    a: 'A higher score suggests it may be helpful to talk with a clinician — a psychologist, counsellor, or psychiatrist. Book a consultation when you are ready. In an emergency, contact local emergency services or iCall (7777936367).',
+    a: 'A higher score suggests it may be helpful to talk with a clinician — a psychologist, counsellor, or psychiatrist. Book a consultation when you are ready. In an emergency, call 112, or call Tele-MANAS at 14416 or 1800-891-4416.',
   },
 ];
 

@@ -1,8 +1,8 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
-import { SCREENING_TOOLS, getTool, scoreTool, maxScore } from '../lib/screeningTools';
+import { getLiveTools, getTool, isToolPaused, scoreTool, maxScore } from '../lib/screeningTools';
 
 export default function ScreeningToolPage() {
   const { toolId } = useParams();
@@ -24,6 +24,16 @@ export default function ScreeningToolPage() {
 
   const result = useMemo(() => (tool ? scoreTool(tool, answers) : null), [tool, answers]);
 
+  const liveCrisis = Boolean(tool && tool.crisisItem !== undefined && (answers[tool.crisisItem] ?? 0) >= 1);
+
+  // Safety interruption must be seen, not just rendered off-screen.
+  useEffect(() => {
+    if (!liveCrisis || submitted) return;
+    requestAnimationFrame(() => {
+      document.querySelector('[role="alert"]')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  }, [liveCrisis, submitted]);
+
   if (!tool) {
     return (
       <div className="page">
@@ -31,6 +41,24 @@ export default function ScreeningToolPage() {
           <div className="container" style={{ maxWidth: 620, textAlign: 'center' }}>
             <h1 style={{ fontWeight: 800, marginBottom: 10 }}>Screening tool not found</h1>
             <p className="muted" style={{ marginBottom: 20 }}>That self-check doesn&rsquo;t exist or has moved.</p>
+            <Link to="/screening" className="btn btn-primary">See all screening tools</Link>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  // Paused instrument: never show questions or scores on the direct URL.
+  if (isToolPaused(tool)) {
+    return (
+      <div className="page">
+        <section className="section">
+          <div className="container" style={{ maxWidth: 620, textAlign: 'center' }}>
+            <h1 style={{ fontWeight: 800, marginBottom: 10 }}>Check temporarily unavailable</h1>
+            <p className="muted" style={{ marginBottom: 20, lineHeight: 1.6 }}>
+              {tool.pausedMessage ||
+                'This check is temporarily unavailable while Serenest reviews instrument permissions and interpretation guidance.'}
+            </p>
             <Link to="/screening" className="btn btn-primary">See all screening tools</Link>
           </div>
         </section>
@@ -85,8 +113,11 @@ export default function ScreeningToolPage() {
                 <p className="muted" style={{ margin: '4px 0 0', fontSize: '0.78rem' }}>
                   {total} questions · about {minutes} min · confidential
                 </p>
+                {tool.ageNote && <p style={{ margin: '6px 0 0', fontSize: '0.82rem', fontWeight: 700 }}>{tool.ageNote}</p>}
                 {tool.note && <p className="muted" style={{ margin: '6px 0 0', fontSize: '0.82rem' }}>{tool.note}</p>}
               </div>
+
+              {crisisFlag && <CrisisNotice />}
 
               {/* Sticky progress bar — stays visible under the site header */}
               <div style={{ position: 'sticky', top: 76, zIndex: 5, padding: '6px 0 10px', background: 'linear-gradient(180deg, var(--bg, #f8f6f0) 70%, transparent)' }}>
@@ -157,11 +188,45 @@ export default function ScreeningToolPage() {
 
           <p className="muted" style={{ fontSize: '0.78rem', textAlign: 'center', marginTop: '2rem', lineHeight: 1.5 }}>
             This is a screening aid, not a diagnosis. Only a qualified professional can diagnose a condition.
-            In a crisis, call <strong>112</strong> or a helpline — see our{' '}
+            In a crisis, call <a href="tel:112" style={{ color: 'var(--brand-700)' }}><strong>112</strong></a>. For free mental-health
+            support in India, call Tele-MANAS at <a href="tel:14416" style={{ color: 'var(--brand-700)' }}>14416</a> or{' '}
+            <a href="tel:18008914416" style={{ color: 'var(--brand-700)' }}>1800-891-4416</a> — see our{' '}
             <Link to="/emergency-disclaimer" style={{ color: 'var(--brand-700)' }}>Emergency page</Link>.
           </p>
         </div>
       </section>
+    </div>
+  );
+}
+
+/**
+ * Immediate safety guidance — shown as soon as PHQ-9 item 9 is answered above
+ * "Not at all", and again with results. Nothing is sent anywhere; Serenest
+ * does not monitor answers. Tele-MANAS is the primary national support line;
+ * iCALL stays available as an additional option.
+ */
+function CrisisNotice() {
+  return (
+    <div role="alert" style={{ background: '#fdecea', border: '2px solid #c44', color: '#7a1f1a', borderRadius: 12, padding: '1.1rem 1.25rem', marginBottom: '1rem' }}>
+      <strong style={{ display: 'block', marginBottom: 6 }}>Please get support now</strong>
+      <p style={{ margin: '0 0 10px', fontSize: '0.92rem', lineHeight: 1.6 }}>
+        If you may act on thoughts of harming yourself, cannot stay safe, or are in immediate danger, call 112 or go
+        to the nearest emergency department. For free mental-health support in India, call Tele-MANAS at 14416 or
+        1800-891-4416.
+      </p>
+      <p style={{ margin: '0 0 10px', fontSize: '0.92rem', fontWeight: 700 }}>
+        <a href="tel:112" style={{ color: '#7a1f1a' }}>Call 112 (Emergency)</a>
+        {' · '}
+        <a href="tel:14416" style={{ color: '#7a1f1a' }}>Tele-MANAS 14416</a>
+        {' · '}
+        <a href="tel:18008914416" style={{ color: '#7a1f1a' }}>1800-891-4416</a>
+        {' · '}
+        <a href="tel:9152987821" style={{ color: '#7a1f1a' }}>iCALL 9152987821 (additional support)</a>
+      </p>
+      <p style={{ margin: 0, fontSize: '0.82rem', lineHeight: 1.5 }}>
+        Online appointments are not emergency services. Your answers stay in this browser — Serenest does not monitor
+        them or send them anywhere.
+      </p>
     </div>
   );
 }
@@ -175,12 +240,7 @@ function Result({ tool, result, crisisFlag, onRetake }) {
 
   return (
     <div>
-      {crisisFlag && (
-        <div style={{ background: '#fdecea', border: '1px solid #f5c2c0', color: '#a02622', borderRadius: 12, padding: '1rem 1.25rem', marginBottom: '1.25rem' }}>
-          <strong>You mentioned thoughts of self-harm.</strong> You deserve support right now. Please talk to someone today —
-          call <strong>iCall 9152987821</strong> or <strong>112</strong> in an emergency. You don&rsquo;t have to wait for an appointment.
-        </div>
-      )}
+      {crisisFlag && <CrisisNotice />}
 
       <div style={{ background: '#fff', border: `2px solid ${band.color}`, borderRadius: 16, padding: '1.5rem', marginBottom: '1.25rem', textAlign: 'center' }}>
         <p className="muted" style={{ fontSize: '0.8rem', margin: '0 0 6px', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700 }}>Your result</p>
@@ -200,6 +260,16 @@ function Result({ tool, result, crisisFlag, onRetake }) {
           {band.label}
         </div>
         <p className="muted" style={{ fontSize: '0.92rem', lineHeight: 1.6, margin: '14px auto 0', maxWidth: 460 }}>{band.desc}</p>
+        {tool.limitationNote && (
+          <p style={{ fontSize: '0.86rem', lineHeight: 1.55, margin: '12px auto 0', maxWidth: 460, background: '#f4eee4', borderRadius: 10, padding: '10px 14px', textAlign: 'left' }}>
+            <strong>Important limitation:</strong> {tool.limitationNote}
+          </p>
+        )}
+        {tool.attribution && (
+          <p className="muted" style={{ fontSize: '0.76rem', lineHeight: 1.5, margin: '12px auto 0', maxWidth: 520 }}>
+            {tool.attribution}{tool.copyrightNotice ? ` ${tool.copyrightNotice}` : ''}
+          </p>
+        )}
       </div>
 
       {/* Next steps */}
@@ -211,7 +281,7 @@ function Result({ tool, result, crisisFlag, onRetake }) {
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
           <Link to="/book" className="btn btn-primary">Book a consultation</Link>
           <a
-            href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I just did the ${tool.name} self-check on Serenest (result: ${band.label}). I'd like to talk to someone.`)}`}
+            href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I just did a self-check on Serenest and I'd like to talk to someone.`)}`}
             target="_blank" rel="noreferrer"
             className="btn btn-ghost" style={{ background: '#25D366', color: '#fff', borderColor: '#25D366' }}
           >
@@ -227,7 +297,7 @@ function Result({ tool, result, crisisFlag, onRetake }) {
 }
 
 function OtherTools({ currentId }) {
-  const others = SCREENING_TOOLS.filter((t) => t.id !== currentId);
+  const others = getLiveTools().filter((t) => t.id !== currentId);
   return (
     <div>
       <p style={{ fontSize: '0.82rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', margin: '1.25rem 0 10px' }}>

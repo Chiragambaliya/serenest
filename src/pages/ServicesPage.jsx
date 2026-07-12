@@ -410,7 +410,9 @@ export default function ServicesPage() {
           </div>
           <p className="svc-emergency">
             Not for emergencies. If someone is at immediate risk, call{' '}
-            <a href="tel:7777936367">7777936367</a> or local emergency services.
+            <a href="tel:112">112</a> or go to the nearest emergency department. For free mental-health
+            support in India, call Tele-MANAS at <a href="tel:14416">14416</a> or{' '}
+            <a href="tel:18008914416">1800-891-4416</a>.
           </p>
         </div>
       </section>

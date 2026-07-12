@@ -83,7 +83,9 @@ export default function PrivacyPolicyPage() {
             <div className="callout-title">Emergency disclaimer</div>
             <p className="muted" style={{ margin: 0 }}>
               Serenest is not for psychiatric emergencies. If you or someone you know is in immediate danger,
-              call us: <a href="tel:7777936367">7777936367</a> or your nearest emergency service.
+              call <a href="tel:112">112</a> or go to the nearest emergency department. For free mental-health
+              support in India, call Tele-MANAS at <a href="tel:14416">14416</a> or{' '}
+              <a href="tel:18008914416">1800-891-4416</a>.
             </p>
           </div>
         </div>

@@ -86,6 +86,8 @@ export default function ConsentPage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: 12, marginTop: 8 }}>
                 {[
                   { name: 'Emergency Services', number: '112' },
+                  { name: 'Tele-MANAS (Govt. of India)', number: '14416' },
+                  { name: 'Tele-MANAS (toll-free)', number: '1800-891-4416' },
                   { name: 'iCall (TISS)', number: '9152987821' },
                   { name: 'Vandrevala Foundation', number: '1860-2662-345' },
                   { name: 'NIMHANS', number: '080-46110007' },

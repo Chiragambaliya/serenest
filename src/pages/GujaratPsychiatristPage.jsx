@@ -79,7 +79,7 @@ export default function GujaratPsychiatristPage() {
       <section className="section">
         <div className="container">
           <EmergencyCallout note={
-            <>If you are in Gujarat and in immediate crisis, please reach a local hospital with psychiatric services or contact iCall (7777936367) or AASRA (+91-9820466726). Online booking is not appropriate for emergencies.</>
+            <>If you are in Gujarat and in immediate crisis, please call 112 or reach a local hospital with psychiatric services, or call Tele-MANAS at 14416 or 1800-891-4416. Online booking is not appropriate for emergencies.</>
           } />
         </div>
       </section>

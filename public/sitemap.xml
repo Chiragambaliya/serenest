@@ -62,11 +62,6 @@
 
   <!-- Interactive self-screening tools -->
   <url>
-    <loc>https://www.serenest.in/screening/tool/pss-10</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.serenest.in/screening/tool/who-5-wellbeing</loc>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>

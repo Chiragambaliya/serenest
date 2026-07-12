@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { screening } from '../lib/api';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
-import { SCREENING_TOOLS } from '../lib/screeningTools';
+import { getLiveTools } from '../lib/screeningTools';
 
 // ── Validated clinical screeners ──────────────────────────────────
 // PHQ-9 — Patient Health Questionnaire for depression (Kroenke et al.)
@@ -38,15 +38,15 @@ const FREQ_OPTIONS = [
 ];
 
 function phq9Severity(score) {
-  if (score <= 4)  return { label: 'Minimal',     color: '#198754', desc: 'Symptoms are minimal and unlikely to need treatment.' };
+  if (score <= 4)  return { label: 'Minimal',     color: '#198754', desc: 'Your score falls in the minimal symptom range. This does not rule out difficulties that are not captured by the questionnaire.' };
   if (score <= 9)  return { label: 'Mild',        color: '#0d6efd', desc: 'Mild symptoms — watchful waiting, lifestyle and follow-up.' };
   if (score <= 14) return { label: 'Moderate',    color: '#e67e22', desc: 'Moderate symptoms — talk therapy is recommended.' };
-  if (score <= 19) return { label: 'Moderately Severe', color: '#fd7e14', desc: 'Active treatment recommended — therapy and possibly medication.' };
-  return              { label: 'Severe',          color: '#dc3545', desc: 'Severe symptoms — immediate active treatment is recommended.' };
+  if (score <= 19) return { label: 'Moderately Severe', color: '#fd7e14', desc: 'A clinical assessment is recommended. Depending on your symptoms, history, functioning and preferences, a clinician may discuss psychological therapy, medication, monitoring, lifestyle changes or a combination of approaches.' };
+  return              { label: 'Severe',          color: '#dc3545', desc: 'Severe symptoms — please speak to a clinician promptly.' };
 }
 
 function gad7Severity(score) {
-  if (score <= 4)  return { label: 'Minimal',  color: '#198754', desc: 'Anxiety is within normal range.' };
+  if (score <= 4)  return { label: 'Minimal',  color: '#198754', desc: 'Your score falls in the minimal anxiety range on this questionnaire.' };
   if (score <= 9)  return { label: 'Mild',     color: '#0d6efd', desc: 'Mild anxiety — monitor and consider self-care strategies.' };
   if (score <= 14) return { label: 'Moderate', color: '#e67e22', desc: 'Moderate anxiety — talk therapy can help.' };
   return              { label: 'Severe',       color: '#dc3545', desc: 'Severe anxiety — professional support is strongly recommended.' };
@@ -94,10 +94,8 @@ export default function ScreeningPage() {
         name: name.trim(),
         phone: phoneClean,
         email: email.trim() || null,
-        phq9_answers: phq,
         phq9_score: phqScore,
         phq9_severity: phqSev.label,
-        gad7_answers: gad,
         gad7_score: gadScore,
         gad7_severity: gadSev.label,
         wants_callback: callback,
@@ -166,7 +164,7 @@ export default function ScreeningPage() {
             </div>
 
             <div style={{ background: 'var(--bg-subtle, #f8f9fa)', borderRadius: 10, padding: '12px 14px', fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem', borderLeft: '3px solid #ffc107' }}>
-              ⚠ <strong>Important:</strong> This is a self-screening tool, not a diagnosis. If you're in crisis or need immediate help, please call <a href="tel:7777936367" style={{ color: 'var(--brand-700)', fontWeight: 600 }}>7777936367</a> or your nearest emergency service.
+              ⚠ <strong>Important:</strong> This is a self-screening tool, not a diagnosis. If you may act on thoughts of harming yourself, cannot stay safe, or are in immediate danger, call <a href="tel:112" style={{ color: 'var(--brand-700)', fontWeight: 600 }}>112</a> or go to the nearest emergency department. For free mental-health support in India, call Tele-MANAS at <a href="tel:14416" style={{ color: 'var(--brand-700)', fontWeight: 600 }}>14416</a> or <a href="tel:18008914416" style={{ color: 'var(--brand-700)', fontWeight: 600 }}>1800-891-4416</a>.
             </div>
 
             <button onClick={() => setStep(1)} className="btn btn-primary btn-lg btn-full">
@@ -194,7 +192,7 @@ export default function ScreeningPage() {
               <p className="muted" style={{ fontSize: '0.88rem', margin: 0 }}>Free, confidential, and takes 1–2 minutes each.</p>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
-              {SCREENING_TOOLS.filter((t) => t.id !== 'phq9' && t.id !== 'gad7').map((t) => (
+              {getLiveTools().filter((t) => t.id !== 'phq9' && t.id !== 'gad7').map((t) => (
                 <Link key={t.id} to={`/screening/tool/${t.slug}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 14, padding: '1.1rem 1.25rem', height: '100%', transition: 'box-shadow 0.15s, transform 0.15s' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
@@ -244,9 +242,10 @@ export default function ScreeningPage() {
         {/* ── CONTACT ───────────────────────────────────────── */}
         {step === 3 && (
           <Card>
-            <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: 4 }}>One last step</h2>
+            <h2 style={{ fontSize: '1.3rem', fontWeight: 800, marginBottom: 4 }}>Optional: save a summary for follow-up</h2>
             <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.25rem' }}>
-              Share your details so we can send your personalised results and follow up if you'd like to talk to someone.
+              Sharing contact details is optional and only if you want Serenest to follow up. Only summary scores and
+              severity labels are stored — never your individual answers. You can see your results without sharing anything.
             </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem', marginBottom: '1rem' }}>
@@ -295,11 +294,16 @@ export default function ScreeningPage() {
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'space-between', flexWrap: 'wrap' }}>
               <button onClick={() => setStep(2)} className="btn btn-ghost" disabled={submitting}>← Back</button>
-              <button onClick={handleSubmit} className="btn btn-primary" disabled={!contactOk || submitting}>
-                {submitting ? 'Submitting…' : 'See my results →'}
-              </button>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                <button onClick={() => { setDone(true); setStep(4); }} className="btn btn-ghost" disabled={submitting}>
+                  Skip — see my results
+                </button>
+                <button onClick={handleSubmit} className="btn btn-primary" disabled={!contactOk || submitting}>
+                  {submitting ? 'Submitting…' : 'Save & see my results →'}
+                </button>
+              </div>
             </div>
           </Card>
         )}
@@ -313,9 +317,17 @@ export default function ScreeningPage() {
                 borderRadius: 14, padding: '1.25rem',
                 marginBottom: '1rem',
               }}>
-                <div style={{ fontWeight: 800, color: '#a02622', fontSize: '1rem', marginBottom: 6 }}>⚠ Please reach out for support</div>
-                <p style={{ color: '#a02622', fontSize: '0.9rem', margin: 0 }}>
-                  You indicated thoughts of self-harm. You are not alone — please call <a href="tel:7777936367" style={{ color: '#a02622', fontWeight: 700 }}>7777936367</a> now, or reach out to <a href="tel:9152987821" style={{ color: '#a02622', fontWeight: 700 }}>iCall (9152987821)</a> — a free helpline.
+                <div style={{ fontWeight: 800, color: '#a02622', fontSize: '1rem', marginBottom: 6 }}>⚠ Please get support now</div>
+                <p style={{ color: '#a02622', fontSize: '0.9rem', margin: '0 0 8px' }}>
+                  If you may act on thoughts of harming yourself, cannot stay safe, or are in immediate danger, call{' '}
+                  <a href="tel:112" style={{ color: '#a02622', fontWeight: 700 }}>112</a> or go to the nearest emergency
+                  department. For free mental-health support in India, call Tele-MANAS at{' '}
+                  <a href="tel:14416" style={{ color: '#a02622', fontWeight: 700 }}>14416</a> or{' '}
+                  <a href="tel:18008914416" style={{ color: '#a02622', fontWeight: 700 }}>1800-891-4416</a>. iCALL{' '}
+                  (<a href="tel:9152987821" style={{ color: '#a02622', fontWeight: 700 }}>9152987821</a>) is an additional support option.
+                </p>
+                <p style={{ color: '#a02622', fontSize: '0.8rem', margin: 0 }}>
+                  Online appointments are not emergency services. Your answers stay in this browser — Serenest does not monitor them or send them anywhere.
                 </p>
               </div>
             )}
@@ -330,7 +342,7 @@ export default function ScreeningPage() {
                   marginBottom: '1rem',
                   boxShadow: '0 8px 24px rgba(70, 85, 47, 0.35)',
                 }}>✓</div>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: 4 }}>Your results, {name.split(' ')[0]}</h2>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: 4 }}>{name.trim() ? `Your results, ${name.trim().split(' ')[0]}` : 'Your results'}</h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem' }}>
                   Based on your responses to PHQ-9 and GAD-7
                 </p>
@@ -371,7 +383,7 @@ export default function ScreeningPage() {
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
                 <Link to="/book" className="btn btn-primary">Book a session →</Link>
                 <Link to="/patient/find-professional" className="btn btn-ghost">Browse professionals</Link>
-                <a href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I just took the self-screening (PHQ-9: ${phqScore}, GAD-7: ${gadScore}). I'd like to talk to someone.`)}`} target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ background: '#25D366', color: '#fff', borderColor: '#25D366' }}>💬 WhatsApp us</a>
+                <a href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I just took the self-screening on Serenest. I'd like to talk to someone.`)}`} target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ background: '#25D366', color: '#fff', borderColor: '#25D366' }}>💬 WhatsApp us</a>
               </div>
 
               <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', textAlign: 'center', marginTop: '1.25rem', lineHeight: 1.5 }}>

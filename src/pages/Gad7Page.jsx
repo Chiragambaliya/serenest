@@ -9,10 +9,10 @@ import {
 const PATH = '/gad-7-anxiety-screening';
 
 const SEVERITY_BANDS = [
-  ['0 – 4', 'Minimal', 'Symptoms are minimal. Continue with healthy routines; recheck if things change.'],
+  ['0 – 4', 'Minimal', 'Your score falls in the minimal anxiety range on this questionnaire. This does not rule out difficulties the questionnaire does not capture; recheck if things change.'],
   ['5 – 9', 'Mild', 'Mild symptoms. Self-care, social support, and possibly counselling may help. Recheck in 2 weeks.'],
   ['10 – 14', 'Moderate', 'Moderate symptoms. A clinician evaluation — psychologist, counsellor, or psychiatrist — is reasonable.'],
-  ['15 – 21', 'Severe', 'Severe symptoms. A clinician evaluation is recommended. Treatment options may include therapy, medication, or a combination, decided clinically.'],
+  ['15 – 21', 'Severe', 'Severe symptoms. A clinical assessment is recommended. Depending on your symptoms, history, functioning and preferences, a clinician may discuss psychological therapy, medication, monitoring, lifestyle changes or a combination of approaches.'],
 ];
 
 export default function Gad7Page() {

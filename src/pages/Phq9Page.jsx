@@ -9,11 +9,11 @@ import {
 const PATH = '/phq-9-depression-screening';
 
 const SEVERITY_BANDS = [
-  ['0 – 4', 'Minimal symptoms', 'Symptoms are minimal. Continue to look after sleep, exercise, and social connection. If symptoms persist or worsen, speak with a clinician.'],
+  ['0 – 4', 'Minimal symptoms', 'Your score falls in the minimal symptom range. This does not rule out difficulties that are not captured by the questionnaire. If symptoms persist or worsen, speak with a clinician.'],
   ['5 – 9', 'Mild', 'Mild symptoms. Self-care, structured routines, social support, and possibly counselling may help. Recheck in 2 weeks.'],
   ['10 – 14', 'Moderate', 'Moderate symptoms. It is reasonable to book a clinician — psychologist, counsellor, or psychiatrist — for an evaluation.'],
-  ['15 – 19', 'Moderately severe', 'A clinician evaluation is recommended. Treatment options may include therapy, medication, or a combination, decided clinically.'],
-  ['20 – 27', 'Severe', 'Please speak to a clinician promptly. If safety is a concern, contact local emergency services or iCall (7777936367) immediately.'],
+  ['15 – 19', 'Moderately severe', 'A clinical assessment is recommended. Depending on your symptoms, history, functioning and preferences, a clinician may discuss psychological therapy, medication, monitoring, lifestyle changes or a combination of approaches.'],
+  ['20 – 27', 'Severe', 'Please speak to a clinician promptly. If safety is a concern, call 112, go to the nearest emergency department, or call Tele-MANAS at 14416 or 1800-891-4416.'],
 ];
 
 export default function Phq9Page() {
@@ -74,7 +74,7 @@ export default function Phq9Page() {
             </table>
             </div>
             <p style={{ marginTop: 12, fontSize: 13, color: 'rgba(11,36,32,0.65)' }}>
-              Note: PHQ-9 item 9 asks about thoughts of self-harm. If you answered “several days” or higher on item 9, please speak to a clinician promptly. In an emergency, contact iCall (7777936367) or your nearest hospital.
+              Note: PHQ-9 item 9 asks about thoughts of self-harm. If you answered “several days” or higher on item 9, please speak to a clinician promptly. In an emergency, call 112 or go to the nearest emergency department; for free mental-health support in India, call Tele-MANAS at 14416 or 1800-891-4416.
             </p>
           </div>
         </div>
@@ -87,7 +87,7 @@ export default function Phq9Page() {
             <h2>PHQ-9 is a guide — not a diagnosis</h2>
           </div>
           <EmergencyCallout note={
-            <>The PHQ-9 includes a question on self-harm thoughts. A positive answer or any current crisis means online booking is not the right pathway right now. Please contact local emergency services or iCall (7777936367) immediately.</>
+            <>The PHQ-9 includes a question on self-harm thoughts. A positive answer or any current crisis means online booking is not the right pathway right now. Please call 112 or go to the nearest emergency department; for free mental-health support in India, call Tele-MANAS at 14416 or 1800-891-4416.</>
           } />
           <div className="grid-2" style={{ marginTop: 24 }}>
             <article className="tile">

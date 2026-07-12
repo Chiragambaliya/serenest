@@ -1,13 +1,17 @@
 /**
  * Serenest self-screening tools.
  *
- * A small, data-driven engine so each new validated questionnaire is just a
- * definition below. All instruments here are freely reproducible for clinical
- * / educational use (Pfizer PHQ/GAD, WHO ASRS & AUDIT, WHO-5, PSS, Kessler
- * K10, the public-domain PCL-5, and SCOFF).
+ * A small, data-driven engine so each new questionnaire is just a
+ * definition below (Pfizer PHQ/GAD, WHO ASRS & AUDIT, WHO-5, Kessler K10,
+ * the public-domain PCL-5, and SCOFF).
+ *
+ * Tools may carry `status: 'paused'` — paused tools are excluded from all
+ * public listings and their direct route shows an unavailable notice
+ * instead of questions or scores. Do not delete paused definitions.
  *
  * IMPORTANT: these are screening aids, not diagnoses. Scores only indicate
- * whether a professional conversation may help.
+ * whether a professional conversation may help. No automated result may
+ * recommend starting, stopping, or changing medication.
  */
 
 // Shared 0–3 "over the last 2 weeks" frequency options (PHQ-9 / GAD-7)
@@ -72,10 +76,10 @@ export const SCREENING_TOOLS = [
       { text: 'Thoughts that you would be better off dead, or of hurting yourself in some way' },
     ],
     bands: [
-      { max: 4,  label: 'Minimal',            color: '#198754', desc: 'Symptoms are minimal and unlikely to need treatment.' },
+      { max: 4,  label: 'Minimal',            color: '#198754', desc: 'Your score falls in the minimal symptom range. This does not rule out difficulties that are not captured by the questionnaire.' },
       { max: 9,  label: 'Mild',               color: '#0d6efd', desc: 'Mild symptoms — self-care and follow-up may be enough.' },
       { max: 14, label: 'Moderate',           color: '#e67e22', desc: 'Moderate symptoms — talking to a professional is recommended.' },
-      { max: 19, label: 'Moderately severe',  color: '#fd7e14', desc: 'Active treatment is recommended — therapy and possibly medication.' },
+      { max: 19, label: 'Moderately severe',  color: '#fd7e14', desc: 'A clinical assessment is recommended. Depending on your symptoms, history, functioning and preferences, a clinician may discuss psychological therapy, medication, monitoring, lifestyle changes or a combination of approaches.' },
       { max: 27, label: 'Severe',             color: '#dc3545', desc: 'Severe symptoms — please speak to a psychiatrist soon.' },
     ],
   },
@@ -103,7 +107,7 @@ export const SCREENING_TOOLS = [
       { text: 'Feeling afraid, as if something awful might happen' },
     ],
     bands: [
-      { max: 4,  label: 'Minimal',  color: '#198754', desc: 'Anxiety is within the normal range.' },
+      { max: 4,  label: 'Minimal',  color: '#198754', desc: 'Your score falls in the minimal anxiety range on this questionnaire.' },
       { max: 9,  label: 'Mild',     color: '#0d6efd', desc: 'Mild anxiety — monitor and try self-care strategies.' },
       { max: 14, label: 'Moderate', color: '#e67e22', desc: 'Moderate anxiety — talk therapy can help.' },
       { max: 21, label: 'Severe',   color: '#dc3545', desc: 'Severe anxiety — speaking to a professional is strongly recommended.' },
@@ -116,6 +120,12 @@ export const SCREENING_TOOLS = [
     name: 'PSS-10',
     short: 'Stress',
     title: 'Stress check (PSS-10)',
+    // Temporarily withheld from public use — do not delete this definition.
+    status: 'paused',
+    pausedReason:
+      'Commercial/public-web permission and official interpretation bands need confirmation.',
+    pausedMessage:
+      'This check is temporarily unavailable while Serenest reviews instrument permissions and interpretation guidance.',
     icon: '😖',
     blurb: 'A 10-question check for how stretched and overloaded life feels.',
     timeframe: 'In the last month, how often have you felt or thought this way…',
@@ -169,7 +179,7 @@ export const SCREENING_TOOLS = [
       { max: 28,  label: 'Very low wellbeing', color: '#dc3545', desc: 'This score can be a sign of low mood or depression. Speaking to a professional is a good idea.' },
       { max: 50,  label: 'Low wellbeing',      color: '#e67e22', desc: 'Your wellbeing is on the lower side — support may help you feel better.' },
       { max: 75,  label: 'Moderate wellbeing', color: '#0d6efd', desc: 'Reasonable wellbeing, with room to feel better.' },
-      { max: 100, label: 'Good wellbeing',     color: '#198754', desc: 'Your wellbeing is good right now — keep it up.' },
+      { max: 100, label: 'Good wellbeing',     color: '#198754', desc: 'Your score falls in the higher wellbeing range on this measure. A high score does not rule out difficulties in areas this short check does not cover.' },
     ],
     seoTitle: 'WHO-5 Wellbeing Test Online | Serenest',
     seoDescription: 'Take the free WHO-5 wellbeing self-check online from India. 5 short, positive questions scored 0–100. Instant result — a screening aid, not a diagnosis.',
@@ -241,6 +251,11 @@ export const SCREENING_TOOLS = [
     blurb: 'The WHO 6-question screener for adult attention / hyperactivity.',
     timeframe: 'Over the past 6 months, how often…',
     source: 'Adult ADHD Self-Report Scale v1.1 Part A (WHO)',
+    ageNote: 'This screening tool is intended for adults aged 18 years and above.',
+    attribution:
+      'Adult ADHD Self-Report Scale (ASRS-v1.1) Symptom Checklist, developed with the World Health Organization and the Workgroup on Adult ADHD.',
+    copyrightNotice:
+      '© World Health Organization. Reproduced without modification of the official question wording or scoring thresholds. Citation: Kessler RC, Adler L, Ames M, et al. The World Health Organization Adult ADHD Self-Report Scale (ASRS): a short screening scale for use in the general population. Psychological Medicine. 2005;35(2):245–256.',
     options: ASRS_0_4,
     scoring: 'threshold_count',
     positiveMin: 4, // ≥4 items in the shaded zone = a positive screen
@@ -252,8 +267,8 @@ export const SCREENING_TOOLS = [
       { text: 'How often do you fidget or squirm with your hands or feet when you have to sit down for a long time?', thresholdMin: 3 },
       { text: 'How often do you feel overly active and compelled to do things, like you were driven by a motor?', thresholdMin: 3 },
     ],
-    positiveBand: { label: 'Symptoms consistent with adult ADHD', color: '#e67e22', desc: 'Your answers are consistent with adult ADHD. This is not a diagnosis — a full assessment with a professional is the next step.' },
-    negativeBand: { label: 'Unlikely to indicate ADHD', color: '#198754', desc: 'Your answers are not strongly consistent with adult ADHD. If concerns persist, a professional can still help.' },
+    positiveBand: { label: 'Positive adult ADHD screen', color: '#e67e22', desc: 'Your responses reached the screening threshold on the ASRS-v1.1. This does not confirm ADHD. A full assessment should consider childhood history, daily functioning, sleep, anxiety, mood, substance use and other possible explanations.' },
+    negativeBand: { label: 'Below screening threshold', color: '#198754', desc: 'Your responses did not reach the screening threshold on the ASRS-v1.1. A negative screen does not rule out ADHD or other concerns — if difficulties persist, a professional can still help.' },
     seoTitle: 'Adult ADHD Self-Test Online (ASRS v1.1) | Serenest',
     seoDescription: 'Take the free WHO ASRS v1.1 adult ADHD self-screening online from India. The standard 6-question screener for attention and hyperactivity. Instant result — not a diagnosis.',
   },
@@ -290,7 +305,7 @@ export const SCREENING_TOOLS = [
       { text: 'Worthless' },
     ],
     bands: [
-      { max: 19, label: 'Likely well',        color: '#198754', desc: 'Your distress levels appear to be in the healthy range.' },
+      { max: 19, label: 'Lower distress range', color: '#198754', desc: 'Your score falls in the lower distress range on this measure. A low score does not rule out a mental-health concern, and you may still seek help if something is troubling you.' },
       { max: 24, label: 'Mild distress',      color: '#0d6efd', desc: 'Mild distress — self-care and monitoring may be enough, but support is available.' },
       { max: 29, label: 'Moderate distress',  color: '#e67e22', desc: 'Moderate distress — talking to a professional is likely to help.' },
       { max: 50, label: 'Severe distress',    color: '#dc3545', desc: 'Severe distress — please consider speaking to a professional soon.' },
@@ -341,9 +356,11 @@ export const SCREENING_TOOLS = [
       { text: 'Having difficulty concentrating' },
       { text: 'Trouble falling or staying asleep' },
     ],
+    limitationNote:
+      'A structured clinical interview is required for diagnosis. The most suitable threshold may vary according to the population and purpose of screening.',
     bands: [
-      { max: 30, label: 'Below screening threshold', color: '#198754', desc: 'Your score is below the usual PTSD screening threshold. If these symptoms still trouble you, a professional can help regardless of score.' },
-      { max: 80, label: 'Consistent with PTSD symptoms', color: '#dc3545', desc: 'Your score is above the usual screening threshold (31+). This is not a diagnosis — a trauma-informed assessment with a professional is the right next step.' },
+      { max: 30, label: 'Below screening threshold', color: '#198754', desc: 'Your score is below the provisional screening threshold used on this page. If these symptoms still trouble you, a professional can help regardless of score.' },
+      { max: 80, label: 'Above a provisional PTSD screening threshold', color: '#dc3545', desc: 'Your score is above the provisional screening threshold used on this page. PCL-5 cut-points can vary by population and setting. This is not a PTSD diagnosis. A trauma-informed clinical assessment is recommended if symptoms are distressing or affecting daily life.' },
     ],
     seoTitle: 'PTSD Self-Screening Online (PCL-5) | Serenest',
     seoDescription: 'Take the free PCL-5 PTSD self-screening online from India. The standard 20-item checklist for post-traumatic stress symptoms. Confidential, instant result — not a diagnosis.',
@@ -373,7 +390,7 @@ export const SCREENING_TOOLS = [
       { text: 'Would you say that food dominates your life?' },
     ],
     bands: [
-      { max: 1, label: 'Low likelihood',  color: '#198754', desc: 'Your answers do not suggest an eating disorder. If food or body image still worries you, a professional can help.' },
+      { max: 1, label: 'Below screening threshold',  color: '#198754', desc: 'Your answers fall below the usual SCOFF screening threshold. This does not rule out an eating concern — if food or body image still worries you, a professional can help.' },
       { max: 5, label: 'Positive screen', color: '#e67e22', desc: 'Two or more "yes" answers suggest a possible eating disorder. This is not a diagnosis — please consider a professional assessment.' },
     ],
     seoTitle: 'Eating Disorder Screening Online (SCOFF) | Serenest',
@@ -381,6 +398,17 @@ export const SCREENING_TOOLS = [
   },
 ];
 
+/** True when a tool must not be publicly offered (listings, suggestions). */
+export function isToolPaused(tool) {
+  return tool?.status === 'paused';
+}
+
+/** Live tools only — paused instruments never appear in public listings. */
+export function getLiveTools() {
+  return SCREENING_TOOLS.filter((t) => !isToolPaused(t));
+}
+
+/** Resolves paused tools too — callers must check isToolPaused before showing questions or scores. */
 export function getTool(slug) {
   return SCREENING_TOOLS.find((t) => t.slug === slug || t.id === slug) || null;
 }

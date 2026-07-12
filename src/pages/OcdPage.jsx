@@ -81,7 +81,7 @@ export default function OcdPage() {
             <h2>What online OCD care can — and cannot — do</h2>
           </div>
           <EmergencyCallout note={
-            <>If you have thoughts of harming yourself or others and feel unable to stay safe, contact local emergency services or iCall (7777936367) immediately. Harm-related obsessions in OCD are common and distressing — a clinician helps distinguish them from imminent risk and plans safe care. Serenest is not an emergency service.</>
+            <>If you have thoughts of harming yourself or others and feel unable to stay safe, call 112 or go to the nearest emergency department, or call Tele-MANAS at 14416 or 1800-891-4416. Harm-related obsessions in OCD are common and distressing — a clinician helps distinguish them from imminent risk and plans safe care. Serenest is not an emergency service.</>
           } />
           <div className="grid-2" style={{ marginTop: 24 }}>
             <article className="tile">
