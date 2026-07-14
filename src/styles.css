@@ -112,6 +112,17 @@ button {
 
   /* Horizontal page gutter — keeps brand and copy off screen edges */
   --page-gutter: clamp(1.25rem, 5vw, 2rem);
+
+  /* ── Redesign palette (calm premium wellness — approved mockup) ──
+     Introduced with the new header; the full token migration maps the
+     legacy --teal-* names onto these in a later phase. */
+  --green-800: #2e4a38;
+  --green-900: #22382b;
+  --green-950: #182a20;
+  --sage-100:  #e7efe7;
+  --cream-50:  #fdfbf6;
+  --on-dark:   #f2eddf;
+  --r-pill:    9999px;
 }
 
 /* Heading scale â€” Inter, tight tracking, balanced wrapping */
@@ -381,14 +392,14 @@ h6 {
 }
 
 .header.is-top {
-  background: rgba(247, 249, 246, 0.82);
+  background: rgba(253, 251, 246, 0.82);
   border-bottom: 1px solid transparent;
   -webkit-backdrop-filter: blur(10px) saturate(120%);
   backdrop-filter: blur(10px) saturate(120%);
 }
 
 .header.is-scrolled {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(253, 251, 246, 0.92);
   -webkit-backdrop-filter: blur(16px) saturate(140%);
   backdrop-filter: blur(16px) saturate(140%);
   border-bottom: 1px solid var(--border-soft);
@@ -454,6 +465,26 @@ h6 {
   line-height: 1.35;
 }
 
+/* Leaf mark + serif wordmark (redesign) */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.logo-wordmark {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.18;
+  color: var(--ink);
+}
+
+.logo--light .logo-wordmark {
+  color: var(--on-dark);
+}
+
 @media (max-width: 480px) {
   .header-inner {
     padding-block: 14px;
@@ -462,6 +493,7 @@ h6 {
 
   .brand-tagline { display: none; }
   .brand-text { font-size: 1.125rem; }
+  .logo-wordmark { font-size: 1.15rem; }
 }
 
 /* legacy fallback (kept for safety) */
@@ -636,30 +668,31 @@ h6 {
   flex-shrink: 0;
 }
 
-/* Book CTA button */
+/* "Get started" CTA — deep-sage pill per the redesign mockup */
 .header-cta {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  background: var(--teal-600);
-  border: 1.5px solid var(--teal-600);
-  color: #fff !important;
-  border-radius: var(--r-sm);
-  padding: 10px 18px;
+  background: var(--green-800);
+  border: 1.5px solid var(--green-800);
+  color: var(--on-dark) !important;
+  border-radius: var(--r-pill);
+  padding: 11px 22px;
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
   box-shadow: none;
-  transition: background 150ms ease, border-color 150ms ease;
+  transition: background 150ms ease, border-color 150ms ease,
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease;
   margin-left: 8px;
   flex-shrink: 0;
 }
 
 .header-cta:hover {
-  background: var(--teal-700);
-  border-color: var(--teal-700);
-  transform: none;
-  box-shadow: none;
+  background: var(--green-900);
+  border-color: var(--green-900);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(24, 42, 32, 0.18);
 }
 
 .header-cta:active {
