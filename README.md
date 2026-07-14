@@ -1,99 +1,70 @@
 # Serenest
 
-Aligning minds, enhancing lives — website with screening, services, backend storage, and Supabase Auth.
+Clinical telepsychiatry for India — online psychiatry, therapy, counselling,
+self-screening (PHQ-9 / GAD-7), and de-addiction support, plus Serenest
+Academy for clinician education. Live at **https://www.serenest.in**.
+
+## Stack
+
+- **Frontend:** Vite + React 18 single-page app (`src/`), React Router.
+- **Backend:** Express server (`server.js`) serving the built SPA and all
+  `/api/*` routes, with per-route SEO injection.
+- **Database & auth:** Supabase (Postgres). Schema in `supabase/`.
+- **Video:** Daily.co · **Payments:** Razorpay · **Email:** Resend ·
+  **WhatsApp pings:** CallMeBot · **AI:** OpenAI (site guide), Anthropic
+  (content generation).
+- **Hosting:** Render (`render.yaml`) — see `DEPLOY.md`.
 
 ## Run locally
 
-Open `index.html` in a browser, or use a local server:
-
 ```bash
-npx serve .
+npm install
+cp .env.example .env   # fill in at least the Supabase values
+npm run build          # builds the SPA into dist/
+npm start              # Express serves dist/ + /api on http://localhost:3000
 ```
 
-Then visit **http://localhost:3000** (or the URL shown).
+For frontend development with hot reload, run `npm run dev` (Vite) alongside
+`npm start`, and set `VITE_API_URL=http://localhost:3000` in `.env`.
 
----
+## Environment variables
 
-## Backend (Supabase)
+Every variable is documented in **`.env.example`**. What breaks when they're
+missing (also verifiable live at `/api/health`):
 
-Form submissions (sign up, professionals, screening) are stored in Supabase. Auth (email + password) is also handled by Supabase.
+| Variables | If missing |
+|---|---|
+| `SUPABASE_URL`, `SUPABASE_SERVICE_KEY` | Bookings/screenings aren't stored in the database — they fall back to `data/leads-fallback.jsonl` on the server (lost on redeploy) |
+| `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | Patient/professional login is disabled in the browser |
+| `RESEND_API_KEY`, `NOTIFY_EMAIL` | **No email alerts for new leads** — you only see them in `/admin` |
+| `CALLMEBOT_WHATSAPP_APIKEY`, `CALLMEBOT_WHATSAPP_PHONE` | No WhatsApp pings for leads/visitors |
+| `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Payments off — bookings become manual "we'll call you back" requests |
+| `GA_MEASUREMENT_ID` | No analytics — no traffic or conversion measurement |
+| `ADMIN_SECRET` | Admin dashboard/API unprotected routes refuse access |
+| `DAILY_API_KEY` | Video consultation rooms can't be created |
+| `OPENAI_API_KEY` | Serenest Guide chat disabled |
 
-### 1. Create a Supabase project
+## Verify production
 
-1. Go to [supabase.com](https://supabase.com) and create a project.
-2. In **Project Settings → API**, copy:
-   - **Project URL**
-   - **anon public** key (safe to use in the browser).
+After every deploy, open **`https://www.serenest.in/api/health`** — it reports
+whether the database, lead notifications, payments, and analytics are
+configured. The admin dashboard (`/admin`) shows a warning banner when the
+lead pipeline is misconfigured, and the server logs print a config summary at
+startup.
 
-### 2. Create the database tables + policies + auth trigger
-
-1. In the Supabase dashboard, open **SQL Editor**.
-2. Paste and run the contents of **`supabase/schema.sql`**.
-3. This creates `signups`, `professionals`, and `screening_responses`, enables RLS, adds read policies for authenticated users, and sets up a trigger that mirrors new patient sign-ups into the `signups` table automatically.
-
-### 3. Enable email auth
-
-1. In Supabase Dashboard → **Authentication → Providers → Email**, enable email logins.
-2. In **Authentication → URL Configuration**, set **Site URL** to your deployed domain (e.g. `https://serenest.in`).
-3. Optionally disable email confirmation during testing (Authentication → Settings → "Enable email confirmations").
-
-### 4. Connect the site to Supabase
-
-1. Copy the example config:
-   ```bash
-   cp js/config.example.js js/config.js
-   ```
-2. Edit **`js/config.js`** and set:
-   - `SERENEST_SUPABASE_URL` — your Project URL
-   - `SERENEST_SUPABASE_ANON_KEY` — your anon public key
-
-If `js/config.js` is missing or the values are empty, forms still show “Thank you” but data is not saved and auth will not work.
-
----
-
-## Auth flow
-
-| Page | What happens |
-|------|--------------|
-| `index.html #signup` | Patient can **create account** (email + password) or **sign in**. After sign-in they are redirected to `profile.html`. |
-| `for-professionals.html` | Professional can **create account** or **log in**. After log-in they are redirected to `professionals-dashboard.html`. When already logged in, the form is replaced by a dashboard link. |
-| `professionals-dashboard.html` | Auth-gated. Non-authenticated visitors are redirected to `for-professionals.html`. Shows stat cards (patient count, professional count, screening count) and recent data tables. |
-| All pages | `js/auth.js` checks session on every page and updates the nav — “Sign up” becomes “My account” and “For professionals” becomes “My dashboard” when logged in. |
-
----
-
-## Deploying on Render
-
-See `DEPLOY.md` for full instructions. Key environment variables to set in Render:
-
-| Variable | Value |
-|----------|-------|
-| `SUPABASE_URL` | Your Supabase project URL |
-| `SUPABASE_ANON_KEY` | Your Supabase anon key |
-
-If you use a build step to inject `js/config.js`, add it to your build script. Otherwise commit a `js/config.js` with real keys (only do this on private repos).
-
----
-
-## File structure
+## Structure
 
 ```
 serenest/
-├── index.html                  Homepage + patient signup/login
-├── for-professionals.html      Professionals landing + account auth
-├── professionals-dashboard.html  Auth-gated professional dashboard
-├── screening.html              Mental health screening questionnaire
-├── services.html               Services overview
-├── profile.html                User profile page
-├── styles.css                  Global styles
-├── main.js                     Form submission + nav + screening logic
-├── js/
-│   ├── config.example.js        Copy to config.js and fill in keys
-│   ├── config.js                (git-ignored) Your real Supabase keys
-│   ├── supabase-loader.js       Dynamically loads Supabase JS client
-│   └── auth.js                  Email auth helpers (signup, login, logout, guard)
-├── supabase/
-│   └── schema.sql               Run this in Supabase SQL Editor once
-├── assets/                     Images and icons
-└── DEPLOY.md                   Render deployment instructions
+├── server.js          Express API + static serving + SEO injection
+├── index.html         Vite entry (SEO head is re-injected per route at runtime)
+├── src/
+│   ├── App.jsx        Routes
+│   ├── pages/         Page components (BookingPage, ScreeningPage, AdminPage, …)
+│   ├── lib/           API client, SEO map, analytics, Supabase browser client
+│   └── server/        Server-side modules (notify, AI assistant, social)
+├── public/            Static files (robots.txt, sitemap.xml, manifest, …)
+├── supabase/          schema.sql + migrations (run in Supabase SQL editor)
+├── render.yaml        Render Blueprint (see DEPLOY.md)
+└── .env.example       All environment variables, documented
 ```

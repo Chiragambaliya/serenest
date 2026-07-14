@@ -5,6 +5,7 @@ import { CONSULTATION_MODES } from '../lib/consultationModes';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { useAuth } from '../lib/useAuth';
+import { trackEvent } from '../lib/analytics';
 
 const DEFAULT_FEE_INR = 499;
 
@@ -145,6 +146,7 @@ export default function BookingPage() {
       if (!paymentsOn) {
         const res = await bookings.create(bookingData);
         setConfirmation(res.booking);
+        trackEvent('book_request_submitted', { practitioner_type: practitionerType, mode, paid: false });
         return;
       }
 
@@ -178,6 +180,7 @@ export default function BookingPage() {
                 razorpay_signature: resp.razorpay_signature,
               });
               setConfirmation(res.booking);
+              trackEvent('book_request_submitted', { practitioner_type: practitionerType, mode, paid: true });
               resolve();
             } catch (e) {
               reject(e);

@@ -36,6 +36,19 @@ const CALLMEBOT_PHONE = process.env.CALLMEBOT_WHATSAPP_PHONE
 const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TG_CHAT  = process.env.TELEGRAM_CHAT_ID;
 
+// One-time startup visibility: individual sends stay silent when a channel is
+// off, so list the disabled channels here — otherwise a misconfigured deploy
+// swallows every lead alert without a trace in the logs.
+{
+  const off = [];
+  if (!RESEND_KEY) off.push('email (set RESEND_API_KEY)');
+  else if (!NOTIFY_TO) off.push('team email (set NOTIFY_EMAIL)');
+  if (!CALLMEBOT_KEY || !CALLMEBOT_PHONE) off.push('team WhatsApp (set CALLMEBOT_WHATSAPP_APIKEY + CALLMEBOT_WHATSAPP_PHONE)');
+  if (off.length) {
+    console.warn(`[notify] ⚠ Alerts disabled on: ${off.join(', ')} — new leads will not ping these channels.`);
+  }
+}
+
 // ── Internal: send email via Resend ───────────────────────────────
 /** @param {{ subject: string, html: string, urgent?: boolean, to?: string | string[] }} opts If `to` omitted, uses NOTIFY_EMAIL. */
 async function sendEmail({ subject, html, urgent = false, to = null }) {

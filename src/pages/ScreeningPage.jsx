@@ -4,6 +4,7 @@ import { screening } from '../lib/api';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { SCREENING_TOOLS } from '../lib/screeningTools';
+import { trackEvent } from '../lib/analytics';
 
 // ── Validated clinical screeners ──────────────────────────────────
 // PHQ-9 — Patient Health Questionnaire for depression (Kroenke et al.)
@@ -105,6 +106,11 @@ export default function ScreeningPage() {
       });
       setDone(true);
       setStep(4);
+      trackEvent('screening_completed', {
+        phq9_severity: phqSev.label,
+        gad7_severity: gadSev.label,
+        wants_callback: callback,
+      });
     } catch (err) {
       setSubmitError(err.message ?? 'Could not save your responses. Please try again.');
     } finally {

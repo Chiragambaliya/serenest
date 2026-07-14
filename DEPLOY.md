@@ -24,9 +24,10 @@ Academy now ship together (Academy lives at `/academy`).
 
 ---
 
-## 2. (Optional) Add Supabase env vars
+## 2. Add Supabase env vars (required to store leads)
 
-If you want form data saved to Supabase:
+Without these, bookings and screenings are only captured to a fallback file
+on the server's ephemeral disk — set them before going live:
 
 1. In the Render dashboard, open your **serenest** web service.
 2. Go to **Environment**.

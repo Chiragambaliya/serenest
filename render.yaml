@@ -56,6 +56,19 @@ services:
       # - key: NOTIFY_EACH_UNIQUE_VISITOR_EMAIL
       #   value: "true"
 
+      # ── Payments via Razorpay (optional) ─────────────────────
+      # Both keys set → bookings are paid + confirmed instantly.
+      # Unset → manual "we'll call you back" booking flow.
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+
+      # ── Google Analytics 4 (optional) ────────────────────────
+      # Measurement ID (G-XXXXXXXXXX) — enables analytics + conversion events.
+      - key: GA_MEASUREMENT_ID
+        sync: false
+
       # ── CORS (set to your custom domain after first deploy) ──
       # - key: CORS_ORIGIN
       #   value: https://serenest.in

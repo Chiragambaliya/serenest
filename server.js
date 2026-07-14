@@ -5,7 +5,7 @@ import helmet from 'helmet';
 import compression from 'compression';
 import { rateLimit } from 'express-rate-limit';
 import crypto from 'crypto';
-import { readFileSync } from 'fs';
+import { readFileSync, appendFileSync, mkdirSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
@@ -93,6 +93,26 @@ function requireDb(res) {
   return true;
 }
 
+// ── Fallback lead capture ────────────────────────────────────
+// Bookings and screenings are revenue-critical: when the database is not
+// configured (or an insert fails) we still accept the lead — the team is
+// alerted via notify.* and the record is appended to a local JSONL file so
+// nothing is silently lost. This is a safety net, not primary storage:
+// Render's free-tier disk is ephemeral across deploys.
+const FALLBACK_LEADS_FILE = join(__dirname, 'data', 'leads-fallback.jsonl');
+function captureFallbackLead(kind, record) {
+  console.warn(`[fallback lead] DB unavailable — ${kind} lead captured to ${FALLBACK_LEADS_FILE}`);
+  try {
+    mkdirSync(dirname(FALLBACK_LEADS_FILE), { recursive: true });
+    appendFileSync(
+      FALLBACK_LEADS_FILE,
+      JSON.stringify({ kind, received_at: new Date().toISOString(), ...record }) + '\n',
+    );
+  } catch (e) {
+    console.error('[fallback lead] write failed:', e.message);
+  }
+}
+
 // ── Razorpay (payments) ──────────────────────────────────────
 const RZP_KEY_ID     = process.env.RAZORPAY_KEY_ID;
 const RZP_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
@@ -166,6 +186,7 @@ app.get('/api/health', (_req, res) => {
     patient_email: notify.isPatientEmailEnabled() ? 'enabled' : 'disabled',
     team_whatsapp: notify.hasTeamWhatsApp() ? 'enabled' : 'disabled',
     payments: paymentsEnabled() ? 'enabled' : 'disabled',
+    analytics: GA_ID ? 'enabled' : 'disabled',
     ts: new Date().toISOString(),
   });
 });
@@ -208,8 +229,6 @@ app.post('/api/payments/order', async (req, res) => {
  * after the signature checks out.
  */
 app.post('/api/bookings', async (req, res) => {
-  if (!requireDb(res)) return;
-
   const {
     patient_name, patient_phone, patient_email,
     practitioner_type, mode, preferred_date, preferred_time,
@@ -245,35 +264,44 @@ app.post('/api/bookings', async (req, res) => {
     };
   }
 
-  const { data, error } = await supabase
-    .from('appointments')
-    .insert({
-      patient_name: patient_name.trim(),
-      patient_phone: phone,
-      patient_email: patient_email?.trim() || null,
-      practitioner_type,
-      mode: mode || 'video',
-      preferred_date,
-      preferred_time,
-      language,
-      notes: notes.trim(),
-      professional_id: professional_id || null,
-      status: 'pending',
-      payment_status: payment.status,
-      payment_id: payment.id,
-      payment_order_id: payment.order_id,
-      amount_paid: payment.amount,
-    })
-    .select()
-    .single();
+  const record = {
+    patient_name: patient_name.trim(),
+    patient_phone: phone,
+    patient_email: patient_email?.trim() || null,
+    practitioner_type,
+    mode: mode || 'video',
+    preferred_date,
+    preferred_time,
+    language,
+    notes: notes.trim(),
+    professional_id: professional_id || null,
+    status: 'pending',
+    payment_status: payment.status,
+    payment_id: payment.id,
+    payment_order_id: payment.order_id,
+    amount_paid: payment.amount,
+  };
 
-  if (error) {
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('appointments')
+      .insert(record)
+      .select()
+      .single();
+
+    if (!error) {
+      notify.booking(data);
+      return ok(res, { booking: data }, 201);
+    }
     console.error('[POST /api/bookings]', error);
-    return err(res, 'Failed to save booking. Please try again.', 500);
   }
 
-  notify.booking(data);
-  return ok(res, { booking: data }, 201);
+  // DB missing or insert failed — never turn away a patient. Alert the team
+  // and persist the lead to the fallback file instead of erroring out.
+  const fallback = { id: crypto.randomUUID(), ...record };
+  captureFallbackLead('booking', fallback);
+  notify.booking(fallback);
+  return ok(res, { booking: fallback }, 201);
 });
 
 /**
@@ -504,8 +532,6 @@ app.delete('/api/bookings/:id', async (req, res) => {
  * Save a self-screening response (PHQ-9 + GAD-7 + contact).
  */
 app.post('/api/screening', async (req, res) => {
-  if (!requireDb(res)) return;
-
   const {
     name, phone, email,
     reason, conditions = [], format, frequency,
@@ -516,35 +542,44 @@ app.post('/api/screening', async (req, res) => {
 
   const cleanPhone = (phone || '').replace(/[^\d]/g, '');
 
-  const { data, error } = await supabase
-    .from('screening_responses')
-    .insert({
-      name: name?.trim() || null,
-      phone: cleanPhone || null,
-      email: email?.trim() || null,
-      reason: reason || null,
-      conditions: Array.isArray(conditions) ? conditions : [],
-      format: format || null,
-      frequency: frequency || null,
-      phq9_answers: phq9_answers || null,
-      phq9_score: phq9_score ?? null,
-      phq9_severity: phq9_severity || null,
-      gad7_answers: gad7_answers || null,
-      gad7_score: gad7_score ?? null,
-      gad7_severity: gad7_severity || null,
-      wants_callback,
-      status: 'new',
-    })
-    .select()
-    .single();
+  const record = {
+    name: name?.trim() || null,
+    phone: cleanPhone || null,
+    email: email?.trim() || null,
+    reason: reason || null,
+    conditions: Array.isArray(conditions) ? conditions : [],
+    format: format || null,
+    frequency: frequency || null,
+    phq9_answers: phq9_answers || null,
+    phq9_score: phq9_score ?? null,
+    phq9_severity: phq9_severity || null,
+    gad7_answers: gad7_answers || null,
+    gad7_score: gad7_score ?? null,
+    gad7_severity: gad7_severity || null,
+    wants_callback,
+    status: 'new',
+  };
 
-  if (error) {
+  if (supabase) {
+    const { data, error } = await supabase
+      .from('screening_responses')
+      .insert(record)
+      .select()
+      .single();
+
+    if (!error) {
+      notify.screening(data);
+      return ok(res, { screening: data }, 201);
+    }
     console.error('[POST /api/screening]', error);
-    return err(res, 'Failed to save screening response', 500);
   }
 
-  notify.screening(data);
-  return ok(res, { screening: data }, 201);
+  // DB missing or insert failed — screenings can carry safety flags, so the
+  // team alert and fallback capture must still go out.
+  const fallback = { id: crypto.randomUUID(), ...record };
+  captureFallbackLead('screening', fallback);
+  notify.screening(fallback);
+  return ok(res, { screening: fallback }, 201);
 });
 
 /** GET /api/screening — admin only — list all screening responses */
@@ -2122,6 +2157,16 @@ function seoRouteKey(pathname) {
   return ROUTE_SEO[norm] ? norm : null;
 }
 
+// Optional Google Analytics 4 — injected only when GA_MEASUREMENT_ID is set
+// (e.g. G-XXXXXXXXXX). The ID is validated so an env typo can't inject markup.
+const GA_ID = /^[A-Za-z0-9-]{4,20}$/.test(process.env.GA_MEASUREMENT_ID || '')
+  ? process.env.GA_MEASUREMENT_ID
+  : '';
+const GA_SNIPPET = GA_ID
+  ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>\n`
+    + `<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');</script>\n`
+  : '';
+
 function buildHtmlForRequest(pathname, { status }) {
   const tpl = loadTemplate.__dev
     ? readFileSync(join(dist, 'index.html'), 'utf8')
@@ -2135,6 +2180,7 @@ function buildHtmlForRequest(pathname, { status }) {
   const renderPath = routeKey || '/';
   const replacement = `<!--SEO_HEAD_START-->\n    ${renderSeoHead(renderPath, { noindex })}\n    <!--SEO_HEAD_END-->`;
   let html = tpl.replace(SEO_SENTINEL, replacement);
+  if (GA_SNIPPET) html = html.replace('</head>', `${GA_SNIPPET}</head>`);
 
   // Admin is a separate installable PWA: on /admin routes we swap the web app
   // manifest, theme colour and title so it installs as its own "Serenest Admin"
@@ -2200,5 +2246,20 @@ app.listen(port, () => {
   console.log(`   Admin: ${process.env.ADMIN_SECRET ? '✅ Secret set' : '⚠️  Not configured (set ADMIN_SECRET)'}`);
   console.log(`   Alert: ${notify.isConfigured() ? '✅ Team email (Resend)' : '⚠️  Team email incomplete'} (RESEND_API_KEY + NOTIFY_EMAIL)`);
   console.log(`   Patient email: ${notify.isPatientEmailEnabled() ? '✅ Resend key set' : '⚠️  Add RESEND_API_KEY for confirmations'}`);
-  console.log(`   Team WhatsApp: ${notify.hasTeamWhatsApp() ? '✅ CallMeBot configured' : '○ Optional: CALLMEBOT_WHATSAPP_APIKEY + CALLMEBOT_WHATSAPP_PHONE'}\n`);
+  console.log(`   Team WhatsApp: ${notify.hasTeamWhatsApp() ? '✅ CallMeBot configured' : '○ Optional: CALLMEBOT_WHATSAPP_APIKEY + CALLMEBOT_WHATSAPP_PHONE'}`);
+  console.log(`   Payments: ${paymentsEnabled() ? '✅ Razorpay enabled' : '○ Disabled (set RAZORPAY_KEY_ID + RAZORPAY_KEY_SECRET)'}`);
+  console.log(`   Analytics: ${GA_ID ? `✅ GA4 (${GA_ID})` : '○ Disabled (set GA_MEASUREMENT_ID)'}\n`);
+
+  // Lead-pipeline warnings — these misconfigurations are the ones that
+  // silently cost clients, so make them impossible to miss in the logs.
+  if (!supabase) {
+    console.warn('🚨 LEADS AT RISK: database not configured. Bookings and screenings are being');
+    console.warn(`   captured to ${FALLBACK_LEADS_FILE} only (lost on redeploy).`);
+    console.warn('   Set SUPABASE_URL + SUPABASE_SERVICE_KEY in your hosting dashboard.\n');
+  }
+  if (!notify.isConfigured() && !notify.hasTeamWhatsApp()) {
+    console.warn('🚨 NO LEAD ALERTS: neither team email (RESEND_API_KEY + NOTIFY_EMAIL) nor');
+    console.warn('   WhatsApp (CALLMEBOT_*) is configured. New bookings will NOT notify anyone —');
+    console.warn('   you would only see them by opening /admin.\n');
+  }
 });

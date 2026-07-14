@@ -14,6 +14,9 @@ yarn-error.log*
 .env.local
 .env.*.local
 
+# Fallback lead capture (contains patient contact details — never commit)
+data/
+
 # Temp scripts
 *.cjs
 push-*.js

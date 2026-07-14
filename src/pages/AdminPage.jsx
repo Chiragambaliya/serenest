@@ -370,6 +370,7 @@ export default function AdminPage() {
   const [siteHubFilter, setSiteHubFilter] = useState('');
   const [siteCopied, setSiteCopied]       = useState('');
   const [healthProbe, setHealthProbe]     = useState(null);
+  const [health, setHealth]               = useState(null);
 
   // read messages tracked client-side (localStorage) — no DB column needed
   const [readMsgIds, setReadMsgIds] = useState(() => {
@@ -465,6 +466,30 @@ export default function AdminPage() {
   useEffect(() => {
     if (authed) load('all');
   }, [authed, load]);
+
+  // Lead-pipeline health check — warns when a channel that captures or alerts
+  // on leads is unconfigured in production.
+  useEffect(() => {
+    if (!authed) return;
+    fetch(`${BASE}/api/health`)
+      .then((r) => r.json())
+      .then(setHealth)
+      .catch(() => {});
+  }, [authed]);
+
+  const healthIssues = useMemo(() => {
+    if (!health) return [];
+    const issues = [];
+    if (health.db !== 'connected') {
+      issues.push('Database is NOT configured (SUPABASE_URL + SUPABASE_SERVICE_KEY) — bookings and screenings are only being saved to the on-server fallback file, which is lost on redeploy.');
+    }
+    if (health.notifications !== 'enabled' && health.team_whatsapp !== 'enabled') {
+      issues.push('No lead alerts are configured — new bookings will not email (RESEND_API_KEY + NOTIFY_EMAIL) or WhatsApp (CALLMEBOT_*) anyone. You will only see leads by checking this dashboard.');
+    } else if (health.notifications !== 'enabled') {
+      issues.push('Team email alerts are off (set RESEND_API_KEY + NOTIFY_EMAIL) — lead alerts currently arrive on WhatsApp only.');
+    }
+    return issues;
+  }, [health]);
 
   const filteredSiteHub = useMemo(() => {
     const q = siteHubFilter.trim().toLowerCase();
@@ -968,6 +993,14 @@ export default function AdminPage() {
           </header>
 
           <div className="admin-content" key={tab}>
+            {healthIssues.length > 0 && (
+              <div className="admin-alert" style={{ background: '#fffbeb', border: '1px solid #f59e0b', color: '#92400e' }}>
+                <strong>⚠ Setup incomplete — you may be losing clients:</strong>
+                <ul style={{ margin: '6px 0 0', paddingLeft: '1.2rem' }}>
+                  {healthIssues.map((issue) => <li key={issue} style={{ marginTop: 4 }}>{issue}</li>)}
+                </ul>
+              </div>
+            )}
             {error && (
               <div className="admin-alert">
                 ⚠ {error}
