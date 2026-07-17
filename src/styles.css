@@ -1813,6 +1813,25 @@ a.pro-hub-tile:hover .learning-card-aux {
   margin-top: 20px;
   padding-top: 20px;
   border-top: 1px solid var(--border-soft);
+  /* Keep primary Continue/Confirm clear of floating widgets on mobile */
+  padding-bottom: max(12px, env(safe-area-inset-bottom, 0px));
+  position: relative;
+  z-index: 2;
+}
+
+@media (max-width: 640px) {
+  .booking-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+  .booking-actions .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+  }
+  .booking-shell {
+    padding-bottom: 2rem;
+  }
 }
 
 .slot-grid {

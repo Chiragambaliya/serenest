@@ -341,7 +341,17 @@ export default function SiteLayout() {
               <p>Book a consultation with a qualified mental health professional.</p>
             </div>
             <div className="footer-cta-actions">
-              <Link className="btn btn-primary btn-lg" to="/book">Book appointment</Link>
+              <Link
+                className="btn btn-primary btn-lg"
+                to="/book"
+                onClick={() => {
+                  if (location.pathname.startsWith('/book')) {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }
+                }}
+              >
+                Book appointment
+              </Link>
               <a
                 className="btn btn-whatsapp btn-lg"
                 href="https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest"

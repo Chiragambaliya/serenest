@@ -97,7 +97,16 @@ function VisitTracker() {
 // live consultation, where they'd just be clutter.
 function MarketingWidgets() {
   const { pathname } = useLocation();
-  if (pathname.startsWith('/admin') || pathname.startsWith('/consultation')) return null;
+  // Keep conversion pages clear of popups that intercept taps.
+  if (
+    pathname.startsWith('/admin')
+    || pathname.startsWith('/consultation')
+    || pathname.startsWith('/book')
+    || pathname.startsWith('/patient/login')
+    || pathname.startsWith('/professionals/apply')
+  ) {
+    return null;
+  }
   return (
     <>
       <CookieConsent />
