@@ -368,6 +368,9 @@
   display: none;
 }
 
+.admin-mobile-only { display: none; }
+.admin-desktop-only { display: block; }
+
 .admin-topbar {
   background: rgba(255, 255, 255, 0.82);
   -webkit-backdrop-filter: saturate(180%) blur(12px);
@@ -662,4 +665,145 @@
   .admin-filter-bar > div {
     justify-content: flex-start !important;
   }
+
+  /* ── Login: prevent iOS zoom, tighter padding ── */
+  .admin-login-screen { padding: 1rem; }
+  .admin-login-card { padding: 1.75rem 1.25rem; border-radius: 16px; }
+  .admin-input,
+  .admin-login-form input,
+  .admin-content input,
+  .admin-content select,
+  .admin-content textarea {
+    font-size: 16px !important; /* iOS won't zoom on focus */
+  }
+
+  /* ── Modals above bottom tab bar ── */
+  .admin-modal-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    z-index: 1300 !important;
+    background: rgba(0, 0, 0, 0.55) !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    padding: 0.75rem !important;
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .admin-modal-overlay > div {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    margin: auto 0;
+    border-radius: 14px !important;
+  }
+
+  .admin-page.has-modal .admin-mobile-nav {
+    display: none !important;
+  }
+
+  /* ── Desktop table / mobile cards ── */
+  .admin-desktop-only { display: none !important; }
+  .admin-mobile-only { display: block !important; }
+
+  .admin-booking-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .admin-booking-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 0.9rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .admin-booking-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .admin-booking-card-meta {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+
+  .admin-booking-card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .admin-booking-card-actions .btn,
+  .admin-booking-card-actions button {
+    min-height: 40px;
+    padding: 8px 12px !important;
+    font-size: 0.82rem !important;
+  }
+
+  /* Rx form stacks on phone */
+  .admin-rx-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-rx-med-row {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+  }
+
+  .admin-rx-med-row > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .admin-rx-med-row > :last-child {
+    grid-column: 1 / -1;
+  }
+
+  .admin-modal-panel {
+    max-width: 100% !important;
+  }
+
+  /* Professional cards shouldn't overflow ~390px */
+  .admin-content [style*="minmax(340px"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Past Rx / dense tables: prefer readable cards feel via scroll + larger cells */
+  .admin-content td,
+  .admin-content th {
+    padding: 10px 12px !important;
+  }
+
+  .admin-content h2 {
+    font-size: 1.2rem !important;
+  }
+
+  /* Sticky modal action bar padding */
+  .admin-rx-actions {
+    position: sticky;
+    bottom: 0;
+    background: var(--surface);
+    padding-top: 0.75rem !important;
+    padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)) !important;
+    border-top: 1px solid var(--border);
+    margin-left: -0.25rem;
+    margin-right: -0.25rem;
+    z-index: 2;
+  }
+}
+
+/* Desktop: hide mobile-only chrome */
+@media (min-width: 901px) {
+  .admin-mobile-only { display: none !important; }
+  .admin-desktop-only { display: block !important; }
 }
