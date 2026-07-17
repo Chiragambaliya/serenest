@@ -129,6 +129,25 @@ export default function SiteLayout() {
     setMenuOpen(false);
   }, [location]);
 
+  // Footer / in-app links change the route but keep the old scroll offset,
+  // so the new page looks like it "didn't load" (still stuck at the bottom).
+  useEffect(() => {
+    if (location.hash) {
+      const id = decodeURIComponent(location.hash.slice(1));
+      // Wait a tick so the new page can mount before we seek the anchor.
+      const t = window.setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'auto', block: 'start' });
+        } else {
+          window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+        }
+      }, 0);
+      return () => window.clearTimeout(t);
+    }
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  }, [location.pathname, location.hash, location.key]);
+
   // Scroll-aware header
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
