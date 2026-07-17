@@ -52,7 +52,6 @@ function makeSlots() {
 export default function BookingPage() {
   useSEO({ path: '/book', ...ROUTE_SEO['/book'] });
   const { user } = useAuth();
-  const [guestMode, setGuestMode] = useState(false);
   const [searchParams] = useSearchParams();
   const preProId    = searchParams.get('pid') ?? '';
   const preProName  = searchParams.get('pname') ?? '';
@@ -296,30 +295,21 @@ export default function BookingPage() {
         </div>
       </section>
 
-      {/* Auth prompt — optional; continue as guest stays on this page */}
-      {!user && !guestMode && (
+      {/* Optional account — never blocks the booking form */}
+      {!user && (
         <div style={{ background: 'var(--brand-50, #f4f6f0)', borderBottom: '1px solid var(--border)' }}>
-          <div className="container" style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem 1.25rem' }}>
-            <div style={{ flex: 1, minWidth: 220 }}>
-              <p style={{ fontWeight: 700, fontSize: '0.94rem', marginBottom: 2 }}>Optional: save this booking to your account</p>
-              <p style={{ fontSize: '0.83rem', color: 'var(--text-muted)' }}>You can book as a guest. Sign in later to track appointments and prescriptions.</p>
-            </div>
-            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+          <div className="container" style={{ padding: '0.65rem 1.25rem', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem 1rem' }}>
+            <p style={{ flex: 1, minWidth: 200, margin: 0, fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+              Booking as guest. Optional:{' '}
               <Link
-                to={`/patient/login?from=${encodeURIComponent(`${window.location.pathname}${window.location.search}`)}`}
-                state={{ mode: 'login', from: `${window.location.pathname}${window.location.search}` }}
-                className="btn btn-ghost btn-sm"
+                to={`/patient/login?from=${encodeURIComponent(`${typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/book'}`)}`}
+                state={{ mode: 'login', from: typeof window !== 'undefined' ? `${window.location.pathname}${window.location.search}` : '/book' }}
+                style={{ color: 'var(--brand-700)', fontWeight: 700 }}
               >
                 Sign in
               </Link>
-              <button
-                type="button"
-                className="btn btn-primary btn-sm"
-                onClick={() => setGuestMode(true)}
-              >
-                Continue as guest →
-              </button>
-            </div>
+              {' '}to save appointments later.
+            </p>
           </div>
         </div>
       )}

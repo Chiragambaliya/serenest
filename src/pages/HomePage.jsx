@@ -143,7 +143,8 @@ export default function HomePage() {
   useEffect(() => {
     if (authLoading || user) return;
     if (localStorage.getItem('serenest_portal_seen')) return;
-    const t = setTimeout(() => setModalOpen(true), 1400);
+    // Don't interrupt first paint — wait longer so Book CTAs stay tappable.
+    const t = setTimeout(() => setModalOpen(true), 4500);
     return () => clearTimeout(t);
   }, [authLoading, user]);
 
@@ -184,10 +185,17 @@ export default function HomePage() {
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               <Link
+                to="/book"
+                onClick={closeModal}
+                className="btn btn-primary btn-full"
+              >
+                Book an appointment →
+              </Link>
+              <Link
                 to="/patient/login"
                 state={{ mode: 'signup' }}
                 onClick={closeModal}
-                className="btn btn-primary btn-full"
+                className="btn btn-ghost btn-full"
               >
                 Create a free account
               </Link>

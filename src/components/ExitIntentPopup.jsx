@@ -35,19 +35,16 @@ export default function ExitIntentPopup() {
   useEffect(() => {
     if (!shouldShow()) return;
 
-    // Desktop: mouse leaving toward browser chrome
+    // Desktop only: mouse leaving toward browser chrome.
+    // Do NOT auto-open on a mobile idle timer — that covers CTAs and feels broken.
+    const coarse = window.matchMedia?.('(pointer: coarse)').matches;
+    if (coarse) return undefined;
+
     function onMouseLeave(e) {
       if (e.clientY <= 8) open();
     }
     document.addEventListener('mouseleave', onMouseLeave);
-
-    // Mobile / fallback: 30s idle
-    const fallback = setTimeout(open, 30_000);
-
-    return () => {
-      document.removeEventListener('mouseleave', onMouseLeave);
-      clearTimeout(fallback);
-    };
+    return () => document.removeEventListener('mouseleave', onMouseLeave);
   }, []);
 
   async function handleSubmit(e) {
