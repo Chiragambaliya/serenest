@@ -1229,9 +1229,10 @@ export default function AdminPage() {
 
   // ── dashboard ──────────────────────────────────────────────
   const activeTabLabel = TABS.find((t) => t.id === tab)?.label ?? 'Dashboard';
+  const anyModalOpen = Boolean(prescribeBooking || assignBooking || scheduleFor || offerFor);
 
   return (
-    <div className="admin-page admin-dashboard">
+    <div className={`admin-page admin-dashboard${anyModalOpen ? ' has-modal' : ''}`}>
       <div className="admin-shell">
         {/* Mobile sidebar overlay backdrop */}
         {mobileSidebarOpen && (
@@ -1707,7 +1708,65 @@ export default function AdminPage() {
                 text={bookings.length === 0 ? 'No bookings yet' : 'No bookings match your search or filter'}
               />
             ) : (
-              <div style={{ overflowX: 'auto' }}>
+              <>
+              {/* Mobile cards */}
+              <div className="admin-mobile-only admin-booking-cards">
+                {filteredBookings.map((b) => (
+                  <article key={b.id} className="admin-booking-card">
+                    <div className="admin-booking-card-head">
+                      <div>
+                        <strong style={{ fontSize: '1rem' }}>{b.patient_name}</strong>
+                        <div className="admin-booking-card-meta">
+                          {b.patient_phone}{b.patient_email ? ` · ${b.patient_email}` : ''}
+                        </div>
+                      </div>
+                      <div style={{ textAlign: 'right' }}>
+                        <Badge status={b.status} />
+                        {b.payment_status === 'paid' && (
+                          <div style={{ marginTop: 4, background: '#d1e7dd', color: '#0a3622', padding: '2px 8px', borderRadius: 99, fontSize: '0.68rem', fontWeight: 700 }}>
+                            ✓ Paid{b.amount_paid ? ` ₹${b.amount_paid}` : ''}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                    <div className="admin-booking-card-meta">
+                      {b.practitioner_type} · {b.mode}<br />
+                      {fmtDate(b.preferred_date)} · {b.preferred_time}
+                      {rxByAppointmentId[b.id] && (
+                        <> · <span style={{ fontWeight: 700, color: rxByAppointmentId[b.id].is_locked ? '#5b2a86' : '#856404' }}>
+                          {rxByAppointmentId[b.id].is_locked ? 'Rx locked' : 'Rx draft'}
+                        </span></>
+                      )}
+                    </div>
+                    <div className="admin-booking-card-actions">
+                      {b.status === 'pending'   && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Confirm'}  onClick={() => updateBookingStatus(b.id, 'confirmed')}  color="#198754" disabled={bookingBusyId === b.id} />}
+                      {b.status !== 'completed' && b.status !== 'cancelled' && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Complete'} onClick={() => updateBookingStatus(b.id, 'completed')} color="#0d6efd" disabled={bookingBusyId === b.id} />}
+                      {b.status !== 'cancelled' && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Cancel'}   onClick={() => updateBookingStatus(b.id, 'cancelled')}  color="#dc3545" disabled={bookingBusyId === b.id} />}
+                      {b.status === 'confirmed' && (
+                        <Link to={`/consultation/${b.id}?mode=${b.mode}`} target="_blank" className="btn btn-sm btn-ghost">
+                          🎥 Room
+                        </Link>
+                      )}
+                      {(b.status === 'confirmed' || b.status === 'completed') && (
+                        <ActionBtn
+                          label={rxByAppointmentId[b.id]?.is_locked ? '📋 View Rx' : rxByAppointmentId[b.id] ? '📋 Edit Rx' : '📋 Issue Rx'}
+                          onClick={() => openPrescribe(b)}
+                          color="#6f42c1"
+                        />
+                      )}
+                      <ActionBtn
+                        label="🗑 Delete"
+                        onClick={() => { if (window.confirm(`Delete booking for ${b.patient_name}? This cannot be undone.`)) deleteBooking(b.id); }}
+                        color="#6c757d"
+                        disabled={bookingBusyId === b.id}
+                      />
+                    </div>
+                  </article>
+                ))}
+              </div>
+
+              {/* Desktop table */}
+              <div className="admin-desktop-only" style={{ overflowX: 'auto' }}>
                 <table style={tableStyle}>
                   <thead>
                     <tr>
@@ -1775,13 +1834,14 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               </div>
+              </>
               );
             })()}
 
             {/* ── Issue prescription modal ── */}
             {prescribeBooking && rxForm && (
-              <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '1.5rem 1rem', overflowY: 'auto' }}>
-                <div style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.5rem', maxWidth: rxPreview ? 880 : 600, width: '100%', maxHeight: '92vh', overflowY: 'auto' }}>
+              <div className="admin-modal-overlay" style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1300, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '1.5rem 1rem', overflowY: 'auto' }}>
+                <div className="admin-modal-panel" style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.5rem', maxWidth: rxPreview ? 880 : 600, width: '100%', maxHeight: '92vh', overflowY: 'auto' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4, gap: 8 }}>
                     <h3 style={{ fontWeight: 800, margin: 0 }}>
                       {rxMeta?.is_locked ? 'Prescription (locked)' : rxMeta?.id ? 'Edit prescription' : 'Issue prescription'}
@@ -1818,7 +1878,7 @@ export default function AdminPage() {
                   ) : (
                     <fieldset disabled={rxMeta?.is_locked} style={{ border: 0, margin: 0, padding: 0, minWidth: 0, opacity: rxMeta?.is_locked ? 0.72 : 1 }}>
                       <RxGroup title="Patient details" />
-                      <div style={rxGridStyle}>
+                      <div className="admin-rx-grid" style={rxGridStyle}>
                         <RxField label="Name" value={rxForm.patient_name} onChange={(v) => setRx('patient_name', v)} />
                         <RxField label="Age / Gender" value={rxForm.patient_age_gender} onChange={(v) => setRx('patient_age_gender', v)} placeholder="32 / Male" />
                         <RxField label="Contact" value={rxForm.patient_contact} onChange={(v) => setRx('patient_contact', v)} />
@@ -1826,7 +1886,7 @@ export default function AdminPage() {
                       </div>
 
                       <RxGroup title="Doctor details" />
-                      <div style={rxGridStyle}>
+                      <div className="admin-rx-grid" style={rxGridStyle}>
                         <RxField label="Doctor name" value={rxForm.professional_name} onChange={(v) => setRx('professional_name', v)} placeholder="Dr. …" />
                         <RxField label="Qualification" value={rxForm.doctor_qualification} onChange={(v) => setRx('doctor_qualification', v)} placeholder="MBBS, MD" />
                         <RxField label="Specialization" value={rxForm.doctor_specialization} onChange={(v) => setRx('doctor_specialization', v)} placeholder="Psychiatry" />
@@ -1835,7 +1895,7 @@ export default function AdminPage() {
                       </div>
 
                       <RxGroup title="Clinical summary" />
-                      <div style={rxGridStyle}>
+                      <div className="admin-rx-grid" style={rxGridStyle}>
                         <RxField label="Chief complaints" value={rxForm.chief_complaints} onChange={(v) => setRx('chief_complaints', v)} wide />
                         <RxField label="Duration" value={rxForm.complaint_duration} onChange={(v) => setRx('complaint_duration', v)} />
                         <RxField label="Provisional diagnosis" value={rxForm.provisional_diagnosis} onChange={(v) => setRx('provisional_diagnosis', v)} />
@@ -1847,7 +1907,7 @@ export default function AdminPage() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: '0.75rem' }}>
                         {rxForm.medicines.map((m, i) => (
                           <div key={i} style={{ border: '1px solid var(--border)', borderRadius: 8, padding: '0.6rem' }}>
-                            <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto', gap: 6, marginBottom: 6 }}>
+                            <div className="admin-rx-med-row" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr 1fr auto', gap: 6, marginBottom: 6 }}>
                               <input value={m.name} onChange={(e) => updateRxMedicine(i, 'name', e.target.value)} placeholder="Medicine" style={rxMedInputStyle} />
                               <input value={m.strength} onChange={(e) => updateRxMedicine(i, 'strength', e.target.value)} placeholder="Strength" style={rxMedInputStyle} />
                               <input value={m.dosage} onChange={(e) => updateRxMedicine(i, 'dosage', e.target.value)} placeholder="Dose" style={rxMedInputStyle} />
@@ -1863,7 +1923,7 @@ export default function AdminPage() {
                       <button type="button" onClick={addRxMedicine} className="btn btn-ghost btn-sm" style={{ marginBottom: '1rem' }}>+ Add medicine</button>
 
                       <RxGroup title="Advice & follow-up" />
-                      <div style={rxGridStyle}>
+                      <div className="admin-rx-grid" style={rxGridStyle}>
                         <RxArea label="Advice (one per line)" value={rxForm.advice} onChange={(v) => setRx('advice', v)} wide rows={3} />
                         <RxField label="Review after" value={rxForm.review_after} onChange={(v) => setRx('review_after', v)} placeholder="2 weeks" />
                         <RxField label="Follow-up date" type="date" value={rxForm.follow_up_date} onChange={(v) => setRx('follow_up_date', v)} />
@@ -1872,7 +1932,7 @@ export default function AdminPage() {
                       </div>
 
                       <RxGroup title="Issued by (optional — defaults applied)" />
-                      <div style={rxGridStyle}>
+                      <div className="admin-rx-grid" style={rxGridStyle}>
                         <RxField label="Clinic / organization" value={rxForm.clinic_name} onChange={(v) => setRx('clinic_name', v)} placeholder="Serenest Education Pvt Ltd" />
                         <RxField label="Address" value={rxForm.clinic_address} onChange={(v) => setRx('clinic_address', v)} />
                         <RxField label="Contact" value={rxForm.clinic_contact} onChange={(v) => setRx('clinic_contact', v)} placeholder="7777936367" />
@@ -1888,7 +1948,7 @@ export default function AdminPage() {
                     </div>
                   )}
 
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: '1rem' }}>
+                  <div className="admin-rx-actions" style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: '1rem' }}>
                     {!rxMeta?.is_locked && (
                       <button onClick={() => submitPrescription({ send: false })} disabled={rxSaving || rxSending || rxLoadingExisting} className="btn btn-primary btn-sm">
                         {rxSaving ? 'Saving…' : 'Save prescription'}
@@ -2242,7 +2302,7 @@ export default function AdminPage() {
               {filtered.length === 0 ? (
                 <EmptyState icon="🩺" text={professionals.length === 0 ? 'No approved professionals yet — approve applications first' : `No ${proFilter}s found`} />
               ) : (
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: '1rem' }}>
+                <div className="admin-pro-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '1rem' }}>
                   {filtered.map((p) => {
                     const isEditing = editPro === p.id;
                     const bookingList = Array.isArray(p.appointments) ? p.appointments : [];
@@ -2364,11 +2424,11 @@ export default function AdminPage() {
 
               {/* Assign to booking modal */}
               {assignBooking && (
-                <div style={{
-                  position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100,
+                <div className="admin-modal-overlay" style={{
+                  position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1300,
                   display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem',
                 }}>
-                  <div style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.5rem', maxWidth: 480, width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+                  <div className="admin-modal-panel" style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.5rem', maxWidth: 480, width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
                     <h3 style={{ fontWeight: 800, marginBottom: '0.5rem' }}>Assign {assignBooking.full_name}</h3>
                     <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Select a pending booking to assign this professional to:</p>
                     {bookings.filter((b) => b.status === 'pending').length === 0 ? (
@@ -2772,8 +2832,8 @@ export default function AdminPage() {
 
             {/* ── Schedule Interview Modal ── */}
             {scheduleFor && (
-              <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', zIndex:100, display:'flex', alignItems:'center', justifyContent:'center', padding:'1rem' }}>
-                <div style={{ background:'var(--surface)', borderRadius:14, padding:'1.5rem', maxWidth:460, width:'100%', overflowY:'auto', maxHeight:'90vh' }}>
+              <div className="admin-modal-overlay" style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', zIndex:1300, display:'flex', alignItems:'center', justifyContent:'center', padding:'1rem' }}>
+                <div className="admin-modal-panel" style={{ background:'var(--surface)', borderRadius:14, padding:'1.5rem', maxWidth:460, width:'100%', overflowY:'auto', maxHeight:'90vh' }}>
                   <h3 style={{ fontWeight:800, marginBottom:4 }}>Schedule Interview</h3>
                   <p style={{ fontSize:'0.85rem', color:'var(--text-muted)', marginBottom:'1rem' }}>For: <strong>{scheduleFor.full_name}</strong> — {scheduleFor.department} › {scheduleFor.role}</p>
                   <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem' }}>
@@ -2816,8 +2876,8 @@ export default function AdminPage() {
 
             {/* ── Extend Offer Modal ── */}
             {offerFor && (
-              <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', zIndex:100, display:'flex', alignItems:'center', justifyContent:'center', padding:'1rem' }}>
-                <div style={{ background:'var(--surface)', borderRadius:14, padding:'1.5rem', maxWidth:400, width:'100%' }}>
+              <div className="admin-modal-overlay" style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.5)', zIndex:1300, display:'flex', alignItems:'center', justifyContent:'center', padding:'1rem' }}>
+                <div className="admin-modal-panel" style={{ background:'var(--surface)', borderRadius:14, padding:'1.5rem', maxWidth:400, width:'100%' }}>
                   <h3 style={{ fontWeight:800, marginBottom:4 }}>Extend Offer</h3>
                   <p style={{ fontSize:'0.85rem', color:'var(--text-muted)', marginBottom:'1rem' }}>For: <strong>{offerFor.full_name}</strong></p>
                   <div style={{ display:'flex', flexDirection:'column', gap:'0.6rem' }}>
@@ -3810,10 +3870,10 @@ export default function AdminPage() {
       {/* ── Mobile bottom tab bar ── */}
       <nav className="admin-mobile-nav" aria-label="Mobile admin navigation">
         {[
-          { id: 'overview',      label: 'Overview',  icon: '◈' },
-          { id: 'bookings',      label: 'Bookings',  icon: '▷' },
-          { id: 'professionals', label: 'Team',      icon: '◆' },
-          { id: 'messages',      label: 'Messages',  icon: '◉' },
+          { id: 'overview',      label: 'Home',   icon: '◈' },
+          { id: 'bookings',      label: 'Bookings', icon: '▷' },
+          { id: 'prescriptions', label: 'Past Rx', icon: '📋' },
+          { id: 'messages',      label: 'Inbox',  icon: '◉' },
         ].map((t) => (
           <button
             key={t.id}
