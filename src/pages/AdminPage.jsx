@@ -302,8 +302,12 @@ export default function AdminPage() {
   const [prescribeBooking, setPrescribeBooking] = useState(null);
   const [rxForm, setRxForm] = useState(null);
   const [rxSaving, setRxSaving] = useState(false);
+  const [rxSending, setRxSending] = useState(false);
   const [rxError, setRxError] = useState(null);
+  const [rxSuccess, setRxSuccess] = useState(null);
   const [rxPreview, setRxPreview] = useState(false);
+  const [rxMeta, setRxMeta] = useState(null); // { id, is_locked, locked_at }
+  const [rxLoadingExisting, setRxLoadingExisting] = useState(false);
 
   // Academy content sub-state
   const [academyTab, setAcademyTab]       = useState('learners');
@@ -695,42 +699,117 @@ export default function AdminPage() {
 
   // ── prescriptions ───────────────────────────────────────────
   const RX_EMPTY_MED = { name: '', strength: '', dosage: '', frequency: '', duration: '', instructions: '' };
+  const SITE_ORIGIN = typeof window !== 'undefined' ? window.location.origin : 'https://serenest.in';
 
-  function openPrescribe(booking) {
-    setPrescribeBooking(booking);
-    setRxError(null);
-    setRxPreview(false);
-    setRxForm({
-      // patient
+  function blankRxForm(booking) {
+    return {
       patient_name: booking.patient_name || '',
       patient_age_gender: '',
       patient_contact: booking.patient_phone || '',
-      // doctor
       professional_name: '',
       doctor_qualification: '',
       doctor_specialization: '',
       doctor_reg_no: '',
       doctor_contact: '',
       mode: booking.mode || '',
-      // clinical
       chief_complaints: '',
       complaint_duration: '',
       history_summary: '',
       provisional_diagnosis: '',
       risk_assessment: '',
-      // rx
       medicines: [{ ...RX_EMPTY_MED }],
       advice: '',
       review_after: '',
       follow_up_date: '',
       emergency_advice: '',
       important_notes: '',
-      // issued by
-      clinic_name: '',
+      clinic_name: 'Serenest Education Pvt Ltd',
       clinic_address: '',
-      clinic_contact: '',
-      clinic_website: '',
-    });
+      clinic_contact: '7777936367',
+      clinic_website: 'https://serenest.in',
+    };
+  }
+
+  function closePrescribe() {
+    setPrescribeBooking(null);
+    setRxForm(null);
+    setRxPreview(false);
+    setRxError(null);
+    setRxSuccess(null);
+    setRxMeta(null);
+    setRxLoadingExisting(false);
+  }
+
+  function rxViewUrl(appointmentId) {
+    return `${SITE_ORIGIN}/consultation/${appointmentId}/prescription`;
+  }
+
+  function rxWhatsAppShareUrl(booking) {
+    const url = rxViewUrl(booking.id);
+    const ref = String(booking.id).slice(0, 8).toUpperCase();
+    const phone = String(booking.patient_phone || '').replace(/\D/g, '');
+    const digits = phone.length === 10 ? `91${phone}` : phone;
+    const text = `Hi ${booking.patient_name || ''}, your Serenest prescription is ready.\n\nView / print / save as PDF:\n${url}\n\nRef: ${ref}`;
+    return `https://wa.me/${digits}?text=${encodeURIComponent(text)}`;
+  }
+
+  async function openPrescribe(booking) {
+    setPrescribeBooking(booking);
+    setRxError(null);
+    setRxSuccess(null);
+    setRxPreview(false);
+    setRxMeta(null);
+    setRxForm(blankRxForm(booking));
+    setRxLoadingExisting(true);
+    try {
+      const r = await adminFetch(`/api/prescriptions/${booking.id}`, secret);
+      const existing = r.prescription;
+      if (existing) {
+        const meds = Array.isArray(existing.medicines) && existing.medicines.length
+          ? existing.medicines.map((m) => ({ ...RX_EMPTY_MED, ...m }))
+          : [{ ...RX_EMPTY_MED }];
+        setRxForm({
+          ...blankRxForm(booking),
+          patient_name: existing.patient_name || booking.patient_name || '',
+          patient_age_gender: existing.patient_age_gender || '',
+          patient_contact: existing.patient_contact || booking.patient_phone || '',
+          professional_name: existing.professional_name || '',
+          doctor_qualification: existing.doctor_qualification || '',
+          doctor_specialization: existing.doctor_specialization || '',
+          doctor_reg_no: existing.doctor_reg_no || '',
+          doctor_contact: existing.doctor_contact || '',
+          mode: existing.mode || booking.mode || '',
+          chief_complaints: existing.chief_complaints || '',
+          complaint_duration: existing.complaint_duration || '',
+          history_summary: existing.history_summary || '',
+          provisional_diagnosis: existing.provisional_diagnosis || '',
+          risk_assessment: existing.risk_assessment || '',
+          medicines: meds,
+          advice: existing.advice || '',
+          review_after: existing.review_after || '',
+          follow_up_date: existing.follow_up_date || '',
+          emergency_advice: existing.emergency_advice || '',
+          important_notes: existing.important_notes || '',
+          clinic_name: existing.clinic_name || 'Serenest Education Pvt Ltd',
+          clinic_address: existing.clinic_address || '',
+          clinic_contact: existing.clinic_contact || '7777936367',
+          clinic_website: existing.clinic_website || 'https://serenest.in',
+        });
+        setRxMeta({
+          id: existing.id,
+          is_locked: Boolean(existing.is_locked),
+          locked_at: existing.locked_at || null,
+        });
+        if (existing.is_locked) {
+          setRxSuccess(`Locked prescription loaded. Patient link: ${rxViewUrl(booking.id)}`);
+        }
+      }
+    } catch (e) {
+      // Non-fatal — start with a blank form if load fails
+      console.warn('Could not load existing prescription', e.message);
+    } finally {
+      setRxLoadingExisting(false);
+    }
   }
 
   function setRx(key, value) {
@@ -752,33 +831,124 @@ export default function AdminPage() {
     setRxForm((prev) => ({ ...prev, medicines: prev.medicines.filter((_, i) => i !== index) }));
   }
 
-  async function submitPrescription() {
-    setRxError(null);
+  function buildRxPayload() {
     const medicines = rxForm.medicines
       .map((m) => ({ ...m, name: (m.name || '').trim() }))
       .filter((m) => m.name);
+    return {
+      medicines,
+      body: {
+        ...rxForm,
+        appointment_id: prescribeBooking.id,
+        medicines,
+        follow_up_date: rxForm.follow_up_date || null,
+      },
+    };
+  }
+
+  function applyRxResult(r, { sent } = {}) {
+    if (r.prescription) {
+      setRxMeta({
+        id: r.prescription.id,
+        is_locked: Boolean(r.prescription.is_locked),
+        locked_at: r.prescription.locked_at || null,
+      });
+    }
+    const link = rxViewUrl(prescribeBooking.id);
+    if (r.send_error) {
+      setRxError(null);
+      setRxSuccess(`Prescription saved, but not emailed: ${r.send_error} Use WhatsApp link or fix email, then retry. Link: ${link}`);
+      return;
+    }
+    setRxError(null);
+    if (sent) {
+      setRxSuccess(
+        r.patient_email
+          ? `Saved, locked, and emailed to ${r.patient_email}. Link: ${link}`
+          : `Saved and locked. Link: ${link}`,
+      );
+    } else {
+      setRxSuccess(`Prescription saved. Patient link: ${link}`);
+    }
+  }
+
+  async function submitPrescription({ send = false } = {}) {
+    setRxError(null);
+    setRxSuccess(null);
+    if (rxMeta?.is_locked && !send) {
+      setRxError('This prescription is locked. Use Re-send or share the patient link.');
+      return;
+    }
+    if (rxMeta?.is_locked && send) {
+      // Re-send only — no edit
+      setRxSending(true);
+      try {
+        const r = await adminFetch(`/api/prescriptions/${prescribeBooking.id}/send`, secret, {
+          method: 'POST',
+          body: '{}',
+        });
+        applyRxResult(r, { sent: true });
+      } catch (e) {
+        setRxError(e.message);
+      } finally {
+        setRxSending(false);
+      }
+      return;
+    }
+
+    const { medicines, body } = buildRxPayload();
     if (medicines.length === 0) {
       setRxError('Add at least one medicine.');
       return;
     }
-    setRxSaving(true);
+
+    if (send) setRxSending(true);
+    else setRxSaving(true);
     try {
-      await adminFetch('/api/prescriptions', secret, {
+      const r = await adminFetch('/api/prescriptions', secret, {
         method: 'POST',
-        body: JSON.stringify({
-          ...rxForm,
-          appointment_id: prescribeBooking.id,
-          medicines,
-          follow_up_date: rxForm.follow_up_date || null,
-        }),
+        body: JSON.stringify({ ...body, send, lock: send }),
       });
-      setPrescribeBooking(null);
-      setRxForm(null);
-      setRxPreview(false);
+      applyRxResult(r, { sent: Boolean(send && r.sent) });
+      if (send && r.prescription?.is_locked) {
+        setRxPreview(true);
+      }
     } catch (e) {
       setRxError(e.message);
     } finally {
       setRxSaving(false);
+      setRxSending(false);
+    }
+  }
+
+  async function lockPrescription() {
+    if (!rxMeta?.id) {
+      setRxError('Save the prescription before locking.');
+      return;
+    }
+    setRxSaving(true);
+    setRxError(null);
+    try {
+      const r = await adminFetch(`/api/prescriptions/${rxMeta.id}/lock`, secret, {
+        method: 'PATCH',
+        body: '{}',
+      });
+      applyRxResult(r);
+      setRxSuccess(`Prescription locked. Patient link: ${rxViewUrl(prescribeBooking.id)}`);
+    } catch (e) {
+      setRxError(e.message);
+    } finally {
+      setRxSaving(false);
+    }
+  }
+
+  async function copyRxLink() {
+    const url = rxViewUrl(prescribeBooking.id);
+    try {
+      await navigator.clipboard.writeText(url);
+      setRxSuccess(`Link copied: ${url}`);
+    } catch {
+      setRxSuccess(`Patient link: ${url}`);
     }
   }
 
@@ -1434,14 +1604,29 @@ export default function AdminPage() {
               <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 100, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '1.5rem 1rem', overflowY: 'auto' }}>
                 <div style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.5rem', maxWidth: rxPreview ? 880 : 600, width: '100%', maxHeight: '92vh', overflowY: 'auto' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4, gap: 8 }}>
-                    <h3 style={{ fontWeight: 800, margin: 0 }}>Issue prescription</h3>
+                    <h3 style={{ fontWeight: 800, margin: 0 }}>
+                      {rxMeta?.is_locked ? 'Prescription (locked)' : rxMeta?.id ? 'Edit prescription' : 'Issue prescription'}
+                    </h3>
                     <button onClick={() => setRxPreview((v) => !v)} className="btn btn-ghost btn-sm">
                       {rxPreview ? '← Edit' : '👁 Preview'}
                     </button>
                   </div>
-                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+                  <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
                     For: <strong>{prescribeBooking.patient_name}</strong> — {prescribeBooking.practitioner_type} · {fmtDate(prescribeBooking.preferred_date)}
+                    {prescribeBooking.patient_email ? (
+                      <> · <span style={{ color: 'var(--text)' }}>{prescribeBooking.patient_email}</span></>
+                    ) : (
+                      <> · <span style={{ color: '#b45309' }}>no email on booking</span></>
+                    )}
                   </p>
+                  {rxLoadingExisting && (
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.75rem' }}>Loading existing prescription…</p>
+                  )}
+                  {rxMeta?.is_locked && (
+                    <p style={{ fontSize: '0.8rem', background: '#fef3c7', color: '#92400e', padding: '8px 10px', borderRadius: 8, marginBottom: '0.75rem' }}>
+                      This prescription is locked and cannot be edited. You can still re-send the email or share the patient link.
+                    </p>
+                  )}
 
                   {rxPreview ? (
                     <div style={{ background: '#fff', borderRadius: 8, overflow: 'hidden' }}>
@@ -1452,7 +1637,7 @@ export default function AdminPage() {
                       }} />
                     </div>
                   ) : (
-                    <>
+                    <fieldset disabled={rxMeta?.is_locked} style={{ border: 0, margin: 0, padding: 0, minWidth: 0, opacity: rxMeta?.is_locked ? 0.72 : 1 }}>
                       <RxGroup title="Patient details" />
                       <div style={rxGridStyle}>
                         <RxField label="Name" value={rxForm.patient_name} onChange={(v) => setRx('patient_name', v)} />
@@ -1514,16 +1699,60 @@ export default function AdminPage() {
                         <RxField label="Contact" value={rxForm.clinic_contact} onChange={(v) => setRx('clinic_contact', v)} placeholder="7777936367" />
                         <RxField label="Website / email" value={rxForm.clinic_website} onChange={(v) => setRx('clinic_website', v)} />
                       </div>
-                    </>
+                    </fieldset>
                   )}
 
                   {rxError && <p style={{ color: '#dc3545', fontSize: '0.82rem', margin: '0.75rem 0' }}>{rxError}</p>}
+                  {rxSuccess && (
+                    <div style={{ background: '#d1e7dd', color: '#0a3622', fontSize: '0.82rem', padding: '10px 12px', borderRadius: 8, margin: '0.75rem 0', lineHeight: 1.45 }}>
+                      {rxSuccess}
+                    </div>
+                  )}
 
-                  <div style={{ display: 'flex', gap: 8, marginTop: '1rem' }}>
-                    <button onClick={submitPrescription} disabled={rxSaving} className="btn btn-primary btn-sm">
-                      {rxSaving ? 'Saving…' : 'Save prescription'}
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: '1rem' }}>
+                    {!rxMeta?.is_locked && (
+                      <button onClick={() => submitPrescription({ send: false })} disabled={rxSaving || rxSending || rxLoadingExisting} className="btn btn-primary btn-sm">
+                        {rxSaving ? 'Saving…' : 'Save prescription'}
+                      </button>
+                    )}
+                    <button
+                      onClick={() => submitPrescription({ send: true })}
+                      disabled={rxSaving || rxSending || rxLoadingExisting || (!rxMeta?.is_locked && !prescribeBooking.patient_email)}
+                      className="btn btn-sm"
+                      style={{ background: '#0f766e', color: '#fff', border: 'none' }}
+                      title={!prescribeBooking.patient_email ? 'Booking has no patient email — use WhatsApp share' : 'Save, email patient, and lock'}
+                    >
+                      {rxSending
+                        ? 'Sending…'
+                        : rxMeta?.is_locked
+                          ? 'Re-send email'
+                          : 'Save & send to patient'}
                     </button>
-                    <button onClick={() => { setPrescribeBooking(null); setRxForm(null); setRxPreview(false); }} className="btn btn-ghost btn-sm">Cancel</button>
+                    <a
+                      href={rxWhatsAppShareUrl(prescribeBooking)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn btn-sm btn-ghost"
+                      style={{ textDecoration: 'none' }}
+                    >
+                      WhatsApp link
+                    </a>
+                    <button type="button" onClick={copyRxLink} className="btn btn-ghost btn-sm">Copy link</button>
+                    {!rxMeta?.is_locked && rxMeta?.id && (
+                      <button type="button" onClick={lockPrescription} disabled={rxSaving || rxSending} className="btn btn-ghost btn-sm">
+                        Lock only
+                      </button>
+                    )}
+                    <a
+                      href={rxViewUrl(prescribeBooking.id)}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="btn btn-ghost btn-sm"
+                      style={{ textDecoration: 'none' }}
+                    >
+                      Open patient view
+                    </a>
+                    <button onClick={closePrescribe} className="btn btn-ghost btn-sm">Close</button>
                   </div>
                 </div>
               </div>
