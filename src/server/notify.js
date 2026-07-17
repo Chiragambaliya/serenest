@@ -32,6 +32,16 @@ const CALLMEBOT_PHONE = process.env.CALLMEBOT_WHATSAPP_PHONE
   ? String(process.env.CALLMEBOT_WHATSAPP_PHONE).replace(/\D/g, '')
   : '';
 
+/** Invite link for the SERENEST professionals WhatsApp group (chat.whatsapp.com/…). */
+function getSerenestWaGroupInvite() {
+  const raw = process.env.SERENEST_WA_GROUP_INVITE
+    || process.env.WA_GROUP_INVITE
+    || process.env.VITE_WA_GROUP_INVITE
+    || process.env.VITE_WA_CHANNEL_LINK
+    || '';
+  return String(raw).trim();
+}
+
 // Optional secondary channel — kept silent unless explicitly enabled.
 const TG_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TG_CHAT  = process.env.TELEGRAM_CHAT_ID;
@@ -416,6 +426,68 @@ export const notify = {
       }));
     }
   },
+
+  /**
+   * After admin approves a professional — welcome email with SERENEST WhatsApp group invite.
+   * WhatsApp cannot add members via API; the clinician must tap the invite link.
+   */
+  async professionalApproved(p) {
+    const roleLabel = p.role_label || p.role || 'professional';
+    const invite = getSerenestWaGroupInvite();
+    const first = esc((p.full_name || 'there').trim().split(/\s+/)[0]);
+    const to = p.email?.trim();
+
+    fire(sendTeamWhatsApp(
+      `Serenest — Approved clinician\n${p.full_name} (${roleLabel})\n+91 ${String(p.phone || '').replace(/\D/g, '')}\nInvite to SERENEST WA group${invite ? ' ready' : ' — set SERENEST_WA_GROUP_INVITE'}`,
+    ));
+
+    if (!to) return { emailed: false, reason: 'no_email', inviteConfigured: Boolean(invite) };
+    if (!RESEND_KEY) return { emailed: false, reason: 'resend_off', inviteConfigured: Boolean(invite) };
+
+    const inviteBlock = invite
+      ? `<p style="margin:0 0 12px">Please join our <strong>SERENEST</strong> professionals WhatsApp group — updates, case coordination, and team communication live there:</p>`
+        + `<p style="margin:0 0 16px"><a href="${esc(invite)}" style="display:inline-block;background:#25d366;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">Join SERENEST WhatsApp group</a></p>`
+        + `<p style="margin:0 0 12px;font-size:13px;color:#64748b">Or open: <a href="${esc(invite)}" style="color:#0f766e;word-break:break-all">${esc(invite)}</a></p>`
+      : `<p style="margin:0 0 12px">Our team will share the <strong>SERENEST</strong> WhatsApp group invite shortly.</p>`;
+
+    const emailed = await sendPatientEmail({
+      subject: 'Welcome to Serenest — join the SERENEST WhatsApp group',
+      html:
+        `<p style="margin:0 0 12px">Hi ${first},</p>`
+        + `<p style="margin:0 0 12px">You're approved as a <strong>${esc(roleLabel)}</strong> on Serenest. Welcome aboard.</p>`
+        + inviteBlock
+        + `<p style="margin:0;font-size:13px;color:#64748b">Questions? WhatsApp <a href="https://wa.me/917777936367" style="color:#0f766e">+91 77779 36367</a>.</p>`,
+      to,
+    });
+    return { emailed, reason: emailed ? null : 'send_failed', inviteConfigured: Boolean(invite) };
+  },
+
+  /**
+   * Email an existing approved professional the SERENEST WhatsApp group invite.
+   * Returns true when Resend accepted the message.
+   */
+  async inviteToSerenestWaGroup(p) {
+    const invite = getSerenestWaGroupInvite();
+    if (!invite) return { ok: false, reason: 'invite_not_configured' };
+    const to = p.email?.trim();
+    if (!to) return { ok: false, reason: 'no_email' };
+    if (!RESEND_KEY) return { ok: false, reason: 'resend_off' };
+
+    const first = esc((p.full_name || 'there').trim().split(/\s+/)[0]);
+    const roleLabel = p.role_label || p.role || 'professional';
+    const sent = await sendPatientEmail({
+      subject: 'Join the SERENEST WhatsApp group',
+      html:
+        `<p style="margin:0 0 12px">Hi ${first},</p>`
+        + `<p style="margin:0 0 12px">Please join our <strong>SERENEST</strong> professionals WhatsApp group for team updates and coordination (${esc(roleLabel)}).</p>`
+        + `<p style="margin:0 0 16px"><a href="${esc(invite)}" style="display:inline-block;background:#25d366;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">Join SERENEST WhatsApp group</a></p>`
+        + `<p style="margin:0;font-size:13px;color:#64748b">Link: <a href="${esc(invite)}" style="color:#0f766e;word-break:break-all">${esc(invite)}</a></p>`,
+      to,
+    });
+    return { ok: sent, reason: sent ? null : 'send_failed' };
+  },
+
+  getSerenestWaGroupInvite,
 
   jobApplication(j) {
     const html = `

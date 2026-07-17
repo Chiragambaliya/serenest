@@ -185,6 +185,7 @@ app.get('/api/health', (_req, res) => {
     notifications: notify.isConfigured() ? 'enabled' : 'disabled',
     patient_email: notify.isPatientEmailEnabled() ? 'enabled' : 'disabled',
     team_whatsapp: notify.hasTeamWhatsApp() ? 'enabled' : 'disabled',
+    serenest_wa_group: notify.getSerenestWaGroupInvite() ? 'configured' : 'missing',
     payments: paymentsEnabled() ? 'enabled' : 'disabled',
     analytics: GA_ID ? 'enabled' : 'disabled',
     ts: new Date().toISOString(),
@@ -671,6 +672,7 @@ app.get('/api/professionals/applications', async (req, res) => {
 /**
  * PATCH /api/professionals/applications/:id
  * Approve or reject a professional application (admin only).
+ * On approve: emails the clinician a SERENEST WhatsApp group invite (if configured).
  */
 app.patch('/api/professionals/applications/:id', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;
@@ -678,6 +680,12 @@ app.patch('/api/professionals/applications/:id', async (req, res) => {
   const VALID = ['pending', 'approved', 'rejected'];
   const { status } = req.body;
   if (!VALID.includes(status)) return err(res, `status must be one of: ${VALID.join(', ')}`);
+
+  const { data: existing } = await supabase
+    .from('professional_applications')
+    .select('id, status')
+    .eq('id', req.params.id)
+    .maybeSingle();
 
   const { data, error } = await supabase
     .from('professional_applications')
@@ -687,8 +695,106 @@ app.patch('/api/professionals/applications/:id', async (req, res) => {
     .single();
 
   if (error) return err(res, 'Failed to update application', 500);
-  return ok(res, { application: data });
+
+  let waInvite = null;
+  const newlyApproved = status === 'approved' && existing?.status !== 'approved';
+  if (newlyApproved && data) {
+    waInvite = await notify.professionalApproved(data);
+  }
+
+  return ok(res, {
+    application: data,
+    wa_group_invite: notify.getSerenestWaGroupInvite() || null,
+    approval_notify: waInvite,
+  });
 });
+
+/**
+ * GET /api/professionals/wa-group
+ * Admin — SERENEST WhatsApp group invite URL (from server env).
+ */
+app.get('/api/professionals/wa-group', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  const invite = notify.getSerenestWaGroupInvite();
+  return ok(res, {
+    group_name: 'SERENEST',
+    invite_url: invite || null,
+    configured: Boolean(invite),
+    hint: invite
+      ? null
+      : 'Set SERENEST_WA_GROUP_INVITE to your chat.whatsapp.com invite link in Render → Environment',
+  });
+});
+
+/**
+ * POST /api/professionals/wa-group/invite-all
+ * Admin — email every approved professional the SERENEST WhatsApp group invite.
+ * WhatsApp cannot add members via API; email + manual WA are the supported paths.
+ */
+app.post('/api/professionals/wa-group/invite-all', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const invite = notify.getSerenestWaGroupInvite();
+  if (!invite) {
+    return err(res, 'SERENEST WhatsApp group invite is not configured. Set SERENEST_WA_GROUP_INVITE on the server.', 503);
+  }
+  if (!notify.isPatientEmailEnabled()) {
+    return err(res, 'Patient/clinician email is not configured (set RESEND_API_KEY)', 503);
+  }
+
+  const { data: pros, error } = await supabase
+    .from('professional_applications')
+    .select('id, full_name, email, phone, role, role_label, status')
+    .eq('status', 'approved')
+    .order('full_name');
+
+  if (error) return err(res, 'Failed to load professionals', 500);
+
+  const list = pros || [];
+  let emailed = 0;
+  let skippedNoEmail = 0;
+  let failed = 0;
+  const results = [];
+
+  for (const p of list) {
+    if (!p.email?.trim()) {
+      skippedNoEmail += 1;
+      results.push({ id: p.id, name: p.full_name, ok: false, reason: 'no_email' });
+      continue;
+    }
+    const r = await notify.inviteToSerenestWaGroup(p);
+    if (r.ok) {
+      emailed += 1;
+      results.push({ id: p.id, name: p.full_name, ok: true, email: p.email });
+    } else {
+      failed += 1;
+      results.push({ id: p.id, name: p.full_name, ok: false, reason: r.reason, email: p.email });
+    }
+  }
+
+  fireTeamPingForInviteAll(emailed, skippedNoEmail, failed, list.length);
+
+  return ok(res, {
+    group_name: 'SERENEST',
+    invite_url: invite,
+    total: list.length,
+    emailed,
+    skipped_no_email: skippedNoEmail,
+    failed,
+    results,
+  });
+});
+
+function fireTeamPingForInviteAll(emailed, skippedNoEmail, failed, total) {
+  // Team WhatsApp is best-effort; notify.sendTeamWhatsApp is internal — use custom + WA via notify APIs.
+  try {
+    notify.custom(
+      'SERENEST WA group invites sent',
+      `<p style="margin:0">Emailed <strong>${emailed}</strong> of ${total} approved professionals.`
+        + ` Skipped (no email): ${skippedNoEmail}. Failed: ${failed}.</p>`,
+    );
+  } catch { /* ignore */ }
+}
 
 // ══════════════════════════════════════════════════════════════
 //  PROFESSIONALS MANAGEMENT

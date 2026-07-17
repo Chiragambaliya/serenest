@@ -5,6 +5,21 @@ import PrescriptionDocument from '../components/PrescriptionDocument';
 // ── API helper ──────────────────────────────────────────────────────────────
 const BASE = import.meta.env.VITE_API_URL ?? '';
 const WA_CHANNEL = import.meta.env.VITE_WA_CHANNEL_LINK ?? '';
+const WA_GROUP_FALLBACK = import.meta.env.VITE_WA_GROUP_INVITE || WA_CHANNEL || '';
+
+function serenestWaInviteMessage(person, inviteUrl) {
+  const name = (person.full_name || person.patient_name || '').split(' ')[0] || 'there';
+  const role = person.role_label ?? person.role ?? 'professional';
+  const link = inviteUrl || 'the SERENEST WhatsApp group (link from our team)';
+  return `Hi ${name}! You've been approved as a ${role} on Serenest.\n\nPlease join our SERENEST professionals WhatsApp group here:\n${link}\n\nWelcome aboard!\n— Serenest Team`;
+}
+
+function waMeUrlForProfessional(person, inviteUrl) {
+  const phone = String(person.phone || '').replace(/\D/g, '');
+  if (!phone) return null;
+  const fullPhone = phone.length === 10 ? `91${phone}` : phone;
+  return `https://wa.me/${fullPhone}?text=${encodeURIComponent(serenestWaInviteMessage(person, inviteUrl))}`;
+}
 
 async function adminFetch(path, secret, opts = {}) {
   const res = await fetch(`${BASE}${path}`, {
@@ -287,6 +302,10 @@ export default function AdminPage() {
   const [rxListSearch, setRxListSearch] = useState('');
   const [rxListFilter, setRxListFilter] = useState('all'); // all | locked | draft
   const [professionals, setProfessionals] = useState([]);
+  const [waGroupInvite, setWaGroupInvite] = useState(WA_GROUP_FALLBACK);
+  const [waGroupConfigured, setWaGroupConfigured] = useState(Boolean(WA_GROUP_FALLBACK));
+  const [waInviteBusy, setWaInviteBusy] = useState(false);
+  const [waInviteResult, setWaInviteResult] = useState(null);
   const [apps, setApps]               = useState([]);
   const [jobs, setJobs]               = useState([]);
   const [messages, setMessages]       = useState([]);
@@ -419,9 +438,14 @@ export default function AdminPage() {
         const r = await adminFetch('/api/professionals/applications', secret);
         setApps(r.applications ?? []);
       }),
-      (which === 'all' || which === 'professionals') && safe(async () => {
+      (which === 'all' || which === 'professionals' || which === 'applications') && safe(async () => {
         const r = await adminFetch('/api/professionals/list', secret);
         setProfessionals(r.professionals ?? []);
+      }),
+      (which === 'all' || which === 'professionals' || which === 'applications') && safe(async () => {
+        const r = await adminFetch('/api/professionals/wa-group', secret);
+        setWaGroupInvite(r.invite_url || WA_GROUP_FALLBACK || '');
+        setWaGroupConfigured(Boolean(r.configured || r.invite_url || WA_GROUP_FALLBACK));
       }),
       (which === 'all' || which === 'hr') && safe(async () => {
         const [rApps, rPostings, rInterviews] = await Promise.all([
@@ -1080,15 +1104,91 @@ export default function AdminPage() {
   // ── application status update ──────────────────────────────
   async function updateAppStatus(id, status) {
     try {
-      await adminFetch(`/api/professionals/applications/${id}`, secret, {
+      const r = await adminFetch(`/api/professionals/applications/${id}`, secret, {
         method: 'PATCH',
         body: JSON.stringify({ status }),
       });
       setApps((prev) => prev.map((a) => a.id === id ? { ...a, status } : a));
-      load('stats');
+      if (r.wa_group_invite) {
+        setWaGroupInvite(r.wa_group_invite);
+        setWaGroupConfigured(true);
+      }
+      if (status === 'approved') {
+        load('professionals');
+        load('stats');
+        const emailed = r.approval_notify?.emailed;
+        if (emailed) {
+          window.alert('Approved. Welcome email with SERENEST WhatsApp group invite was sent.');
+        } else if (status === 'approved') {
+          // Still approved — WA button remains for manual send
+        }
+      } else {
+        load('stats');
+      }
     } catch (e) {
       setError(e.message);
     }
+  }
+
+  async function emailAllProsSerenestWaInvite() {
+    if (!window.confirm('Email every approved professional the SERENEST WhatsApp group invite link?')) return;
+    setWaInviteBusy(true);
+    setWaInviteResult(null);
+    try {
+      const r = await adminFetch('/api/professionals/wa-group/invite-all', secret, {
+        method: 'POST',
+        body: '{}',
+      });
+      setWaInviteResult(r);
+      if (r.invite_url) {
+        setWaGroupInvite(r.invite_url);
+        setWaGroupConfigured(true);
+      }
+      window.alert(
+        `SERENEST group invites emailed: ${r.emailed}/${r.total}`
+          + (r.skipped_no_email ? `\nSkipped (no email): ${r.skipped_no_email}` : '')
+          + (r.failed ? `\nFailed: ${r.failed}` : ''),
+      );
+    } catch (e) {
+      setError(e.message);
+      window.alert(e.message);
+    } finally {
+      setWaInviteBusy(false);
+    }
+  }
+
+  function openWaInvitesSequentially(list) {
+    const withPhone = (list || []).filter((p) => p.phone);
+    if (!withPhone.length) {
+      window.alert('No professionals with phone numbers to invite.');
+      return;
+    }
+    if (!waGroupInvite) {
+      window.alert('Set SERENEST_WA_GROUP_INVITE on the server (chat.whatsapp.com/… link), then refresh.');
+      return;
+    }
+    let i = 0;
+    const openNext = () => {
+      if (i >= withPhone.length) {
+        window.alert('Opened WhatsApp invites for all professionals with a phone number. Send each message manually.');
+        return;
+      }
+      const p = withPhone[i];
+      const url = waMeUrlForProfessional(p, waGroupInvite);
+      i += 1;
+      if (url) window.open(url, '_blank', 'noopener,noreferrer');
+      if (i < withPhone.length) {
+        window.setTimeout(openNext, 900);
+      } else {
+        window.setTimeout(() => {
+          window.alert(`Opened ${withPhone.length} WhatsApp chat(s). Tap Send on each.`);
+        }, 400);
+      }
+    };
+    if (!window.confirm(
+      `Open WhatsApp chats for ${withPhone.length} professional(s) with a pre-filled SERENEST group invite?\n\nYou still need to tap Send on each chat — WhatsApp cannot auto-add people to a group.`,
+    )) return;
+    openNext();
   }
 
   // ── login screen ───────────────────────────────────────────
@@ -2057,6 +2157,73 @@ export default function AdminPage() {
                 </div>
               </div>
 
+              {/* SERENEST WhatsApp group invites */}
+              <div style={{
+                background: '#f0fdf4',
+                border: '1px solid #bbf7d0',
+                borderRadius: 12,
+                padding: '1rem 1.1rem',
+                marginBottom: '1.25rem',
+              }}>
+                <div style={{ fontWeight: 800, marginBottom: 6 }}>SERENEST WhatsApp group</div>
+                <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', margin: '0 0 10px', lineHeight: 1.5 }}>
+                  WhatsApp cannot auto-add members. Invite every approved professional by email and/or open pre-filled WhatsApp chats (you tap Send).
+                </p>
+                {!waGroupConfigured && (
+                  <p style={{ fontSize: '0.82rem', color: '#b45309', margin: '0 0 10px' }}>
+                    Set <code>SERENEST_WA_GROUP_INVITE</code> in Render to your <code>chat.whatsapp.com/…</code> invite link, then redeploy / refresh.
+                  </p>
+                )}
+                {waGroupInvite && (
+                  <p style={{ fontSize: '0.78rem', margin: '0 0 10px', wordBreak: 'break-all' }}>
+                    Invite: <a href={waGroupInvite} target="_blank" rel="noreferrer">{waGroupInvite}</a>
+                  </p>
+                )}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  <button
+                    type="button"
+                    className="btn btn-sm"
+                    disabled={waInviteBusy || !professionals.length}
+                    onClick={emailAllProsSerenestWaInvite}
+                    style={{ background: '#0f766e', color: '#fff', border: 'none' }}
+                  >
+                    {waInviteBusy ? 'Emailing…' : 'Email invite to all'}
+                  </button>
+                  <button
+                    type="button"
+                    className="btn btn-sm"
+                    disabled={!professionals.length}
+                    onClick={() => openWaInvitesSequentially(professionals)}
+                    style={{ background: '#25d366', color: '#fff', border: 'none' }}
+                  >
+                    Open WA invites (all)
+                  </button>
+                  {waGroupInvite && (
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm"
+                      onClick={async () => {
+                        try {
+                          await navigator.clipboard.writeText(waGroupInvite);
+                          window.alert('Invite link copied');
+                        } catch {
+                          window.prompt('Copy invite link', waGroupInvite);
+                        }
+                      }}
+                    >
+                      Copy group link
+                    </button>
+                  )}
+                </div>
+                {waInviteResult && (
+                  <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)', margin: '10px 0 0' }}>
+                    Last run: emailed {waInviteResult.emailed}/{waInviteResult.total}
+                    {waInviteResult.skipped_no_email ? ` · no email ${waInviteResult.skipped_no_email}` : ''}
+                    {waInviteResult.failed ? ` · failed ${waInviteResult.failed}` : ''}
+                  </p>
+                )}
+              </div>
+
               {/* Role breakdown pills */}
               {professionals.length > 0 && (
                 <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: '1.25rem' }}>
@@ -2114,6 +2281,31 @@ export default function AdminPage() {
                           {p.city  && <span>📍 {p.city}</span>}
                           {p.clinic && <span>🏥 {p.clinic}</span>}
                         </div>
+
+                        {/* SERENEST WA invite */}
+                        {(p.phone || p.email) && (
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                            {p.phone && waMeUrlForProfessional(p, waGroupInvite) && (
+                              <a
+                                href={waMeUrlForProfessional(p, waGroupInvite)}
+                                target="_blank"
+                                rel="noreferrer"
+                                style={{
+                                  display: 'inline-block',
+                                  padding: '4px 10px',
+                                  borderRadius: 6,
+                                  fontSize: '0.75rem',
+                                  fontWeight: 700,
+                                  background: '#25d366',
+                                  color: '#fff',
+                                  textDecoration: 'none',
+                                }}
+                              >
+                                WA · SERENEST group
+                              </a>
+                            )}
+                          </div>
+                        )}
 
                         {/* Details grid */}
                         {!isEditing ? (
@@ -2242,14 +2434,11 @@ export default function AdminPage() {
                             {a.status !== 'rejected' && <ActionBtn label="Reject"  onClick={() => updateAppStatus(a.id, 'rejected')} color="#dc3545" />}
                             {a.status !== 'pending'  && <ActionBtn label="Reset"   onClick={() => updateAppStatus(a.id, 'pending')}  color="#6c757d" />}
                             {a.status === 'approved' && a.phone && (() => {
-                              const phone = String(a.phone).replace(/\D/g, '');
-                              const fullPhone = phone.length === 10 ? `91${phone}` : phone;
-                              const name = (a.full_name || '').split(' ')[0];
-                              const role = a.role_label ?? a.role ?? 'professional';
-                              const msg = `Hi ${name}! You've been approved as a ${role} on Serenest.\n\nJoin our professional community here: ${WA_CHANNEL}\n\nWelcome aboard! We'll be in touch with next steps.\n— Serenest Team`;
+                              const url = waMeUrlForProfessional(a, waGroupInvite || WA_GROUP_FALLBACK);
+                              if (!url) return null;
                               return (
                                 <a
-                                  href={`https://wa.me/${fullPhone}?text=${encodeURIComponent(msg)}`}
+                                  href={url}
                                   target="_blank"
                                   rel="noreferrer"
                                   style={{
@@ -2264,7 +2453,7 @@ export default function AdminPage() {
                                     whiteSpace: 'nowrap',
                                   }}
                                 >
-                                  WA Welcome
+                                  WA · SERENEST
                                 </a>
                               );
                             })()}

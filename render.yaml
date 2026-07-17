@@ -52,6 +52,11 @@ services:
       - key: CALLMEBOT_WHATSAPP_PHONE
         sync: false
 
+      # ── SERENEST professionals WhatsApp group invite ─────────
+      # https://chat.whatsapp.com/… — emailed on approve + Admin bulk invite
+      - key: SERENEST_WA_GROUP_INVITE
+        sync: false
+
       # ── Visitor alerts: email each unique visitor (optional; WhatsApp pings always when CallMeBot set)
       # - key: NOTIFY_EACH_UNIQUE_VISITOR_EMAIL
       #   value: "true"
