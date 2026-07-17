@@ -100,6 +100,7 @@ const TAB_GROUPS = [
     label: 'Patients',
     items: [
       { id: 'bookings',   label: 'Bookings',   icon: '◻' },
+      { id: 'prescriptions', label: 'Past Rx', icon: '◻' },
       { id: 'screenings', label: 'Screenings', icon: '◻' },
       { id: 'signups',    label: 'Signups',    icon: '◻' },
     ],
@@ -282,6 +283,9 @@ export default function AdminPage() {
 
   const [stats, setStats]             = useState(null);
   const [bookings, setBookings]       = useState([]);
+  const [prescriptions, setPrescriptions] = useState([]);
+  const [rxListSearch, setRxListSearch] = useState('');
+  const [rxListFilter, setRxListFilter] = useState('all'); // all | locked | draft
   const [professionals, setProfessionals] = useState([]);
   const [apps, setApps]               = useState([]);
   const [jobs, setJobs]               = useState([]);
@@ -403,9 +407,13 @@ export default function AdminPage() {
         const r = await adminFetch('/api/admin/stats', secret);
         setStats(r.stats);
       }),
-      (which === 'all' || which === 'bookings') && safe(async () => {
-        const r = await adminFetch('/api/bookings', secret);
-        setBookings(r.bookings ?? []);
+      (which === 'all' || which === 'bookings' || which === 'prescriptions') && safe(async () => {
+        const [rBookings, rRx] = await Promise.all([
+          adminFetch('/api/bookings', secret),
+          adminFetch('/api/prescriptions', secret),
+        ]);
+        setBookings(rBookings.bookings ?? []);
+        setPrescriptions(rRx.prescriptions ?? []);
       }),
       (which === 'all' || which === 'applications') && safe(async () => {
         const r = await adminFetch('/api/professionals/applications', secret);
@@ -547,6 +555,7 @@ export default function AdminPage() {
     setInput('');
     setStats(null);
     setBookings([]);
+    setPrescriptions([]);
     setApps([]);
     setProfessionals([]);
     setJobs([]);
@@ -910,6 +919,19 @@ export default function AdminPage() {
         body: JSON.stringify({ ...body, send, lock: send }),
       });
       applyRxResult(r, { sent: Boolean(send && r.sent) });
+      if (r.prescription) {
+        setPrescriptions((prev) => {
+          const next = prev.filter((p) => p.appointment_id !== prescribeBooking.id);
+          return [{
+            ...r.prescription,
+            medicine_count: Array.isArray(r.prescription.medicines)
+              ? r.prescription.medicines.filter((m) => m?.name).length
+              : 0,
+            booking: prescribeBooking,
+            view_path: `/consultation/${prescribeBooking.id}/prescription`,
+          }, ...next];
+        });
+      }
       if (send && r.prescription?.is_locked) {
         setRxPreview(true);
       }
@@ -949,6 +971,48 @@ export default function AdminPage() {
       setRxSuccess(`Link copied: ${url}`);
     } catch {
       setRxSuccess(`Patient link: ${url}`);
+    }
+  }
+
+  const rxByAppointmentId = useMemo(() => {
+    const map = {};
+    for (const p of prescriptions) {
+      if (p?.appointment_id) map[p.appointment_id] = p;
+    }
+    return map;
+  }, [prescriptions]);
+
+  function openPastRx(rx) {
+    const booking = rx.booking || {
+      id: rx.appointment_id,
+      patient_name: rx.patient_name || 'Patient',
+      patient_phone: rx.patient_contact || '',
+      patient_email: null,
+      practitioner_type: '—',
+      preferred_date: null,
+      mode: rx.mode || '',
+      status: 'completed',
+    };
+    openPrescribe(booking);
+  }
+
+  async function resendPastRx(rx) {
+    setRxError(null);
+    try {
+      const r = await adminFetch(`/api/prescriptions/${rx.appointment_id}/send`, secret, {
+        method: 'POST',
+        body: '{}',
+      });
+      setPrescriptions((prev) => prev.map((p) => (
+        p.id === (r.prescription?.id || rx.id)
+          ? { ...p, ...r.prescription, is_locked: true, booking: p.booking }
+          : p
+      )));
+      window.alert(r.patient_email
+        ? `Prescription emailed to ${r.patient_email}`
+        : 'Send requested.');
+    } catch (e) {
+      window.alert(e.message || 'Failed to resend');
     }
   }
 
@@ -1193,6 +1257,7 @@ export default function AdminPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
               {[
                 { id: 'bookings',      icon: '📅', label: 'Manage Bookings',        desc: 'View, confirm & assign appointments' },
+                { id: 'prescriptions', icon: '📋', label: 'Past prescriptions',     desc: 'View, reopen, resend issued Rx' },
                 { id: 'professionals', icon: '🩺', label: 'Professionals',          desc: 'Manage psychiatrists, psychologists & therapists' },
                 { id: 'applications',  icon: '👩‍⚕️', label: 'Applications',          desc: 'Approve or reject professional sign-ups' },
                 { id: 'hr',            icon: '🧑‍💼', label: 'HR / Hiring',           desc: 'Review and manage job applications' },
@@ -1569,6 +1634,16 @@ export default function AdminPage() {
                               ✓ Paid{b.amount_paid ? ` ₹${b.amount_paid}` : ''}
                             </span>
                           )}
+                          {rxByAppointmentId[b.id] && (
+                            <span style={{
+                              display: 'inline-block', marginTop: 4, marginLeft: 4,
+                              background: rxByAppointmentId[b.id].is_locked ? '#e7e0f8' : '#fff3cd',
+                              color: rxByAppointmentId[b.id].is_locked ? '#5b2a86' : '#856404',
+                              padding: '1px 8px', borderRadius: 99, fontSize: '0.68rem', fontWeight: 700,
+                            }}>
+                              {rxByAppointmentId[b.id].is_locked ? 'Rx locked' : 'Rx draft'}
+                            </span>
+                          )}
                         </td>
                         <td style={tdStyle}>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
@@ -1581,7 +1656,11 @@ export default function AdminPage() {
                               </Link>
                             )}
                             {(b.status === 'confirmed' || b.status === 'completed') && (
-                              <ActionBtn label="📋 Issue Rx" onClick={() => openPrescribe(b)} color="#6f42c1" />
+                              <ActionBtn
+                                label={rxByAppointmentId[b.id]?.is_locked ? '📋 View Rx' : rxByAppointmentId[b.id] ? '📋 Edit Rx' : '📋 Issue Rx'}
+                                onClick={() => openPrescribe(b)}
+                                color="#6f42c1"
+                              />
                             )}
                             <ActionBtn
                               label="🗑"
@@ -1757,6 +1836,195 @@ export default function AdminPage() {
                 </div>
               </div>
             )}
+          </div>
+        )}
+
+        {/* ── PAST PRESCRIPTIONS ── */}
+        {tab === 'prescriptions' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.8rem', flexWrap: 'wrap', gap: 8 }}>
+              <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>
+                Past prescriptions{' '}
+                <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({prescriptions.length})</span>
+              </h2>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => load('prescriptions')}>↻ Refresh</button>
+            </div>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem', maxWidth: 720 }}>
+              Every saved Rx is listed here. Open to edit a draft, view a locked script, resend email, or share the patient link.
+            </p>
+
+            <div className="admin-filter-bar" style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: 10,
+              padding: '0.75rem',
+              marginBottom: '1rem',
+              display: 'grid',
+              gridTemplateColumns: '1.2fr auto',
+              gap: 10,
+            }}>
+              <input
+                value={rxListSearch}
+                onChange={(e) => setRxListSearch(e.target.value)}
+                placeholder="Search patient, doctor, diagnosis, medicine…"
+                style={{
+                  width: '100%',
+                  padding: '0.58rem 0.72rem',
+                  borderRadius: 8,
+                  border: '1px solid var(--border)',
+                  fontSize: '0.86rem',
+                  background: 'var(--bg)',
+                  color: 'var(--text)',
+                }}
+              />
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                {['all', 'locked', 'draft'].map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setRxListFilter(s)}
+                    style={{
+                      border: 'none',
+                      borderRadius: 99,
+                      padding: '4px 10px',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      cursor: 'pointer',
+                      background: rxListFilter === s ? 'var(--brand-500)' : 'var(--bg-subtle, #f5f7f9)',
+                      color: rxListFilter === s ? '#fff' : 'var(--text-muted)',
+                    }}
+                  >
+                    {s === 'all' ? 'All' : s === 'locked' ? 'Locked' : 'Drafts'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {(() => {
+              const q = rxListSearch.trim().toLowerCase();
+              const filtered = prescriptions.filter((p) => {
+                if (rxListFilter === 'locked' && !p.is_locked) return false;
+                if (rxListFilter === 'draft' && p.is_locked) return false;
+                if (!q) return true;
+                const medNames = (Array.isArray(p.medicines) ? p.medicines : [])
+                  .map((m) => m?.name).filter(Boolean).join(' ');
+                const hay = [
+                  p.patient_name, p.professional_name, p.provisional_diagnosis,
+                  p.patient_contact, medNames,
+                  p.booking?.patient_name, p.booking?.patient_email, p.booking?.patient_phone,
+                ].filter(Boolean).join(' ').toLowerCase();
+                return hay.includes(q);
+              });
+
+              if (filtered.length === 0) {
+                return (
+                  <EmptyState
+                    icon="📋"
+                    text={prescriptions.length === 0
+                      ? 'No prescriptions saved yet — issue one from Bookings'
+                      : 'No prescriptions match your search or filter'}
+                  />
+                );
+              }
+
+              return (
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={tableStyle}>
+                    <thead>
+                      <tr>
+                        {['Patient', 'Doctor', 'Medicines', 'Updated', 'Status', 'Actions'].map((h) => (
+                          <th key={h} style={thStyle}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filtered.map((p) => {
+                        const meds = Array.isArray(p.medicines) ? p.medicines.filter((m) => m?.name) : [];
+                        const medLabel = meds.length
+                          ? meds.slice(0, 2).map((m) => m.name).join(', ') + (meds.length > 2 ? ` +${meds.length - 2}` : '')
+                          : '—';
+                        const patient = p.patient_name || p.booking?.patient_name || '—';
+                        const contact = p.booking?.patient_email || p.booking?.patient_phone || p.patient_contact || '';
+                        const viewUrl = `${typeof window !== 'undefined' ? window.location.origin : 'https://serenest.in'}/consultation/${p.appointment_id}/prescription`;
+                        return (
+                          <tr key={p.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                            <td style={tdStyle}>
+                              <strong>{patient}</strong><br />
+                              <small style={{ color: 'var(--text-muted)' }}>{contact || 'No contact'}</small>
+                              {p.provisional_diagnosis && (
+                                <>
+                                  <br />
+                                  <small style={{ color: 'var(--text-muted)' }}>{p.provisional_diagnosis}</small>
+                                </>
+                              )}
+                            </td>
+                            <td style={tdStyle}>{p.professional_name || '—'}</td>
+                            <td style={tdStyle}>
+                              {medLabel}
+                              <br />
+                              <small style={{ color: 'var(--text-muted)' }}>{p.medicine_count ?? meds.length} item(s)</small>
+                            </td>
+                            <td style={tdStyle}>{fmt(p.updated_at || p.created_at)}</td>
+                            <td style={tdStyle}>
+                              <span style={{
+                                display: 'inline-block',
+                                background: p.is_locked ? '#e7e0f8' : '#fff3cd',
+                                color: p.is_locked ? '#5b2a86' : '#856404',
+                                padding: '2px 8px',
+                                borderRadius: 99,
+                                fontSize: '0.72rem',
+                                fontWeight: 700,
+                              }}>
+                                {p.is_locked ? 'Locked' : 'Draft'}
+                              </span>
+                            </td>
+                            <td style={tdStyle}>
+                              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
+                                <ActionBtn
+                                  label={p.is_locked ? 'Open' : 'Edit'}
+                                  onClick={() => openPastRx(p)}
+                                  color="#6f42c1"
+                                />
+                                <a
+                                  href={viewUrl}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="btn btn-sm btn-ghost"
+                                  style={{ fontSize: '0.75rem', textDecoration: 'none' }}
+                                >
+                                  Patient view
+                                </a>
+                                <ActionBtn
+                                  label="Resend"
+                                  onClick={() => resendPastRx(p)}
+                                  color="#0f766e"
+                                  disabled={!p.booking?.patient_email}
+                                />
+                                <button
+                                  type="button"
+                                  className="btn btn-sm btn-ghost"
+                                  style={{ fontSize: '0.75rem' }}
+                                  onClick={async () => {
+                                    try {
+                                      await navigator.clipboard.writeText(viewUrl);
+                                      window.alert('Patient link copied');
+                                    } catch {
+                                      window.prompt('Copy patient link', viewUrl);
+                                    }
+                                  }}
+                                >
+                                  Copy link
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
+              );
+            })()}
           </div>
         )}
 
