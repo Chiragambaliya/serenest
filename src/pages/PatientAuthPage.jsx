@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { useAuth } from '../lib/useAuth';
 
 export default function PatientAuthPage() {
   const navigate  = useNavigate();
   const location  = useLocation();
-  const from      = location.state?.from ?? '/patient/dashboard';
+  const [searchParams] = useSearchParams();
+  const fromQuery = searchParams.get('from');
+  const from      = fromQuery || location.state?.from || '/patient/dashboard';
 
   const { user, loading: authLoading } = useAuth();
 
@@ -36,6 +38,15 @@ export default function PatientAuthPage() {
 
   function switchMode(next) { setMode(next); setError(''); setNotice(''); setOtpSent(false); setOtp(''); }
   function switchMethod(m) { setAuthMethod(m); setError(''); setNotice(''); setOtpSent(false); setOtp(''); }
+
+  async function markPatientRole() {
+    if (!supabase) return;
+    try {
+      await supabase.auth.updateUser({ data: { role: 'patient' } });
+    } catch {
+      // non-fatal — session still works
+    }
+  }
 
   // ── Phone OTP: step 1 — send OTP ──────────────────────────────
   async function sendOtp(e) {
@@ -71,6 +82,7 @@ export default function PatientAuthPage() {
         type: 'sms',
       });
       if (e2) throw e2;
+      await markPatientRole();
       navigate(from, { replace: true });
     } catch (err) {
       setError(err.message || 'Invalid code. Please try again.');
@@ -104,6 +116,7 @@ export default function PatientAuthPage() {
       } else {
         const { error: e2 } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
         if (e2) throw e2;
+        await markPatientRole();
         navigate(from, { replace: true });
       }
     } catch (err) {

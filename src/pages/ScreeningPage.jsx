@@ -5,6 +5,7 @@ import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { SCREENING_TOOLS } from '../lib/screeningTools';
 import { trackEvent } from '../lib/analytics';
+import { buildBookPath, suggestRoleFromScreening } from '../lib/bookingHandoff';
 
 // ── Validated clinical screeners ──────────────────────────────────
 // PHQ-9 — Patient Health Questionnaire for depression (Kroenke et al.)
@@ -375,8 +376,27 @@ export default function ScreeningPage() {
               </div>
 
               <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
-                <Link to="/book" className="btn btn-primary">Book a session →</Link>
-                <Link to="/patient/find-professional" className="btn btn-ghost">Browse professionals</Link>
+                <Link
+                  to={buildBookPath({
+                    name: name.trim(),
+                    phone: phoneClean,
+                    email: email.trim() || undefined,
+                    phq: phqScore,
+                    gad: gadScore,
+                    phqsev: phqSev,
+                    gadsev: gadSev,
+                    prole: suggestRoleFromScreening(phqScore, gadScore),
+                  })}
+                  className="btn btn-primary"
+                >
+                  Book a session →
+                </Link>
+                <Link
+                  to={`/patient/find-professional?role=${encodeURIComponent(suggestRoleFromScreening(phqScore, gadScore))}`}
+                  className="btn btn-ghost"
+                >
+                  Browse professionals
+                </Link>
                 <a href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I just took the self-screening (PHQ-9: ${phqScore}, GAD-7: ${gadScore}). I'd like to talk to someone.`)}`} target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ background: '#25D366', color: '#fff', borderColor: '#25D366' }}>💬 WhatsApp us</a>
               </div>
 

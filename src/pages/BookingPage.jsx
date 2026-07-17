@@ -6,6 +6,7 @@ import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { useAuth } from '../lib/useAuth';
 import { trackEvent } from '../lib/analytics';
+import { screeningNote, suggestRoleFromScreening } from '../lib/bookingHandoff';
 
 const DEFAULT_FEE_INR = 499;
 
@@ -59,13 +60,39 @@ export default function BookingPage() {
   const preProLabel = searchParams.get('prolabel') ?? '';
   const preProFee   = searchParams.get('pfee') ?? '';
   const preProDur   = searchParams.get('pduration') ?? '';
+  const preMode     = searchParams.get('mode') ?? '';
+  const preLang     = searchParams.get('lang') ?? '';
+  const preName     = searchParams.get('name') ?? '';
+  const prePhone    = searchParams.get('phone') ?? '';
+  const preEmail    = searchParams.get('email') ?? '';
+  const prePhq      = searchParams.get('phq') ?? '';
+  const preGad      = searchParams.get('gad') ?? '';
+  const prePhqSev   = searchParams.get('phqsev') ?? '';
+  const preGadSev   = searchParams.get('gadsev') ?? '';
+  const preTool     = searchParams.get('tool') ?? '';
+  const preScore    = searchParams.get('score') ?? '';
+  const preBand     = searchParams.get('band') ?? '';
   const hasPro = Boolean(preProName);
+
+  const suggestedRole = preProRole
+    || (prePhq || preGad ? suggestRoleFromScreening(prePhq, preGad) : '')
+    || '';
+
+  const handoffNote = useMemo(
+    () => screeningNote({
+      phq: prePhq, gad: preGad, phqSev: prePhqSev, gadSev: preGadSev,
+      tool: preTool, score: preScore, band: preBand,
+    }),
+    [prePhq, preGad, prePhqSev, preGadSev, preTool, preScore, preBand],
+  );
 
   const { days, times } = useMemo(() => makeSlots(), []);
   const [step, setStep] = useState(1);
 
-  const [practitionerType, setPractitionerType] = useState(preProRole || 'psychiatrist');
-  const [mode, setMode] = useState('video');
+  const [practitionerType, setPractitionerType] = useState(suggestedRole || 'psychiatrist');
+  const [mode, setMode] = useState(
+    ['video', 'audio', 'chat'].includes(preMode) ? preMode : 'video',
+  );
 
   // ── Counsellor picker (only when no professional was preselected via deep link) ──
   const [directory, setDirectory] = useState([]);
@@ -100,17 +127,29 @@ export default function BookingPage() {
   const [dayKey, setDayKey] = useState(days[0]?.key ?? '');
   const [time, setTime] = useState(times[0] ?? '');
 
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [email, setEmail] = useState('');
-  const [language, setLanguage] = useState('English');
-  const [note, setNote] = useState('');
+  const [name, setName] = useState(preName);
+  const [phone, setPhone] = useState(prePhone);
+  const [email, setEmail] = useState(preEmail);
+  const [language, setLanguage] = useState(preLang || 'English');
+  const [note, setNote] = useState(handoffNote);
   const [consent, setConsent] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [confirmation, setConfirmation] = useState(null);
   const [paymentsOn, setPaymentsOn] = useState(false);
+
+  // Prefill from signed-in patient when query params didn't already set fields.
+  useEffect(() => {
+    if (!user) return;
+    const meta = user.user_metadata || {};
+    const full = meta.full_name || meta.name || '';
+    setName((prev) => prev || full);
+    setEmail((prev) => prev || user.email || '');
+    const phoneMeta = meta.phone || user.phone || '';
+    const digits = String(phoneMeta).replace(/\D/g, '').slice(-10);
+    if (digits.length === 10) setPhone((prev) => prev || digits);
+  }, [user]);
 
   // Detect whether the server requires payment before booking.
   useEffect(() => {
@@ -228,8 +267,8 @@ export default function BookingPage() {
             </h1>
             <p className="about-subtext">
               {hasPro
-                ? `${preProLabel}${preProFee ? ` · ₹${preProFee}` : ''}${preProDur ? ` · ${preProDur} min` : ''}. Pick a slot and share your details.`
-                : 'Choose your practitioner type and consultation mode, pick a slot, and share your details.'}
+                ? `${preProLabel}${preProFee ? ` · ₹${preProFee}` : ''}${preProDur ? ` · ${preProDur} min` : ''}. Pick a preferred slot and share your details — we'll confirm shortly.`
+                : 'Choose your practitioner type and consultation mode, pick a preferred slot, and share your details. We confirm by phone or WhatsApp.'}
             </p>
           </div>
           {hasPro && (
@@ -248,28 +287,35 @@ export default function BookingPage() {
               </Link>
             </div>
           )}
+          {handoffNote && (
+            <div className="callout" style={{ marginTop: 16, maxWidth: 720 }}>
+              <div className="callout-title">Screening carried forward</div>
+              <p className="muted" style={{ margin: 0 }}>{handoffNote}</p>
+            </div>
+          )}
         </div>
       </section>
 
-      {/* Auth prompt banner — shown to unauthenticated guests only */}
+      {/* Auth prompt — optional; continue as guest stays on this page */}
       {!user && !guestMode && (
         <div style={{ background: 'var(--brand-50, #f4f6f0)', borderBottom: '1px solid var(--border)' }}>
           <div className="container" style={{ padding: '1rem 1.25rem', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.75rem 1.25rem' }}>
             <div style={{ flex: 1, minWidth: 220 }}>
-              <p style={{ fontWeight: 700, fontSize: '0.94rem', marginBottom: 2 }}>Save your booking to your account</p>
-              <p style={{ fontSize: '0.83rem', color: 'var(--text-muted)' }}>Sign in or create a free account to track appointments and view prescriptions.</p>
+              <p style={{ fontWeight: 700, fontSize: '0.94rem', marginBottom: 2 }}>Optional: save this booking to your account</p>
+              <p style={{ fontSize: '0.83rem', color: 'var(--text-muted)' }}>You can book as a guest. Sign in later to track appointments and prescriptions.</p>
             </div>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-              <Link to="/patient/login" state={{ mode: 'signup', from: '/book' }} className="btn btn-primary btn-sm">
-                Create account
-              </Link>
-              <Link to="/patient/login" state={{ mode: 'login', from: '/book' }} className="btn btn-ghost btn-sm">
+              <Link
+                to={`/patient/login?from=${encodeURIComponent(`${window.location.pathname}${window.location.search}`)}`}
+                state={{ mode: 'login', from: `${window.location.pathname}${window.location.search}` }}
+                className="btn btn-ghost btn-sm"
+              >
                 Sign in
               </Link>
               <button
                 type="button"
+                className="btn btn-primary btn-sm"
                 onClick={() => setGuestMode(true)}
-                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', fontSize: '0.83rem', padding: '4px 2px', whiteSpace: 'nowrap' }}
               >
                 Continue as guest →
               </button>
@@ -412,7 +458,7 @@ export default function BookingPage() {
                 <div className="section-head" style={{ marginBottom: 10 }}>
                   <p className="section-label">Step 2</p>
                   <h2>Pick a preferred slot.</h2>
-                  <p>These are sample slots for now (we’ll connect real availability next).</p>
+                  <p>Choose a preferred day and time. Our team will confirm the slot (or suggest the next available) when we reach out.</p>
                 </div>
 
                 <div className="slot-grid">
@@ -687,8 +733,9 @@ export default function BookingPage() {
                 </div>
 
                 <p style={{ fontSize: '0.92rem', marginBottom: '1.5rem' }}>
-                  Our team will contact you on <strong>+91 {phoneClean}</strong> within a few hours
-                  to confirm your professional and payment.
+                  {confirmation.status === 'confirmed'
+                    ? <>Your session is confirmed. Join from your patient dashboard or the consultation room at the booked time.</>
+                    : <>Status: <strong>awaiting confirmation</strong>. Our team will contact you on <strong>+91 {phoneClean}</strong> shortly to confirm your professional and timing.</>}
                 </p>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -700,16 +747,22 @@ export default function BookingPage() {
                   >
                     💬 Chat on WhatsApp
                   </a>
-                  <Link className="btn btn-ghost" to={`/consultation/${confirmation.id}?mode=${mode}`}>
-                    🎥 Open consultation room
+                  {confirmation.status === 'confirmed' && (
+                    <Link className="btn btn-ghost" to={`/consultation/${confirmation.id}?mode=${mode}`}>
+                      🎥 Open consultation room
+                    </Link>
+                  )}
+                  <Link className="btn btn-ghost" to="/patient/dashboard">
+                    My appointments
                   </Link>
                   <Link className="btn btn-ghost" to="/">
                     Back to home
                   </Link>
                 </div>
                 <p className="fineprint" style={{ marginTop: 12 }}>
-                  The consultation room opens early so you can test your camera/mic — your session only
-                  starts once your professional is confirmed and joins at your booked time.
+                  {confirmation.status === 'confirmed'
+                    ? 'Join a few minutes early to test your camera and mic.'
+                    : 'You will get the consultation room link once your booking is confirmed.'}
                 </p>
               </div>
             )}
