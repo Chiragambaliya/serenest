@@ -1178,6 +1178,55 @@ app.get('/api/rooms/:appointmentId', async (req, res) => {
 // ══════════════════════════════════════════════════════════════
 
 /**
+ * GET /api/prescriptions
+ * Admin — list all issued prescriptions (newest first), with booking contact fields.
+ * Must be registered before /:appointmentId so Express does not treat "list" as an id.
+ */
+app.get('/api/prescriptions', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const { data: rows, error } = await supabase
+    .from('prescriptions')
+    .select('*')
+    .order('updated_at', { ascending: false })
+    .limit(500);
+
+  if (error) {
+    console.error('[GET /api/prescriptions]', error);
+    return err(res, 'Failed to load prescriptions', 500);
+  }
+
+  const prescriptions = rows || [];
+  const appointmentIds = [...new Set(prescriptions.map((p) => p.appointment_id).filter(Boolean))];
+
+  let bookingsById = {};
+  if (appointmentIds.length) {
+    const { data: bookings, error: bErr } = await supabase
+      .from('appointments')
+      .select('id, patient_name, patient_email, patient_phone, practitioner_type, mode, status, preferred_date, preferred_time')
+      .in('id', appointmentIds);
+    if (bErr) {
+      console.error('[GET /api/prescriptions] bookings join', bErr);
+    } else {
+      bookingsById = Object.fromEntries((bookings || []).map((b) => [b.id, b]));
+    }
+  }
+
+  const enriched = prescriptions.map((p) => {
+    const booking = bookingsById[p.appointment_id] || null;
+    const meds = Array.isArray(p.medicines) ? p.medicines : [];
+    return {
+      ...p,
+      medicine_count: meds.filter((m) => m?.name).length,
+      booking,
+      view_path: `/consultation/${p.appointment_id}/prescription`,
+    };
+  });
+
+  return ok(res, { prescriptions: enriched, count: enriched.length });
+});
+
+/**
  * GET /api/prescriptions/:appointmentId
  * Public — a patient opens this from their consultation room link.
  */
