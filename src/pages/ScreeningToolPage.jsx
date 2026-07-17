@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { SCREENING_TOOLS, getTool, scoreTool, maxScore } from '../lib/screeningTools';
+import { buildBookPath } from '../lib/bookingHandoff';
 
 export default function ScreeningToolPage() {
   const { toolId } = useParams();
@@ -209,7 +210,17 @@ function Result({ tool, result, crisisFlag, onRetake }) {
           A short conversation with a verified professional can help you make sense of this and decide what — if anything — to do.
         </p>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-          <Link to="/book" className="btn btn-primary">Book a consultation</Link>
+          <Link
+            to={buildBookPath({
+              tool: tool.slug,
+              score: isCount ? `${result.count}/${tool.questions.length}` : value,
+              band: band.label,
+              prole: (Number(value) >= 15 || (isCount && result.count >= 3)) ? 'psychiatrist' : 'psychologist',
+            })}
+            className="btn btn-primary"
+          >
+            Book a consultation
+          </Link>
           <a
             href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I just did the ${tool.name} self-check on Serenest (result: ${band.label}). I'd like to talk to someone.`)}`}
             target="_blank" rel="noreferrer"

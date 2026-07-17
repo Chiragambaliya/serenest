@@ -11,7 +11,7 @@ const NAV_GROUPS = [
     id: 'services',
     label: 'Services',
     items: [
-      { to: '/book',                      label: 'Book a Consultation',  desc: 'Same-day online slots available' },
+      { to: '/book',                      label: 'Book a Consultation',  desc: 'Request a preferred slot — we confirm quickly' },
       { to: '/patient/find-professional', label: 'Find a Professional',  desc: 'Browse our verified clinicians' },
       { to: '/screening',                 label: 'Self-Screening',       desc: 'PHQ-9 & GAD-7 in 5 minutes' },
       { to: '/pricing',                   label: 'Pricing',              desc: 'Transparent, no hidden fees' },
@@ -119,8 +119,8 @@ export default function SiteLayout() {
   const location                   = useLocation();
   const { user }                   = useAuth();
 
-  const isPatient = user?.user_metadata?.role === 'patient';
-  const patientFirstName = isPatient
+  const isPatient = user?.user_metadata?.role === 'patient' || Boolean(user);
+  const patientFirstName = user
     ? (user.user_metadata?.full_name || user.user_metadata?.name || '').split(' ')[0]
     : '';
 
@@ -188,8 +188,14 @@ export default function SiteLayout() {
 
             <span className="nav-divider" aria-hidden="true" />
 
-            <NavLink to="/patient/dashboard" className={navClass} style={{ fontWeight: 600 }}>
-              {isPatient && patientFirstName ? `Hi, ${patientFirstName}` : 'My account'}
+            <NavLink
+              to={user ? '/patient/dashboard' : '/patient/login'}
+              className={navClass}
+              style={{ fontWeight: 600 }}
+            >
+              {user
+                ? (patientFirstName ? `Hi, ${patientFirstName}` : 'My account')
+                : 'Sign in'}
             </NavLink>
 
             <Link className="header-cta" to="/book">
@@ -246,10 +252,17 @@ export default function SiteLayout() {
 
             {/* Nav links — grouped */}
             <nav className="menu-links" aria-label="Mobile navigation">
-              {isPatient && (
+              {user ? (
                 <div className="menu-section">
                   <Link to="/patient/dashboard" className="menu-link menu-link--accent" onClick={() => setMenuOpen(false)}>
                     {patientFirstName ? `Hi, ${patientFirstName}` : 'My account'}
+                    <span className="menu-link-arrow">→</span>
+                  </Link>
+                </div>
+              ) : (
+                <div className="menu-section">
+                  <Link to="/patient/login" className="menu-link menu-link--accent" onClick={() => setMenuOpen(false)}>
+                    Sign in
                     <span className="menu-link-arrow">→</span>
                   </Link>
                 </div>
@@ -306,7 +319,7 @@ export default function SiteLayout() {
                 Book an appointment →
               </Link>
               <p className="menu-drawer-note">
-                Same-day slots often available
+                Prefer a time — we confirm by phone or WhatsApp
               </p>
             </div>
           </aside>

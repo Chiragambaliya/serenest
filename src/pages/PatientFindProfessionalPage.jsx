@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { professionals as professionalsApi } from '../lib/api';
+import { buildBookPath, preferModeFromPro } from '../lib/bookingHandoff';
 
 const VALID_ROLES = ['psychiatrist', 'psychologist', 'therapist', 'counsellor'];
 
@@ -484,7 +485,16 @@ function ProfessionalCard({ p }) {
       {/* Actions */}
       <div style={{ display: 'flex', gap: 8, marginTop: 'auto', paddingTop: 4 }}>
         <Link
-          to={`/book?pid=${encodeURIComponent(p.id)}&pname=${encodeURIComponent(p.name)}&prole=${encodeURIComponent(p.role)}&prolabel=${encodeURIComponent(p.roleLabel)}&pfee=${encodeURIComponent(p.fee ?? '')}&pduration=${encodeURIComponent(p.duration ?? '')}`}
+          to={buildBookPath({
+            pid: p.id,
+            pname: p.name,
+            prole: p.role,
+            prolabel: p.roleLabel,
+            pfee: p.fee ?? '',
+            pduration: p.duration ?? '',
+            mode: preferModeFromPro(p.modes),
+            lang: Array.isArray(p.languages) ? p.languages[0] : (String(p.languages || '').split(/[,/]/)[0] || ''),
+          })}
           className="btn btn-primary"
           style={{ flex: 1, justifyContent: 'center', display: 'flex' }}
         >

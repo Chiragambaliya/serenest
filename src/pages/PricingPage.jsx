@@ -162,7 +162,7 @@ export default function PricingPage() {
           </p>
           <div className="pr-hero__actions">
             <Link className="btn btn-primary btn-lg" to="/book">Book a session</Link>
-            <Link className="btn btn-ghost btn-lg" to="/professionals">Meet our clinicians</Link>
+            <Link className="btn btn-ghost btn-lg" to="/patient/find-professional">Meet our clinicians</Link>
           </div>
           <nav className="pr-hero__nav" aria-label="On this page">
             {HERO_NAV.map((item) => (
