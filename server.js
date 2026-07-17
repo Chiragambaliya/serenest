@@ -1202,11 +1202,17 @@ app.get('/api/prescriptions/:appointmentId', async (req, res) => {
  * Issue or update a prescription for an appointment (admin only).
  * Upserts on appointment_id — re-issuing replaces the previous draft
  * unless it has already been locked.
+ *
+ * Optional body flags:
+ *   send: true  → email the patient a link to view/print the Rx (locks on success)
+ *   lock: true  → lock after save (ignored when send is true and email fails)
  */
 app.post('/api/prescriptions', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;
 
-  const { appointment_id, medicines = [] } = req.body;
+  const { appointment_id, medicines = [], send = false, lock = false } = req.body;
+  const shouldSend = Boolean(send);
+  const wantLock = Boolean(lock);
 
   if (!appointment_id) return err(res, 'appointment_id is required');
   if (!Array.isArray(medicines) || medicines.length === 0) {
@@ -1251,7 +1257,115 @@ app.post('/api/prescriptions', async (req, res) => {
     console.error('[POST /api/prescriptions]', error);
     return err(res, 'Failed to save prescription', 500);
   }
-  return ok(res, { prescription: data }, 201);
+
+  let prescription = data;
+  let sent = false;
+  let patientEmail = null;
+  let sendError = null;
+
+  if (shouldSend) {
+    const { data: booking } = await supabase
+      .from('appointments')
+      .select('id, patient_name, patient_email, patient_phone, practitioner_type, mode')
+      .eq('id', appointment_id)
+      .maybeSingle();
+
+    patientEmail = booking?.patient_email?.trim() || null;
+
+    if (!notify.isPatientEmailEnabled()) {
+      sendError = 'Patient email is not configured (set RESEND_API_KEY)';
+    } else if (!patientEmail) {
+      sendError = 'This booking has no patient email — share the prescription link via WhatsApp instead';
+    } else {
+      sent = await notify.prescriptionIssued(booking || { id: appointment_id }, prescription);
+      if (!sent) sendError = 'Email failed to send — try Re-send or share the link manually';
+    }
+  }
+
+  // If send was requested, lock only after a successful email.
+  // Otherwise honor an explicit lock flag (Lock only).
+  const doLock = shouldSend ? sent : wantLock;
+  if (doLock && prescription?.id) {
+    const { data: locked, error: lockErr } = await supabase
+      .from('prescriptions')
+      .update({ is_locked: true, locked_at: new Date().toISOString() })
+      .eq('id', prescription.id)
+      .select()
+      .single();
+    if (lockErr) {
+      console.error('[POST /api/prescriptions] lock after save', lockErr);
+    } else {
+      prescription = locked;
+    }
+  }
+
+  return ok(res, {
+    prescription,
+    sent,
+    locked: Boolean(prescription?.is_locked),
+    patient_email: patientEmail,
+    send_error: sendError,
+    view_path: `/consultation/${appointment_id}/prescription`,
+  }, 201);
+});
+
+/**
+ * POST /api/prescriptions/:appointmentId/send
+ * Re-send the existing prescription link to the patient (admin only).
+ * Locks the prescription if it is still a draft.
+ */
+app.post('/api/prescriptions/:appointmentId/send', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const appointmentId = req.params.appointmentId;
+
+  const { data: prescription, error } = await supabase
+    .from('prescriptions')
+    .select('*')
+    .eq('appointment_id', appointmentId)
+    .maybeSingle();
+
+  if (error) {
+    console.error('[POST /api/prescriptions/:appointmentId/send]', error);
+    return err(res, 'Failed to load prescription', 500);
+  }
+  if (!prescription) return err(res, 'No prescription found for this appointment — save one first', 404);
+
+  const { data: booking } = await supabase
+    .from('appointments')
+    .select('id, patient_name, patient_email, patient_phone, practitioner_type, mode')
+    .eq('id', appointmentId)
+    .maybeSingle();
+
+  const patientEmail = booking?.patient_email?.trim() || null;
+  if (!notify.isPatientEmailEnabled()) {
+    return err(res, 'Patient email is not configured (set RESEND_API_KEY)', 503);
+  }
+  if (!patientEmail) {
+    return err(res, 'This booking has no patient email — share the prescription link via WhatsApp instead', 400);
+  }
+
+  const sent = await notify.prescriptionIssued(booking || { id: appointmentId }, prescription);
+  if (!sent) return err(res, 'Failed to send prescription email', 502);
+
+  let lockedRx = prescription;
+  if (!prescription.is_locked) {
+    const { data: locked, error: lockErr } = await supabase
+      .from('prescriptions')
+      .update({ is_locked: true, locked_at: new Date().toISOString() })
+      .eq('id', prescription.id)
+      .select()
+      .single();
+    if (!lockErr && locked) lockedRx = locked;
+  }
+
+  return ok(res, {
+    prescription: lockedRx,
+    sent: true,
+    locked: Boolean(lockedRx.is_locked),
+    patient_email: patientEmail,
+    view_path: `/consultation/${appointmentId}/prescription`,
+  });
 });
 
 /**

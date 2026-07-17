@@ -508,6 +508,59 @@ export const notify = {
    * (and retry on the next tick otherwise). The professional's copy is
    * fire-and-forget — it must not block the patient's reminder flag.
    */
+  /**
+   * Email the patient a link to their issued prescription (and optionally
+   * notify the team). Returns true when the patient email was accepted.
+   */
+  async prescriptionIssued(booking, prescription = {}) {
+    const appointmentId = booking?.id || prescription?.appointment_id;
+    const ref = appointmentId ? String(appointmentId).slice(0, 8).toUpperCase() : '';
+    const rxPath = `/consultation/${appointmentId}/prescription`;
+    const rxUrl = `https://serenest.in${rxPath}`;
+    const meds = Array.isArray(prescription.medicines) ? prescription.medicines : [];
+    const medSummary = meds
+      .filter((m) => m?.name)
+      .map((m) => esc(m.name) + (m.dosage ? ` — ${esc(m.dosage)}` : '') + (m.frequency ? ` · ${esc(m.frequency)}` : '') + (m.duration ? ` · ${esc(m.duration)}` : ''))
+      .join('<br/>');
+
+    fire(sendEmail({
+      subject: `Prescription issued — ${booking?.patient_name || 'patient'}${ref ? ` · ${ref}` : ''}`,
+      html: `
+        <p style="margin:0 0 8px;font-size:16px">Prescription issued for <strong>${esc(booking?.patient_name)}</strong>.</p>
+        ${table([
+          row('Phone', fmtPhone(booking?.patient_phone || prescription.patient_contact)),
+          row('Email', esc(booking?.patient_email)),
+          row('Doctor', esc(prescription.professional_name)),
+          row('Diagnosis', esc(prescription.provisional_diagnosis)),
+          row('Medicines', medSummary || '—'),
+          row('Reference', ref ? `<code style="font-family:monospace">${esc(ref)}</code>` : ''),
+        ])}
+        <p style="margin:12px 0 0"><a href="${rxUrl}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">Open prescription</a></p>
+      `,
+    }));
+
+    const to = booking?.patient_email?.trim();
+    if (!to) return false;
+
+    const first = esc((booking.patient_name || 'there').trim().split(/\s+/)[0]);
+    const doctor = prescription.professional_name
+      ? ` from <strong>${esc(prescription.professional_name)}</strong>`
+      : '';
+    return sendPatientEmail({
+      subject: 'Your Serenest prescription is ready',
+      html:
+        `<p style="margin:0 0 12px">Hi ${first},</p>`
+        + `<p style="margin:0 0 12px">Your prescription${doctor} is ready. You can view, print, or save it as a PDF from the link below.</p>`
+        + (medSummary
+          ? `<p style="margin:0 0 12px"><strong>Medicines:</strong><br/>${medSummary}</p>`
+          : '')
+        + `<p style="margin:0 0 12px"><a href="${rxUrl}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">View your prescription</a></p>`
+        + (ref ? `<p style="margin:0 0 12px;color:#64748b;font-size:13px">Reference: <code style="font-family:monospace">${esc(ref)}</code></p>` : '')
+        + `<p style="margin:0;font-size:13px;color:#64748b">Questions? WhatsApp <a href="https://wa.me/917777936367" style="color:#0f766e">+91 77779 36367</a>.</p>`,
+      to,
+    });
+  },
+
   async appointmentReminder(b, { professionalEmail } = {}) {
     const ref = b.id ? String(b.id).slice(0, 8).toUpperCase() : '';
     const joinPath = `/consultation/${b.appointment_id || b.id}?mode=${encodeURIComponent(b.mode || 'video')}`;
