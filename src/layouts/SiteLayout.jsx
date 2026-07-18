@@ -185,15 +185,15 @@ export default function SiteLayout() {
     location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/consultation');
 
-  // Editorial homepage owns its own nav + cream footer; other pages keep default chrome.
-  const isEditorialHome = location.pathname === '/';
+  // Editorial test theme is opt-in on /preview only — live pages stay as-is.
+  const isEditorialPreview = location.pathname === '/preview';
 
   return (
-    <div className={isEditorialHome ? 'theme-editorial' : undefined}>
+    <div className={isEditorialPreview ? 'theme-editorial' : undefined}>
       <a className="skip-link" href="#main">Skip to content</a>
 
-      {/* Homepage owns its editorial header — keep SiteLayout chrome off /. */}
-      {!isEditorialHome && (
+      {/* Preview page owns its editorial header — keep SiteLayout chrome off /preview. */}
+      {!isEditorialPreview && (
       <header className={`header ${scrolled ? 'is-scrolled' : 'is-top'}`}>
         <div className="container header-inner">
           {/* Brand */}
@@ -249,10 +249,10 @@ export default function SiteLayout() {
       </header>
       )}
 
-      {!isEditorialHome && location.pathname.startsWith('/professionals') ? <ProfessionalsSubNav /> : null}
+      {!isEditorialPreview && location.pathname.startsWith('/professionals') ? <ProfessionalsSubNav /> : null}
 
       {/* ── Mobile Drawer ──────────────────────────────────── */}
-      {!isEditorialHome && menuOpen && (
+      {!isEditorialPreview && menuOpen && (
         <div
           className="menu-overlay"
           role="presentation"
@@ -364,12 +364,12 @@ export default function SiteLayout() {
       </main>
 
       {/* ── Footer ─────────────────────────────────────────── */}
-      {isEditorialHome ? (
+      {isEditorialPreview ? (
         <footer className="ed-footer" aria-label="Site footer">
           <div className="ed-footer__shell">
             <div className="ed-footer__grid">
               <div className="ed-footer__brand">
-                <Link to="/" className="ed-footer__logo">
+                <Link to="/preview" className="ed-footer__logo">
                   <img src="/favicon.svg" alt="" width="28" height="28" />
                   <span>Serenest</span>
                 </Link>
@@ -440,7 +440,7 @@ export default function SiteLayout() {
               <div className="ed-footer__subscribe">
                 <h3 className="ed-footer__title">Stay in the loop</h3>
                 <p>Occasional updates from Serenest. No spam.</p>
-                <EmailCapture source="homepage_footer_newsletter" variant="light" />
+                <EmailCapture source="preview_footer_newsletter" variant="light" />
               </div>
             </div>
 
