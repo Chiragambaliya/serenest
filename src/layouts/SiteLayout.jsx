@@ -191,12 +191,13 @@ export default function SiteLayout() {
     <div className={isEditorialPreview ? 'theme-editorial' : undefined}>
       <a className="skip-link" href="#main">Skip to content</a>
 
-      {/* ── Header ─────────────────────────────────────────── */}
+      {/* Preview page owns its editorial header — keep SiteLayout chrome off /preview. */}
+      {!isEditorialPreview && (
       <header className={`header ${scrolled ? 'is-scrolled' : 'is-top'}`}>
         <div className="container header-inner">
           {/* Brand */}
           <Link
-            to={isEditorialPreview ? '/preview' : '/'}
+            to="/"
             className="brand"
             aria-label="Serenest — Home"
           >
@@ -206,23 +207,10 @@ export default function SiteLayout() {
             </span>
           </Link>
 
-          {/* Editorial preview nav (flat, matches reference) */}
-          {isEditorialPreview && (
-            <nav className="editorial-nav" aria-label="Preview navigation">
-              <Link to="/services">Services</Link>
-              <Link to="/professionals">For Professionals</Link>
-              <Link to="/academy">Academy</Link>
-              <Link to="/guides">Resources</Link>
-              <Link to="/about">About</Link>
-              <Link className="editorial-nav__cta" to="/book">Book Consultation</Link>
-            </nav>
-          )}
-
           {/* Desktop nav (default site) */}
           <nav
-            className={`header-links${isEditorialPreview ? ' header-links--default' : ''}`}
+            className="header-links"
             aria-label="Main navigation"
-            {...(isEditorialPreview ? { hidden: true } : {})}
           >
             {NAV_GROUPS.map((group) => (
               <NavGroup key={group.id} group={group} />
@@ -258,11 +246,12 @@ export default function SiteLayout() {
           </button>
         </div>
       </header>
+      )}
 
-      {location.pathname.startsWith('/professionals') ? <ProfessionalsSubNav /> : null}
+      {!isEditorialPreview && location.pathname.startsWith('/professionals') ? <ProfessionalsSubNav /> : null}
 
       {/* ── Mobile Drawer ──────────────────────────────────── */}
-      {menuOpen && (
+      {!isEditorialPreview && menuOpen && (
         <div
           className="menu-overlay"
           role="presentation"
