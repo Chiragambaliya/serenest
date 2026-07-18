@@ -184,23 +184,46 @@ export default function SiteLayout() {
     location.pathname.startsWith('/admin') ||
     location.pathname.startsWith('/consultation');
 
+  // Editorial test theme is opt-in on /preview only — live pages stay as-is.
+  const isEditorialPreview = location.pathname === '/preview';
+
   return (
-    <div>
+    <div className={isEditorialPreview ? 'theme-editorial' : undefined}>
       <a className="skip-link" href="#main">Skip to content</a>
 
       {/* ── Header ─────────────────────────────────────────── */}
       <header className={`header ${scrolled ? 'is-scrolled' : 'is-top'}`}>
         <div className="container header-inner">
           {/* Brand */}
-          <Link to="/" className="brand" aria-label="Serenest — Home">
+          <Link
+            to={isEditorialPreview ? '/preview' : '/'}
+            className="brand"
+            aria-label="Serenest — Home"
+          >
             <span className="brand-wordmark">
               <span className="brand-text">Serenest</span>
               <span className="brand-tagline">Mind care, simplified</span>
             </span>
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="header-links" aria-label="Main navigation">
+          {/* Editorial preview nav (flat, matches reference) */}
+          {isEditorialPreview && (
+            <nav className="editorial-nav" aria-label="Preview navigation">
+              <Link to="/services">Services</Link>
+              <Link to="/professionals">For Professionals</Link>
+              <Link to="/academy">Academy</Link>
+              <Link to="/guides">Resources</Link>
+              <Link to="/about">About</Link>
+              <Link className="editorial-nav__cta" to="/book">Book Consultation</Link>
+            </nav>
+          )}
+
+          {/* Desktop nav (default site) */}
+          <nav
+            className={`header-links${isEditorialPreview ? ' header-links--default' : ''}`}
+            aria-label="Main navigation"
+            {...(isEditorialPreview ? { hidden: true } : {})}
+          >
             {NAV_GROUPS.map((group) => (
               <NavGroup key={group.id} group={group} />
             ))}
