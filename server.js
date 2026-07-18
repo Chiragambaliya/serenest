@@ -2315,6 +2315,7 @@ app.use(express.static(dist, { index: false }));
 // Keep this in sync with src/App.jsx.
 const VALID_ROUTES = new Set([
   '/',
+  '/preview',
   '/about',
   '/team',
   '/services',

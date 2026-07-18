@@ -10,6 +10,7 @@ import ExitIntentPopup from './components/ExitIntentPopup';
 captureUtm();
 
 const HomePage = lazy(() => import('./pages/HomePage'));
+const HomePreviewPage = lazy(() => import('./pages/HomePreviewPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
@@ -127,6 +128,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<SiteLayout />}>
           <Route index element={<S><HomePage /></S>} />
+          <Route path="preview" element={<S><HomePreviewPage /></S>} />
           <Route path="about" element={<S><AboutPage /></S>} />
           <Route path="team" element={<S><TeamPage /></S>} />
           <Route path="services" element={<S><ServicesPage /></S>} />
