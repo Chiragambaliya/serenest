@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { BLOG_POSTS } from '../lib/blogPosts';
 import EmailCapture from '../components/EmailCapture';
+import EdIcon from '../components/EdIcon';
 
 const IMG = {
   hero: {
-    webp: '/images/editorial/serenest-hero-editorial.webp',
-    jpg: '/images/editorial/serenest-hero-editorial.jpg',
+    webp: '/images/serenest-hero-editorial.webp',
+    jpg: '/images/serenest-hero-editorial.jpg',
   },
   academy: {
     webp: '/images/editorial/serenest-academy-books.webp',
@@ -19,12 +20,20 @@ const IMG = {
   },
 };
 
+const PREVIEW_NAV = [
+  { label: 'Services', to: '/services' },
+  { label: 'For Professionals', to: '/professionals' },
+  { label: 'Academy', to: '/academy' },
+  { label: 'Insights', to: '/blog' },
+  { label: 'About', to: '/about' },
+];
+
 const TRUST = [
   { icon: 'stethoscope', title: 'Doctor-led', body: 'Built by a practising psychiatrist' },
-  { icon: 'shield', title: 'Evidence-based', body: 'Structured clinical workflows' },
-  { icon: 'lock', title: 'Private & secure', body: 'Encrypted sessions, careful records' },
-  { icon: 'video', title: 'Teleconsultation', body: 'Video, audio, and chat' },
-  { icon: 'person', title: 'For individuals', body: 'Care from home, across India' },
+  { icon: 'target', title: 'Evidence-based', body: 'Structured clinical workflows' },
+  { icon: 'shield', title: 'Private & secure', body: 'Encrypted sessions, careful records' },
+  { icon: 'monitor', title: 'Teleconsultation', body: 'Video, audio, and chat care' },
+  { icon: 'heart', title: 'For individuals', body: 'Support from home across India' },
   { icon: 'people', title: 'For professionals', body: 'Practice tools and Academy' },
 ];
 
@@ -111,12 +120,19 @@ function Picture({ src, alt = '', className, width, height }) {
 }
 
 export default function HomePreviewPage() {
+  const [navOpen, setNavOpen] = useState(false);
+
   useSEO({
     path: '/preview',
     title: 'Homepage preview (test) | Serenest',
     description: 'Internal test preview of the editorial Serenest homepage. Not the live site.',
     noindex: true,
   });
+
+  useEffect(() => {
+    document.body.style.overflow = navOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [navOpen]);
 
   return (
     <div className="home-preview">
@@ -126,37 +142,96 @@ export default function HomePreviewPage() {
         <Link to="/">/</Link>
       </div>
 
-      <section className="hp-hero" aria-labelledby="hp-hero-title">
-        <div className="hp-hero__media" aria-hidden="true">
-          <picture>
-            <source srcSet={IMG.hero.webp} type="image/webp" />
-            <img
-              src={IMG.hero.jpg}
-              alt=""
-              width={1600}
-              height={900}
-              fetchPriority="high"
-              decoding="async"
-            />
-          </picture>
+      <header className="hp-nav">
+        <div className="hp-shell hp-nav__inner">
+          <Link to="/preview" className="hp-nav__brand" aria-label="Serenest preview home">
+            <img src="/favicon.svg" alt="" width="32" height="32" className="hp-nav__logo" />
+            <span className="hp-nav__wordmark">Serenest</span>
+          </Link>
+
+          <nav className="hp-nav__links" aria-label="Preview navigation">
+            {PREVIEW_NAV.map((item) => (
+              <Link key={item.to} to={item.to}>{item.label}</Link>
+            ))}
+          </nav>
+
+          <Link className="hp-nav__cta" to="/book">Book Consultation</Link>
+
+          <button
+            type="button"
+            className={`hp-nav__menu-btn${navOpen ? ' is-open' : ''}`}
+            aria-label={navOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={navOpen}
+            aria-controls="hp-mobile-nav"
+            onClick={() => setNavOpen((v) => !v)}
+          >
+            <span />
+          </button>
         </div>
-        <div className="hp-shell hp-hero__content">
-          <p className="hp-brand">
-            <span className="hp-brand__name">Serenest</span>
-          </p>
-          <h1 id="hp-hero-title" className="hp-hero__title">
-            Mental healthcare, thoughtfully connected.
-          </h1>
-          <p className="hp-hero__lead">
-            Care for your mind. Support for your journey. Better practice for professionals.
-          </p>
-          <div className="hp-hero__actions">
-            <Link className="ds-btn ds-btn--primary" to="/book">
-              Find your starting point
+
+        {navOpen && (
+          <div
+            id="hp-mobile-nav"
+            className="hp-nav__drawer"
+            role="dialog"
+            aria-label="Mobile navigation"
+          >
+            {PREVIEW_NAV.map((item) => (
+              <Link key={item.to} to={item.to} onClick={() => setNavOpen(false)}>
+                {item.label}
+              </Link>
+            ))}
+            <Link className="hp-nav__cta hp-nav__cta--drawer" to="/book" onClick={() => setNavOpen(false)}>
+              Book Consultation
             </Link>
-            <Link className="ds-btn ds-btn--ghost" to="/academy">
-              Explore Serenest Academy
-            </Link>
+          </div>
+        )}
+      </header>
+
+      <section className="hp-hero" aria-labelledby="hp-hero-title">
+        <div className="hp-shell hp-hero__grid">
+          <div className="hp-hero__copy">
+            <h1 id="hp-hero-title" className="hp-hero__title">
+              <span>Mental healthcare,</span>
+              <span>thoughtfully</span>
+              <span>connected.</span>
+            </h1>
+            <p className="hp-hero__support">
+              Care for your mind. Support for your journey.<br />
+              Better practice for professionals.
+            </p>
+            <p className="hp-hero__body">
+              Serenest brings clinical care, professional learning and thoughtful mental health
+              resources into one connected platform.
+            </p>
+            <div className="hp-hero__actions">
+              <Link className="hp-btn hp-btn--primary" to="/book">
+                Find your starting point
+              </Link>
+              <Link className="hp-btn hp-btn--secondary" to="/academy">
+                Explore Serenest Academy
+              </Link>
+            </div>
+            <p className="hp-hero__note">
+              Serenest is not an emergency service. If there is an immediate risk of harm, contact
+              local emergency services or a crisis helpline.
+            </p>
+          </div>
+
+          <div className="hp-hero__visual">
+            <div className="hp-hero__frame">
+              <picture>
+                <source srcSet={IMG.hero.webp} type="image/webp" />
+                <img
+                  src={IMG.hero.jpg}
+                  alt="Serenest editorial illustration — abstract profile, botanical forms, and a path of progress"
+                  width={960}
+                  height={1080}
+                  fetchPriority="high"
+                  decoding="async"
+                />
+              </picture>
+            </div>
           </div>
         </div>
       </section>
@@ -166,7 +241,9 @@ export default function HomePreviewPage() {
           <ul className="hp-trust__grid">
             {TRUST.map((item) => (
               <li key={item.title} className="hp-trust__item">
-                <span className="hp-trust__icon"><Icon name={item.icon} /></span>
+                <span className="hp-trust__icon" aria-hidden="true">
+                  <EdIcon name={item.icon} size={22} />
+                </span>
                 <strong>{item.title}</strong>
                 <span>{item.body}</span>
               </li>
