@@ -372,7 +372,6 @@ export const ROUTE_ALIASES = {
 // Routes that the SPA renders but should NOT be indexed (utility/internal pages).
 export const NOINDEX_ROUTES = new Set([
   '/admin',
-  '/preview',
   '/professionals/apply',
   '/patient/find-professional',
   '/patient/login',
