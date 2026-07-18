@@ -807,46 +807,7 @@
 @media (min-width: 800px) {
   .hp-newsletter { grid-template-columns: 1fr 1fr; gap: 2rem; padding: 2rem; }
 }
-.home-preview .email-capture {
-  margin: 0;
-  max-width: none;
-  border-radius: 1rem;
-}
-.home-preview .email-capture-title {
-  color: var(--hp-ink, #1c1a17);
-  font-size: 1.05rem;
-}
-.home-preview .email-capture-sub {
-  color: var(--hp-muted, rgba(28, 26, 23, 0.62));
-}
-.home-preview .email-capture-input {
-  border: 1px solid rgba(28, 26, 23, 0.16);
-  background: #fffdf9;
-  color: #1c1a17;
-  border-radius: 0.85rem;
-}
-.home-preview .email-capture-input::placeholder {
-  color: rgba(28, 26, 23, 0.4);
-}
-.home-preview .email-capture-input:focus {
-  border-color: rgba(90, 107, 74, 0.55);
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(90, 107, 74, 0.12);
-}
-.home-preview .email-capture .btn-primary {
-  border-radius: 0.85rem;
-  background: #c1572d;
-  border-color: #c1572d;
-}
-.home-preview .email-capture .btn-primary:hover {
-  background: #a84622;
-  border-color: #a84622;
-}
-.home-preview .email-capture-done { color: #3c4a2c; }
-.home-preview .email-capture-error { color: #b42318; }
-
-/* Test banner no longer used on live homepage */
-.hp-banner { display: none; }
+.home-preview .email-capture { border-radius: 1rem; }
 
 /* CTA with botanical art */
 .hp-cta {
