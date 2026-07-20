@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { friendlyAuthError } from '../lib/authErrors';
 import { useAuth } from '../lib/useAuth';
 
 export default function PatientAuthPage() {
@@ -63,7 +64,7 @@ export default function PatientAuthPage() {
       setOtpSent(true);
       setNotice(`OTP sent to +91 ${phoneClean.replace(/(\d{5})(\d{5})/, '$1 $2')}`);
     } catch (err) {
-      setError(err.message || 'Could not send OTP. Try again.');
+      setError(friendlyAuthError(err, 'Could not send OTP. Try again.'));
     } finally {
       setBusy(false);
     }
@@ -85,7 +86,7 @@ export default function PatientAuthPage() {
       await markPatientRole();
       navigate(from, { replace: true });
     } catch (err) {
-      setError(err.message || 'Invalid code. Please try again.');
+      setError(friendlyAuthError(err, 'Invalid code. Please try again.'));
     } finally {
       setBusy(false);
     }
@@ -120,7 +121,7 @@ export default function PatientAuthPage() {
         navigate(from, { replace: true });
       }
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
+      setError(friendlyAuthError(err, 'Something went wrong. Please try again.'));
     } finally {
       setBusy(false);
     }

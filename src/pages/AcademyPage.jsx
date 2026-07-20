@@ -5,7 +5,7 @@ import { ROUTE_SEO } from '../lib/seo';
 import { signOut } from '../lib/useAuth';
 import { useProfessionalAccess } from '../lib/useProfessionalAccess';
 import {
-  ACADEMY_PROGRAMS, ACADEMY_CATEGORIES, ACADEMY_JOURNEY, ACADEMY_STATS, FEATURED_PROGRAMS,
+  ACADEMY_PROGRAMS, ACADEMY_CATEGORIES, ACADEMY_JOURNEY, FEATURED_PROGRAMS,
 } from '../lib/academyPrograms';
 import EdIcon from '../components/EdIcon';
 import AcademyGuide from '../components/AcademyGuide';
@@ -205,14 +205,6 @@ export default function AcademyPage() {
                   All programs
                 </a>
               </div>
-              <div className="eda-hero-stats" aria-label="Academy at a glance">
-                {ACADEMY_STATS.map((s) => (
-                  <div key={s.label} className="eda-hero-stat">
-                    <span className="eda-stat-val">{s.value}</span>
-                    <span className="eda-stat-lbl">{s.label}</span>
-                  </div>
-                ))}
-              </div>
             </div>
 
             {/* Floating card */}
@@ -410,14 +402,6 @@ export default function AcademyPage() {
                 psychologists, counsellors, psychiatrists, and researchers.
               </p>
             </div>
-            <ul className="eda-workforce-stats" aria-label="Workforce statistics">
-              {ACADEMY_STATS.map((s) => (
-                <li key={s.label}>
-                  <span className="eda-wf-val">{s.value}</span>
-                  <span className="eda-wf-lbl">{s.label}</span>
-                </li>
-              ))}
-            </ul>
           </div>
 
         </div>

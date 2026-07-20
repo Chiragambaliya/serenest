@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { friendlyAuthError } from '../lib/authErrors';
 import { useAuth } from '../lib/useAuth';
 
 /**
@@ -49,7 +50,7 @@ export default function ProfessionalAuthPage() {
       if (e1) throw e1;
       setSent(true);
     } catch (err) {
-      setError(err.message || 'Could not send the sign-in link. Please try again.');
+      setError(friendlyAuthError(err, 'Could not send the sign-in link. Please try again.'));
     } finally {
       setBusy(false);
     }
