@@ -297,11 +297,3 @@ export const ACADEMY_JOURNEY = [
   { icon: 'briefcase', title: 'Professional Practice', sub: 'Deliver impact with confidence' },
   { icon: 'award', title: 'CPD & Fellowship', sub: 'Keep learning. Stay ahead.' },
 ];
-
-export const ACADEMY_STATS = [
-  { value: '10,000+', label: 'Learners' },
-  { value: '200+', label: 'Expert Faculty' },
-  { value: '50+', label: 'Programs' },
-  { value: 'Pan India', label: 'Impact' },
-  { value: 'Better Mental Health', label: 'Stronger Nation' },
-];
