@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { friendlyAuthError } from '../lib/authErrors';
 
 const ROLES = [
   'Psychology student',
@@ -66,7 +67,7 @@ export default function AcademyAuthPage() {
         navigate('/academy');
       }
     } catch (err) {
-      setError(err.message || 'Something went wrong. Please try again.');
+      setError(friendlyAuthError(err, 'Something went wrong. Please try again.'));
     } finally {
       setBusy(false);
     }
