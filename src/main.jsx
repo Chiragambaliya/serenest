@@ -58,3 +58,38 @@ ReactDOM.createRoot(rootEl).render(
   </React.StrictMode>,
 );
 
+// ── Progressive Web App ────────────────────────────────────────────────
+// Register the service worker so Serenest is installable and boots offline.
+// Production only: in dev a SW would cache Vite's HMR modules and cause stale
+// reloads. The worker itself never caches /api/* so health data stays live.
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((registration) => {
+        // When a new worker has installed and there's already a controller,
+        // an update is ready — activate it so the next navigation is fresh.
+        registration.addEventListener('updatefound', () => {
+          const installing = registration.installing;
+          if (!installing) return;
+          installing.addEventListener('statechange', () => {
+            if (installing.state === 'installed' && navigator.serviceWorker.controller) {
+              installing.postMessage({ type: 'SKIP_WAITING' });
+            }
+          });
+        });
+      })
+      .catch(() => {
+        // A failed SW registration must never break the app.
+      });
+
+    // Reload once when a new worker takes control, so users get the update.
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (refreshing) return;
+      refreshing = true;
+      window.location.reload();
+    });
+  });
+}
+
