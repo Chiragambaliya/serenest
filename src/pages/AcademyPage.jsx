@@ -5,110 +5,29 @@ import { ROUTE_SEO } from '../lib/seo';
 import { signOut } from '../lib/useAuth';
 import { useProfessionalAccess } from '../lib/useProfessionalAccess';
 import {
-  ACADEMY_PROGRAMS, ACADEMY_CATEGORIES, ACADEMY_JOURNEY, FEATURED_PROGRAMS,
+  ACADEMY_PROGRAMS,
+  ACADEMY_CATEGORIES,
+  ACADEMY_JOURNEY,
+  ACADEMY_PATHS,
+  ACADEMY_WHY,
+  ACADEMY_FAQ,
+  FEATURED_PROGRAMS,
 } from '../lib/academyPrograms';
 import EdIcon from '../components/EdIcon';
 import AcademyGuide from '../components/AcademyGuide';
 import { academyContent } from '../lib/api';
 import '../styles/academy.css';
 
-/* ── Static data ─────────────────────────────────────────────────── */
-const FACULTY = [
-  { name: 'Dr. Chirag Ambaliya', role: 'Psychiatrist & Founder', specialty: 'Telepsychiatry · Mood Disorders', avatar: '🧠' },
-  { name: 'Dr. Priya Sharma', role: 'Clinical Psychologist', specialty: 'CBT · Anxiety Disorders', avatar: '💚' },
-  { name: 'Dr. Rohan Mehta', role: 'Psychiatry Researcher', specialty: 'Child Psychiatry · ADHD', avatar: '🔬' },
-];
-
-const CERTIFICATIONS = [
-  { title: 'Clinical Excellence Certificate', duration: '12 weeks', level: 'Flagship', modules: 8, accent: 'teal', icon: '🏅', href: '/academy/program/clinical-excellence' },
-  { title: 'Certificate in Counselling Skills', duration: '6 weeks', level: 'Foundation', modules: 12, accent: 'purple', icon: '🎓' },
-  { title: 'Certificate in Clinical Psychology', duration: '8 weeks', level: 'Intermediate', modules: 16, accent: 'green', icon: '🧠' },
-  { title: 'Certificate in Digital Mental Health', duration: '4 weeks', level: 'Foundation', modules: 8, accent: 'teal', icon: '💻' },
-  { title: 'Fellowship in Telepsychiatry', duration: '12 weeks', level: 'Advanced', modules: 24, accent: 'blue', icon: '🏅' },
-];
-
-const TESTIMONIALS = [
-  {
-    name: 'Ananya Desai',
-    role: 'Psychology Graduate',
-    text: 'The student training track gave me the clinical confidence I needed for my first placement. The case discussions were invaluable.',
-    stars: 5,
-  },
-  {
-    name: 'Dr. Vikram Rao',
-    role: 'Psychiatry Resident',
-    text: 'The telepsychiatry modules are incredibly practical. I started applying the frameworks from day one of my online consultations.',
-    stars: 5,
-  },
-  {
-    name: 'Meera Pillai',
-    role: 'Counsellor, Mumbai',
-    text: 'Serenest Academy helped me transition from classroom theory to real clinical work. The mentorship was exactly what I needed.',
-    stars: 5,
-  },
-];
-
-const CAREER_SUPPORT = [
-  { icon: '🎯', title: 'Placement Guidance', desc: 'Connect with mental health organizations through our growing professional network.' },
-  { icon: '🤝', title: '1:1 Mentorship', desc: 'Personalized guidance from experienced clinicians to shape your career path.' },
-  { icon: '📋', title: 'CV & Portfolio Review', desc: 'Expert clinician feedback on your professional materials before you apply.' },
-  { icon: '🌐', title: 'Professional Network', desc: 'Join India\'s growing community of mental health professionals.' },
-  { icon: '🎓', title: 'Credential Support', desc: 'Certificates recognized by peers and employers across the mental health sector.' },
-  { icon: '💼', title: 'Interview Readiness', desc: 'Case discussion skills and practical tools to succeed in your first role.' },
-];
-
-const FAQ = [
-  {
-    q: 'Who are Serenest Academy courses designed for?',
-    a: 'Our programs serve psychology students, fresh graduates, practicing counsellors, psychiatry residents, and licensed professionals seeking continuous development.',
-  },
-  {
-    q: 'Are the certificates recognized?',
-    a: 'Serenest Academy certificates are issued by Serenest Education Pvt Ltd. They are recognized by peers, employers, and professional networks across India\'s mental health sector.',
-  },
-  {
-    q: 'How are the courses delivered?',
-    a: 'All courses are delivered online — self-paced modules with live case discussion sessions. Learn at your own pace while engaging with peers and faculty.',
-  },
-  {
-    q: 'Can I get a mentor as part of my program?',
-    a: 'Yes. The Mentorship track offers 1:1 clinical supervision and career guidance. Mentorship can also be added alongside any other program.',
-  },
-  {
-    q: 'What is the duration of programs?',
-    a: 'Certificate programs run 4–12 weeks. Fellowship tracks are longer-form (3–6 months). CPD activities are modular and can be completed in days.',
-  },
-  {
-    q: 'How do I enrol?',
-    a: 'Create a Serenest Academy account, choose your program, and follow the enrollment steps. Some programs have specific entry requirements listed on their detail page.',
-  },
-  {
-    q: 'What is the best Academy course for practicing professionals?',
-    a: 'Clinical Excellence is our flagship course for psychiatrists, psychologists, therapists, and counsellors — assessment, evidence-based care, telepsychiatry, documentation, and measurement-based practice. Approved Serenest professionals get it free.',
-  },
-  {
-    q: 'Is Academy free for Serenest professionals?',
-    a: 'Yes. Approved Serenest professionals get full Academy access at no charge — sign in with your professional email and enroll without a program fee. External learners may still request seats through the usual enrollment flow.',
-  },
-];
-
-const WHY_ITEMS = [
-  { icon: '🩺', title: 'Clinician-Led', desc: 'Every program is designed and delivered by practicing mental health professionals.' },
-  { icon: '📚', title: 'Case-Based Learning', desc: 'Learn from real clinical scenarios, not just textbooks and theory.' },
-  { icon: '🏆', title: 'Verified Certificates', desc: 'Earn credentials recognized across the mental health sector.' },
-  { icon: '🕐', title: 'Flexible & Online', desc: 'Self-paced learning that fits your schedule, anywhere in India.' },
-  { icon: '👥', title: 'Mentorship & Community', desc: 'Connect with experts and peers throughout your journey.' },
-  { icon: '🌱', title: 'Career-Focused', desc: 'From student to specialist — every program builds real-world skills.' },
-];
+const HERO_IMG = '/images/editorial/serenest-academy-books.webp';
+const HERO_IMG_FALLBACK = '/images/editorial/serenest-academy-books.jpg';
 
 const INSTRUCTOR_MAILTO =
   'mailto:support@serenest.in?subject=Serenest%20Academy%20%E2%80%94%20Become%20an%20Instructor';
 
-/* ── FAQ accordion item ──────────────────────────────────────────── */
 function FaqItem({ q, a }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="eda-faq-item">
+    <div className={`eda-faq-item${open ? ' is-open' : ''}`}>
       <button
         type="button"
         className="eda-faq-q"
@@ -124,12 +43,11 @@ function FaqItem({ q, a }) {
 }
 
 const TYPE_COLORS = {
-  announcement:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6' },
-  program_update: { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e' },
-  event:          { bg: '#fef9c3', text: '#854d0e', dot: '#eab308' },
+  announcement: { bg: '#e8f2ef', text: '#1a4d42', dot: '#2f7d6a' },
+  program_update: { bg: '#eef4e8', text: '#3c4a2c', dot: '#5a6b4a' },
+  event: { bg: '#f3eee6', text: '#5c4a32', dot: '#8a6d45' },
 };
 
-/* ── Page ────────────────────────────────────────────────────────── */
 export default function AcademyPage() {
   useSEO({ path: '/academy', ...ROUTE_SEO['/academy'] });
   const { user, professional, isProfessional } = useProfessionalAccess();
@@ -145,25 +63,31 @@ export default function AcademyPage() {
     academyContent.list().then((r) => setLiveContent(r.content ?? [])).catch(() => {});
   }, []);
 
-  const pinnedItems   = liveContent.filter((c) => c.pinned);
-  const regularItems  = liveContent.filter((c) => !c.pinned);
+  const pinnedItems = liveContent.filter((c) => c.pinned);
+  const regularItems = liveContent.filter((c) => !c.pinned);
+  const flagship = FEATURED_PROGRAMS[0];
 
   return (
     <div className="eda-page">
 
-      {/* ══ HERO ══════════════════════════════════════════════════ */}
-      <section className="eda-hero">
-        <div className="container">
+      {/* ══ HERO — one composition: brand, headline, lead, CTAs, full-bleed image */}
+      <section className="eda-hero" aria-label="Serenest Academy">
+        <div className="eda-hero__media" aria-hidden="true">
+          <picture>
+            <source srcSet={HERO_IMG} type="image/webp" />
+            <img src={HERO_IMG_FALLBACK} alt="" />
+          </picture>
+          <div className="eda-hero__veil" />
+        </div>
 
-          {/* Top bar */}
+        <div className="container eda-hero__inner">
           <nav className="eda-hero-topbar" aria-label="Academy header">
-            <div className="eda-brand">
-              <span className="eda-brand-mark" aria-hidden="true">✦</span>
+            <Link to="/academy" className="eda-brand">
+              <span className="eda-brand-mark" aria-hidden="true" />
               <span className="eda-brand-name">Serenest Academy</span>
-              <span className="eda-brand-divider" aria-hidden="true">·</span>
-              <span className="eda-brand-sub">Education · Part of Serenest</span>
-            </div>
+            </Link>
             <div className="eda-hero-auth">
+              <Link className="eda-btn eda-btn-ghost" to="/">Serenest care</Link>
               {user ? (
                 <>
                   <span className="eda-hero-greeting">Hi, {firstName}</span>
@@ -177,66 +101,48 @@ export default function AcademyPage() {
             </div>
           </nav>
 
-          {/* Two-column hero body */}
-          <div className="eda-hero-body">
-
-            {/* Text */}
-            <div className="eda-hero-text">
-              <p className="eda-kicker">India's Premier Mental Health Education Platform</p>
-              <h1 className="eda-hero-h1">
-                Train the next generation of{' '}
-                <span className="eda-h1-accent">mental health professionals</span>
-              </h1>
-              <p className="eda-hero-lead">
-                Clinician-led programs in psychology, psychiatry, counselling, and digital mental
-                health — from foundational certificates to advanced fellowships.
+          <div className="eda-hero__copy eda-reveal">
+            <p className="eda-brand-hero">Serenest Academy</p>
+            <h1 className="eda-hero-h1">
+              Clinical learning for mind <em>&amp; practice</em>
+            </h1>
+            <p className="eda-hero-lead">
+              Flagship training for mental health professionals — plus pathways for students,
+              CPD, and organisations. Evidence-led. India-ready.
+            </p>
+            {isProfessional ? (
+              <p className="eda-pro-free-banner" role="status">
+                <strong>Free for Serenest professionals.</strong>{' '}
+                Your approved practice account includes Academy at no charge.
               </p>
-              {isProfessional ? (
-                <div className="eda-pro-free-banner" role="status">
-                  <strong>Free for Serenest professionals.</strong>{' '}
-                  Your approved practice account includes Academy at no charge — explore programs and request a free seat.
-                </div>
-              ) : null}
-              <div className="eda-hero-actions">
-                <Link className="eda-btn eda-btn-primary eda-btn-lg" to="/academy/program/clinical-excellence">
-                  Flagship: Clinical Excellence
-                </Link>
-                <a className="eda-btn eda-btn-outline eda-btn-lg" href="#programs">
-                  All programs
-                </a>
-              </div>
+            ) : null}
+            <div className="eda-hero-actions">
+              <Link
+                className="eda-btn eda-btn-primary eda-btn-lg"
+                to="/academy/program/clinical-excellence"
+              >
+                Clinical Excellence
+              </Link>
+              <a className="eda-btn eda-btn-outline eda-btn-lg" href="#programs">
+                All programmes
+              </a>
             </div>
-
-            {/* Floating card */}
-            <aside className="eda-hero-card" aria-label="Live programs preview">
-              <div className="eda-hcard-badge">Flagship + Live Programs</div>
-              <div className="eda-hcard-list">
-                {ACADEMY_PROGRAMS.slice(0, 4).map((p) => (
-                  <Link key={p.slug} className="eda-hcard-item" to={`/academy/program/${p.slug}`}>
-                    <span className={`eda-hcard-dot eda-acc-${p.accent}`} aria-hidden="true" />
-                    <span className="eda-hcard-title">{p.title}</span>
-                    <span className="eda-hcard-level">{p.featured ? 'Flagship' : p.category}</span>
-                  </Link>
-                ))}
-                <a className="eda-hcard-more" href="#programs">
-                  +{ACADEMY_PROGRAMS.length - 4} more programs →
-                </a>
-              </div>
-            </aside>
-
+            <p className="eda-hero-note">
+              Education only — not emergency care. In crisis, dial 112 / 108.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* ══ INNER STICKY NAV ══════════════════════════════════════ */}
+      {/* ══ INNER NAV */}
       <nav className="eda-inner-nav" aria-label="Jump to section">
         <div className="container">
           <div className="eda-inner-nav-links">
             {[
-              ['#programs', 'Programs'],
-              ['#certifications', 'Certifications'],
-              ['#faculty', 'Faculty'],
-              ['#career', 'Career Support'],
+              ['#flagship', 'Flagship'],
+              ['#paths', 'Paths'],
+              ['#programs', 'Programmes'],
+              ['#guide', 'Guide'],
               ['#faq', 'FAQ'],
             ].map(([href, label]) => (
               <a key={href} href={href} className="eda-inner-nav-link">{label}</a>
@@ -245,29 +151,26 @@ export default function AcademyPage() {
         </div>
       </nav>
 
-      {/* ══ ACADEMY GUIDE ═════════════════════════════════════════ */}
-      <AcademyGuide />
-
-      {/* ══ LIVE ANNOUNCEMENTS / UPDATES ══════════════════════════ */}
+      {/* ══ LIVE UPDATES */}
       {liveContent.length > 0 && (
         <section className="eda-updates" aria-label="Latest updates">
           <div className="container">
-
-            {/* Pinned banner (one at a time — latest pinned item) */}
             {pinnedItems.length > 0 && (
               <div className="eda-pinned-banner">
-                <span className="eda-pinned-tag" aria-label="Pinned">📌</span>
+                <span className="eda-pinned-tag">Pinned</span>
                 <div className="eda-pinned-body">
                   <strong>{pinnedItems[0].title}</strong>
-                  {pinnedItems[0].body && <span className="eda-pinned-text"> — {pinnedItems[0].body}</span>}
+                  {pinnedItems[0].body && (
+                    <span className="eda-pinned-text"> — {pinnedItems[0].body}</span>
+                  )}
                   {pinnedItems[0].link && (
-                    <a href={pinnedItems[0].link} className="eda-pinned-link">{pinnedItems[0].link_label || 'Learn more'} →</a>
+                    <a href={pinnedItems[0].link} className="eda-pinned-link">
+                      {pinnedItems[0].link_label || 'Learn more'} →
+                    </a>
                   )}
                 </div>
               </div>
             )}
-
-            {/* Regular updates grid */}
             {regularItems.length > 0 && (
               <div className="eda-updates-grid">
                 <h2 className="eda-updates-heading">Latest from the Academy</h2>
@@ -275,13 +178,23 @@ export default function AcademyPage() {
                   {regularItems.map((item) => {
                     const colors = TYPE_COLORS[item.type] ?? TYPE_COLORS.announcement;
                     return (
-                      <div key={item.id} className="eda-update-card" style={{ '--uda-bg': colors.bg, '--uda-text': colors.text, '--uda-dot': colors.dot }}>
+                      <div
+                        key={item.id}
+                        className="eda-update-card"
+                        style={{
+                          '--uda-bg': colors.bg,
+                          '--uda-text': colors.text,
+                          '--uda-dot': colors.dot,
+                        }}
+                      >
                         <span className="eda-update-dot" aria-hidden="true" />
                         <div className="eda-update-body">
                           <p className="eda-update-title">{item.title}</p>
                           {item.body && <p className="eda-update-desc">{item.body}</p>}
                           {item.link && (
-                            <a href={item.link} className="eda-update-link">{item.link_label || 'Learn more'} →</a>
+                            <a href={item.link} className="eda-update-link">
+                              {item.link_label || 'Learn more'} →
+                            </a>
                           )}
                         </div>
                       </div>
@@ -294,38 +207,29 @@ export default function AcademyPage() {
         </section>
       )}
 
-      {/* ══ PROGRAMS ══════════════════════════════════════════════ */}
-      <section id="programs" className="eda-section">
-        <div className="container">
-
-          <div className="eda-section-head">
-            <p className="eda-section-kicker">Career Pathways</p>
-            <h2 className="eda-section-h2">Build your mental health career</h2>
-            <p className="eda-section-sub">
-              From student to specialist — structured programs at every stage of your journey.
-            </p>
-          </div>
-
-          {FEATURED_PROGRAMS.map((p) => (
-            <article key={p.slug} className="eda-flagship">
+      {/* ══ FLAGSHIP */}
+      {flagship && (
+        <section id="flagship" className="eda-section">
+          <div className="container">
+            <article className="eda-flagship eda-reveal">
               <div className="eda-flagship-copy">
                 <p className="eda-flagship-kicker">Best for practicing professionals</p>
-                <h3 className="eda-flagship-title">{p.title}</h3>
-                <p className="eda-flagship-lead">{p.overview}</p>
+                <h2 className="eda-flagship-title">{flagship.title}</h2>
+                <p className="eda-flagship-lead">{flagship.overview}</p>
                 <ul className="eda-flagship-points">
-                  {(p.highlights || []).map((h) => (
+                  {(flagship.highlights || []).map((h) => (
                     <li key={h}>{h}</li>
                   ))}
                 </ul>
                 <div className="eda-flagship-actions">
-                  <Link className="eda-btn eda-btn-primary" to={`/academy/program/${p.slug}`}>
-                    {p.ctaLabel} →
+                  <Link className="eda-btn eda-btn-primary" to={`/academy/program/${flagship.slug}`}>
+                    {flagship.ctaLabel} →
                   </Link>
-                  <span className="eda-flagship-meta">{p.format}</span>
+                  <span className="eda-flagship-meta">{flagship.format}</span>
                 </div>
               </div>
               <div className="eda-flagship-side" aria-label="Course snapshot">
-                {p.metrics.map((m) => (
+                {flagship.metrics.map((m) => (
                   <div key={m.sub} className="eda-flagship-metric">
                     <span className="eda-flagship-metric-top">{m.top}</span>
                     <span className="eda-flagship-metric-sub">{m.sub}</span>
@@ -334,9 +238,65 @@ export default function AcademyPage() {
                 <p className="eda-flagship-free">Free for approved Serenest professionals</p>
               </div>
             </article>
-          ))}
+          </div>
+        </section>
+      )}
 
-          {/* Learning journey roadmap */}
+      {/* ══ PATHS */}
+      <section id="paths" className="eda-section eda-section-alt">
+        <div className="container">
+          <div className="eda-section-head">
+            <p className="eda-section-kicker">Who we serve</p>
+            <h2 className="eda-section-h2">One academy. Three clear paths.</h2>
+            <p className="eda-section-sub">
+              Choose the path that matches your role — then dive into programmes built for that stage.
+            </p>
+          </div>
+          <div className="eda-path-grid">
+            {ACADEMY_PATHS.map((p) => (
+              <article key={p.title} className="eda-path">
+                <h3>{p.title}</h3>
+                <p>{p.body}</p>
+                {p.href.startsWith('#') || p.href.startsWith('http') || p.href.startsWith('mailto') ? (
+                  <a href={p.href}>{p.cta} →</a>
+                ) : (
+                  <Link to={p.href}>{p.cta} →</Link>
+                )}
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ WHY */}
+      <section className="eda-section">
+        <div className="container">
+          <div className="eda-section-head">
+            <p className="eda-section-kicker">Why Serenest Academy</p>
+            <h2 className="eda-section-h2">Competence that scales beyond the clinic</h2>
+          </div>
+          <div className="eda-why-grid">
+            {ACADEMY_WHY.map((w) => (
+              <div key={w.title} className="eda-why-item">
+                <h3 className="eda-why-title">{w.title}</h3>
+                <p className="eda-why-desc">{w.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══ PROGRAMMES */}
+      <section id="programs" className="eda-section eda-section-alt">
+        <div className="container">
+          <div className="eda-section-head">
+            <p className="eda-section-kicker">Programmes</p>
+            <h2 className="eda-section-h2">Build your mental health career</h2>
+            <p className="eda-section-sub">
+              From student to specialist — structured programmes at every stage of your journey.
+            </p>
+          </div>
+
           <div className="eda-roadmap" role="list" aria-label="Learning journey">
             {ACADEMY_JOURNEY.map((step, i) => (
               <div key={step.title} className="eda-roadmap-step" role="listitem">
@@ -352,11 +312,10 @@ export default function AcademyPage() {
             ))}
           </div>
 
-          {/* Program cards grouped by category */}
           {ACADEMY_CATEGORIES.map((cat, ci) => (
             <div key={cat.label} className="eda-cat-group">
               <div className="eda-cat-head">
-                <span className="eda-cat-num" aria-hidden="true">{ci + 1}</span>
+                <span className="eda-cat-num" aria-hidden="true">{String(ci + 1).padStart(2, '0')}</span>
                 <div>
                   <p className="eda-cat-label">{cat.label}</p>
                   <p className="eda-cat-tagline">{cat.tagline}</p>
@@ -365,7 +324,7 @@ export default function AcademyPage() {
               <div className="eda-pcard-grid">
                 {ACADEMY_PROGRAMS.filter((p) => p.category === cat.label).map((p) => (
                   <article key={p.slug} className={`eda-pcard eda-pcard--${p.accent}`}>
-                    {p.popular && <span className="eda-pcard-badge">POPULAR</span>}
+                    {p.featured && <span className="eda-pcard-badge">Flagship</span>}
                     <div className="eda-pcard-header">
                       <div className="eda-pcard-ico">
                         <EdIcon name={p.iconName} size={22} />
@@ -392,164 +351,41 @@ export default function AcademyPage() {
               </div>
             </div>
           ))}
-
-          {/* Workforce vision banner */}
-          <div className="eda-workforce">
-            <div className="eda-workforce-text">
-              <h3>Building India's Mental Health Workforce for 2047</h3>
-              <p>
-                Structured education pathways from classroom to clinical practice — preparing
-                psychologists, counsellors, psychiatrists, and researchers.
-              </p>
-            </div>
-          </div>
-
         </div>
       </section>
 
-      {/* ══ CERTIFICATIONS ════════════════════════════════════════ */}
-      <section id="certifications" className="eda-section eda-section-alt">
-        <div className="container">
-          <div className="eda-section-head">
-            <p className="eda-section-kicker">Credentials</p>
-            <h2 className="eda-section-h2">Earn recognized certifications</h2>
-            <p className="eda-section-sub">
-              Clinically reviewed, competency-based credentials you can share with confidence.
-            </p>
-          </div>
-          <div className="eda-cert-grid">
-            {CERTIFICATIONS.map((c) => (
-              <div key={c.title} className={`eda-cert-card eda-cert--${c.accent}`}>
-                <div className="eda-cert-icon" aria-hidden="true">{c.icon}</div>
-                <p className="eda-cert-level">{c.level}</p>
-                <h3 className="eda-cert-title">{c.title}</h3>
-                <div className="eda-cert-meta">
-                  <span>⏱ {c.duration}</span>
-                  <span>📖 {c.modules} modules</span>
-                </div>
-                {c.href ? (
-                  <Link to={c.href} className="eda-cert-cta">View program →</Link>
-                ) : (
-                  <a href="#programs" className="eda-cert-cta">View program →</a>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ══ GUIDE */}
+      <AcademyGuide />
 
-      {/* ══ FACULTY ═══════════════════════════════════════════════ */}
+      {/* ══ FACULTY / INSTRUCTOR CTA — founder only, no fabricated peers */}
       <section id="faculty" className="eda-section">
-        <div className="container">
-          <div className="eda-section-head">
-            <p className="eda-section-kicker">Expert Faculty</p>
-            <h2 className="eda-section-h2">Learn from practicing clinicians</h2>
-            <p className="eda-section-sub">
-              Our faculty are active mental health professionals who bring real clinical experience
-              to every lesson.
+        <div className="container eda-faculty-band">
+          <div>
+            <p className="eda-section-kicker">Faculty</p>
+            <h2 className="eda-section-h2" style={{ textAlign: 'left', marginBottom: 12 }}>
+              Led by practicing clinicians
+            </h2>
+            <p className="eda-faculty-lead">
+              Serenest Academy is directed by{' '}
+              <strong>Dr. Chirag Ambaliya</strong>, psychiatrist and founder — with programmes
+              shaped by active clinical practice on Serenest, not generic courseware.
             </p>
           </div>
-          <div className="eda-faculty-grid">
-            {FACULTY.map((f) => (
-              <div key={f.name} className="eda-faculty-card">
-                <div className="eda-faculty-avatar" aria-hidden="true">{f.avatar}</div>
-                <h3 className="eda-faculty-name">{f.name}</h3>
-                <p className="eda-faculty-role">{f.role}</p>
-                <p className="eda-faculty-specialty">{f.specialty}</p>
-              </div>
-            ))}
-            <div className="eda-faculty-card eda-faculty-join">
-              <div className="eda-faculty-avatar" aria-hidden="true">🎓</div>
-              <h3 className="eda-faculty-name">Become an Instructor</h3>
-              <p className="eda-faculty-role">Share your clinical expertise</p>
-              <p className="eda-faculty-specialty">We read every application and reply when there's a fit.</p>
-              <a
-                href={INSTRUCTOR_MAILTO}
-                className="eda-btn eda-btn-primary"
-                style={{ marginTop: '1rem' }}
-              >
-                Apply Now →
-              </a>
-            </div>
-          </div>
+          <a href={INSTRUCTOR_MAILTO} className="eda-btn eda-btn-outline">
+            Become an instructor →
+          </a>
         </div>
       </section>
 
-      {/* ══ WHY LEARN ═════════════════════════════════════════════ */}
-      <section className="eda-section eda-section-teal">
-        <div className="container">
-          <div className="eda-section-head eda-section-head--light">
-            <p className="eda-section-kicker eda-kicker-light">Why Choose Us</p>
-            <h2 className="eda-section-h2">Why learn with Serenest Academy?</h2>
-          </div>
-          <div className="eda-why-grid">
-            {WHY_ITEMS.map((w) => (
-              <div key={w.title} className="eda-why-card">
-                <span className="eda-why-icon" aria-hidden="true">{w.icon}</span>
-                <h3 className="eda-why-title">{w.title}</h3>
-                <p className="eda-why-desc">{w.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ TESTIMONIALS ══════════════════════════════════════════ */}
-      <section className="eda-section">
-        <div className="container">
-          <div className="eda-section-head">
-            <p className="eda-section-kicker">Student Success</p>
-            <h2 className="eda-section-h2">What our learners say</h2>
-          </div>
-          <div className="eda-testimonial-grid">
-            {TESTIMONIALS.map((t) => (
-              <div key={t.name} className="eda-testimonial">
-                <div className="eda-testimonial-stars" aria-label={`${t.stars} out of 5 stars`}>
-                  {'★'.repeat(t.stars)}
-                </div>
-                <p className="eda-testimonial-text">"{t.text}"</p>
-                <div className="eda-testimonial-author">
-                  <span className="eda-testimonial-name">{t.name}</span>
-                  <span className="eda-testimonial-role">{t.role}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ CAREER SUPPORT ════════════════════════════════════════ */}
-      <section id="career" className="eda-section eda-section-alt">
-        <div className="container">
-          <div className="eda-section-head">
-            <p className="eda-section-kicker">Career Support</p>
-            <h2 className="eda-section-h2">We're with you beyond the course</h2>
-            <p className="eda-section-sub">
-              Graduation is just the beginning. Serenest Academy supports your career from your
-              first program to senior practice.
-            </p>
-          </div>
-          <div className="eda-career-grid">
-            {CAREER_SUPPORT.map((c) => (
-              <div key={c.title} className="eda-career-card">
-                <span className="eda-career-icon" aria-hidden="true">{c.icon}</span>
-                <h3 className="eda-career-title">{c.title}</h3>
-                <p className="eda-career-desc">{c.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══ FAQ ════════════════════════════════════════════════════ */}
-      <section id="faq" className="eda-section">
+      {/* ══ FAQ */}
+      <section id="faq" className="eda-section eda-section-alt">
         <div className="container">
           <div className="eda-section-head">
             <p className="eda-section-kicker">FAQ</p>
             <h2 className="eda-section-h2">Frequently asked questions</h2>
           </div>
           <div className="eda-faq">
-            {FAQ.map((item) => (
+            {ACADEMY_FAQ.map((item) => (
               <FaqItem key={item.q} q={item.q} a={item.a} />
             ))}
           </div>
@@ -560,34 +396,36 @@ export default function AcademyPage() {
               className="eda-link"
             >
               Email us
-            </a>{' '}
-            and we'll get back to you.
+            </a>
+            .
           </p>
         </div>
       </section>
 
-      {/* ══ FINAL CTA ═════════════════════════════════════════════ */}
+      {/* ══ FINAL CTA */}
       <section className="eda-section eda-section-cta">
         <div className="container">
           <div className="eda-cta-block">
             <div>
-              <h2 className="eda-cta-h2">Ready to grow your clinical career?</h2>
+              <h2 className="eda-cta-h2">Ready to grow your clinical practice?</h2>
               <p className="eda-cta-sub">
-                Join thousands of mental health professionals learning with Serenest Academy.
+                Start with Clinical Excellence — or browse every programme and claim your seat.
               </p>
             </div>
             <div className="eda-cta-actions">
-              <a href="#programs" className="eda-btn eda-btn-primary eda-btn-lg">
-                Start Learning →
-              </a>
-              <Link to="/book" className="eda-btn eda-btn-outline eda-btn-lg">
-                Book a Consultation
+              <Link
+                className="eda-btn eda-btn-primary eda-btn-lg"
+                to="/academy/program/clinical-excellence"
+              >
+                Start Clinical Excellence →
               </Link>
+              <a href="#programs" className="eda-btn eda-btn-outline eda-btn-lg">
+                Browse programmes
+              </a>
             </div>
           </div>
         </div>
       </section>
-
     </div>
   );
 }

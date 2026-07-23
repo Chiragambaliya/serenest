@@ -187,13 +187,16 @@ export default function SiteLayout() {
 
   // Editorial test theme is opt-in on /preview only — live pages stay as-is.
   const isEditorialPreview = location.pathname === '/preview';
+  // Academy owns its brand-first chrome — keep SiteLayout header off /academy.
+  const isAcademySurface = location.pathname.startsWith('/academy');
+  const hideSiteHeader = isEditorialPreview || isAcademySurface;
 
   return (
     <div className={isEditorialPreview ? 'theme-editorial' : undefined}>
       <a className="skip-link" href="#main">Skip to content</a>
 
-      {/* Preview page owns its editorial header — keep SiteLayout chrome off /preview. */}
-      {!isEditorialPreview && (
+      {/* Preview / Academy own their headers — keep SiteLayout chrome off those surfaces. */}
+      {!hideSiteHeader && (
       <header className={`header ${scrolled ? 'is-scrolled' : 'is-top'}`}>
         <div className="container header-inner">
           {/* Brand */}
@@ -249,10 +252,10 @@ export default function SiteLayout() {
       </header>
       )}
 
-      {!isEditorialPreview && location.pathname.startsWith('/professionals') ? <ProfessionalsSubNav /> : null}
+      {!hideSiteHeader && location.pathname.startsWith('/professionals') ? <ProfessionalsSubNav /> : null}
 
       {/* ── Mobile Drawer ──────────────────────────────────── */}
-      {!isEditorialPreview && menuOpen && (
+      {!hideSiteHeader && menuOpen && (
         <div
           className="menu-overlay"
           role="presentation"

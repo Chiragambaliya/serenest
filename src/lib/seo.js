@@ -84,9 +84,9 @@ export const ROUTE_SEO = {
       'Clear, clinical guides on common mental health topics and online care in India.',
   },
   '/academy': {
-    title: 'Serenest Academy | Mental Health Literacy & Learning India',
+    title: 'Serenest Academy | Clinical Excellence & Mental Health Learning India',
     description:
-      'Flagship Clinical Excellence course for practicing professionals, plus certificates and fellowships. Free for approved Serenest professionals.',
+      'Serenest Academy — flagship Clinical Excellence for practicing professionals, plus certificates, fellowships, and CPD. Free for approved Serenest professionals.',
     ogTitle: 'Serenest Academy | Clinical Excellence Flagship Course',
     ogDescription:
       'Best course for mental health professionals — assessment, telepsychiatry, documentation, and measurement-based care. Free for Serenest pros.',

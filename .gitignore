@@ -20,3 +20,7 @@ data/
 # Temp scripts
 *.cjs
 push-*.js
+
+# Local Playwright / screenshot artifacts
+.playwright-mcp/
+academy-*.png
