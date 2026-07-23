@@ -1,0 +1,99 @@
+- generic [ref=f2e3]:
+  - link "Skip to content" [ref=f2e4] [cursor=pointer]:
+    - /url: "#main"
+  - main [ref=f2e5]
+  - contentinfo [ref=f2e8]:
+    - generic [ref=f2e9]:
+      - generic [ref=f2e10]:
+        - generic [ref=f2e11]:
+          - heading "Need help today?" [level=3] [ref=f2e12]
+          - paragraph [ref=f2e13]: Book a consultation with a qualified mental health professional.
+        - generic [ref=f2e14]:
+          - link "Book appointment" [ref=f2e15] [cursor=pointer]:
+            - /url: /book
+          - link "WhatsApp" [ref=f2e16] [cursor=pointer]:
+            - /url: https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest
+      - generic [ref=f2e18]:
+        - generic [ref=f2e19]:
+          - generic [ref=f2e20]: Serenest
+          - paragraph [ref=f2e21]: Doctor-led mental healthcare & professional education.
+          - generic [ref=f2e22]:
+            - link "Follow Serenest on Instagram" [ref=f2e23] [cursor=pointer]:
+              - /url: https://www.instagram.com/serenest.fit
+              - generic [ref=f2e28]: "@serenest.fit"
+            - link "Serenest on LinkedIn" [ref=f2e29] [cursor=pointer]:
+              - /url: https://www.linkedin.com/company/serenest-mind-pvt-ltd/
+              - generic [ref=f2e33]: LinkedIn
+        - generic [ref=f2e34]:
+          - generic [ref=f2e35]:
+            - generic [ref=f2e36]: Care
+            - navigation "Care links" [ref=f2e37]:
+              - link "Book appointment" [ref=f2e38] [cursor=pointer]:
+                - /url: /book
+              - link "Find a professional" [ref=f2e43] [cursor=pointer]:
+                - /url: /patient/find-professional
+              - link "Self screening" [ref=f2e47] [cursor=pointer]:
+                - /url: /screening
+              - link "Pricing" [ref=f2e52] [cursor=pointer]:
+                - /url: /pricing
+          - generic [ref=f2e56]:
+            - generic [ref=f2e57]: Academy
+            - navigation "Academy links" [ref=f2e58]:
+              - link "Academy · Free for pros" [ref=f2e59] [cursor=pointer]:
+                - /url: /academy
+              - link "Clinician learning" [ref=f2e63] [cursor=pointer]:
+                - /url: /professionals/learning
+              - link "Resources" [ref=f2e67] [cursor=pointer]:
+                - /url: /professionals/resources
+              - link "Guidelines" [ref=f2e70] [cursor=pointer]:
+                - /url: /professionals/guidelines
+          - generic [ref=f2e73]:
+            - generic [ref=f2e74]: Business
+            - navigation "Business links" [ref=f2e75]:
+              - link "Corporate EAP" [ref=f2e76] [cursor=pointer]:
+                - /url: /corporate
+              - link "Partner with us" [ref=f2e80] [cursor=pointer]:
+                - /url: /partner
+              - link "Careers" [ref=f2e83] [cursor=pointer]:
+                - /url: /careers
+              - link "About Serenest" [ref=f2e87] [cursor=pointer]:
+                - /url: /about
+          - generic [ref=f2e91]:
+            - generic [ref=f2e92]: Legal
+            - navigation "Legal links" [ref=f2e93]:
+              - link "All policies" [ref=f2e94] [cursor=pointer]:
+                - /url: /legal
+              - link "Privacy policy" [ref=f2e97] [cursor=pointer]:
+                - /url: /privacy
+              - link "Terms & conditions" [ref=f2e100] [cursor=pointer]:
+                - /url: /terms
+              - link "Grievance policy" [ref=f2e103] [cursor=pointer]:
+                - /url: /grievance-policy
+              - link "Refund policy" [ref=f2e106] [cursor=pointer]:
+                - /url: /refund-policy
+              - link "Emergency disclaimer" [ref=f2e109] [cursor=pointer]:
+                - /url: /emergency-disclaimer
+        - generic [ref=f2e112]:
+          - link "support@serenest.in" [ref=f2e113] [cursor=pointer]:
+            - /url: mailto:support@serenest.in
+          - link "+91 77779 36367" [ref=f2e117] [cursor=pointer]:
+            - /url: tel:917777936367
+          - link "WhatsApp support" [ref=f2e120] [cursor=pointer]:
+            - /url: https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest
+      - generic [ref=f2e124]:
+        - paragraph [ref=f2e125]: © 2026 Serenest Education Pvt Ltd
+        - navigation "Legal links" [ref=f2e126]:
+          - link "Legal" [ref=f2e127] [cursor=pointer]:
+            - /url: /legal
+          - link "Privacy" [ref=f2e128] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=f2e129] [cursor=pointer]:
+            - /url: /terms
+          - link "Cookies" [ref=f2e130] [cursor=pointer]:
+            - /url: /cookie-policy
+          - link "Grievances" [ref=f2e131] [cursor=pointer]:
+            - /url: /grievance-policy
+          - link "Feedback" [ref=f2e132] [cursor=pointer]:
+            - /url: mailto:support@serenest.in?subject=Feedback
+  - link "Chat with us on WhatsApp" [ref=f2e133] [cursor=pointer]:
+    - /url: https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest

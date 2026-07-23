@@ -31,6 +31,19 @@ export default function AcademyProgramPage() {
     <div className="eda-page eda-program-page">
       <section className="eda-prog-hero">
         <div className="container">
+          <nav className="eda-prog-topbar" aria-label="Academy header">
+            <Link to="/academy" className="eda-brand">
+              <span className="eda-brand-mark" aria-hidden="true" />
+              <span className="eda-brand-name">Serenest Academy</span>
+            </Link>
+            <div className="eda-hero-auth">
+              <Link className="eda-btn eda-btn-ghost" to="/">Serenest care</Link>
+              {user ? null : (
+                <Link className="eda-btn eda-btn-ghost" to="/academy/login">Log in</Link>
+              )}
+            </div>
+          </nav>
+
           <p className="eda-prog-crumb">
             <Link to="/academy">Serenest Academy</Link>
             <span aria-hidden="true"> · </span>

@@ -1,0 +1,249 @@
+- generic [ref=f3e3]:
+  - link "Skip to content" [ref=f3e4] [cursor=pointer]:
+    - /url: "#main"
+  - main [ref=f3e5]:
+    - generic [ref=f3e6]:
+      - generic [ref=f3e8]:
+        - navigation "Academy header" [ref=f3e9]:
+          - link "Serenest Academy" [ref=f3e10] [cursor=pointer]:
+            - /url: /academy
+          - generic [ref=f3e13]:
+            - link "Serenest care" [ref=f3e14] [cursor=pointer]:
+              - /url: /
+            - link "Log in" [ref=f3e15] [cursor=pointer]:
+              - /url: /academy/login
+        - paragraph [ref=f3e16]:
+          - link "Serenest Academy" [ref=f3e17] [cursor=pointer]:
+            - /url: /academy
+          - text: · Clinical Practice · Flagship
+        - generic [ref=f3e18]:
+          - generic [ref=f3e19]:
+            - heading "Clinical Excellence" [level=1] [ref=f3e24]
+            - paragraph [ref=f3e25]: Our flagship program for practicing mental health professionals. Build clinical excellence across assessment, formulation, evidence-based interventions, telepsychiatry, documentation, ethics, and measurement-based care — designed for real Indian practice, free for approved Serenest professionals.
+            - generic [ref=f3e26]:
+              - link "Log in to enroll" [ref=f3e27] [cursor=pointer]:
+                - /url: /academy/login
+              - link "Ask a question" [ref=f3e28] [cursor=pointer]:
+                - /url: mailto:support@serenest.in?subject=Serenest%20Academy%20%E2%80%94%20Clinical%20Excellence
+          - complementary "Program details" [ref=f3e29]:
+            - paragraph [ref=f3e30]: Format
+            - paragraph [ref=f3e31]: Online · 12 weeks · Self-paced modules + live case rounds · Certificate on completion
+            - generic [ref=f3e32]:
+              - generic [ref=f3e33]:
+                - strong [ref=f3e34]: "12"
+                - text: Weeks
+              - generic [ref=f3e35]:
+                - strong [ref=f3e36]: "8"
+                - text: Modules
+              - generic [ref=f3e37]:
+                - strong [ref=f3e38]: Live
+                - text: Case rounds
+              - generic [ref=f3e39]:
+                - strong [ref=f3e40]: Cert
+                - text: Included
+            - paragraph [ref=f3e41]: Who it's for
+            - list [ref=f3e42]:
+              - listitem [ref=f3e43]: Psychiatrists and psychiatry residents
+              - listitem [ref=f3e44]: Clinical psychologists and psychotherapists
+              - listitem [ref=f3e45]: Counsellors and therapists in active practice
+              - listitem [ref=f3e46]: Approved Serenest professionals (included free)
+            - link "Log in to enroll" [ref=f3e47] [cursor=pointer]:
+              - /url: /academy/login
+        - list "Program highlights" [ref=f3e48]:
+          - listitem [ref=f3e49]: Built for practicing clinicians
+          - listitem [ref=f3e50]: Case-based + live supervision
+          - listitem [ref=f3e51]: Free for Serenest professionals
+          - listitem [ref=f3e52]: Certificate of completion
+      - generic [ref=f3e54]:
+        - generic [ref=f3e55]:
+          - paragraph [ref=f3e56]: Curriculum
+          - heading "What you will learn" [level=2] [ref=f3e57]
+          - paragraph [ref=f3e58]: A 12-week arc from assessment to ethics — modules you can apply in clinic the same week.
+        - list [ref=f3e59]:
+          - listitem [ref=f3e60]:
+            - generic [ref=f3e61]: Weeks 01–02
+            - heading "Assessment & Formulation" [level=3] [ref=f3e62]
+            - list [ref=f3e63]:
+              - listitem [ref=f3e64]: Structured history and mental status examination
+              - listitem [ref=f3e65]: Differential thinking without over-pathologising
+              - listitem [ref=f3e66]: Case formulation you can act on the same week
+          - listitem [ref=f3e67]:
+            - generic [ref=f3e68]: Weeks 03–04
+            - heading "Evidence-Based Care" [level=3] [ref=f3e69]
+            - list [ref=f3e70]:
+              - listitem [ref=f3e71]: Depression, anxiety, ADHD, OCD, and sleep pathways
+              - listitem [ref=f3e72]: Stepped care and when to escalate
+              - listitem [ref=f3e73]: Integrating therapy and medication conversations
+          - listitem [ref=f3e74]:
+            - generic [ref=f3e75]: Weeks 05–06
+            - heading "Measurement-Based Practice" [level=3] [ref=f3e76]
+            - list [ref=f3e77]:
+              - listitem [ref=f3e78]: PHQ-9, GAD-7, and outcome tracking in routine care
+              - listitem [ref=f3e79]: Using scores to guide (not replace) clinical judgment
+              - listitem [ref=f3e80]: Review cadence and shared decision-making
+          - listitem [ref=f3e81]:
+            - generic [ref=f3e82]: Weeks 07–08
+            - heading "Telepsychiatry Done Right" [level=3] [ref=f3e83]
+            - list [ref=f3e84]:
+              - listitem [ref=f3e85]: Consent, identity, privacy, and setting
+              - listitem [ref=f3e86]: Rapport and safety over video
+              - listitem [ref=f3e87]: Continuity between visits
+          - listitem [ref=f3e88]:
+            - generic [ref=f3e89]: Weeks 09–10
+            - heading "Documentation & Workflows" [level=3] [ref=f3e90]
+            - list [ref=f3e91]:
+              - listitem [ref=f3e92]: SOAP notes and prescription-ready records
+              - listitem [ref=f3e93]: Clear plans patients can follow
+              - listitem [ref=f3e94]: Handoffs and multidisciplinary notes
+          - listitem [ref=f3e95]:
+            - generic [ref=f3e96]: Weeks 11–12
+            - heading "Risk, Ethics & Indian Context" [level=3] [ref=f3e97]
+            - list [ref=f3e98]:
+              - listitem [ref=f3e99]: Risk assessment and crisis boundaries
+              - listitem [ref=f3e100]: Confidentiality and DPDP-aware practice
+              - listitem [ref=f3e101]: Telemedicine norms for India
+      - generic [ref=f3e105]:
+        - paragraph [ref=f3e106]: Outcomes
+        - heading "Built for real-world practice" [level=2] [ref=f3e107]
+        - list [ref=f3e108]:
+          - listitem [ref=f3e109]: Structured psychiatric & psychological assessment for common presentations
+          - listitem [ref=f3e110]: Case formulation and treatment planning you can use the same week
+          - listitem [ref=f3e111]: Evidence-based approaches for depression, anxiety, ADHD, OCD, and sleep
+          - listitem [ref=f3e112]: Measurement-based care with PHQ-9, GAD-7, and outcome tracking
+          - listitem [ref=f3e113]: "Telepsychiatry excellence: consent, rapport, safety, and continuity online"
+          - listitem [ref=f3e114]: SOAP notes, clinical documentation, and prescription-ready workflows
+          - listitem [ref=f3e115]: Risk assessment, escalation, and crisis boundaries in remote care
+          - listitem [ref=f3e116]: Ethics, confidentiality, DPDP-aware practice, and professional conduct
+          - listitem [ref=f3e117]: Peer case discussions and optional 1:1 clinical supervision
+      - generic [ref=f3e119]:
+        - generic [ref=f3e120]:
+          - paragraph [ref=f3e121]: Explore more
+          - heading "Other programmes" [level=2] [ref=f3e122]
+        - generic [ref=f3e123]:
+          - article [ref=f3e124]:
+            - generic [ref=f3e130]:
+              - heading "Student Training" [level=3] [ref=f3e131]
+              - paragraph [ref=f3e132]: Bridge classroom theory and real clinical work.
+            - link "View programme" [ref=f3e133] [cursor=pointer]:
+              - /url: /academy/program/student-training
+              - text: View programme →
+          - article [ref=f3e134]:
+            - generic [ref=f3e142]:
+              - heading "Counselling Skills" [level=3] [ref=f3e143]
+              - paragraph [ref=f3e144]: Communication, rapport, and ethical technique.
+            - link "View programme" [ref=f3e145] [cursor=pointer]:
+              - /url: /academy/program/counselling-skills
+              - text: View programme →
+          - article [ref=f3e146]:
+            - generic [ref=f3e154]:
+              - heading "Certificate Programs" [level=3] [ref=f3e155]
+              - paragraph [ref=f3e156]: Focused credentials you can finish around work.
+            - link "View programme" [ref=f3e157] [cursor=pointer]:
+              - /url: /academy/program/certificate-programs
+              - text: View programme →
+        - link "← All Academy programmes" [ref=f3e159] [cursor=pointer]:
+          - /url: /academy
+      - generic [ref=f3e162]:
+        - generic [ref=f3e163]:
+          - heading "Claim your place in Clinical Excellence" [level=2] [ref=f3e164]
+          - paragraph [ref=f3e165]: Tell us your role and preferred cohort. We confirm seats and next steps.
+        - generic [ref=f3e166]:
+          - link "Log in to enroll →" [ref=f3e167] [cursor=pointer]:
+            - /url: /academy/login
+          - link "Back to Academy" [ref=f3e168] [cursor=pointer]:
+            - /url: /academy
+  - contentinfo [ref=f3e169]:
+    - generic [ref=f3e170]:
+      - generic [ref=f3e171]:
+        - generic [ref=f3e172]:
+          - heading "Need help today?" [level=3] [ref=f3e173]
+          - paragraph [ref=f3e174]: Book a consultation with a qualified mental health professional.
+        - generic [ref=f3e175]:
+          - link "Book appointment" [ref=f3e176] [cursor=pointer]:
+            - /url: /book
+          - link "WhatsApp" [ref=f3e177] [cursor=pointer]:
+            - /url: https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest
+      - generic [ref=f3e179]:
+        - generic [ref=f3e180]:
+          - generic [ref=f3e181]: Serenest
+          - paragraph [ref=f3e182]: Doctor-led mental healthcare & professional education.
+          - generic [ref=f3e183]:
+            - link "Follow Serenest on Instagram" [ref=f3e184] [cursor=pointer]:
+              - /url: https://www.instagram.com/serenest.fit
+              - generic [ref=f3e189]: "@serenest.fit"
+            - link "Serenest on LinkedIn" [ref=f3e190] [cursor=pointer]:
+              - /url: https://www.linkedin.com/company/serenest-mind-pvt-ltd/
+              - generic [ref=f3e194]: LinkedIn
+        - generic [ref=f3e195]:
+          - generic [ref=f3e196]:
+            - generic [ref=f3e197]: Care
+            - navigation "Care links" [ref=f3e198]:
+              - link "Book appointment" [ref=f3e199] [cursor=pointer]:
+                - /url: /book
+              - link "Find a professional" [ref=f3e204] [cursor=pointer]:
+                - /url: /patient/find-professional
+              - link "Self screening" [ref=f3e208] [cursor=pointer]:
+                - /url: /screening
+              - link "Pricing" [ref=f3e213] [cursor=pointer]:
+                - /url: /pricing
+          - generic [ref=f3e217]:
+            - generic [ref=f3e218]: Academy
+            - navigation "Academy links" [ref=f3e219]:
+              - link "Academy · Free for pros" [ref=f3e220] [cursor=pointer]:
+                - /url: /academy
+              - link "Clinician learning" [ref=f3e224] [cursor=pointer]:
+                - /url: /professionals/learning
+              - link "Resources" [ref=f3e228] [cursor=pointer]:
+                - /url: /professionals/resources
+              - link "Guidelines" [ref=f3e231] [cursor=pointer]:
+                - /url: /professionals/guidelines
+          - generic [ref=f3e234]:
+            - generic [ref=f3e235]: Business
+            - navigation "Business links" [ref=f3e236]:
+              - link "Corporate EAP" [ref=f3e237] [cursor=pointer]:
+                - /url: /corporate
+              - link "Partner with us" [ref=f3e241] [cursor=pointer]:
+                - /url: /partner
+              - link "Careers" [ref=f3e244] [cursor=pointer]:
+                - /url: /careers
+              - link "About Serenest" [ref=f3e248] [cursor=pointer]:
+                - /url: /about
+          - generic [ref=f3e252]:
+            - generic [ref=f3e253]: Legal
+            - navigation "Legal links" [ref=f3e254]:
+              - link "All policies" [ref=f3e255] [cursor=pointer]:
+                - /url: /legal
+              - link "Privacy policy" [ref=f3e258] [cursor=pointer]:
+                - /url: /privacy
+              - link "Terms & conditions" [ref=f3e261] [cursor=pointer]:
+                - /url: /terms
+              - link "Grievance policy" [ref=f3e264] [cursor=pointer]:
+                - /url: /grievance-policy
+              - link "Refund policy" [ref=f3e267] [cursor=pointer]:
+                - /url: /refund-policy
+              - link "Emergency disclaimer" [ref=f3e270] [cursor=pointer]:
+                - /url: /emergency-disclaimer
+        - generic [ref=f3e273]:
+          - link "support@serenest.in" [ref=f3e274] [cursor=pointer]:
+            - /url: mailto:support@serenest.in
+          - link "+91 77779 36367" [ref=f3e278] [cursor=pointer]:
+            - /url: tel:917777936367
+          - link "WhatsApp support" [ref=f3e281] [cursor=pointer]:
+            - /url: https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest
+      - generic [ref=f3e285]:
+        - paragraph [ref=f3e286]: © 2026 Serenest Education Pvt Ltd
+        - navigation "Legal links" [ref=f3e287]:
+          - link "Legal" [ref=f3e288] [cursor=pointer]:
+            - /url: /legal
+          - link "Privacy" [ref=f3e289] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=f3e290] [cursor=pointer]:
+            - /url: /terms
+          - link "Cookies" [ref=f3e291] [cursor=pointer]:
+            - /url: /cookie-policy
+          - link "Grievances" [ref=f3e292] [cursor=pointer]:
+            - /url: /grievance-policy
+          - link "Feedback" [ref=f3e293] [cursor=pointer]:
+            - /url: mailto:support@serenest.in?subject=Feedback
+  - link "Chat with us on WhatsApp" [ref=f3e294] [cursor=pointer]:
+    - /url: https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest

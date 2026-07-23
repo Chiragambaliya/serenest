@@ -188,7 +188,7 @@
 /* ── Hero (full-bleed) ───────────────────────────────────────────── */
 .eda-hero {
   position: relative;
-  min-height: min(92vh, 820px);
+  min-height: min(78vh, 700px);
   display: flex;
   align-items: stretch;
   color: #f4faf7;
@@ -222,19 +222,21 @@
   flex-direction: column;
   width: 100%;
   padding-top: 1.25rem;
-  padding-bottom: clamp(3rem, 8vw, 5rem);
+  padding-bottom: clamp(2.5rem, 6vw, 4rem);
 }
 .eda-hero-topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: clamp(2.5rem, 8vw, 5rem);
+  margin-bottom: clamp(1.75rem, 5vw, 3rem);
 }
 .eda-brand {
   display: flex;
   align-items: center;
   gap: 0.65rem;
+  text-decoration: none;
+  color: inherit;
 }
 .eda-brand-mark {
   width: 10px;
@@ -262,7 +264,7 @@
 
 .eda-hero__copy {
   max-width: 38rem;
-  margin-top: auto;
+  margin-top: 0;
 }
 .eda-brand-hero {
   font-family: var(--font-display);
@@ -891,10 +893,27 @@
 
 /* ── Program detail page ─────────────────────────────────────────── */
 .eda-prog-hero {
-  padding: clamp(2.5rem, 6vw, 4rem) 0 2rem;
+  padding: clamp(1.5rem, 4vw, 2.5rem) 0 2rem;
   background:
     radial-gradient(ellipse 60% 50% at 90% 0%, rgba(47, 125, 106, 0.12), transparent 55%),
     var(--parchment);
+}
+.eda-prog-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.eda-prog-topbar .eda-brand-name { color: var(--forest); }
+.eda-prog-topbar .eda-brand-mark {
+  background: var(--moss);
+  box-shadow: 0 0 0 4px rgba(47, 125, 106, 0.15);
+}
+.eda-prog-topbar .eda-btn-ghost {
+  background: transparent;
+  color: var(--ink-2);
+  border-color: var(--line);
 }
 .eda-prog-crumb {
   margin: 0 0 1.25rem;
@@ -1089,9 +1108,12 @@
 
 @media (max-width: 640px) {
   .eda-hero {
-    min-height: min(88vh, 720px);
+    min-height: min(72vh, 640px);
   }
   .eda-hero-h1 { max-width: none; }
+  .eda-hero-auth .eda-btn-ghost:first-child {
+    display: none; /* keep Log in; Serenest care lives in footer */
+  }
   .eda-why-grid,
   .eda-flagship-side {
     grid-template-columns: 1fr 1fr;

@@ -82,11 +82,12 @@ export default function AcademyPage() {
 
         <div className="container eda-hero__inner">
           <nav className="eda-hero-topbar" aria-label="Academy header">
-            <div className="eda-brand">
+            <Link to="/academy" className="eda-brand">
               <span className="eda-brand-mark" aria-hidden="true" />
               <span className="eda-brand-name">Serenest Academy</span>
-            </div>
+            </Link>
             <div className="eda-hero-auth">
+              <Link className="eda-btn eda-btn-ghost" to="/">Serenest care</Link>
               {user ? (
                 <>
                   <span className="eda-hero-greeting">Hi, {firstName}</span>

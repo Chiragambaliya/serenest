@@ -1,0 +1,191 @@
+- generic [ref=e3]:
+  - link "Skip to content" [ref=e4] [cursor=pointer]:
+    - /url: "#main"
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - link "Serenest — Home" [ref=e7] [cursor=pointer]:
+        - /url: /
+        - generic [ref=e8]:
+          - generic [ref=e9]: Serenest
+          - generic [ref=e10]: Mind care, simplified
+      - navigation "Main navigation" [ref=e11]:
+        - generic [ref=e12]:
+          - button "Services" [ref=e13] [cursor=pointer]
+          - menu:
+            - generic:
+              - menuitem "Book a Consultation Request a preferred slot — we confirm quickly":
+                - generic: Book a Consultation
+                - generic: Request a preferred slot — we confirm quickly
+              - menuitem "Find a Professional Browse our verified clinicians":
+                - generic: Find a Professional
+                - generic: Browse our verified clinicians
+              - menuitem "Self-Screening PHQ-9 & GAD-7 in 5 minutes":
+                - generic: Self-Screening
+                - generic: PHQ-9 & GAD-7 in 5 minutes
+              - menuitem "Pricing Transparent, no hidden fees":
+                - generic: Pricing
+                - generic: Transparent, no hidden fees
+        - generic [ref=e16]:
+          - button "Learn" [ref=e17] [cursor=pointer]
+          - menu:
+            - generic:
+              - menuitem "Serenest Academy CME & certification programs":
+                - generic: Serenest Academy
+                - generic: CME & certification programs
+              - menuitem "Blog Clinical insights & patient guides":
+                - generic: Blog
+                - generic: Clinical insights & patient guides
+              - menuitem "Guides Self-help & condition resources":
+                - generic: Guides
+                - generic: Self-help & condition resources
+              - menuitem "FAQ Common questions answered":
+                - generic: FAQ
+                - generic: Common questions answered
+        - generic [ref=e20]:
+          - button "Professionals" [ref=e21] [cursor=pointer]
+          - menu:
+            - generic:
+              - menuitem "For Professionals Why practice with us":
+                - generic: For Professionals
+                - generic: Why practice with us
+              - menuitem "Join Serenest Apply to practice with us":
+                - generic: Join Serenest
+                - generic: Apply to practice with us
+              - menuitem "My profile Sign in to manage your listing":
+                - generic: My profile
+                - generic: Sign in to manage your listing
+              - menuitem "Learning Hub CPD, CME & clinical training":
+                - generic: Learning Hub
+                - generic: CPD, CME & clinical training
+              - menuitem "Academy · Free Free for Serenest professionals":
+                - generic: Academy · Free
+                - generic: Free for Serenest professionals
+              - menuitem "Resources Clinical tools & templates":
+                - generic: Resources
+                - generic: Clinical tools & templates
+              - menuitem "Guidelines Practice standards & compliance":
+                - generic: Guidelines
+                - generic: Practice standards & compliance
+        - generic [ref=e24]:
+          - button "For Business" [ref=e25] [cursor=pointer]
+          - menu:
+            - generic:
+              - menuitem "Corporate EAP Mental health benefits for your team":
+                - generic: Corporate EAP
+                - generic: Mental health benefits for your team
+              - menuitem "Partner with us Creators, clinics & platforms":
+                - generic: Partner with us
+                - generic: Creators, clinics & platforms
+              - menuitem "Careers Join the Serenest team":
+                - generic: Careers
+                - generic: Join the Serenest team
+        - generic [ref=e28]:
+          - button "About" [ref=e29] [cursor=pointer]
+          - menu:
+            - generic:
+              - menuitem "About Serenest Our mission & approach":
+                - generic: About Serenest
+                - generic: Our mission & approach
+              - menuitem "Our Team Meet our clinicians & staff":
+                - generic: Our Team
+                - generic: Meet our clinicians & staff
+        - link "Sign in" [ref=e33] [cursor=pointer]:
+          - /url: /patient/login
+        - link "Book now" [ref=e34] [cursor=pointer]:
+          - /url: /book
+  - main [ref=e35]
+  - contentinfo [ref=e38]:
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - generic [ref=e41]:
+          - heading "Need help today?" [level=3] [ref=e42]
+          - paragraph [ref=e43]: Book a consultation with a qualified mental health professional.
+        - generic [ref=e44]:
+          - link "Book appointment" [ref=e45] [cursor=pointer]:
+            - /url: /book
+          - link "WhatsApp" [ref=e46] [cursor=pointer]:
+            - /url: https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest
+      - generic [ref=e48]:
+        - generic [ref=e49]:
+          - generic [ref=e50]: Serenest
+          - paragraph [ref=e51]: Doctor-led mental healthcare & professional education.
+          - generic [ref=e52]:
+            - link "Follow Serenest on Instagram" [ref=e53] [cursor=pointer]:
+              - /url: https://www.instagram.com/serenest.fit
+              - generic [ref=e58]: "@serenest.fit"
+            - link "Serenest on LinkedIn" [ref=e59] [cursor=pointer]:
+              - /url: https://www.linkedin.com/company/serenest-mind-pvt-ltd/
+              - generic [ref=e63]: LinkedIn
+        - generic [ref=e64]:
+          - generic [ref=e65]:
+            - generic [ref=e66]: Care
+            - navigation "Care links" [ref=e67]:
+              - link "Book appointment" [ref=e68] [cursor=pointer]:
+                - /url: /book
+              - link "Find a professional" [ref=e73] [cursor=pointer]:
+                - /url: /patient/find-professional
+              - link "Self screening" [ref=e77] [cursor=pointer]:
+                - /url: /screening
+              - link "Pricing" [ref=e82] [cursor=pointer]:
+                - /url: /pricing
+          - generic [ref=e86]:
+            - generic [ref=e87]: Academy
+            - navigation "Academy links" [ref=e88]:
+              - link "Academy · Free for pros" [ref=e89] [cursor=pointer]:
+                - /url: /academy
+              - link "Clinician learning" [ref=e93] [cursor=pointer]:
+                - /url: /professionals/learning
+              - link "Resources" [ref=e97] [cursor=pointer]:
+                - /url: /professionals/resources
+              - link "Guidelines" [ref=e100] [cursor=pointer]:
+                - /url: /professionals/guidelines
+          - generic [ref=e103]:
+            - generic [ref=e104]: Business
+            - navigation "Business links" [ref=e105]:
+              - link "Corporate EAP" [ref=e106] [cursor=pointer]:
+                - /url: /corporate
+              - link "Partner with us" [ref=e110] [cursor=pointer]:
+                - /url: /partner
+              - link "Careers" [ref=e113] [cursor=pointer]:
+                - /url: /careers
+              - link "About Serenest" [ref=e117] [cursor=pointer]:
+                - /url: /about
+          - generic [ref=e121]:
+            - generic [ref=e122]: Legal
+            - navigation "Legal links" [ref=e123]:
+              - link "All policies" [ref=e124] [cursor=pointer]:
+                - /url: /legal
+              - link "Privacy policy" [ref=e127] [cursor=pointer]:
+                - /url: /privacy
+              - link "Terms & conditions" [ref=e130] [cursor=pointer]:
+                - /url: /terms
+              - link "Grievance policy" [ref=e133] [cursor=pointer]:
+                - /url: /grievance-policy
+              - link "Refund policy" [ref=e136] [cursor=pointer]:
+                - /url: /refund-policy
+              - link "Emergency disclaimer" [ref=e139] [cursor=pointer]:
+                - /url: /emergency-disclaimer
+        - generic [ref=e142]:
+          - link "support@serenest.in" [ref=e143] [cursor=pointer]:
+            - /url: mailto:support@serenest.in
+          - link "+91 77779 36367" [ref=e147] [cursor=pointer]:
+            - /url: tel:917777936367
+          - link "WhatsApp support" [ref=e150] [cursor=pointer]:
+            - /url: https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest
+      - generic [ref=e154]:
+        - paragraph [ref=e155]: © 2026 Serenest Education Pvt Ltd
+        - navigation "Legal links" [ref=e156]:
+          - link "Legal" [ref=e157] [cursor=pointer]:
+            - /url: /legal
+          - link "Privacy" [ref=e158] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=e159] [cursor=pointer]:
+            - /url: /terms
+          - link "Cookies" [ref=e160] [cursor=pointer]:
+            - /url: /cookie-policy
+          - link "Grievances" [ref=e161] [cursor=pointer]:
+            - /url: /grievance-policy
+          - link "Feedback" [ref=e162] [cursor=pointer]:
+            - /url: mailto:support@serenest.in?subject=Feedback
+  - link "Chat with us on WhatsApp" [ref=e163] [cursor=pointer]:
+    - /url: https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest

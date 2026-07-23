@@ -1,0 +1,514 @@
+- generic [ref=f8e3]:
+  - link "Skip to content" [ref=f8e4] [cursor=pointer]:
+    - /url: "#main"
+  - main [ref=f8e5]:
+    - generic [ref=f8e6]:
+      - region "Serenest Academy" [ref=f8e7]:
+        - generic [ref=f8e11]:
+          - navigation "Academy header" [ref=f8e12]:
+            - link "Serenest Academy" [ref=f8e13] [cursor=pointer]:
+              - /url: /academy
+            - generic [ref=f8e16]:
+              - link "Serenest care" [ref=f8e17] [cursor=pointer]:
+                - /url: /
+              - link "Log in / Sign up" [ref=f8e18] [cursor=pointer]:
+                - /url: /academy/login
+          - generic [ref=f8e19]:
+            - paragraph [ref=f8e20]: Serenest Academy
+            - heading [level=1] [ref=f8e21]:
+              - text: Clinical learning for mind
+              - emphasis [ref=f8e22]: "& practice"
+            - paragraph [ref=f8e23]: Flagship training for mental health professionals — plus pathways for students, CPD, and organisations. Evidence-led. India-ready.
+            - generic [ref=f8e24]:
+              - link "Clinical Excellence" [ref=f8e25] [cursor=pointer]:
+                - /url: /academy/program/clinical-excellence
+              - link "All programmes" [ref=f8e26] [cursor=pointer]:
+                - /url: "#programs"
+            - paragraph [ref=f8e27]: Education only — not emergency care. In crisis, dial 112 / 108.
+      - navigation "Jump to section" [ref=f8e28]:
+        - generic [ref=f8e30]:
+          - link "Flagship" [ref=f8e31] [cursor=pointer]:
+            - /url: "#flagship"
+          - link "Paths" [ref=f8e32] [cursor=pointer]:
+            - /url: "#paths"
+          - link "Programmes" [ref=f8e33] [cursor=pointer]:
+            - /url: "#programs"
+          - link "Guide" [ref=f8e34] [cursor=pointer]:
+            - /url: "#guide"
+          - link "FAQ" [ref=f8e35] [cursor=pointer]:
+            - /url: "#faq"
+      - article [ref=f8e38]:
+        - generic [ref=f8e39]:
+          - paragraph [ref=f8e40]: Best for practicing professionals
+          - heading "Clinical Excellence" [level=2] [ref=f8e41]
+          - paragraph [ref=f8e42]: Our flagship program for practicing mental health professionals. Build clinical excellence across assessment, formulation, evidence-based interventions, telepsychiatry, documentation, ethics, and measurement-based care — designed for real Indian practice, free for approved Serenest professionals.
+          - list [ref=f8e43]:
+            - listitem [ref=f8e44]: Built for practicing clinicians
+            - listitem [ref=f8e45]: Case-based + live supervision
+            - listitem [ref=f8e46]: Free for Serenest professionals
+            - listitem [ref=f8e47]: Certificate of completion
+          - generic [ref=f8e48]:
+            - link "Explore Clinical Excellence →" [ref=f8e49] [cursor=pointer]:
+              - /url: /academy/program/clinical-excellence
+            - generic [ref=f8e50]: Online · 12 weeks · Self-paced modules + live case rounds · Certificate on completion
+        - generic "Course snapshot" [ref=f8e51]:
+          - generic [ref=f8e52]:
+            - generic [ref=f8e53]: "12"
+            - text: Weeks
+          - generic [ref=f8e54]:
+            - generic [ref=f8e55]: "8"
+            - text: Modules
+          - generic [ref=f8e56]:
+            - generic [ref=f8e57]: Live
+            - text: Case rounds
+          - generic [ref=f8e58]:
+            - generic [ref=f8e59]: Cert
+            - text: Included
+          - paragraph [ref=f8e60]: Free for approved Serenest professionals
+      - generic [ref=f8e62]:
+        - generic [ref=f8e63]:
+          - paragraph [ref=f8e64]: Who we serve
+          - heading "One academy. Three clear paths." [level=2] [ref=f8e65]
+          - paragraph [ref=f8e66]: Choose the path that matches your role — then dive into programmes built for that stage.
+        - generic [ref=f8e67]:
+          - article [ref=f8e68]:
+            - heading "For clinicians" [level=3] [ref=f8e69]
+            - paragraph [ref=f8e70]: Flagship Clinical Excellence, telepractice, documentation, and CPD that fit real schedules.
+            - link "Open Clinical Excellence →" [ref=f8e71] [cursor=pointer]:
+              - /url: /academy/program/clinical-excellence
+          - article [ref=f8e72]:
+            - heading "For students & early career" [level=3] [ref=f8e73]
+            - paragraph [ref=f8e74]: Student training, counselling skills, and certificates that bridge classroom and clinic.
+            - link "Browse career-entry tracks →" [ref=f8e75] [cursor=pointer]:
+              - /url: "#programs"
+          - article [ref=f8e76]:
+            - heading "For organisations" [level=3] [ref=f8e77]
+            - paragraph [ref=f8e78]: Workplace and campus literacy programmes with clear boundaries — education, not diagnosis.
+            - link "Plan a workshop →" [ref=f8e79] [cursor=pointer]:
+              - /url: /corporate
+      - generic [ref=f8e81]:
+        - generic [ref=f8e82]:
+          - paragraph [ref=f8e83]: Why Serenest Academy
+          - heading "Competence that scales beyond the clinic" [level=2] [ref=f8e84]
+        - generic [ref=f8e85]:
+          - generic [ref=f8e86]:
+            - heading "Clinician-led" [level=3] [ref=f8e87]
+            - paragraph [ref=f8e88]: Every programme is designed by practicing mental health professionals — not generic content farms.
+          - generic [ref=f8e89]:
+            - heading "Case-based" [level=3] [ref=f8e90]
+            - paragraph [ref=f8e91]: Learn from real clinical scenarios you can apply the same week, not only textbooks.
+          - generic [ref=f8e92]:
+            - heading "India-ready" [level=3] [ref=f8e93]
+            - paragraph [ref=f8e94]: Aligned with Indian telemedicine norms, documentation practice, and regulatory context.
+          - generic [ref=f8e95]:
+            - heading "Free for Serenest pros" [level=3] [ref=f8e96]
+            - paragraph [ref=f8e97]: Approved Serenest professionals get full Academy access at no program fee.
+      - generic [ref=f8e99]:
+        - generic [ref=f8e100]:
+          - paragraph [ref=f8e101]: Programmes
+          - heading "Build your mental health career" [level=2] [ref=f8e102]
+          - paragraph [ref=f8e103]: From student to specialist — structured programmes at every stage of your journey.
+        - list "Learning journey" [ref=f8e104]:
+          - listitem [ref=f8e105]:
+            - paragraph [ref=f8e110]: Student
+            - paragraph [ref=f8e111]: Start your learning journey
+            - generic [ref=f8e112]: ›
+          - listitem [ref=f8e113]:
+            - paragraph [ref=f8e120]: Certificate
+            - paragraph [ref=f8e121]: Build foundational skills
+            - generic [ref=f8e122]: ›
+          - listitem [ref=f8e123]:
+            - paragraph [ref=f8e129]: Clinical Training
+            - paragraph [ref=f8e130]: Gain practical clinical expertise
+            - generic [ref=f8e131]: ›
+          - listitem [ref=f8e132]:
+            - paragraph [ref=f8e137]: Research
+            - paragraph [ref=f8e138]: Contribute to evidence
+            - generic [ref=f8e139]: ›
+          - listitem [ref=f8e140]:
+            - paragraph [ref=f8e145]: Practice
+            - paragraph [ref=f8e146]: Deliver impact with confidence
+            - generic [ref=f8e147]: ›
+          - listitem [ref=f8e148]:
+            - paragraph [ref=f8e153]: CPD & Fellowship
+            - paragraph [ref=f8e154]: Keep learning. Stay ahead.
+        - generic [ref=f8e155]:
+          - generic [ref=f8e156]:
+            - generic [ref=f8e157]: "01"
+            - generic [ref=f8e158]:
+              - paragraph [ref=f8e159]: Career Entry
+              - paragraph [ref=f8e160]: Start strong. Build your foundation.
+          - generic [ref=f8e161]:
+            - article [ref=f8e162]:
+              - generic [ref=f8e168]:
+                - heading "Student Training" [level=3] [ref=f8e169]
+                - paragraph [ref=f8e170]: For Psychology, Psychiatry & Mental Health Students
+              - paragraph [ref=f8e171]: Foundational, case-based training for students entering the mental health field.
+              - generic "Program metrics" [ref=f8e172]:
+                - generic [ref=f8e173]:
+                  - generic [ref=f8e174]: 50+
+                  - text: Hours
+                - generic [ref=f8e175]:
+                  - generic [ref=f8e176]: Case
+                  - text: Discussions
+                - generic [ref=f8e177]:
+                  - generic [ref=f8e178]: Cert
+                  - text: Included
+              - link "Explore student track" [ref=f8e179] [cursor=pointer]:
+                - /url: /academy/program/student-training
+                - text: Explore student track →
+            - article [ref=f8e180]:
+              - generic [ref=f8e188]:
+                - heading "Counselling Skills" [level=3] [ref=f8e189]
+                - paragraph [ref=f8e190]: Foundational Counselling & Therapeutic Communication
+              - paragraph [ref=f8e191]: Practical skill-building in therapeutic communication, ethics, and counsellor competencies.
+              - generic "Program metrics" [ref=f8e192]:
+                - generic [ref=f8e193]:
+                  - generic [ref=f8e194]: 30+
+                  - text: Modules
+                - generic [ref=f8e195]:
+                  - generic [ref=f8e196]: Role-play
+                  - text: Sessions
+                - generic [ref=f8e197]:
+                  - generic [ref=f8e198]: Tools
+                  - text: Practical
+              - link "Open counselling track" [ref=f8e199] [cursor=pointer]:
+                - /url: /academy/program/counselling-skills
+                - text: Open counselling track →
+            - article [ref=f8e200]:
+              - generic [ref=f8e208]:
+                - heading "Certificate Programs" [level=3] [ref=f8e209]
+                - paragraph [ref=f8e210]: Short-term Professional Certifications
+              - paragraph [ref=f8e211]: Structured, clinically reviewed certificate tracks for working professionals and students.
+              - generic "Program metrics" [ref=f8e212]:
+                - generic [ref=f8e213]:
+                  - generic [ref=f8e214]: 4–8
+                  - text: Weeks
+                - generic [ref=f8e215]:
+                  - generic [ref=f8e216]: Role
+                  - text: Relevant
+                - generic [ref=f8e217]:
+                  - generic [ref=f8e218]: Flex
+                  - text: Schedule
+              - link "Explore certificates" [ref=f8e219] [cursor=pointer]:
+                - /url: /academy/program/certificate-programs
+                - text: Explore certificates →
+        - generic [ref=f8e220]:
+          - generic [ref=f8e221]:
+            - generic [ref=f8e222]: "02"
+            - generic [ref=f8e223]:
+              - paragraph [ref=f8e224]: Clinical Practice
+              - paragraph [ref=f8e225]: Learn. Practice. Deliver impact.
+          - generic [ref=f8e226]:
+            - article [ref=f8e227]:
+              - generic [ref=f8e228]: Flagship
+              - generic [ref=f8e234]:
+                - heading "Clinical Excellence" [level=3] [ref=f8e235]
+                - paragraph [ref=f8e236]: Flagship Course for Practicing Mental Health Professionals
+              - paragraph [ref=f8e237]: Assessment, evidence-based care, telepsychiatry, documentation, and measurement-based practice — built for real Indian clinical work.
+              - generic "Program metrics" [ref=f8e238]:
+                - generic [ref=f8e239]:
+                  - generic [ref=f8e240]: "12"
+                  - text: Weeks
+                - generic [ref=f8e241]:
+                  - generic [ref=f8e242]: "8"
+                  - text: Modules
+                - generic [ref=f8e243]:
+                  - generic [ref=f8e244]: Live
+                  - text: Case rounds
+                - generic [ref=f8e245]:
+                  - generic [ref=f8e246]: Cert
+                  - text: Included
+              - link "Explore Clinical Excellence" [ref=f8e247] [cursor=pointer]:
+                - /url: /academy/program/clinical-excellence
+                - text: Explore Clinical Excellence →
+            - article [ref=f8e248]:
+              - generic [ref=f8e254]:
+                - heading "Psychiatry Training" [level=3] [ref=f8e255]
+                - paragraph [ref=f8e256]: Clinical Psychiatry, Prescribing & Telemedicine
+              - paragraph [ref=f8e257]: "For residents and prescribers: telemedicine norms, prescribing conversations, and documentation workflows."
+              - generic "Program metrics" [ref=f8e258]:
+                - generic [ref=f8e259]:
+                  - generic [ref=f8e260]: 40+
+                  - text: Modules
+                - generic [ref=f8e261]:
+                  - generic [ref=f8e262]: Rx
+                  - text: Guides
+                - generic [ref=f8e263]:
+                  - generic [ref=f8e264]: Case
+                  - text: Based
+              - link "Open psychiatry track" [ref=f8e265] [cursor=pointer]:
+                - /url: /academy/program/psychiatry-training
+                - text: Open psychiatry track →
+            - article [ref=f8e266]:
+              - generic [ref=f8e272]:
+                - heading "Digital Mental Health" [level=3] [ref=f8e273]
+                - paragraph [ref=f8e274]: Telepsychiatry, Documentation & Remote Care
+              - paragraph [ref=f8e275]: Platform workflows, secure documentation, and safe remote-care delivery.
+              - generic "Program metrics" [ref=f8e276]:
+                - generic [ref=f8e277]:
+                  - generic [ref=f8e278]: 25+
+                  - text: Workflows
+                - generic [ref=f8e279]:
+                  - generic [ref=f8e280]: Docs
+                  - text: Templates
+                - generic [ref=f8e281]:
+                  - generic [ref=f8e282]: Tele
+                  - text: Guides
+              - link "Learn telepsychiatry" [ref=f8e283] [cursor=pointer]:
+                - /url: /academy/program/digital-mental-health
+                - text: Learn telepsychiatry →
+            - article [ref=f8e284]:
+              - generic [ref=f8e291]:
+                - heading "Research & Publications" [level=3] [ref=f8e292]
+                - paragraph [ref=f8e293]: Research Methodology & Publication Support
+              - paragraph [ref=f8e294]: Support for case write-ups, literature reviews, and publication-ready clinical writing.
+              - generic "Program metrics" [ref=f8e295]:
+                - generic [ref=f8e296]:
+                  - generic [ref=f8e297]: Guided
+                  - text: Projects
+                - generic [ref=f8e298]:
+                  - generic [ref=f8e299]: Mentor
+                  - text: Support
+                - generic [ref=f8e300]:
+                  - generic [ref=f8e301]: Journal
+                  - text: Ready
+              - link "View research track" [ref=f8e302] [cursor=pointer]:
+                - /url: /academy/program/research-publications
+                - text: View research track →
+        - generic [ref=f8e303]:
+          - generic [ref=f8e304]:
+            - generic [ref=f8e305]: "03"
+            - generic [ref=f8e306]:
+              - paragraph [ref=f8e307]: Professional Growth
+              - paragraph [ref=f8e308]: Grow continuously. Lead with clarity.
+          - generic [ref=f8e309]:
+            - article [ref=f8e310]:
+              - generic [ref=f8e317]:
+                - heading "CPD Programs" [level=3] [ref=f8e318]
+                - paragraph [ref=f8e319]: Continuous Professional Development
+              - paragraph [ref=f8e320]: Ongoing learning for licensed professionals to stay current and sharpen skills.
+              - generic "Program metrics" [ref=f8e321]:
+                - generic [ref=f8e322]:
+                  - generic [ref=f8e323]: Modular
+                  - text: Activities
+                - generic [ref=f8e324]:
+                  - generic [ref=f8e325]: Expert
+                  - text: Faculty
+                - generic [ref=f8e326]:
+                  - generic [ref=f8e327]: Flex
+                  - text: Pace
+              - link "Open CPD track" [ref=f8e328] [cursor=pointer]:
+                - /url: /academy/program/cpd-programs
+                - text: Open CPD track →
+            - article [ref=f8e329]:
+              - generic [ref=f8e337]:
+                - heading "Mentorship" [level=3] [ref=f8e338]
+                - paragraph [ref=f8e339]: 1:1 Supervision & Career Guidance
+              - paragraph [ref=f8e340]: One-to-one mentorship and clinical supervision for clarity and confidence.
+              - generic "Program metrics" [ref=f8e341]:
+                - generic [ref=f8e342]:
+                  - generic [ref=f8e343]: 1:1
+                  - text: Sessions
+                - generic [ref=f8e344]:
+                  - generic [ref=f8e345]: Case
+                  - text: Supervision
+                - generic [ref=f8e346]:
+                  - generic [ref=f8e347]: Career
+                  - text: Guidance
+              - link "Find a mentor" [ref=f8e348] [cursor=pointer]:
+                - /url: /academy/program/mentorship
+                - text: Find a mentor →
+            - article [ref=f8e349]:
+              - generic [ref=f8e355]:
+                - heading "Fellowship Programs" [level=3] [ref=f8e356]
+                - paragraph [ref=f8e357]: Advanced Specialty Tracks
+              - paragraph [ref=f8e358]: Longer-form specialty tracks for clinicians ready for advanced depth.
+              - generic "Program metrics" [ref=f8e359]:
+                - generic [ref=f8e360]:
+                  - generic [ref=f8e361]: 3–6
+                  - text: Months
+                - generic [ref=f8e362]:
+                  - generic [ref=f8e363]: Specialty
+                  - text: Depth
+                - generic [ref=f8e364]:
+                  - generic [ref=f8e365]: Advanced
+                  - text: Credential
+              - link "Explore fellowships" [ref=f8e366] [cursor=pointer]:
+                - /url: /academy/program/fellowship-programs
+                - text: Explore fellowships →
+      - generic [ref=f8e369]:
+        - generic [ref=f8e370]:
+          - paragraph [ref=f8e371]: Academy Guide · AI
+          - heading "Ask about literacy, learning tracks & partnerships" [level=2] [ref=f8e372]
+          - paragraph [ref=f8e373]:
+            - text: Serenest Academy Guide helps you find the right programme, learning track, or next step — in plain language. It explains what Academy publishes and when clinical care on Serenest is more appropriate. It does
+            - strong [ref=f8e374]: not
+            - text: diagnose or prescribe.
+          - list [ref=f8e375]:
+            - listitem [ref=f8e376]: Articles, blog, and public mental health literacy
+            - listitem [ref=f8e377]: Clinician pharmacology & psychology learning paths
+            - listitem [ref=f8e378]: School, college & workplace partnership conversations
+        - generic "Serenest Academy Guide" [ref=f8e379]:
+          - generic [ref=f8e381]:
+            - generic [ref=f8e382]: Serenest Academy Guide
+            - paragraph [ref=f8e383]: Literacy & learning — not medical advice
+          - generic "Suggested questions" [ref=f8e384]:
+            - button "What can I learn at Serenest Academy?" [ref=f8e385] [cursor=pointer]
+            - button "Explain the pharmacology vs psychology tracks" [ref=f8e386] [cursor=pointer]
+            - button "How do I partner with Academy for my school or workplace?" [ref=f8e387] [cursor=pointer]
+            - button "When should I book a psychiatrist instead of reading here?" [ref=f8e388] [cursor=pointer]
+          - log [ref=f8e389]:
+            - paragraph [ref=f8e391]:
+              - text: Ask me about Academy programmes, clinician learning tracks, or how to collaborate with Serenest. For an appointment or screening, I'll point you to
+              - link "Book" [ref=f8e392] [cursor=pointer]:
+                - /url: /book
+              - text: or
+              - link "Screening" [ref=f8e393] [cursor=pointer]:
+                - /url: /screening
+              - text: ". Emergencies: call"
+              - strong [ref=f8e394]: "112"
+              - text: or
+              - strong [ref=f8e395]: "108"
+              - text: in India.
+          - generic [ref=f8e396]:
+            - textbox "e.g. What’s the difference between Academy and booking a psychiatrist?" [ref=f8e397]
+            - button "Ask Academy Guide" [disabled] [ref=f8e398] [cursor=pointer]
+      - generic [ref=f8e400]:
+        - generic [ref=f8e401]:
+          - paragraph [ref=f8e402]: Faculty
+          - heading "Led by practicing clinicians" [level=2] [ref=f8e403]
+          - paragraph [ref=f8e404]:
+            - text: Serenest Academy is directed by
+            - strong [ref=f8e405]: Dr. Chirag Ambaliya
+            - text: ", psychiatrist and founder — with programmes shaped by active clinical practice on Serenest, not generic courseware."
+        - link "Become an instructor →" [ref=f8e406] [cursor=pointer]:
+          - /url: mailto:support@serenest.in?subject=Serenest%20Academy%20%E2%80%94%20Become%20an%20Instructor
+      - generic [ref=f8e408]:
+        - generic [ref=f8e409]:
+          - paragraph [ref=f8e410]: FAQ
+          - heading "Frequently asked questions" [level=2] [ref=f8e411]
+        - generic [ref=f8e412]:
+          - button "Who are Serenest Academy courses designed for?" [ref=f8e414] [cursor=pointer]:
+            - generic [ref=f8e416]: +
+          - button "What is the best Academy course for practicing professionals?" [ref=f8e418] [cursor=pointer]:
+            - generic [ref=f8e420]: +
+          - button "Is Academy free for Serenest professionals?" [ref=f8e422] [cursor=pointer]:
+            - generic [ref=f8e424]: +
+          - button "Are the certificates recognized?" [ref=f8e426] [cursor=pointer]:
+            - generic [ref=f8e428]: +
+          - button "How are the courses delivered?" [ref=f8e430] [cursor=pointer]:
+            - generic [ref=f8e432]: +
+          - button "Do Academy programmes diagnose or treat patients?" [ref=f8e434] [cursor=pointer]:
+            - generic [ref=f8e436]: +
+          - button "How do I enrol?" [ref=f8e438] [cursor=pointer]:
+            - generic [ref=f8e440]: +
+        - paragraph [ref=f8e441]:
+          - text: Still have questions?
+          - link "Email us" [ref=f8e442] [cursor=pointer]:
+            - /url: mailto:support@serenest.in?subject=Serenest%20Academy%20Query
+          - text: .
+      - generic [ref=f8e445]:
+        - generic [ref=f8e446]:
+          - heading "Ready to grow your clinical practice?" [level=2] [ref=f8e447]
+          - paragraph [ref=f8e448]: Start with Clinical Excellence — or browse every programme and claim your seat.
+        - generic [ref=f8e449]:
+          - link "Start Clinical Excellence →" [ref=f8e450] [cursor=pointer]:
+            - /url: /academy/program/clinical-excellence
+          - link "Browse programmes" [ref=f8e451] [cursor=pointer]:
+            - /url: "#programs"
+  - contentinfo [ref=f8e452]:
+    - generic [ref=f8e453]:
+      - generic [ref=f8e454]:
+        - generic [ref=f8e455]:
+          - heading "Need help today?" [level=3] [ref=f8e456]
+          - paragraph [ref=f8e457]: Book a consultation with a qualified mental health professional.
+        - generic [ref=f8e458]:
+          - link "Book appointment" [ref=f8e459] [cursor=pointer]:
+            - /url: /book
+          - link "WhatsApp" [ref=f8e460] [cursor=pointer]:
+            - /url: https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest
+      - generic [ref=f8e462]:
+        - generic [ref=f8e463]:
+          - generic [ref=f8e464]: Serenest
+          - paragraph [ref=f8e465]: Doctor-led mental healthcare & professional education.
+          - generic [ref=f8e466]:
+            - link "Follow Serenest on Instagram" [ref=f8e467] [cursor=pointer]:
+              - /url: https://www.instagram.com/serenest.fit
+              - generic [ref=f8e472]: "@serenest.fit"
+            - link "Serenest on LinkedIn" [ref=f8e473] [cursor=pointer]:
+              - /url: https://www.linkedin.com/company/serenest-mind-pvt-ltd/
+              - generic [ref=f8e477]: LinkedIn
+        - generic [ref=f8e478]:
+          - generic [ref=f8e479]:
+            - generic [ref=f8e480]: Care
+            - navigation "Care links" [ref=f8e481]:
+              - link "Book appointment" [ref=f8e482] [cursor=pointer]:
+                - /url: /book
+              - link "Find a professional" [ref=f8e487] [cursor=pointer]:
+                - /url: /patient/find-professional
+              - link "Self screening" [ref=f8e491] [cursor=pointer]:
+                - /url: /screening
+              - link "Pricing" [ref=f8e496] [cursor=pointer]:
+                - /url: /pricing
+          - generic [ref=f8e500]:
+            - generic [ref=f8e501]: Academy
+            - navigation "Academy links" [ref=f8e502]:
+              - link "Academy · Free for pros" [ref=f8e503] [cursor=pointer]:
+                - /url: /academy
+              - link "Clinician learning" [ref=f8e507] [cursor=pointer]:
+                - /url: /professionals/learning
+              - link "Resources" [ref=f8e511] [cursor=pointer]:
+                - /url: /professionals/resources
+              - link "Guidelines" [ref=f8e514] [cursor=pointer]:
+                - /url: /professionals/guidelines
+          - generic [ref=f8e517]:
+            - generic [ref=f8e518]: Business
+            - navigation "Business links" [ref=f8e519]:
+              - link "Corporate EAP" [ref=f8e520] [cursor=pointer]:
+                - /url: /corporate
+              - link "Partner with us" [ref=f8e524] [cursor=pointer]:
+                - /url: /partner
+              - link "Careers" [ref=f8e527] [cursor=pointer]:
+                - /url: /careers
+              - link "About Serenest" [ref=f8e531] [cursor=pointer]:
+                - /url: /about
+          - generic [ref=f8e535]:
+            - generic [ref=f8e536]: Legal
+            - navigation "Legal links" [ref=f8e537]:
+              - link "All policies" [ref=f8e538] [cursor=pointer]:
+                - /url: /legal
+              - link "Privacy policy" [ref=f8e541] [cursor=pointer]:
+                - /url: /privacy
+              - link "Terms & conditions" [ref=f8e544] [cursor=pointer]:
+                - /url: /terms
+              - link "Grievance policy" [ref=f8e547] [cursor=pointer]:
+                - /url: /grievance-policy
+              - link "Refund policy" [ref=f8e550] [cursor=pointer]:
+                - /url: /refund-policy
+              - link "Emergency disclaimer" [ref=f8e553] [cursor=pointer]:
+                - /url: /emergency-disclaimer
+        - generic [ref=f8e556]:
+          - link "support@serenest.in" [ref=f8e557] [cursor=pointer]:
+            - /url: mailto:support@serenest.in
+          - link "+91 77779 36367" [ref=f8e561] [cursor=pointer]:
+            - /url: tel:917777936367
+          - link "WhatsApp support" [ref=f8e564] [cursor=pointer]:
+            - /url: https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest
+      - generic [ref=f8e568]:
+        - paragraph [ref=f8e569]: © 2026 Serenest Education Pvt Ltd
+        - navigation "Legal links" [ref=f8e570]:
+          - link "Legal" [ref=f8e571] [cursor=pointer]:
+            - /url: /legal
+          - link "Privacy" [ref=f8e572] [cursor=pointer]:
+            - /url: /privacy
+          - link "Terms" [ref=f8e573] [cursor=pointer]:
+            - /url: /terms
+          - link "Cookies" [ref=f8e574] [cursor=pointer]:
+            - /url: /cookie-policy
+          - link "Grievances" [ref=f8e575] [cursor=pointer]:
+            - /url: /grievance-policy
+          - link "Feedback" [ref=f8e576] [cursor=pointer]:
+            - /url: mailto:support@serenest.in?subject=Feedback
+  - link "Chat with us on WhatsApp" [ref=f8e577] [cursor=pointer]:
+    - /url: https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest
