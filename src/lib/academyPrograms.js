@@ -11,22 +11,23 @@ export const ACADEMY_PROGRAMS = [
     iconName: 'award', accent: 'teal', popular: true, featured: true,
     title: 'Clinical Excellence',
     subtitle: 'Flagship Course for Practicing Mental Health Professionals',
-    tagline: 'The flagship course for psychiatrists, psychologists, therapists & counsellors.',
-    body: 'Serenest Academy’s best course for working clinicians — assessment, evidence-based care, telepsychiatry, documentation, and measurement-based practice.',
+    tagline: 'The definitive course for psychiatrists, psychologists, therapists & counsellors.',
+    body: 'Assessment, evidence-based care, telepsychiatry, documentation, and measurement-based practice — built for real Indian clinical work.',
     overview:
       'Our flagship program for practicing mental health professionals. Build clinical excellence across assessment, formulation, evidence-based interventions, telepsychiatry, documentation, ethics, and measurement-based care — designed for real Indian practice, free for approved Serenest professionals.',
     metrics: [
       { top: '12', sub: 'Weeks' },
-      { top: '8', sub: 'Clinical Modules' },
-      { top: 'Certificate', sub: 'Included' },
+      { top: '8', sub: 'Modules' },
+      { top: 'Live', sub: 'Case rounds' },
+      { top: 'Cert', sub: 'Included' },
     ],
     highlights: [
-      'Flagship for practicing clinicians',
-      'Free for Serenest professionals',
+      'Built for practicing clinicians',
       'Case-based + live supervision',
+      'Free for Serenest professionals',
       'Certificate of completion',
     ],
-    ctaLabel: 'Start Clinical Excellence',
+    ctaLabel: 'Explore Clinical Excellence',
     learn: [
       'Structured psychiatric & psychological assessment for common presentations',
       'Case formulation and treatment planning you can use the same week',
@@ -37,6 +38,62 @@ export const ACADEMY_PROGRAMS = [
       'Risk assessment, escalation, and crisis boundaries in remote care',
       'Ethics, confidentiality, DPDP-aware practice, and professional conduct',
       'Peer case discussions and optional 1:1 clinical supervision',
+    ],
+    modules: [
+      {
+        week: '01–02',
+        title: 'Assessment & Formulation',
+        outcomes: [
+          'Structured history and mental status examination',
+          'Differential thinking without over-pathologising',
+          'Case formulation you can act on the same week',
+        ],
+      },
+      {
+        week: '03–04',
+        title: 'Evidence-Based Care',
+        outcomes: [
+          'Depression, anxiety, ADHD, OCD, and sleep pathways',
+          'Stepped care and when to escalate',
+          'Integrating therapy and medication conversations',
+        ],
+      },
+      {
+        week: '05–06',
+        title: 'Measurement-Based Practice',
+        outcomes: [
+          'PHQ-9, GAD-7, and outcome tracking in routine care',
+          'Using scores to guide (not replace) clinical judgment',
+          'Review cadence and shared decision-making',
+        ],
+      },
+      {
+        week: '07–08',
+        title: 'Telepsychiatry Done Right',
+        outcomes: [
+          'Consent, identity, privacy, and setting',
+          'Rapport and safety over video',
+          'Continuity between visits',
+        ],
+      },
+      {
+        week: '09–10',
+        title: 'Documentation & Workflows',
+        outcomes: [
+          'SOAP notes and prescription-ready records',
+          'Clear plans patients can follow',
+          'Handoffs and multidisciplinary notes',
+        ],
+      },
+      {
+        week: '11–12',
+        title: 'Risk, Ethics & Indian Context',
+        outcomes: [
+          'Risk assessment and crisis boundaries',
+          'Confidentiality and DPDP-aware practice',
+          'Telemedicine norms for India',
+        ],
+      },
     ],
     forWho: [
       'Psychiatrists and psychiatry residents',
@@ -52,15 +109,16 @@ export const ACADEMY_PROGRAMS = [
     iconName: 'cap', accent: 'green',
     title: 'Student Training',
     subtitle: 'For Psychology, Psychiatry & Mental Health Students',
-    tagline: 'For Psychology, Psychiatry & Mental Health students.',
-    body: 'Foundational and applied training for students entering the mental health field.',
+    tagline: 'Bridge classroom theory and real clinical work.',
+    body: 'Foundational, case-based training for students entering the mental health field.',
     overview:
       'A foundational, case-based program that bridges the gap between classroom theory and real clinical work. Built for students who want to enter practice confident and job-ready.',
     metrics: [
-      { top: '50+', sub: 'Hours Training' },
+      { top: '50+', sub: 'Hours' },
       { top: 'Case', sub: 'Discussions' },
-      { top: 'Certificate', sub: 'Included' },
+      { top: 'Cert', sub: 'Included' },
     ],
+    highlights: ['Placement-ready skills', 'Validated screening tools', 'Ethics foundations'],
     ctaLabel: 'Explore student track',
     learn: [
       'Core concepts in clinical psychology and assessment',
@@ -75,18 +133,19 @@ export const ACADEMY_PROGRAMS = [
   {
     slug: 'counselling-skills',
     category: 'Career Entry',
-    iconName: 'people', accent: 'purple',
+    iconName: 'people', accent: 'amber',
     title: 'Counselling Skills',
     subtitle: 'Foundational Counselling & Therapeutic Communication',
-    tagline: 'Foundational counselling and therapeutic communication.',
-    body: 'Practical, case-based skill building in communication, ethics and counsellor competencies.',
+    tagline: 'Communication, rapport, and ethical technique.',
+    body: 'Practical skill-building in therapeutic communication, ethics, and counsellor competencies.',
     overview:
       'Practical skill-building for effective, ethical counselling — the communication, rapport, and technique foundations every mental health practitioner needs.',
     metrics: [
-      { top: '30+', sub: 'Skills Modules' },
+      { top: '30+', sub: 'Modules' },
       { top: 'Role-play', sub: 'Sessions' },
-      { top: 'Practical', sub: 'Tools' },
+      { top: 'Tools', sub: 'Practical' },
     ],
+    highlights: ['Active listening labs', 'CBT basics', 'Boundary clarity'],
     ctaLabel: 'Open counselling track',
     learn: [
       'Active listening and therapeutic communication',
@@ -101,18 +160,19 @@ export const ACADEMY_PROGRAMS = [
   {
     slug: 'certificate-programs',
     category: 'Career Entry',
-    iconName: 'certificate', accent: 'amber',
+    iconName: 'certificate', accent: 'green',
     title: 'Certificate Programs',
     subtitle: 'Short-term Professional Certifications',
-    tagline: 'Short-term professional certifications.',
-    body: 'Structured, clinically reviewed certificate programs for working professionals and students.',
+    tagline: 'Focused credentials you can finish around work.',
+    body: 'Structured, clinically reviewed certificate tracks for working professionals and students.',
     overview:
       'Focused, short-term certificate tracks that let working professionals and students build a specific, verifiable skill and earn a certificate of completion.',
     metrics: [
-      { top: '10+', sub: 'Certificates' },
-      { top: 'Industry', sub: 'Relevant' },
-      { top: 'Flexible', sub: 'Learning' },
+      { top: '4–8', sub: 'Weeks' },
+      { top: 'Role', sub: 'Relevant' },
+      { top: 'Flex', sub: 'Schedule' },
     ],
+    highlights: ['Shareable credential', 'Case-based modules', 'Clear completion criteria'],
     ctaLabel: 'Explore certificates',
     learn: [
       'Targeted, role-relevant clinical skills',
@@ -129,15 +189,16 @@ export const ACADEMY_PROGRAMS = [
     iconName: 'shield', accent: 'blue',
     title: 'Psychiatry Training',
     subtitle: 'Clinical Psychiatry, Prescribing & Telemedicine',
-    tagline: 'Clinical psychiatry, prescribing & telemedicine.',
-    body: 'For residents and prescribers: telemedicine norms, prescribing conversations, and SOAP/Rx workflow.',
+    tagline: 'Prescribing conversations, SOAP/Rx, and telemedicine norms.',
+    body: 'For residents and prescribers: telemedicine norms, prescribing conversations, and documentation workflows.',
     overview:
       'For residents and prescribers: a practice-oriented program covering modern telepsychiatry norms, prescribing conversations, documentation, and continuity of care.',
     metrics: [
-      { top: '40+', sub: 'Clinical Modules' },
-      { top: 'Prescribing', sub: 'Guides' },
-      { top: 'Case-based', sub: 'Learning' },
+      { top: '40+', sub: 'Modules' },
+      { top: 'Rx', sub: 'Guides' },
+      { top: 'Case', sub: 'Based' },
     ],
+    highlights: ['Telemedicine consent', 'Safety-first prescribing', 'Continuity of care'],
     ctaLabel: 'Open psychiatry track',
     learn: [
       'Telemedicine practice norms and consent',
@@ -155,15 +216,16 @@ export const ACADEMY_PROGRAMS = [
     iconName: 'monitor', accent: 'teal',
     title: 'Digital Mental Health',
     subtitle: 'Telepsychiatry, Documentation & Remote Care',
-    tagline: 'Telepsychiatry, documentation & remote care.',
-    body: 'Modern, remote-care delivery with platform workflows, documentation and continuity of care.',
+    tagline: 'High-quality care over video, audio, and chat.',
+    body: 'Platform workflows, secure documentation, and safe remote-care delivery.',
     overview:
       'Learn to deliver high-quality care remotely — platform workflows, secure documentation, and the practicalities of running safe, effective telepsychiatry.',
     metrics: [
       { top: '25+', sub: 'Workflows' },
-      { top: 'Documentation', sub: 'Templates' },
-      { top: 'Telehealth', sub: 'Guides' },
+      { top: 'Docs', sub: 'Templates' },
+      { top: 'Tele', sub: 'Guides' },
     ],
+    highlights: ['Remote rapport', 'Privacy & consent', 'Follow-up systems'],
     ctaLabel: 'Learn telepsychiatry',
     learn: [
       'Setting up and running a teleconsultation',
@@ -181,16 +243,17 @@ export const ACADEMY_PROGRAMS = [
     iconName: 'microscope', accent: 'coral',
     title: 'Research & Publications',
     subtitle: 'Research Methodology & Publication Support',
-    tagline: 'Research methodology and publication support.',
+    tagline: 'From literature review to submission-ready writing.',
     body: 'Support for case write-ups, literature reviews, and publication-ready clinical writing.',
     overview:
       'Support for clinicians and students who want to publish — from literature reviews and case reports to publication-ready writing, with mentorship along the way.',
     metrics: [
       { top: 'Guided', sub: 'Projects' },
-      { top: 'Publication', sub: 'Mentorship' },
-      { top: 'Journal', sub: 'Support' },
+      { top: 'Mentor', sub: 'Support' },
+      { top: 'Journal', sub: 'Ready' },
     ],
-    ctaLabel: 'View resources',
+    highlights: ['Case reports', 'Lit reviews', 'Submission structure'],
+    ctaLabel: 'View research track',
     learn: [
       'Research methodology basics',
       'Conducting a focused literature review',
@@ -207,15 +270,16 @@ export const ACADEMY_PROGRAMS = [
     iconName: 'target', accent: 'green',
     title: 'CPD Programs',
     subtitle: 'Continuous Professional Development',
-    tagline: 'Continuous professional development.',
-    body: 'Ongoing learning for licensed professionals to stay current and meet CPD requirements.',
+    tagline: 'Stay current without pausing your practice.',
+    body: 'Ongoing learning for licensed professionals to stay current and sharpen skills.',
     overview:
       'Ongoing, structured learning that helps licensed professionals stay current with evidence, sharpen skills, and meet continuing professional development expectations.',
     metrics: [
-      { top: '100+', sub: 'CPD Activities' },
+      { top: 'Modular', sub: 'Activities' },
       { top: 'Expert', sub: 'Faculty' },
-      { top: 'CPD', sub: 'Credits' },
+      { top: 'Flex', sub: 'Pace' },
     ],
+    highlights: ['Evidence updates', 'Skill refreshers', 'Reflective practice'],
     ctaLabel: 'Open CPD track',
     learn: [
       'Current, evidence-based updates',
@@ -232,15 +296,16 @@ export const ACADEMY_PROGRAMS = [
     iconName: 'people', accent: 'amber',
     title: 'Mentorship',
     subtitle: '1:1 Supervision & Career Guidance',
-    tagline: '1:1 supervision and career guidance.',
-    body: 'Personalized mentorship and supervision to help you grow with clarity and confidence.',
+    tagline: 'Personalised supervision from experienced clinicians.',
+    body: 'One-to-one mentorship and clinical supervision for clarity and confidence.',
     overview:
       'Personalised, one-to-one mentorship and clinical supervision — guidance on cases, skills, and career direction from experienced clinicians.',
     metrics: [
-      { top: '1:1', sub: 'Mentorship' },
+      { top: '1:1', sub: 'Sessions' },
       { top: 'Case', sub: 'Supervision' },
       { top: 'Career', sub: 'Guidance' },
     ],
+    highlights: ['Real-case review', 'Career direction', 'Reflective practice'],
     ctaLabel: 'Find a mentor',
     learn: [
       '1:1 clinical supervision on real cases',
@@ -254,18 +319,19 @@ export const ACADEMY_PROGRAMS = [
   {
     slug: 'fellowship-programs',
     category: 'Professional Growth',
-    iconName: 'award', accent: 'purple',
+    iconName: 'award', accent: 'blue',
     title: 'Fellowship Programs',
     subtitle: 'Advanced Specialty Tracks',
-    tagline: 'Advanced specialty tracks.',
-    body: 'In-depth fellowship programs in specialized areas of mental health practice.',
+    tagline: 'Go deeper in a focused clinical specialty.',
+    body: 'Longer-form specialty tracks for clinicians ready for advanced depth.',
     overview:
       'In-depth, advanced specialty tracks for clinicians ready to go deeper — structured, longer-form programs building real expertise in a focused area.',
     metrics: [
-      { top: 'Specialty', sub: 'Tracks' },
-      { top: 'Advanced', sub: 'Training' },
-      { top: 'Professional', sub: 'Recognition' },
+      { top: '3–6', sub: 'Months' },
+      { top: 'Specialty', sub: 'Depth' },
+      { top: 'Advanced', sub: 'Credential' },
     ],
+    highlights: ['Supervised depth', 'Research component', 'Specialty focus'],
     ctaLabel: 'Explore fellowships',
     learn: [
       'Advanced, specialty-focused curriculum',
@@ -286,14 +352,85 @@ export const FEATURED_PROGRAMS = ACADEMY_PROGRAMS.filter((p) => p.featured);
 export const ACADEMY_CATEGORIES = [
   { label: 'Career Entry', tagline: 'Start strong. Build your foundation.' },
   { label: 'Clinical Practice', tagline: 'Learn. Practice. Deliver impact.' },
-  { label: 'Professional Growth', tagline: 'Grow continuously. Lead the change.' },
+  { label: 'Professional Growth', tagline: 'Grow continuously. Lead with clarity.' },
+];
+
+export const ACADEMY_PATHS = [
+  {
+    title: 'For clinicians',
+    body: 'Flagship Clinical Excellence, telepractice, documentation, and CPD that fit real schedules.',
+    href: '/academy/program/clinical-excellence',
+    cta: 'Open Clinical Excellence',
+  },
+  {
+    title: 'For students & early career',
+    body: 'Student training, counselling skills, and certificates that bridge classroom and clinic.',
+    href: '#programs',
+    cta: 'Browse career-entry tracks',
+  },
+  {
+    title: 'For organisations',
+    body: 'Workplace and campus literacy programmes with clear boundaries — education, not diagnosis.',
+    href: '/corporate',
+    cta: 'Plan a workshop',
+  },
 ];
 
 export const ACADEMY_JOURNEY = [
   { icon: 'cap', title: 'Student', sub: 'Start your learning journey' },
   { icon: 'certificate', title: 'Certificate', sub: 'Build foundational skills' },
   { icon: 'stethoscope', title: 'Clinical Training', sub: 'Gain practical clinical expertise' },
-  { icon: 'book', title: 'Research & Publication', sub: 'Contribute to evidence & knowledge' },
-  { icon: 'briefcase', title: 'Professional Practice', sub: 'Deliver impact with confidence' },
+  { icon: 'book', title: 'Research', sub: 'Contribute to evidence' },
+  { icon: 'briefcase', title: 'Practice', sub: 'Deliver impact with confidence' },
   { icon: 'award', title: 'CPD & Fellowship', sub: 'Keep learning. Stay ahead.' },
+];
+
+export const ACADEMY_WHY = [
+  {
+    title: 'Clinician-led',
+    desc: 'Every programme is designed by practicing mental health professionals — not generic content farms.',
+  },
+  {
+    title: 'Case-based',
+    desc: 'Learn from real clinical scenarios you can apply the same week, not only textbooks.',
+  },
+  {
+    title: 'India-ready',
+    desc: 'Aligned with Indian telemedicine norms, documentation practice, and regulatory context.',
+  },
+  {
+    title: 'Free for Serenest pros',
+    desc: 'Approved Serenest professionals get full Academy access at no program fee.',
+  },
+];
+
+export const ACADEMY_FAQ = [
+  {
+    q: 'Who are Serenest Academy courses designed for?',
+    a: 'Psychology students, fresh graduates, practicing counsellors, psychiatry residents, and licensed professionals seeking continuous development.',
+  },
+  {
+    q: 'What is the best Academy course for practicing professionals?',
+    a: 'Clinical Excellence is our flagship course — assessment, evidence-based care, telepsychiatry, documentation, and measurement-based practice. Approved Serenest professionals get it free.',
+  },
+  {
+    q: 'Is Academy free for Serenest professionals?',
+    a: 'Yes. Approved Serenest professionals get full Academy access at no charge — sign in with your professional email and enroll without a program fee.',
+  },
+  {
+    q: 'Are the certificates recognized?',
+    a: 'Certificates are issued by Serenest Education Pvt Ltd and recognized by peers, employers, and professional networks across India’s mental health sector.',
+  },
+  {
+    q: 'How are the courses delivered?',
+    a: 'Online — self-paced modules with live case discussion sessions. Learn at your own pace while engaging with peers and faculty.',
+  },
+  {
+    q: 'Do Academy programmes diagnose or treat patients?',
+    a: 'No. Academy is educational. Clinical care happens on Serenest’s clinical platform with verified professionals — never through a course alone.',
+  },
+  {
+    q: 'How do I enrol?',
+    a: 'Create a Serenest Academy account, choose your program, and follow the enrollment steps. Some programs list specific entry requirements on their detail page.',
+  },
 ];
