@@ -14,7 +14,7 @@
   padding: 28px 30px;
   border: 2px solid var(--rx-teal-soft);
   border-radius: 6px;
-  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-family: var(--font-body);
   font-size: 13px;
   line-height: 1.5;
   box-sizing: border-box;
@@ -31,7 +31,7 @@
 }
 .rx-brand { display: flex; align-items: center; gap: 10px; }
 .rx-brand-name {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-heading);
   font-size: 1.5rem; font-weight: 700; color: #1b2a2a; line-height: 1;
 }
 .rx-brand-tag { font-size: 10.5px; color: var(--rx-teal); letter-spacing: 0.02em; margin-top: 2px; }

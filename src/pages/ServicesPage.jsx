@@ -2,6 +2,22 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import FaqAccordion from '../components/FaqAccordion';
+import EmergencyNotice from '../components/EmergencyNotice';
+import '../styles/service-detail.css';
+
+const SPECIALTIES = [
+  { title: 'Psychiatry', body: 'Assessment, diagnosis, and medication management from a licensed psychiatrist.', href: '/services/psychiatry' },
+  { title: 'Therapy and Counselling', body: 'Structured talk therapy for individuals, couples, and families.', href: '/services/therapy' },
+  { title: 'Addiction and Recovery', body: 'Assessment, counselling, and relapse-prevention support for substance use.', href: '/services/addiction-care' },
+  { title: 'Digital Consultations', body: 'How teleconsultation works, and what it can and can\'t do.', href: '/services/digital-consultations' },
+];
+
+const SERVICES_FAQ = [
+  { question: 'Which service is right for me?', answer: 'If you\'re unsure, start with self-screening or book a psychiatry consultation — your clinician can help direct you to therapy, addiction support, or a combination, based on what you actually need.' },
+  { question: 'Can I switch between services?', answer: 'Yes. Many people use more than one — for example, psychiatry for medication management alongside ongoing therapy. Your clinicians can coordinate care between them.' },
+  { question: 'Do all consultations happen online?', answer: 'Most care on Serenest happens over secure video, audio, or chat. Some situations need in-person assessment — your clinician will tell you clearly if that applies to you.' },
+];
 
 const HERO_NAV = [
   { label: 'Clinical care', href: '#core-services' },
@@ -263,6 +279,27 @@ export default function ServicesPage() {
               ),
             )}
           </nav>
+        </div>
+      </section>
+
+      <section className="svd-section" id="specialties" aria-label="Service comparison">
+        <div className="container">
+          <h2>Which service is right for you?</h2>
+          <p className="svd-section-lead">
+            Not sure where to start? Here's what each service actually covers — you can also
+            book a consultation and let your clinician help direct you.
+          </p>
+          <ul className="svd-list">
+            {SPECIALTIES.map((item) => (
+              <li key={item.title}>
+                <strong>{item.title}</strong>
+                <span>{item.body}</span>
+                <div style={{ marginTop: '0.75rem' }}>
+                  <Link className="hp-text-link" to={item.href}>Learn more</Link>
+                </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 

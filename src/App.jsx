@@ -1,7 +1,6 @@
 import React, { lazy, Suspense, useEffect } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import SiteLayout from './layouts/SiteLayout';
-import RequireAcademyAuth from './components/RequireAcademyAuth';
 import { trackVisit } from './lib/visitTracker';
 import { captureUtm } from './lib/utm';
 import CookieConsent from './components/CookieConsent';
@@ -10,10 +9,14 @@ import ExitIntentPopup from './components/ExitIntentPopup';
 captureUtm();
 
 const HomePage = lazy(() => import('./pages/HomePage'));
-const HomePreviewPage = lazy(() => import('./pages/HomePreviewPage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const PsychiatryPage = lazy(() => import('./pages/PsychiatryPage'));
+const TherapyPage = lazy(() => import('./pages/TherapyPage'));
+const AddictionCarePage = lazy(() => import('./pages/AddictionCarePage'));
+const DigitalConsultationsPage = lazy(() => import('./pages/DigitalConsultationsPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ProfessionalsPage = lazy(() => import('./pages/ProfessionalsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const BookingPage = lazy(() => import('./pages/BookingPage'));
@@ -43,6 +46,12 @@ const Gad7Page = lazy(() => import('./pages/Gad7Page'));
 const OnlinePrescriptionPage = lazy(() => import('./pages/OnlinePrescriptionPage'));
 const GuidesPage = lazy(() => import('./pages/GuidesPage'));
 const AcademyPage = lazy(() => import('./pages/AcademyPage'));
+const AcademyProgramsPage = lazy(() => import('./pages/AcademyProgramsPage'));
+const AcademyWorkshopsPage = lazy(() => import('./pages/AcademyWorkshopsPage'));
+const AcademyLearningPathsPage = lazy(() => import('./pages/AcademyLearningPathsPage'));
+const AcademyFacultyPage = lazy(() => import('./pages/AcademyFacultyPage'));
+const AcademyResourcesPage = lazy(() => import('./pages/AcademyResourcesPage'));
+const AcademyFaqsPage = lazy(() => import('./pages/AcademyFaqsPage'));
 const PatientAuthPage = lazy(() => import('./pages/PatientAuthPage'));
 const PatientDashboardPage = lazy(() => import('./pages/PatientDashboardPage'));
 const ProfessionalAuthPage = lazy(() => import('./pages/ProfessionalAuthPage'));
@@ -80,6 +89,18 @@ function PageFallback() {
 // Helper: wrap a lazy component so Suspense is scoped to the route, not the whole app
 function S({ children }) {
   return <Suspense fallback={<PageFallback />}>{children}</Suspense>;
+}
+
+// Old singular /academy/program/:slug path — keeps existing links/bookmarks
+// working after the route moved to /academy/programs/:slug.
+function AcademyProgramRedirect() {
+  const { slug } = useParams();
+  return <Navigate to={`/academy/programs/${slug}`} replace />;
+}
+
+function ResourceRedirect() {
+  const { slug } = useParams();
+  return <Navigate to={`/blog/${slug}`} replace />;
 }
 
 function VisitTracker() {
@@ -128,10 +149,15 @@ export default function App() {
       <Routes>
         <Route path="/" element={<SiteLayout />}>
           <Route index element={<S><HomePage /></S>} />
-          <Route path="preview" element={<S><HomePreviewPage /></S>} />
+          <Route path="preview" element={<Navigate to="/" replace />} />
           <Route path="about" element={<S><AboutPage /></S>} />
           <Route path="team" element={<S><TeamPage /></S>} />
           <Route path="services" element={<S><ServicesPage /></S>} />
+          <Route path="services/psychiatry" element={<S><PsychiatryPage /></S>} />
+          <Route path="services/therapy" element={<S><TherapyPage /></S>} />
+          <Route path="services/addiction-care" element={<S><AddictionCarePage /></S>} />
+          <Route path="services/digital-consultations" element={<S><DigitalConsultationsPage /></S>} />
+          <Route path="contact" element={<S><ContactPage /></S>} />
           <Route path="professionals" element={<S><ProfessionalsPage /></S>} />
           <Route path="professionals/learning" element={<S><ProfessionalLearningPage /></S>} />
           <Route path="professionals/resources" element={<S><ProfessionalResourcesPage /></S>} />
@@ -143,6 +169,12 @@ export default function App() {
           <Route path="guides" element={<S><GuidesPage /></S>} />
           <Route path="blog" element={<S><BlogIndexPage /></S>} />
           <Route path="blog/:slug" element={<S><BlogPostPage /></S>} />
+          {/* /resources is the target IA's canonical name for this content;
+              /blog stays the underlying route so existing indexed links and
+              SEO metadata aren't disturbed. */}
+          <Route path="resources" element={<Navigate to="/blog" replace />} />
+          <Route path="resources/:slug" element={<ResourceRedirect />} />
+          <Route path="disclaimer" element={<Navigate to="/emergency-disclaimer" replace />} />
           <Route path="privacy" element={<S><PrivacyPolicyPage /></S>} />
           <Route path="terms" element={<S><TermsPage /></S>} />
           <Route path="patient/terms" element={<S><PatientTermsPage /></S>} />
@@ -180,12 +212,22 @@ export default function App() {
           <Route path="gad-7-anxiety-screening" element={<S><Gad7Page /></S>} />
           <Route path="online-psychiatrist-prescription-india" element={<S><OnlinePrescriptionPage /></S>} />
 
-          {/* Serenest Academy — literacy/learning surface, merged in from the
-              former standalone education-site. /academy/learn redirects to the
-              clinician learning hub so old Academy deep-links keep working. */}
-          <Route path="academy" element={<S><RequireAcademyAuth><AcademyPage /></RequireAcademyAuth></S>} />
+          {/* Serenest Academy — public marketing/catalog surface. The
+              programs list and program detail pages are browsable without
+              signing in (matches the locked design); only the actual
+              enrolment action requires an account. /academy/learn redirects
+              to the clinician learning hub so old Academy deep-links keep
+              working. */}
+          <Route path="academy" element={<S><AcademyPage /></S>} />
           <Route path="academy/login" element={<S><AcademyAuthPage /></S>} />
-          <Route path="academy/program/:slug" element={<S><RequireAcademyAuth><AcademyProgramPage /></RequireAcademyAuth></S>} />
+          <Route path="academy/programs" element={<S><AcademyProgramsPage /></S>} />
+          <Route path="academy/programs/:slug" element={<S><AcademyProgramPage /></S>} />
+          <Route path="academy/program/:slug" element={<AcademyProgramRedirect />} />
+          <Route path="academy/workshops" element={<S><AcademyWorkshopsPage /></S>} />
+          <Route path="academy/learning-paths" element={<S><AcademyLearningPathsPage /></S>} />
+          <Route path="academy/faculty" element={<S><AcademyFacultyPage /></S>} />
+          <Route path="academy/resources" element={<S><AcademyResourcesPage /></S>} />
+          <Route path="academy/faqs" element={<S><AcademyFaqsPage /></S>} />
           <Route
             path="academy/learn"
             element={<Navigate to="/professionals/learning" replace />}

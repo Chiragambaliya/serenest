@@ -26,6 +26,10 @@ export default function AcademyGuide() {
   }, []);
 
   useEffect(() => {
+    // Skip on mount (empty thread) — only auto-scroll once a conversation
+    // is actually underway, so landing on the page doesn't yank visitors
+    // away from the hero straight into this widget.
+    if (messages.length === 0) return;
     threadEndRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
   }, [messages, loading]);
 

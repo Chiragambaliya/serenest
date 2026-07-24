@@ -24,14 +24,14 @@
   --sh-sm:      0 4px 16px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
   --sh-md:      0 12px 40px rgba(0,0,0,0.10), 0 2px 8px rgba(0,0,0,0.04);
 
-  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   background: var(--bg);
   color: var(--ink);
   letter-spacing: -0.01em;
 }
 
 .eda-page h1, .eda-page h2, .eda-page h3, .eda-page h4 {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-heading);
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.2;
@@ -193,7 +193,7 @@
 }
 
 .eda-brand-name {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-heading);
   font-weight: 700;
   font-size: 1rem;
   color: var(--ink);
@@ -284,7 +284,7 @@
 }
 
 .eda-stat-val {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-heading);
   font-size: 1.35rem;
   font-weight: 700;
   color: var(--ink);
@@ -712,7 +712,7 @@ a.eda-hcard-item:hover {
 
 .eda-pcard-title {
   font-size: 1.08rem;
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-heading);
   font-weight: 700;
   margin: 2px 0 4px;
   line-height: 1.2;
@@ -786,7 +786,7 @@ a.eda-hcard-item:hover {
 }
 
 .eda-workforce h3 {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-heading);
   font-size: clamp(1.3rem, 2.5vw, 1.75rem);
   font-weight: 700;
   color: #fff;
@@ -855,7 +855,7 @@ a.eda-hcard-item:hover {
 
 .eda-cert-title {
   font-size: 1.02rem;
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-heading);
   font-weight: 700;
   color: var(--ink);
   margin: 0;
@@ -922,7 +922,7 @@ a.eda-hcard-item:hover {
 
 .eda-faculty-name {
   font-size: 1rem;
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-heading);
   font-weight: 700;
   color: var(--ink);
   margin: 0 0 4px;
@@ -1228,3 +1228,125 @@ a.eda-hcard-item:hover {
   text-decoration: none;
 }
 .eda-update-link:hover { text-decoration: underline; }
+
+/* ── Simplified public hero (no auth topbar) ─────────────────── */
+.eda-hero--simple .eda-hero-body { padding-top: clamp(1.5rem, 4vw, 2.5rem); }
+
+/* ── Illustrated stand-ins for photography that doesn't exist yet ──── */
+.eda-hero-photo,
+.eda-why-photo {
+  position: relative;
+  min-height: 280px;
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  display: flex;
+  align-items: flex-end;
+  padding: 1.25rem;
+}
+.eda-illustration {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+.eda-why-photo { min-height: 340px; align-items: flex-end; }
+.eda-quote {
+  position: relative;
+  z-index: 1;
+  margin: auto 0 0;
+  padding: 1.25rem 1.4rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-style: normal;
+  color: var(--ink);
+  max-width: 26rem;
+  box-shadow: var(--shadow-md);
+}
+
+/* ── What We Teach ─────────────────────────────────────────────── */
+.eda-teach-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.eda-teach-card { text-align: left; }
+.eda-teach-icon {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--r-md);
+  background: var(--bg-2);
+  color: var(--teal-600);
+  margin-bottom: 0.85rem;
+}
+.eda-teach-title { font-family: var(--font-heading); font-size: 1.05rem; font-weight: 400; margin: 0 0 0.4rem; }
+.eda-teach-body { font-size: 0.88rem; color: var(--muted); line-height: 1.5; margin: 0; }
+
+/* ── Why learn split ──────────────────────────────────────────── */
+.eda-why-split {
+  display: grid;
+  gap: 2.5rem;
+}
+@media (min-width: 860px) {
+  .eda-why-split { grid-template-columns: 1fr 1fr; align-items: center; }
+}
+.eda-why-list {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+.eda-why-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  color: var(--ink-2);
+  font-size: 0.98rem;
+}
+.eda-why-list li svg { flex-shrink: 0; margin-top: 0.15rem; color: var(--teal-600); }
+
+/* ── Section head row (kicker + link on one line) ────────────── */
+.eda-section-head--row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+/* ── Learning experience row ──────────────────────────────────── */
+.eda-experience-row {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 960px) {
+  .eda-experience-row { grid-template-columns: 1fr 260px; align-items: center; }
+}
+.eda-experience-callout {
+  padding: 1.5rem;
+  border-radius: var(--r-lg);
+  background: var(--bg-2);
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  color: var(--ink);
+}
+.eda-experience-callout p { margin: 0; }
+
+/* ── Academy disclaimer ───────────────────────────────────────── */
+.eda-disclaimer {
+  margin: 2rem auto 0;
+  max-width: 46rem;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
