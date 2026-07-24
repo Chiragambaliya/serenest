@@ -3,7 +3,8 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
 import EdIcon from '../components/EdIcon';
-import EmailCapture from '../components/EmailCapture';
+import GlobalHeader from '../components/GlobalHeader';
+import GlobalFooter from '../components/GlobalFooter';
 import { useAuth } from '../lib/useAuth';
 
 /* ── Navigation groups ───────────────────────────────────── */
@@ -192,8 +193,10 @@ export default function SiteLayout() {
     <div className={isEditorialPreview ? 'theme-editorial' : undefined}>
       <a className="skip-link" href="#main">Skip to content</a>
 
-      {/* Preview page owns its editorial header — keep SiteLayout chrome off /preview. */}
-      {!isEditorialPreview && (
+      {/* Preview uses shared editorial chrome; live pages keep existing header. */}
+      {isEditorialPreview ? (
+        <GlobalHeader homeTo="/preview" showTestBanner />
+      ) : (
       <header className={`header ${scrolled ? 'is-scrolled' : 'is-top'}`}>
         <div className="container header-inner">
           {/* Brand */}
@@ -365,91 +368,7 @@ export default function SiteLayout() {
 
       {/* ── Footer ─────────────────────────────────────────── */}
       {isEditorialPreview ? (
-        <footer className="ed-footer" aria-label="Site footer">
-          <div className="ed-footer__shell">
-            <div className="ed-footer__grid">
-              <div className="ed-footer__brand">
-                <Link to="/preview" className="ed-footer__logo">
-                  <img src="/favicon.svg" alt="" width="28" height="28" />
-                  <span>Serenest</span>
-                </Link>
-                <p>
-                  Doctor-led mental healthcare, professional learning, and thoughtful
-                  resources — connected in one calm platform.
-                </p>
-                <div className="ed-footer__social" aria-label="Social links">
-                  <a
-                    href="https://www.instagram.com/serenest.fit"
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="Instagram"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-                      <rect x="2" y="2" width="20" height="20" rx="5" />
-                      <circle cx="12" cy="12" r="4.5" />
-                      <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none" />
-                    </svg>
-                  </a>
-                  <a
-                    href="https://www.linkedin.com/company/serenest-mind-pvt-ltd/"
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label="LinkedIn"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-                      <rect x="2" y="2" width="20" height="20" rx="4" />
-                      <path d="M8 11v5M8 8v.5M12 16v-3a2 2 0 0 1 4 0v3M12 11v5" />
-                    </svg>
-                  </a>
-                  <a href="mailto:support@serenest.in" aria-label="Email">
-                    <EdIcon name="mail" size={18} />
-                  </a>
-                </div>
-              </div>
-
-              <div className="ed-footer__cols">
-                <div>
-                  <h3 className="ed-footer__title">Company</h3>
-                  <nav aria-label="Company">
-                    <Link to="/about">About us</Link>
-                    <Link to="/team">Our team</Link>
-                    <Link to="/careers">Careers</Link>
-                    <a href="mailto:support@serenest.in">Contact us</a>
-                  </nav>
-                </div>
-                <div>
-                  <h3 className="ed-footer__title">Support</h3>
-                  <nav aria-label="Support">
-                    <Link to="/faq">Help centre</Link>
-                    <Link to="/privacy">Privacy policy</Link>
-                    <Link to="/terms">Terms</Link>
-                    <Link to="/grievance-policy">Grievances</Link>
-                  </nav>
-                </div>
-                <div>
-                  <h3 className="ed-footer__title">Resources</h3>
-                  <nav aria-label="Resources">
-                    <Link to="/blog">Articles</Link>
-                    <Link to="/guides">Guides</Link>
-                    <Link to="/screening">Screening tools</Link>
-                    <Link to="/professionals">For professionals</Link>
-                  </nav>
-                </div>
-              </div>
-
-              <div className="ed-footer__subscribe">
-                <h3 className="ed-footer__title">Stay in the loop</h3>
-                <p>Occasional updates from Serenest. No spam.</p>
-                <EmailCapture source="preview_footer_newsletter" variant="light" />
-              </div>
-            </div>
-
-            <div className="ed-footer__bottom">
-              <p>© {new Date().getFullYear()} Serenest Education Pvt Ltd</p>
-              <p className="ed-footer__made">Made with care in India</p>
-            </div>
-          </div>
-        </footer>
+        <GlobalFooter homeTo="/preview" />
       ) : (
       <footer className="footer">
         <div className="container">
