@@ -25,100 +25,43 @@ const IMG = {
   },
 };
 
-const STATS = [
-  { value: '10,000+', label: 'Community followers' },
-  { value: '500+', label: 'Sessions completed' },
-  { value: '4.9 ★', label: 'Average rating' },
-  { value: '15+', label: 'Verified professionals' },
+// "Our Services" — links point at /services until dedicated
+// /services/psychiatry etc. pages exist.
+const OUR_SERVICES = [
+  { icon: 'stethoscope', title: 'Psychiatry', body: 'Assessment, diagnosis, and medication management from a licensed psychiatrist.', href: '/services' },
+  { icon: 'chat', title: 'Therapy and Counselling', body: 'Structured talk therapy for individuals, couples, and families.', href: '/services' },
+  { icon: 'pill', title: 'Addiction and Recovery', body: 'Assessment, counselling, and relapse-prevention support for substance use.', href: '/services' },
+  { icon: 'monitor', title: 'Digital Mental Health', body: 'Secure video, audio, and chat consultations, wherever you are in India.', href: '/services' },
 ];
 
-const TRUST = [
-  { icon: 'check', title: 'Verified clinicians', body: 'Psychiatrists & psychologists reviewed before joining' },
-  { icon: 'monitor', title: 'Video, audio, chat', body: 'Consult in whichever format works for you' },
-  { icon: 'clipboard', title: 'PHQ-9 / GAD-7', body: 'Structured screening tools before you book' },
-  { icon: 'follow', title: 'Continuity of care', body: 'Notes and follow-ups stay connected' },
-  { icon: 'lock', title: 'Private by design', body: 'Encrypted sessions, careful records' },
-  { icon: 'people', title: 'For professionals', body: 'Practice tools and free Academy access' },
+// "How Serenest Helps" — the care journey.
+const HOW_WE_HELP = [
+  { title: 'Understand your need', body: 'Start with a short self-screening or simply describe what you’re going through.' },
+  { title: 'Choose the right professional', body: 'We match you with a psychiatrist, therapist, or counsellor suited to your situation.' },
+  { title: 'Book your consultation', body: 'Pick a time that works. We confirm by phone or WhatsApp.' },
+  { title: 'Receive ongoing care and guidance', body: 'Follow-ups, notes, and care plans stay connected after your first session.' },
 ];
 
-const PATHS = [
-  {
-    key: 'individuals',
-    title: 'Individuals',
-    body: 'Find the right support for your mind and emotional wellbeing.',
-    cta: 'Explore care',
-    to: '/book',
-    icon: 'heart',
-  },
-  {
-    key: 'professionals',
-    title: 'Professionals',
-    body: 'Grow your practice with resources, supervision and community.',
-    cta: 'Explore for professionals',
-    to: '/professionals',
-    icon: 'briefcase',
-  },
-  {
-    key: 'learners',
-    title: 'Students & learners',
-    body: 'Learn, upskill and advance your career in mental health.',
-    cta: 'Explore Academy',
-    to: '/academy',
-    icon: 'cap',
-  },
+// "Why Serenest" — grounded claims only, no unverifiable numbers.
+const WHY_SERENEST = [
+  { icon: 'stethoscope', title: 'Doctor-led clinical oversight', body: 'Founded and clinically overseen by a practising psychiatrist.' },
+  { icon: 'lock', title: 'Ethical and confidential care', body: 'Careful handling of your health information, at every step.' },
+  { icon: 'check', title: 'Clear professional boundaries', body: 'Consultations follow defined clinical and ethical limits.' },
+  { icon: 'monitor', title: 'A thoughtful digital experience', body: 'Built to feel calm and unhurried, not transactional.' },
+  { icon: 'follow', title: 'Coordinated psychiatry and therapy', body: 'Your psychiatrist and therapist can work from the same picture.' },
+  { icon: 'heart', title: 'Responsible addiction care', body: 'Recovery support that accounts for medical and family context.' },
 ];
 
-const ECOSYSTEM = [
-  {
-    icon: 'stethoscope',
-    title: 'Mental Healthcare Services',
-    body: 'Verified psychiatrists and psychologists for video, audio, and chat consultations.',
-    href: '/services',
-  },
-  {
-    icon: 'cap',
-    title: 'Serenest Academy',
-    body: 'Clinically oriented education and certificate programs for the mental health workforce.',
-    href: '/academy',
-  },
-  {
-    icon: 'building',
-    title: 'Corporate Mental Wellness',
-    body: 'Workplace programmes and EAP-style support for organisations.',
-    href: '/corporate',
-  },
-  {
-    icon: 'pill',
-    title: 'De-addiction & Rehabilitation',
-    body: 'Structured recovery support and continuity of care.',
-    href: '/services',
-  },
-  {
-    icon: 'globe',
-    title: 'Digital Mental Health Solutions',
-    body: 'Telepsychiatry infrastructure and tools built for Indian care delivery.',
-    href: '/services',
-  },
+// Serenest Academy — subjects taught (preview of the full curriculum).
+const ACADEMY_PREVIEW = [
+  { icon: 'stethoscope', title: 'Clinical Psychiatry' },
+  { icon: 'pill', title: 'Psychopharmacology' },
+  { icon: 'chat', title: 'Psychotherapy' },
+  { icon: 'heart', title: 'Addiction and Recovery' },
 ];
 
-const SERVICES = [
-  { title: 'Psychiatry consultation', icon: 'stethoscope', to: '/services' },
-  { title: 'Therapy & counselling', icon: 'chat', to: '/services' },
-  { title: 'De-addiction support', icon: 'pill', to: '/services' },
-  { title: 'Child & adolescent mental health', icon: 'heart', to: '/services' },
-  { title: 'Couples & relationship therapy', icon: 'people', to: '/services' },
-  { title: 'Mental wellness programs', icon: 'globe', to: '/corporate' },
-];
-
-const STEPS = [
-  { title: 'Choose your format', body: 'Video, audio, or chat — or begin with screening if you are unsure.', icon: 'clipboard' },
-  { title: 'Pick a time', body: 'Share your details. We confirm your clinician and next steps with you.', icon: 'monitor' },
-  { title: 'Meet your clinician', body: 'Assessment, guidance, and a clear plan for follow-up where needed.', icon: 'folder' },
-  { title: 'Continue your care', body: 'Follow-ups and care plans in one place so treatment does not stop.', icon: 'heart' },
-];
-
-const STORIES = BLOG_POSTS.slice(0, 4);
-const STORY_ICONS = ['book', 'chat', 'heart', 'globe'];
+const RESOURCES = BLOG_POSTS.slice(0, 3);
+const RESOURCE_ICONS = ['book', 'chat', 'heart'];
 
 export default function HomePage() {
   useSEO({ path: '/', ...ROUTE_SEO['/'] });
@@ -195,22 +138,23 @@ export default function HomePage() {
       <section className="hp-hero" aria-labelledby="home-hero-title">
         <div className="hp-shell hp-hero__grid">
           <div className="hp-hero__copy">
-            <p className="hp-eyebrow">Serenest · Pan-India telepsychiatry</p>
+            <p className="hp-eyebrow">Doctor-led mental healthcare</p>
             <h1 id="home-hero-title" className="hp-hero__title">
-              <span>Private, clinical</span>
-              <span>mental health care —</span>
-              <span>wherever you are.</span>
+              <span>Care for the mind,</span>
+              <span>grounded in</span>
+              <span>clinical practice.</span>
             </h1>
             <p className="hp-hero__body">
-              Speak with verified psychiatrists and psychologists from home. Structured intake,
-              evidence-based screening, and care that continues beyond a single session.
+              Psychiatry, therapy, addiction support, and professional mental-health
+              education — brought together with clinical responsibility and human
+              understanding.
             </p>
             <div className="hp-hero__actions">
-              <Link className="hp-btn hp-btn--primary" to="/book">
-                Book now
+              <Link className="hp-btn hp-btn--primary" to="/services">
+                Find the Right Service
               </Link>
-              <Link className="hp-btn hp-btn--secondary" to="/screening">
-                Take screening
+              <Link className="hp-btn hp-btn--secondary" to="/book">
+                Book an Appointment
               </Link>
             </div>
             <p className="hp-hero__note">
@@ -225,7 +169,7 @@ export default function HomePage() {
                 <source srcSet={IMG.hero.webp} type="image/webp" />
                 <img
                   src={IMG.hero.jpg}
-                  alt="Serenest editorial illustration — abstract profile, botanical forms, and a path of progress"
+                  alt="A quiet illustrated scene of someone reading by a window, a plant and a cup of tea nearby"
                   width={960}
                   height={1080}
                   fetchpriority="high"
@@ -237,23 +181,49 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Social proof stats ──────────────────────────────────── */}
-      <section className="hp-stats" aria-label="Serenest by the numbers">
-        <div className="hp-shell hp-stats__grid">
-          {STATS.map((s) => (
-            <div key={s.label} className="hp-stats__item">
-              <div className="hp-stats__value">{s.value}</div>
-              <div className="hp-stats__label">{s.label}</div>
-            </div>
-          ))}
+      {/* ── Our Services ─────────────────────────────────────────── */}
+      <section className="hp-section" aria-labelledby="home-services-title">
+        <div className="hp-shell">
+          <header className="hp-section__head">
+            <p className="hp-eyebrow">Our Services</p>
+            <h2 id="home-services-title">Four kinds of support, one clinical team.</h2>
+          </header>
+          <div className="hp-ecosystem">
+            {OUR_SERVICES.map((item) => (
+              <Link key={item.title} className="hp-ecosystem__card" to={item.href}>
+                <span className="hp-services__icon" aria-hidden="true"><EdIcon name={item.icon} size={22} /></span>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ── Trust / what you get ───────────────────────────────── */}
-      <section className="hp-trust" aria-label="What Serenest includes">
+      {/* ── How Serenest Helps ──────────────────────────────────── */}
+      <section className="hp-section hp-section--soft" aria-labelledby="home-how-title">
+        <div className="hp-shell">
+          <header className="hp-section__head">
+            <p className="hp-eyebrow">How Serenest Helps</p>
+            <h2 id="home-how-title">A care journey, not a one-off appointment.</h2>
+          </header>
+          <ol className="hp-steps">
+            {HOW_WE_HELP.map((step, i) => (
+              <li key={step.title} className="hp-step">
+                <span className="hp-step__num">0{i + 1}</span>
+                <strong>{step.title}</strong>
+                <p>{step.body}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
+
+      {/* ── Why Serenest ─────────────────────────────────────────── */}
+      <section className="hp-trust" aria-label="Why Serenest">
         <div className="hp-shell">
           <ul className="hp-trust__grid">
-            {TRUST.map((item) => (
+            {WHY_SERENEST.map((item) => (
               <li key={item.title} className="hp-trust__item">
                 <span className="hp-trust__icon" aria-hidden="true">
                   <EdIcon name={item.icon} size={22} />
@@ -266,72 +236,41 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Choose your path ────────────────────────────────────── */}
-      <section className="hp-section" aria-labelledby="home-paths-title">
-        <div className="hp-shell">
-          <header className="hp-section__head">
-            <p className="hp-eyebrow">Start here</p>
-            <h2 id="home-paths-title">Choose your path</h2>
-            <p>Whether you are seeking care, building a practice, or learning — start where you are.</p>
-          </header>
-          <div className="hp-paths">
-            {PATHS.map((p) => (
-              <Link key={p.key} to={p.to} className={`hp-path hp-path--${p.key}`}>
-                <span className="hp-path__icon" aria-hidden="true">
-                  <EdIcon name={p.icon} size={22} />
-                </span>
-                <h3>{p.title}</h3>
-                <p>{p.body}</p>
-                <span className="hp-path__cta">{p.cta}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Ecosystem ───────────────────────────────────────────── */}
-      <section className="hp-section hp-section--soft" id="ecosystem">
-        <div className="hp-shell">
-          <header className="hp-section__head">
-            <p className="hp-eyebrow">Serenest Ecosystem</p>
-            <h2>One brand. Care, education, and wellness together.</h2>
-            <p>Mental healthcare services, professional education, corporate wellness, de-addiction
-              support, and digital health infrastructure — all under Serenest.</p>
-          </header>
-          <div className="hp-ecosystem">
-            {ECOSYSTEM.map((item) => (
-              <Link key={item.title} className="hp-ecosystem__card" to={item.href}>
-                <span className="hp-services__icon" aria-hidden="true"><EdIcon name={item.icon} size={22} /></span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Services + Academy ─────────────────────────────────── */}
-      <section className="hp-section" aria-labelledby="home-services-title">
+      {/* ── For Professionals ────────────────────────────────────── */}
+      <section className="hp-section" aria-labelledby="home-professionals-title">
         <div className="hp-shell hp-split">
           <div className="hp-services-block">
             <header className="hp-section__head hp-section__head--left">
-              <p className="hp-eyebrow">Care</p>
-              <h2 id="home-services-title">Our services</h2>
-              <p>Clinical care pathways for individuals, families, and organisations.</p>
+              <p className="hp-eyebrow">For Professionals</p>
+              <h2 id="home-professionals-title">Learning and resources for people shaping mental healthcare.</h2>
             </header>
             <ul className="hp-services">
-              {SERVICES.map((s) => (
-                <li key={s.title}>
-                  <Link to={s.to}>
-                    <span className="hp-services__icon" aria-hidden="true">
-                      <EdIcon name={s.icon} size={20} />
-                    </span>
-                    <span>{s.title}</span>
-                  </Link>
-                </li>
-              ))}
+              <li>
+                <Link to="/academy">
+                  <span className="hp-services__icon" aria-hidden="true"><EdIcon name="cap" size={20} /></span>
+                  <span>Serenest Academy</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/professionals/resources">
+                  <span className="hp-services__icon" aria-hidden="true"><EdIcon name="folder" size={20} /></span>
+                  <span>Clinical resources</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/partner">
+                  <span className="hp-services__icon" aria-hidden="true"><EdIcon name="people" size={20} /></span>
+                  <span>Professional collaboration</span>
+                </Link>
+              </li>
+              <li>
+                <Link to="/professionals/apply">
+                  <span className="hp-services__icon" aria-hidden="true"><EdIcon name="briefcase" size={20} /></span>
+                  <span>Faculty opportunities</span>
+                </Link>
+              </li>
             </ul>
-            <Link className="hp-text-link" to="/services">View all services</Link>
+            <Link className="hp-text-link" to="/professionals">For Professionals</Link>
           </div>
 
           <aside className="hp-academy-card" aria-labelledby="home-academy-title">
@@ -340,45 +279,20 @@ export default function HomePage() {
               <img src={IMG.academy.jpg} alt="" width={720} height={720} loading="lazy" decoding="async" />
             </picture>
             <div className="hp-academy-card__body">
-              <p className="hp-eyebrow">Education</p>
-              <h2 id="home-academy-title">Serenest Academy</h2>
-              <p>
-                Short courses, case discussions, and clinician learning — free for approved
-                Serenest professionals.
-              </p>
+              <p className="hp-eyebrow">Serenest Academy</p>
+              <h2 id="home-academy-title">Learning that strengthens practice.</h2>
+              <p>Practical, clinically grounded education for mental health professionals.</p>
               <ul className="hp-academy-list">
-                <li>Certificate programs &amp; CPD</li>
-                <li>Clinical framing and pharmacology tracks</li>
-                <li>Resources for practice readiness</li>
+                {ACADEMY_PREVIEW.map((a) => (
+                  <li key={a.title}>{a.title}</li>
+                ))}
               </ul>
-              <Link className="hp-btn hp-btn--teal" to="/academy">
-                Explore Serenest Academy
-              </Link>
+              <div className="hp-hero__actions">
+                <Link className="hp-btn hp-btn--teal" to="/academy">Explore Academy</Link>
+                <Link className="hp-text-link" to="/academy">View Programs</Link>
+              </div>
             </div>
           </aside>
-        </div>
-      </section>
-
-      {/* ── How it works ────────────────────────────────────────── */}
-      <section className="hp-section hp-section--soft" aria-labelledby="home-how-title">
-        <div className="hp-shell">
-          <header className="hp-section__head">
-            <p className="hp-eyebrow">Journey</p>
-            <h2 id="home-how-title">How care works</h2>
-            <p>A simple path from first booking to ongoing support.</p>
-          </header>
-          <ol className="hp-steps">
-            {STEPS.map((step, i) => (
-              <li key={step.title} className="hp-step">
-                <span className="hp-step__icon" aria-hidden="true">
-                  <EdIcon name={step.icon} size={20} />
-                </span>
-                <span className="hp-step__num">0{i + 1}</span>
-                <strong>{step.title}</strong>
-                <p>{step.body}</p>
-              </li>
-            ))}
-          </ol>
         </div>
       </section>
 
@@ -409,21 +323,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ── Stories & insights ──────────────────────────────────── */}
-      <section className="hp-section hp-section--soft" aria-labelledby="home-stories-title">
+      {/* ── Resources ────────────────────────────────────────────── */}
+      <section className="hp-section hp-section--soft" aria-labelledby="home-resources-title">
         <div className="hp-shell">
           <header className="hp-section__head hp-section__head--row">
             <div>
-              <p className="hp-eyebrow">From Serenest</p>
-              <h2 id="home-stories-title">Stories &amp; insights</h2>
+              <p className="hp-eyebrow">Resources</p>
+              <h2 id="home-resources-title">A few things worth reading</h2>
             </div>
             <Link className="hp-text-link hp-text-link--inline" to="/blog">Visit all articles</Link>
           </header>
           <div className="hp-stories">
-            {STORIES.map((post, i) => (
+            {RESOURCES.map((post, i) => (
               <Link key={post.slug} to={`/blog/${post.slug}`} className={`hp-story hp-story--${(i % 4) + 1}`}>
                 <div className="hp-story__media" aria-hidden="true">
-                  <EdIcon name={STORY_ICONS[i % STORY_ICONS.length]} size={28} />
+                  <EdIcon name={RESOURCE_ICONS[i % RESOURCE_ICONS.length]} size={28} />
                 </div>
                 <div className="hp-story__body">
                   <span className="hp-story__tag">{post.tag}</span>
@@ -471,7 +385,7 @@ export default function HomePage() {
 
       <InstagramFeed />
 
-      {/* ── Final CTA ───────────────────────────────────────────── */}
+      {/* ── Final action ────────────────────────────────────────── */}
       <section className="hp-cta" aria-labelledby="home-cta-title">
         <div className="hp-cta__art" aria-hidden="true">
           <picture>
@@ -484,7 +398,7 @@ export default function HomePage() {
             <span className="hp-brand__name">Serenest</span>
           </p>
           <h2 id="home-cta-title">
-            You don&apos;t have to navigate this alone. We&apos;re here to walk alongside you.
+            Start with the kind of support you need.
           </h2>
           <p className="hp-cta__contact">
             <a href="mailto:support@serenest.in">support@serenest.in</a>
@@ -492,17 +406,12 @@ export default function HomePage() {
             <a href="tel:7777936367">7777936367</a>
           </p>
           <div className="hp-cta__actions">
-            <Link className="hp-btn hp-btn--primary" to="/book">
-              Book a consultation
+            <Link className="hp-btn hp-btn--primary" to="/services">
+              Explore Services
             </Link>
-            <a
-              className="hp-btn hp-btn--ghost-dark"
-              href="https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest"
-              target="_blank"
-              rel="noreferrer"
-            >
-              Talk to our team on WhatsApp
-            </a>
+            <Link className="hp-btn hp-btn--ghost-dark" to="/book">
+              Book an Appointment
+            </Link>
           </div>
           <SharePanel className="hp-cta__share" />
         </div>

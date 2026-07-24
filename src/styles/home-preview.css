@@ -225,7 +225,7 @@
   justify-content: center;
   min-height: 48px;
   padding: 0.8rem 1.35rem;
-  border-radius: 999px;
+  border-radius: var(--r-btn);
   border: 1.5px solid transparent;
   font-size: 0.95rem;
   font-weight: 700;
@@ -234,11 +234,11 @@
 }
 .hp-btn:hover { transform: translateY(-1px); }
 .hp-btn--primary {
-  background: #c1572d;
-  border-color: #c1572d;
+  background: var(--hp-sage-deep);
+  border-color: var(--hp-sage-deep);
   color: #fff;
 }
-.hp-btn--primary:hover { background: #a84622; border-color: #a84622; color: #fff; }
+.hp-btn--primary:hover { background: #2a3320; border-color: #2a3320; color: #fff; }
 .hp-btn--secondary {
   background: transparent;
   border-color: #3d6b5e;
@@ -693,8 +693,8 @@
   display: grid;
   place-items: center;
   border-radius: 999px;
-  background: rgba(193, 87, 45, 0.1);
-  color: #c1572d;
+  background: rgba(107, 83, 68, 0.12);
+  color: var(--brown);
   margin-bottom: 0.75rem;
 }
 .hp-step__num {
@@ -703,7 +703,7 @@
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.1em;
-  color: #c1572d;
+  color: var(--brown);
 }
 .hp-step strong {
   display: block;
@@ -767,7 +767,7 @@
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #c1572d;
+  color: var(--brown);
 }
 .hp-story h3 {
   margin: 0;
