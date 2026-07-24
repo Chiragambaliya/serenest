@@ -6,31 +6,34 @@
    ============================================================ */
 
 :root {
-  /* Core editorial palette (available globally; unused until opted in) */
-  --ds-ink: #1c1a17;
-  --ds-ink-2: rgba(28, 26, 23, 0.72);
-  --ds-muted: rgba(28, 26, 23, 0.62);
-  --ds-subtle: rgba(28, 26, 23, 0.42);
-  --ds-line: rgba(28, 26, 23, 0.1);
-  --ds-line-strong: rgba(28, 26, 23, 0.16);
+  /* Editorial component tokens — now aliases onto the canonical tokens in
+     styles.css so there is a single source of truth for the palette. These
+     are site-wide (not opt-in) and used directly by the .ds-* primitives
+     below, which any page can use. */
+  --ds-ink: var(--ink);
+  --ds-ink-2: var(--ink-2);
+  --ds-muted: var(--muted);
+  --ds-subtle: var(--subtle);
+  --ds-line: var(--border);
+  --ds-line-strong: var(--border-strong);
 
-  --ds-cream: #f7f2ea;
-  --ds-cream-2: #efe8dc;
-  --ds-cream-3: #e6ddd0;
-  --ds-white: #fffdf9;
+  --ds-cream: var(--bg);
+  --ds-cream-2: var(--bg-2);
+  --ds-cream-3: var(--bg-3);
+  --ds-white: var(--surface);
 
-  --ds-rust: #c1572d;
-  --ds-rust-deep: #a84622;
-  --ds-rust-soft: #f4ddd0;
+  --ds-rust: var(--accent);
+  --ds-rust-deep: var(--accent-dark);
+  --ds-rust-soft: var(--accent-light);
 
-  --ds-sage: #5a6b4a;
+  --ds-sage: var(--teal-500);
   --ds-sage-mid: #6d7f5c;
-  --ds-sage-deep: #3c4a2c;
+  --ds-sage-deep: var(--teal-600);
   --ds-sage-soft: rgba(90, 107, 74, 0.12);
 
-  --ds-teal: #3d6b5e;
-  --ds-brown: #6b5344;
-  --ds-plum: #6a5f6e;
+  --ds-teal: var(--teal-accent);
+  --ds-brown: var(--brown);
+  --ds-plum: var(--plum);
   --ds-charcoal: #2a241f;
 
   --ds-font-display: var(--font-heading, 'Fraunces', Georgia, serif);
@@ -39,33 +42,17 @@
   --ds-radius-sm: 0.75rem;
   --ds-radius-md: 1.125rem;
   --ds-radius-lg: 1.35rem;
-  --ds-radius-pill: 999px;
+  --ds-radius-pill: var(--r-pill);
 
-  --ds-shadow-sm: 0 1px 2px rgba(28, 26, 23, 0.04), 0 8px 24px rgba(28, 26, 23, 0.06);
-  --ds-shadow-md: 0 12px 36px rgba(28, 26, 23, 0.1);
+  --ds-shadow-sm: var(--shadow-sm);
+  --ds-shadow-md: var(--shadow-md);
 
   --ds-shell: 1160px;
   --ds-section: clamp(3.75rem, 8vw, 5.5rem);
   --ds-gutter: max(var(--page-gutter, 1.25rem), env(safe-area-inset-left, 0px));
 }
 
-/* Opt-in theme root */
-.theme-editorial {
-  --ink: var(--ds-ink);
-  --muted: var(--ds-muted);
-  --bg: var(--ds-cream);
-  --bg-2: var(--ds-cream-2);
-  --surface: var(--ds-white);
-  --border: var(--ds-line);
-  --accent: var(--ds-rust);
-  --brand: var(--ds-sage);
-  --brand-hover: var(--ds-sage-deep);
-  --brand-dark: var(--ds-sage-deep);
-  color: var(--ds-ink);
-  background: var(--ds-cream);
-  font-family: var(--ds-font-body);
-}
-
+.ds-shell,
 .theme-editorial .ds-shell {
   max-width: var(--ds-shell);
   margin-inline: auto;
@@ -249,6 +236,64 @@
   padding-right: max(var(--page-gutter, 1.25rem), env(safe-area-inset-right, 0px));
 }
 
+/* Pre-footer CTA */
+.ed-footer__cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  padding-bottom: 2.5rem;
+  margin-bottom: 2.5rem;
+  border-bottom: 1px solid var(--ds-line);
+}
+
+.ed-footer__cta h3 {
+  font-family: var(--ds-font-display);
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  font-weight: 600;
+  color: var(--ds-ink);
+  margin: 0 0 0.35rem;
+}
+
+.ed-footer__cta p {
+  margin: 0;
+  color: var(--ds-muted);
+  font-size: 0.95rem;
+}
+
+.ed-footer__cta-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.ed-footer__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.1rem;
+}
+
+.ed-footer__contact a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.9rem;
+  color: var(--ds-ink-2);
+  text-decoration: none;
+}
+
+.ed-footer__contact a:hover {
+  color: var(--ds-sage-deep);
+}
+
+.ed-footer__wa:hover {
+  background: rgba(37, 211, 102, 0.14);
+  border-color: rgba(37, 211, 102, 0.4);
+  color: #1da851;
+}
+
 .ed-footer__grid {
   display: grid;
   gap: 2.5rem 2rem;
@@ -267,8 +312,8 @@
 
 @media (min-width: 1024px) {
   .ed-footer__grid {
-    grid-template-columns: 1.15fr 1.45fr 1fr;
-    gap: 2.5rem 3rem;
+    grid-template-columns: 1fr 2.1fr 1fr;
+    gap: 2.5rem 2.5rem;
   }
   .ed-footer__subscribe {
     grid-column: auto;
@@ -328,8 +373,21 @@
 
 .ed-footer__cols {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1.5rem 1.25rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.75rem 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .ed-footer__cols {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .ed-footer__cols {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 1.5rem 1.25rem;
+  }
 }
 
 .ed-footer__title {

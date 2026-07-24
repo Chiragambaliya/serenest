@@ -1,7 +1,7 @@
 /* ── Homepage preview — editorial, image-led ───────────────────
    Live homepage (/) untouched. Tokens from editorial.css.       */
 
-.home-preview {
+.home {
   --hp-ink: var(--ds-ink);
   --hp-muted: var(--ds-muted);
   --hp-subtle: var(--ds-subtle);
@@ -807,7 +807,7 @@
 @media (min-width: 800px) {
   .hp-newsletter { grid-template-columns: 1fr 1fr; gap: 2rem; padding: 2rem; }
 }
-.home-preview .email-capture { border-radius: 1rem; }
+.home .email-capture { border-radius: 1rem; }
 
 /* CTA with botanical art */
 .hp-cta {
@@ -854,4 +854,128 @@
   .hp-cta__actions { width: 100%; }
   .hp-cta__actions .hp-btn { flex: 1 1 100%; }
   .hp-newsletter { padding: 1.25rem; }
+}
+
+.hp-cta__contact {
+  margin: -0.5rem 0 1.35rem;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.95rem;
+}
+.hp-cta__contact a { color: #fff; text-decoration: underline; text-underline-offset: 3px; }
+.hp-cta__share { margin-top: 1.75rem; }
+
+/* Stats strip */
+.hp-stats {
+  padding: 2.5rem 0;
+  background: var(--hp-sage-deep);
+  color: #fff;
+}
+.hp-stats__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 1.5rem;
+  text-align: center;
+}
+.hp-stats__value {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3vw, 1.9rem);
+  font-weight: 600;
+  color: #d9e2c9;
+  line-height: 1;
+  margin-bottom: 0.35rem;
+}
+.hp-stats__label {
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+/* Ecosystem cards */
+.hp-ecosystem {
+  display: grid;
+  gap: 1.1rem;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+.hp-ecosystem__card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  padding: 1.6rem 1.4rem;
+  border-radius: 1.25rem;
+  border: 1px solid var(--hp-line);
+  background: var(--hp-white);
+  text-decoration: none;
+  color: var(--hp-ink);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+.hp-ecosystem__card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 34px rgba(28, 26, 23, 0.1);
+  border-color: rgba(90, 107, 74, 0.3);
+}
+.hp-ecosystem__card h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.hp-ecosystem__card p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--hp-muted);
+}
+
+/* Patient portal strip */
+.hp-portal {
+  padding: var(--hp-section) 0;
+  background: var(--hp-cream-2);
+}
+.hp-portal__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  flex-wrap: wrap;
+  padding: 2rem 2.25rem;
+  border-radius: 1.5rem;
+  background: var(--hp-white);
+  border: 1px solid var(--hp-line);
+}
+.hp-portal__inner h2 { margin: 0.35rem 0 0.5rem; }
+.hp-portal__inner > div:first-child p { margin: 0; max-width: 46ch; color: var(--hp-muted); }
+.hp-portal__actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+/* Guide topic chips */
+.hp-topics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+.hp-topic {
+  padding: 0.65rem 1.1rem;
+  border-radius: 999px;
+  border: 1px solid var(--hp-line);
+  background: var(--hp-white);
+  color: var(--hp-ink);
+  font-size: 0.88rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: border-color 140ms ease, background 140ms ease, color 140ms ease;
+}
+.hp-topic:hover {
+  border-color: rgba(90, 107, 74, 0.4);
+  background: var(--hp-sage-deep);
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .hp-portal__inner { flex-direction: column; align-items: flex-start; }
+  .hp-portal__actions { width: 100%; }
+  .hp-portal__actions .btn { flex: 1; justify-content: center; }
 }
