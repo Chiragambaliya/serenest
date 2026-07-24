@@ -36,6 +36,23 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Consistent, visible keyboard focus ring across the site (brand color
+   instead of each browser's default blue), without adding a ring on
+   mouse/touch interaction. */
+:focus-visible {
+  outline: 2px solid var(--teal-500);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
   margin: 0;
   font-family: 'Bricolage Grotesque', ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
