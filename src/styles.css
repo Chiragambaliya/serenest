@@ -512,6 +512,16 @@ h6 {
   letter-spacing: 0.05em;
   text-transform: uppercase;
   color: var(--subtle);
+  max-width: 34ch;
+}
+.image-placeholder__direction {
+  display: block;
+  margin-top: 0.35rem;
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  line-height: 1.45;
+  color: var(--subtle);
 }
 
 /* ── Thin-rule list — an editorial alternative to bordered card grids ── */

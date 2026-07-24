@@ -4,6 +4,7 @@ import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import FaqAccordion from '../components/FaqAccordion';
 import EmergencyNotice from '../components/EmergencyNotice';
+import ImagePlaceholder from '../components/ImagePlaceholder';
 import '../styles/service-detail.css';
 
 const SPECIALTIES = [
@@ -17,31 +18,6 @@ const SERVICES_FAQ = [
   { question: 'Which service is right for me?', answer: 'If you\'re unsure, start with self-screening or book a psychiatry consultation — your clinician can help direct you to therapy, addiction support, or a combination, based on what you actually need.' },
   { question: 'Can I switch between services?', answer: 'Yes. Many people use more than one — for example, psychiatry for medication management alongside ongoing therapy. Your clinicians can coordinate care between them.' },
   { question: 'Do all consultations happen online?', answer: 'Most care on Serenest happens over secure video, audio, or chat. Some situations need in-person assessment — your clinician will tell you clearly if that applies to you.' },
-];
-
-const HERO_NAV = [
-  { label: 'Clinical care', href: '#core-services' },
-  { label: 'Serenest Academy', href: '#academy' },
-  { label: 'Organisations', href: '#organisations' },
-  { label: 'Guides', href: '/guides', route: true },
-];
-
-const PILLARS = [
-  {
-    title: 'Clinical care',
-    body: 'Consultations, screening, prescriptions, and records with verified clinicians.',
-    href: '#core-services',
-  },
-  {
-    title: 'Serenest Academy',
-    body: 'Guides, learning tracks, and literacy partnerships on the same site.',
-    href: '#academy',
-  },
-  {
-    title: 'Organisations',
-    body: 'Workplace, school, and campus mental health programmes.',
-    href: '#organisations',
-  },
 ];
 
 const CORE_SERVICES = [
@@ -258,61 +234,46 @@ export default function ServicesPage() {
 
   return (
     <div className="services-page">
-      <section className="svc-hero">
-        <div className="container svc-hero__inner">
-          <p className="svc-eyebrow">Serenest · Pan-India</p>
-          <h1 className="svc-hero__title">Clinical care, Academy learning, and organisation programmes — together.</h1>
-          <p className="svc-hero__lead">
-            Telepsychiatry, screening, prescriptions, and records on Serenest. Guides, clinician learning,
-            and partnerships through Serenest Academy. One platform, one team.
-          </p>
-          <div className="svc-hero__actions">
-            <Link className="btn btn-primary btn-lg" to="/book">Book an appointment</Link>
-            <Link className="btn btn-ghost btn-lg" to="/screening">Self-screening</Link>
+      <section className="svd-hero">
+        <div className="container svd-split">
+          <div>
+            <p className="svd-eyebrow">Serenest · Pan-India</p>
+            <h1>Find the care that fits what you&apos;re going through.</h1>
+            <p className="svd-hero__lead">
+              Four kinds of clinical support, one team. If you&apos;re not sure where to start,
+              begin with a short self-screening or book a consultation and let your clinician
+              help direct you.
+            </p>
+            <div className="svd-hero__actions">
+              <Link className="btn btn-primary btn-lg" to="/book">Book an Appointment</Link>
+              <Link className="btn btn-ghost btn-lg" to="/screening">Start with screening</Link>
+            </div>
           </div>
-          <nav className="svc-hero__nav" aria-label="On this page">
-            {HERO_NAV.map((item) =>
-              item.route ? (
-                <Link key={item.label} to={item.href}>{item.label}</Link>
-              ) : (
-                <a key={item.label} href={item.href}>{item.label}</a>
-              ),
-            )}
-          </nav>
+          <div className="svd-split__media">
+            <ImagePlaceholder
+              asset="services-hero-clinic-daylight.jpg"
+              direction="A calm, uncluttered consulting space in natural daylight — a chair, a side table, a window. No people, no stock-clinic sterility."
+            />
+          </div>
         </div>
       </section>
 
+      {/* The four specialties lead the page — each links to its own page. */}
       <section className="svd-section" id="specialties" aria-label="Service comparison">
         <div className="container">
+          <p className="svd-sidelabel">Choose a starting point</p>
           <h2>Which service is right for you?</h2>
-          <p className="svd-section-lead">
-            Not sure where to start? Here's what each service actually covers — you can also
-            book a consultation and let your clinician help direct you.
-          </p>
-          <ul className="svd-list">
+          <ul className="svd-list svd-list--split">
             {SPECIALTIES.map((item) => (
               <li key={item.title}>
                 <strong>{item.title}</strong>
-                <span>{item.body}</span>
-                <div style={{ marginTop: '0.75rem' }}>
+                <span>
+                  {item.body}{' '}
                   <Link className="hp-text-link" to={item.href}>Learn more</Link>
-                </div>
+                </span>
               </li>
             ))}
           </ul>
-        </div>
-      </section>
-
-      <section className="svc-pillars" aria-label="Service areas">
-        <div className="container">
-          <div className="svc-pillars__grid">
-            {PILLARS.map((item) => (
-              <a key={item.title} className="svc-pillar" href={item.href}>
-                <h2 className="svc-pillar__title">{item.title}</h2>
-                <p className="svc-pillar__body">{item.body}</p>
-              </a>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -445,22 +406,27 @@ export default function ServicesPage() {
               </div>
             ))}
           </div>
-          <p className="svc-emergency">
-            Not for emergencies. If someone is at immediate risk, call{' '}
-            <a href="tel:7777936367">7777936367</a> or local emergency services.
-          </p>
+          <div style={{ marginTop: '2rem' }}>
+            <EmergencyNotice />
+          </div>
         </div>
       </section>
 
-      <section className="svc-cta">
-        <div className="container svc-cta__inner">
-          <div>
-            <h2>Ready when you are</h2>
-            <p>Book a consultation or reach us at support@serenest.in</p>
-          </div>
-          <div className="svc-cta__actions">
-            <Link className="btn btn-primary btn-lg" to="/book">Book now</Link>
-            <Link className="btn btn-ghost btn-lg" to="/academy">Serenest Academy</Link>
+      <section className="svd-section">
+        <div className="container">
+          <p className="svd-sidelabel">Questions</p>
+          <h2>Common questions about choosing a service</h2>
+          <FaqAccordion items={SERVICES_FAQ} />
+        </div>
+      </section>
+
+      <section className="svd-cta">
+        <div className="container">
+          <h2>Ready when you are</h2>
+          <p>Book a consultation, or reach us at support@serenest.in if you&apos;d rather ask first.</p>
+          <div className="svd-cta__actions">
+            <Link className="btn btn-primary btn-lg" to="/book">Book an Appointment</Link>
+            <Link className="btn btn-ghost btn-lg" to="/contact">Contact us</Link>
           </div>
         </div>
       </section>

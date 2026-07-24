@@ -5,10 +5,13 @@ import React from 'react';
  * plain — a flat neutral fill and a small caption naming the exact asset
  * needed — not decorative filler art pretending to be a finished image.
  */
-export default function ImagePlaceholder({ asset, className = '' }) {
+export default function ImagePlaceholder({ asset, direction, className = '' }) {
   return (
     <div className={`image-placeholder ${className}`}>
-      <span className="image-placeholder__label">Image needed: {asset}</span>
+      <span className="image-placeholder__label">
+        Image needed: {asset}
+        {direction ? <span className="image-placeholder__direction">{direction}</span> : null}
+      </span>
     </div>
   );
 }

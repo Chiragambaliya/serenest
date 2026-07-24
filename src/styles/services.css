@@ -755,3 +755,127 @@
     align-items: stretch;
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   Editorial correction pass
+   Overrides the earlier card-grid treatment: thin rules instead of
+   bordered/shadowed boxes, left-aligned section heads instead of
+   centered ones. Kept as a trailing block so the original rules stay
+   readable in diff/history.
+   ══════════════════════════════════════════════════════════════════ */
+
+.services-page .svc-section__head {
+  max-width: 46rem;
+  margin: 0 0 2.25rem;
+  text-align: left;
+}
+
+/* Service cards → thin-rule entries */
+.services-page .svc-card {
+  padding: 1.5rem 0;
+  border: none;
+  border-top: 1px solid var(--s-line);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.services-page .svc-card:hover { border-color: var(--s-line); }
+.services-page .svc-card__badge,
+.services-page .svc-card__tag {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--s-sage-mid);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+}
+
+/* Programme cards (Academy + Organisations) → thin-rule entries */
+.services-page .svc-programme {
+  padding: 1.5rem 0;
+  border: none;
+  border-top: 1px solid var(--s-line);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.services-page .svc-programme__tag {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--s-sage-mid);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+}
+
+/* Steps → numbered list on a single rule, no boxes */
+.services-page .svc-step {
+  padding: 1.25rem 0;
+  border: none;
+  border-top: 1px solid var(--s-line);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.services-page .svc-step__num {
+  background: none;
+  border: none;
+  color: var(--s-sage-mid);
+  font-family: var(--font-heading);
+  width: auto;
+  height: auto;
+}
+
+/* Audience items → thin-rule entries */
+.services-page .svc-audience__item {
+  padding: 1.25rem 0;
+  border: none;
+  border-top: 1px solid var(--s-line);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* Academy banner → drop the panel treatment */
+.services-page .svc-academy__banner {
+  border: none;
+  border-top: 1px solid var(--s-line);
+  border-bottom: 1px solid var(--s-line);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  padding: 2rem 0;
+}
+
+/* Conditions table → open rows rather than a bordered panel */
+.services-page .svc-conditions {
+  border: none;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.services-page .svc-conditions__head,
+.services-page .svc-conditions__row {
+  background: none;
+  border-bottom: 1px solid var(--s-line);
+}
+
+/* Band CTA → a quiet rule-bounded row */
+.services-page .svc-band-cta {
+  border: none;
+  border-top: 1px solid var(--s-line);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* Section heads: the block is left-aligned above, but the inner h2/p
+   still carried `margin: 0 auto`, which re-centered them. */
+.services-page .svc-section__head h2,
+.services-page .svc-section__head p {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Hero: the old centered treatment competed with the new split hero. */
+.services-page .svc-hero__inner { text-align: left; margin-left: 0; }

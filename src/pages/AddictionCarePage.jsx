@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import FaqAccordion from '../components/FaqAccordion';
 import EmergencyNotice from '../components/EmergencyNotice';
+import ImagePlaceholder from '../components/ImagePlaceholder';
 import '../styles/service-detail.css';
 
 const JOURNEY = [
@@ -44,34 +45,67 @@ export default function AddictionCarePage() {
         </div>
       </section>
 
+      {/* The journey as an ordered sequence — this page's distinct spine. */}
       <section className="svd-section">
-        <div className="container">
-          <h2>What recovery support on Serenest covers</h2>
-          <ul className="svd-list">
-            {JOURNEY.map((item) => (
-              <li key={item.title}>
-                <strong>{item.title}</strong>
-                <span>{item.body}</span>
-              </li>
-            ))}
-          </ul>
+        <div className="container svd-split svd-split--aside">
+          <div>
+            <p className="svd-sidelabel">What's involved</p>
+            <p className="svd-section-lead" style={{ margin: 0 }}>
+              Recovery support is a sequence, not a single appointment.
+            </p>
+          </div>
+          <div>
+            <h2>What recovery support on Serenest covers</h2>
+            <ol className="svd-sequence">
+              {JOURNEY.map((item) => (
+                <li key={item.title}>
+                  <strong>{item.title}</strong>
+                  <span>{item.body}</span>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </section>
 
+      {/* Planning — statement-led, with a grounding image. */}
       <section className="svd-section svd-section--soft">
+        <div className="container svd-split svd-split--reverse">
+          <div>
+            <p className="svd-sidelabel">Longer term</p>
+            <h2>Rehabilitation and recovery planning</h2>
+            <p className="svd-section-lead">
+              Recovery isn't a single appointment. Where useful, your clinician will help build a
+              longer-term plan — counselling, relapse-prevention strategies, and coordination with
+              in-person rehabilitation services where that's the right level of care.
+            </p>
+          </div>
+          <div className="svd-split__media">
+            <ImagePlaceholder
+              asset="addiction-care-open-window.jpg"
+              direction="A quiet room with an open window and morning light — suggesting recovery and space. No people, nothing clinical or clichéd."
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* Safety guidance given its own full-width moment, not buried. */}
+      <section className="svd-section">
         <div className="container">
-          <h2>Rehabilitation and recovery planning</h2>
+          <p className="svd-sidelabel">Safety first</p>
+          <h2>When you need more than an online appointment</h2>
           <p className="svd-section-lead" style={{ marginBottom: '1.5rem' }}>
-            Recovery isn't a single appointment. Where useful, your clinician will help build a
-            longer-term plan — counselling, relapse-prevention strategies, and coordination with
-            in-person rehabilitation services where that's the right level of care.
+            Withdrawal from some substances carries real medical risk. Online support does not
+            replace medical detox, inpatient care, or emergency treatment when that's what's
+            clinically needed.
           </p>
           <EmergencyNotice />
         </div>
       </section>
 
-      <section className="svd-section">
+      <section className="svd-section svd-section--soft">
         <div className="container">
+          <p className="svd-sidelabel">Questions</p>
           <h2>Frequently asked questions</h2>
           <FaqAccordion items={FAQS} />
         </div>

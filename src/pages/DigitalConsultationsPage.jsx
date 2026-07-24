@@ -49,48 +49,62 @@ export default function DigitalConsultationsPage() {
         </div>
       </section>
 
+      {/* The defining idea of this page: two honest facing columns. */}
       <section className="svd-section">
         <div className="container">
-          <h2>What can be managed online</h2>
-          <ul className="svd-list">
-            {CAN_MANAGE.map((item) => (
-              <li key={item.title}>
-                <strong>{item.title}</strong>
-                <span>{item.body}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="svd-section svd-section--soft">
-        <div className="container">
-          <h2>What may require in-person assessment</h2>
-          <ul className="svd-list">
-            {NEEDS_IN_PERSON.map((item) => (
-              <li key={item.title}>
-                <strong>{item.title}</strong>
-                <span>{item.body}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="svd-section">
-        <div className="container">
-          <h2>Consent, confidentiality, and prescription limits</h2>
-          <p className="svd-section-lead" style={{ marginBottom: '1.5rem' }}>
-            You'll be asked to consent to teleconsultation before your first session. Prescriptions
-            follow India's telemedicine rules, which restrict some medications from being issued
-            without an in-person evaluation — your clinician will be upfront if that applies to you.
+          <p className="svd-sidelabel">Scope and limits</p>
+          <h2>What teleconsultation can and can't do</h2>
+          <p className="svd-section-lead">
+            Being upfront about the boundaries is part of practising responsibly — here's the
+            honest split.
           </p>
-          <EmergencyNotice />
+          <div className="svd-compare">
+            <div className="svd-compare__col">
+              <h3>Manageable online</h3>
+              <ul className="svd-list">
+                {CAN_MANAGE.map((item) => (
+                  <li key={item.title}>
+                    <strong>{item.title}</strong>
+                    <span>{item.body}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="svd-compare__col svd-compare__col--limits">
+              <h3>Needs in-person assessment</h3>
+              <ul className="svd-list">
+                {NEEDS_IN_PERSON.map((item) => (
+                  <li key={item.title}>
+                    <strong>{item.title}</strong>
+                    <span>{item.body}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="svd-section svd-section--soft">
+        <div className="container svd-split svd-split--aside">
+          <div>
+            <p className="svd-sidelabel">Consent &amp; compliance</p>
+          </div>
+          <div>
+            <h2>Consent, confidentiality, and prescription limits</h2>
+            <p className="svd-section-lead" style={{ marginBottom: '1.5rem' }}>
+              You'll be asked to consent to teleconsultation before your first session. Prescriptions
+              follow India's telemedicine rules, which restrict some medications from being issued
+              without an in-person evaluation — your clinician will be upfront if that applies to you.
+            </p>
+            <EmergencyNotice />
+          </div>
+        </div>
+      </section>
+
+      <section className="svd-section">
         <div className="container">
+          <p className="svd-sidelabel">Questions</p>
           <h2>Frequently asked questions</h2>
           <FaqAccordion items={FAQS} />
         </div>

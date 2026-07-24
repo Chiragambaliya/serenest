@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import FaqAccordion from '../components/FaqAccordion';
 import EmergencyNotice from '../components/EmergencyNotice';
+import ImagePlaceholder from '../components/ImagePlaceholder';
 import '../styles/service-detail.css';
 
 const ASSESSED = [
@@ -30,29 +31,40 @@ export default function PsychiatryPage() {
 
   return (
     <div className="svd-page">
+      {/* Hero — copy left, portrait image right. */}
       <section className="svd-hero">
-        <div className="container">
-          <p className="svd-eyebrow">Services · Psychiatry</p>
-          <h1>What psychiatric care on Serenest involves</h1>
-          <p className="svd-hero__lead">
-            Assessment, diagnosis, and medication planning from a licensed psychiatrist —
-            delivered over secure video, audio, or chat, with a clear plan for follow-up.
-          </p>
-          <div className="svd-hero__actions">
-            <Link className="btn btn-primary btn-lg" to="/book">Book an Appointment</Link>
-            <Link className="btn btn-ghost btn-lg" to="/screening">Start with screening</Link>
+        <div className="container svd-split">
+          <div>
+            <p className="svd-eyebrow">Services · Psychiatry</p>
+            <h1>What psychiatric care on Serenest involves</h1>
+            <p className="svd-hero__lead">
+              Assessment, diagnosis, and medication planning from a licensed psychiatrist —
+              delivered over secure video, audio, or chat, with a clear plan for follow-up.
+            </p>
+            <div className="svd-hero__actions">
+              <Link className="btn btn-primary btn-lg" to="/book">Book an Appointment</Link>
+              <Link className="btn btn-ghost btn-lg" to="/screening">Start with screening</Link>
+            </div>
+          </div>
+          <div className="svd-split__media">
+            <ImagePlaceholder
+              asset="psychiatry-consultation-desk.jpg"
+              direction="A psychiatrist's desk mid-consultation — notes, a laptop turned away from camera, daylight. No identifiable patient."
+            />
           </div>
         </div>
       </section>
 
+      {/* Conditions — a wide two-column reference list, no boxes. */}
       <section className="svd-section">
         <div className="container">
+          <p className="svd-sidelabel">Scope</p>
           <h2>Conditions commonly assessed</h2>
           <p className="svd-section-lead">
             This is not a diagnostic tool — it's a guide to when psychiatric assessment is often
             appropriate. Your psychiatrist will make the actual clinical assessment.
           </p>
-          <ul className="svd-list">
+          <ul className="svd-list svd-list--wide">
             {ASSESSED.map((item) => (
               <li key={item.title}>
                 <strong>{item.title}</strong>
@@ -63,43 +75,62 @@ export default function PsychiatryPage() {
         </div>
       </section>
 
+      {/* First consultation — margin label beside the body copy. */}
       <section className="svd-section svd-section--soft">
-        <div className="container">
-          <h2>What happens in the first consultation</h2>
-          <p className="svd-section-lead">
-            A structured intake, a discussion of your history and current symptoms, and — where
-            useful — standard screening tools like the PHQ-9 or GAD-7. You leave with a clear
-            next step, not just a conversation.
-          </p>
-          <h2 style={{ fontSize: '1.3rem', marginTop: '2.5rem' }}>Medication and non-medication planning</h2>
-          <p className="svd-section-lead" style={{ marginTop: 0 }}>
-            Some conditions respond well to medication, others to therapy, and many benefit from
-            both. Your psychiatrist will discuss the options relevant to your situation — Serenest
-            does not promise a specific treatment outcome in advance.
-          </p>
+        <div className="container svd-split svd-split--aside">
+          <div>
+            <p className="svd-sidelabel">Your first session</p>
+          </div>
+          <div>
+            <h2>What happens in the first consultation</h2>
+            <p className="svd-section-lead">
+              A structured intake, a discussion of your history and current symptoms, and — where
+              useful — standard screening tools like the PHQ-9 or GAD-7. You leave with a clear
+              next step, not just a conversation.
+            </p>
+            <p className="svd-statement">
+              Some conditions respond well to medication, others to therapy, and many benefit
+              from both.
+            </p>
+            <p className="svd-section-lead" style={{ marginTop: '1.5rem' }}>
+              Your psychiatrist will discuss the options relevant to your situation — Serenest
+              does not promise a specific treatment outcome in advance.
+            </p>
+          </div>
         </div>
       </section>
 
+      {/* Follow-up + boundaries — image left, copy right. */}
       <section className="svd-section">
-        <div className="container">
-          <h2>Follow-up care</h2>
-          <p className="svd-section-lead">
-            Psychiatric care is rarely a single session. Follow-ups let your psychiatrist track
-            how a treatment plan is working and adjust it — session notes and history stay
-            connected on Serenest so you don't have to repeat your story each time.
-          </p>
-          <h2 style={{ fontSize: '1.3rem', marginTop: '2.5rem' }}>Online consultation boundaries</h2>
-          <p className="svd-section-lead" style={{ marginTop: 0, marginBottom: '1.5rem' }}>
-            Telepsychiatry works well for assessment, therapy, and medication follow-up. It is not
-            a substitute for emergency or in-person care when that's what's clinically needed —
-            your psychiatrist will tell you if your situation requires it.
-          </p>
-          <EmergencyNotice />
+        <div className="container svd-split svd-split--reverse">
+          <div>
+            <p className="svd-sidelabel">Continuity</p>
+            <h2>Follow-up care</h2>
+            <p className="svd-section-lead">
+              Psychiatric care is rarely a single session. Follow-ups let your psychiatrist track
+              how a treatment plan is working and adjust it — session notes and history stay
+              connected on Serenest so you don't have to repeat your story each time.
+            </p>
+            <h3 style={{ marginTop: '2rem', marginBottom: '0.6rem' }}>Online consultation boundaries</h3>
+            <p className="svd-section-lead" style={{ margin: '0 0 1.5rem' }}>
+              Telepsychiatry works well for assessment, therapy, and medication follow-up. It is not
+              a substitute for emergency or in-person care when that's what's clinically needed —
+              your psychiatrist will tell you if your situation requires it.
+            </p>
+            <EmergencyNotice />
+          </div>
+          <div className="svd-split__media">
+            <ImagePlaceholder
+              asset="psychiatry-followup-notes.jpg"
+              direction="Handwritten clinical notes and a prescription pad on a warm wooden surface, shallow depth of field."
+            />
+          </div>
         </div>
       </section>
 
       <section className="svd-section svd-section--soft">
         <div className="container">
+          <p className="svd-sidelabel">Questions</p>
           <h2>Frequently asked questions</h2>
           <FaqAccordion items={FAQS} />
         </div>
