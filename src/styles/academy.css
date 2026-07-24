@@ -1232,33 +1232,28 @@ a.eda-hcard-item:hover {
 /* ── Simplified public hero (no auth topbar) ─────────────────── */
 .eda-hero--simple .eda-hero-body { padding-top: clamp(1.5rem, 4vw, 2.5rem); }
 
-/* ── Photography placeholders ─────────────────────────────────── */
+/* ── Illustrated stand-ins for photography that doesn't exist yet ──── */
 .eda-hero-photo,
 .eda-why-photo {
   position: relative;
   min-height: 280px;
   border-radius: var(--r-xl);
-  background:
-    repeating-linear-gradient(135deg, rgba(60,74,44,0.06) 0 14px, transparent 14px 28px),
-    var(--bg-2);
-  border: 1.5px dashed var(--border-strong, var(--border));
+  overflow: hidden;
+  border: 1px solid var(--border);
   display: flex;
   align-items: flex-end;
   padding: 1.25rem;
 }
-.eda-hero-photo__label {
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
-  color: var(--muted);
-  background: var(--surface);
-  padding: 0.4rem 0.7rem;
-  border-radius: 999px;
-  border: 1px solid var(--border);
+.eda-illustration {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 }
-.eda-why-photo { min-height: 340px; align-items: flex-start; }
+.eda-why-photo { min-height: 340px; align-items: flex-end; }
 .eda-quote {
+  position: relative;
+  z-index: 1;
   margin: auto 0 0;
   padding: 1.25rem 1.4rem;
   background: var(--surface);
@@ -1269,6 +1264,7 @@ a.eda-hcard-item:hover {
   font-style: normal;
   color: var(--ink);
   max-width: 26rem;
+  box-shadow: var(--shadow-md);
 }
 
 /* ── What We Teach ─────────────────────────────────────────────── */

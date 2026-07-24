@@ -4,10 +4,24 @@
 
 /* ── Fonts (self-hosted) ─────────────────────────────────────── */
 @font-face {
-  font-family: 'Gloock';
-  src: url('/fonts/Gloock-Regular.ttf') format('truetype');
-  font-weight: 400;
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Regular.ttf') format('truetype');
+  font-weight: 400 500;
   font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Bold.ttf') format('truetype');
+  font-weight: 600 800;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Lora';
+  src: url('/fonts/Lora-Italic.ttf') format('truetype');
+  font-weight: 400 800;
+  font-style: italic;
   font-display: swap;
 }
 @font-face {
@@ -158,14 +172,14 @@ button {
   --sp-7: 80px;
 
   /* Typography */
-  --font-heading: 'Gloock', Georgia, serif;
+  --font-heading: 'Lora', Georgia, serif;
   --font-body: 'Bricolage Grotesque', ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
 
   /* Horizontal page gutter — keeps brand and copy off screen edges */
   --page-gutter: clamp(1.25rem, 5vw, 2rem);
 }
 
-/* Heading scale — Gloock display serif, tight tracking, balanced wrapping */
+/* Heading scale — Lora display serif, tight tracking, balanced wrapping */
 h1, h2, h3, h4, h5, h6 {
   margin: 0;
   font-family: var(--font-heading);
@@ -175,23 +189,23 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
   font-size: clamp(2rem, 4.2vw, 2.75rem);
-  font-weight: 500;
-  letter-spacing: -0.032em;
-  line-height: 1.06;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
 }
 
 h2 {
   font-size: clamp(1.5rem, 2.9vw, 2rem);
-  font-weight: 500;
-  letter-spacing: -0.024em;
-  line-height: 1.14;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.18;
 }
 
 h3 {
   font-size: clamp(1.0625rem, 2vw, 1.1875rem);
-  font-weight: 500;
-  letter-spacing: -0.018em;
-  line-height: 1.22;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
 }
 
 h4 {
@@ -475,6 +489,7 @@ h6 {
 .brand-mark {
   flex-shrink: 0;
   display: block;
+  color: var(--teal-600);
 }
 
 .brand:hover {

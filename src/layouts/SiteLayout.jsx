@@ -6,6 +6,19 @@ import EdIcon from '../components/EdIcon';
 import EmailCapture from '../components/EmailCapture';
 import { useAuth } from '../lib/useAuth';
 
+/* Simple line-art leaf mark for the brand wordmark. */
+function LeafMark({ size = 24 }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" className="brand-mark">
+      <path
+        d="M5 19c-1-6 1.5-11.5 7-14 5.5-1.5 9 1 9 1s-1 6-6 9.5C10.5 18.5 5 19 5 19Z"
+        stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"
+      />
+      <path d="M5 19c3-4 6.5-7.5 11.5-12.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 /* ── Primary navigation (flat — matches the locked nav structure) ── */
 const NAV_LINKS = [
   { to: '/services', label: 'Services' },
@@ -106,7 +119,7 @@ export default function SiteLayout() {
             className="brand"
             aria-label="Serenest — Home"
           >
-            <img src="/favicon.svg" alt="" width="24" height="24" className="brand-mark" />
+            <LeafMark size={24} />
             <span className="brand-wordmark">
               <span className="brand-text">Serenest</span>
               <span className="brand-tagline">Mental health</span>
@@ -284,7 +297,7 @@ export default function SiteLayout() {
           <div className="ed-footer__grid">
             <div className="ed-footer__brand">
               <Link to="/" className="ed-footer__logo">
-                <img src="/favicon.svg" alt="" width="28" height="28" />
+                <LeafMark size={26} />
                 <span>Serenest</span>
               </Link>
               <p>
