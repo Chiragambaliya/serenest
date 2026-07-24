@@ -9,12 +9,9 @@ import { useAuth } from '../lib/useAuth';
 import EmailCapture from '../components/EmailCapture';
 import SharePanel from '../components/SharePanel';
 import InstagramFeed from '../components/InstagramFeed';
+import ImagePlaceholder from '../components/ImagePlaceholder';
 
 const IMG = {
-  hero: {
-    webp: '/images/serenest-hero-editorial.webp',
-    jpg: '/images/serenest-hero-editorial.jpg',
-  },
   academy: {
     webp: '/images/editorial/serenest-academy-books.webp',
     jpg: '/images/editorial/serenest-academy-books.jpg',
@@ -165,17 +162,7 @@ export default function HomePage() {
 
           <div className="hp-hero__visual">
             <div className="hp-hero__frame">
-              <picture>
-                <source srcSet={IMG.hero.webp} type="image/webp" />
-                <img
-                  src={IMG.hero.jpg}
-                  alt="A quiet illustrated scene of someone reading by a window, a plant and a cup of tea nearby"
-                  width={960}
-                  height={1080}
-                  fetchpriority="high"
-                  decoding="async"
-                />
-              </picture>
+              <ImagePlaceholder asset="home-hero-patient-consultation.jpg" />
             </div>
           </div>
         </div>
@@ -184,18 +171,22 @@ export default function HomePage() {
       {/* ── Our Services ─────────────────────────────────────────── */}
       <section className="hp-section" aria-labelledby="home-services-title">
         <div className="hp-shell">
-          <header className="hp-section__head">
-            <p className="hp-eyebrow">Our Services</p>
-            <h2 id="home-services-title">Four kinds of support, one clinical team.</h2>
-          </header>
-          <div className="hp-ecosystem">
-            {OUR_SERVICES.map((item) => (
-              <Link key={item.title} className="hp-ecosystem__card" to={item.href}>
-                <span className="hp-services__icon" aria-hidden="true"><EdIcon name={item.icon} size={22} /></span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </Link>
-            ))}
+          <div className="rule-list-block rule-list-block--narrow">
+            <header className="hp-section__head hp-section__head--left">
+              <p className="hp-eyebrow">Our Services</p>
+              <h2 id="home-services-title">Four kinds of support, one clinical team.</h2>
+            </header>
+            <div className="rule-list">
+              {OUR_SERVICES.map((item) => (
+                <Link key={item.title} to={item.href} className="rule-list__item">
+                  <span className="rule-list__marker" aria-hidden="true"><EdIcon name={item.icon} size={20} /></span>
+                  <span>
+                    <strong>{item.title}</strong>
+                    <span className="rule-list__body">{item.body}</span>
+                  </span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -203,19 +194,21 @@ export default function HomePage() {
       {/* ── How Serenest Helps ──────────────────────────────────── */}
       <section className="hp-section hp-section--soft" aria-labelledby="home-how-title">
         <div className="hp-shell">
-          <header className="hp-section__head">
+          <header className="hp-section__head hp-section__head--left">
             <p className="hp-eyebrow">How Serenest Helps</p>
             <h2 id="home-how-title">A care journey, not a one-off appointment.</h2>
           </header>
-          <ol className="hp-steps">
+          <div className="rule-list">
             {HOW_WE_HELP.map((step, i) => (
-              <li key={step.title} className="hp-step">
-                <span className="hp-step__num">0{i + 1}</span>
-                <strong>{step.title}</strong>
-                <p>{step.body}</p>
-              </li>
+              <div key={step.title} className="rule-list__item">
+                <span className="rule-list__marker">0{i + 1}</span>
+                <span>
+                  <strong>{step.title}</strong>
+                  <span className="rule-list__body">{step.body}</span>
+                </span>
+              </div>
             ))}
-          </ol>
+          </div>
         </div>
       </section>
 
