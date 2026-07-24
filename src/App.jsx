@@ -13,6 +13,11 @@ const HomePage = lazy(() => import('./pages/HomePage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
 const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const PsychiatryPage = lazy(() => import('./pages/PsychiatryPage'));
+const TherapyPage = lazy(() => import('./pages/TherapyPage'));
+const AddictionCarePage = lazy(() => import('./pages/AddictionCarePage'));
+const DigitalConsultationsPage = lazy(() => import('./pages/DigitalConsultationsPage'));
+const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ProfessionalsPage = lazy(() => import('./pages/ProfessionalsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const BookingPage = lazy(() => import('./pages/BookingPage'));
@@ -131,6 +136,11 @@ export default function App() {
           <Route path="about" element={<S><AboutPage /></S>} />
           <Route path="team" element={<S><TeamPage /></S>} />
           <Route path="services" element={<S><ServicesPage /></S>} />
+          <Route path="services/psychiatry" element={<S><PsychiatryPage /></S>} />
+          <Route path="services/therapy" element={<S><TherapyPage /></S>} />
+          <Route path="services/addiction-care" element={<S><AddictionCarePage /></S>} />
+          <Route path="services/digital-consultations" element={<S><DigitalConsultationsPage /></S>} />
+          <Route path="contact" element={<S><ContactPage /></S>} />
           <Route path="professionals" element={<S><ProfessionalsPage /></S>} />
           <Route path="professionals/learning" element={<S><ProfessionalLearningPage /></S>} />
           <Route path="professionals/resources" element={<S><ProfessionalResourcesPage /></S>} />

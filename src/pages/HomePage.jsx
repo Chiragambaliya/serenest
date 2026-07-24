@@ -28,10 +28,10 @@ const IMG = {
 // "Our Services" — links point at /services until dedicated
 // /services/psychiatry etc. pages exist.
 const OUR_SERVICES = [
-  { icon: 'stethoscope', title: 'Psychiatry', body: 'Assessment, diagnosis, and medication management from a licensed psychiatrist.', href: '/services' },
-  { icon: 'chat', title: 'Therapy and Counselling', body: 'Structured talk therapy for individuals, couples, and families.', href: '/services' },
-  { icon: 'pill', title: 'Addiction and Recovery', body: 'Assessment, counselling, and relapse-prevention support for substance use.', href: '/services' },
-  { icon: 'monitor', title: 'Digital Mental Health', body: 'Secure video, audio, and chat consultations, wherever you are in India.', href: '/services' },
+  { icon: 'stethoscope', title: 'Psychiatry', body: 'Assessment, diagnosis, and medication management from a licensed psychiatrist.', href: '/services/psychiatry' },
+  { icon: 'chat', title: 'Therapy and Counselling', body: 'Structured talk therapy for individuals, couples, and families.', href: '/services/therapy' },
+  { icon: 'pill', title: 'Addiction and Recovery', body: 'Assessment, counselling, and relapse-prevention support for substance use.', href: '/services/addiction-care' },
+  { icon: 'monitor', title: 'Digital Mental Health', body: 'Secure video, audio, and chat consultations, wherever you are in India.', href: '/services/digital-consultations' },
 ];
 
 // "How Serenest Helps" — the care journey.
@@ -45,10 +45,10 @@ const HOW_WE_HELP = [
 // "Why Serenest" — grounded claims only, no unverifiable numbers.
 const WHY_SERENEST = [
   { icon: 'stethoscope', title: 'Doctor-led clinical oversight', body: 'Founded and clinically overseen by a practising psychiatrist.' },
-  { icon: 'lock', title: 'Ethical and confidential care', body: 'Careful handling of your health information, at every step.' },
-  { icon: 'check', title: 'Clear professional boundaries', body: 'Consultations follow defined clinical and ethical limits.' },
+  { icon: 'shield', title: 'Ethical and confidential care', body: 'Careful handling of your health information, at every step.' },
+  { icon: 'target', title: 'Clear professional boundaries', body: 'Consultations follow defined clinical and ethical limits.' },
   { icon: 'monitor', title: 'A thoughtful digital experience', body: 'Built to feel calm and unhurried, not transactional.' },
-  { icon: 'follow', title: 'Coordinated psychiatry and therapy', body: 'Your psychiatrist and therapist can work from the same picture.' },
+  { icon: 'people', title: 'Coordinated psychiatry and therapy', body: 'Your psychiatrist and therapist can work from the same picture.' },
   { icon: 'heart', title: 'Responsible addiction care', body: 'Recovery support that accounts for medical and family context.' },
 ];
 
