@@ -98,6 +98,11 @@ function AcademyProgramRedirect() {
   return <Navigate to={`/academy/programs/${slug}`} replace />;
 }
 
+function ResourceRedirect() {
+  const { slug } = useParams();
+  return <Navigate to={`/blog/${slug}`} replace />;
+}
+
 function VisitTracker() {
   const location = useLocation();
   useEffect(() => {
@@ -164,6 +169,12 @@ export default function App() {
           <Route path="guides" element={<S><GuidesPage /></S>} />
           <Route path="blog" element={<S><BlogIndexPage /></S>} />
           <Route path="blog/:slug" element={<S><BlogPostPage /></S>} />
+          {/* /resources is the target IA's canonical name for this content;
+              /blog stays the underlying route so existing indexed links and
+              SEO metadata aren't disturbed. */}
+          <Route path="resources" element={<Navigate to="/blog" replace />} />
+          <Route path="resources/:slug" element={<ResourceRedirect />} />
+          <Route path="disclaimer" element={<Navigate to="/emergency-disclaimer" replace />} />
           <Route path="privacy" element={<S><PrivacyPolicyPage /></S>} />
           <Route path="terms" element={<S><TermsPage /></S>} />
           <Route path="patient/terms" element={<S><PatientTermsPage /></S>} />

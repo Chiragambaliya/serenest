@@ -12,7 +12,7 @@ const NAV_LINKS = [
   { to: '/professionals', label: 'For Professionals' },
   { to: '/academy', label: 'Academy' },
   { to: '/about', label: 'About' },
-  { to: '/guides', label: 'Resources' },
+  { to: '/resources', label: 'Resources' },
   { to: '/contact', label: 'Contact' },
 ];
 
