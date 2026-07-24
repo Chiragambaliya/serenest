@@ -1,7 +1,6 @@
 import React, { lazy, Suspense, useEffect } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
 import SiteLayout from './layouts/SiteLayout';
-import RequireAcademyAuth from './components/RequireAcademyAuth';
 import { trackVisit } from './lib/visitTracker';
 import { captureUtm } from './lib/utm';
 import CookieConsent from './components/CookieConsent';
@@ -47,6 +46,12 @@ const Gad7Page = lazy(() => import('./pages/Gad7Page'));
 const OnlinePrescriptionPage = lazy(() => import('./pages/OnlinePrescriptionPage'));
 const GuidesPage = lazy(() => import('./pages/GuidesPage'));
 const AcademyPage = lazy(() => import('./pages/AcademyPage'));
+const AcademyProgramsPage = lazy(() => import('./pages/AcademyProgramsPage'));
+const AcademyWorkshopsPage = lazy(() => import('./pages/AcademyWorkshopsPage'));
+const AcademyLearningPathsPage = lazy(() => import('./pages/AcademyLearningPathsPage'));
+const AcademyFacultyPage = lazy(() => import('./pages/AcademyFacultyPage'));
+const AcademyResourcesPage = lazy(() => import('./pages/AcademyResourcesPage'));
+const AcademyFaqsPage = lazy(() => import('./pages/AcademyFaqsPage'));
 const PatientAuthPage = lazy(() => import('./pages/PatientAuthPage'));
 const PatientDashboardPage = lazy(() => import('./pages/PatientDashboardPage'));
 const ProfessionalAuthPage = lazy(() => import('./pages/ProfessionalAuthPage'));
@@ -84,6 +89,13 @@ function PageFallback() {
 // Helper: wrap a lazy component so Suspense is scoped to the route, not the whole app
 function S({ children }) {
   return <Suspense fallback={<PageFallback />}>{children}</Suspense>;
+}
+
+// Old singular /academy/program/:slug path — keeps existing links/bookmarks
+// working after the route moved to /academy/programs/:slug.
+function AcademyProgramRedirect() {
+  const { slug } = useParams();
+  return <Navigate to={`/academy/programs/${slug}`} replace />;
 }
 
 function VisitTracker() {
@@ -189,12 +201,22 @@ export default function App() {
           <Route path="gad-7-anxiety-screening" element={<S><Gad7Page /></S>} />
           <Route path="online-psychiatrist-prescription-india" element={<S><OnlinePrescriptionPage /></S>} />
 
-          {/* Serenest Academy — literacy/learning surface, merged in from the
-              former standalone education-site. /academy/learn redirects to the
-              clinician learning hub so old Academy deep-links keep working. */}
-          <Route path="academy" element={<S><RequireAcademyAuth><AcademyPage /></RequireAcademyAuth></S>} />
+          {/* Serenest Academy — public marketing/catalog surface. The
+              programs list and program detail pages are browsable without
+              signing in (matches the locked design); only the actual
+              enrolment action requires an account. /academy/learn redirects
+              to the clinician learning hub so old Academy deep-links keep
+              working. */}
+          <Route path="academy" element={<S><AcademyPage /></S>} />
           <Route path="academy/login" element={<S><AcademyAuthPage /></S>} />
-          <Route path="academy/program/:slug" element={<S><RequireAcademyAuth><AcademyProgramPage /></RequireAcademyAuth></S>} />
+          <Route path="academy/programs" element={<S><AcademyProgramsPage /></S>} />
+          <Route path="academy/programs/:slug" element={<S><AcademyProgramPage /></S>} />
+          <Route path="academy/program/:slug" element={<AcademyProgramRedirect />} />
+          <Route path="academy/workshops" element={<S><AcademyWorkshopsPage /></S>} />
+          <Route path="academy/learning-paths" element={<S><AcademyLearningPathsPage /></S>} />
+          <Route path="academy/faculty" element={<S><AcademyFacultyPage /></S>} />
+          <Route path="academy/resources" element={<S><AcademyResourcesPage /></S>} />
+          <Route path="academy/faqs" element={<S><AcademyFaqsPage /></S>} />
           <Route
             path="academy/learn"
             element={<Navigate to="/professionals/learning" replace />}

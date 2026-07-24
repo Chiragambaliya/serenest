@@ -1,6 +1,6 @@
 /**
  * Serenest Academy programs. Each renders a dedicated page at
- * /academy/program/:slug via AcademyProgramPage, and a rich card on the
+ * /academy/programs/:slug via AcademyProgramPage, and a rich card on the
  * Academy landing page.
  */
 
