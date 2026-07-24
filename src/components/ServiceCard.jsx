@@ -5,7 +5,7 @@ import EdIcon from './EdIcon';
 /** Service entry card linking to a future/current service page. */
 export default function ServiceCard({ title, body, to, icon }) {
   return (
-    <Link to={to} className="ed-service">
+    <Link to={to} className="ed-service" aria-label={`${title} — Learn more`}>
       {icon && (
         <span className="ds-icon" aria-hidden="true">
           <EdIcon name={icon} size={20} />
@@ -13,7 +13,7 @@ export default function ServiceCard({ title, body, to, icon }) {
       )}
       <h3>{title}</h3>
       <p>{body}</p>
-      <span className="ed-service__more">Learn more</span>
+      <span className="ed-service__more" aria-hidden="true">Learn more</span>
     </Link>
   );
 }

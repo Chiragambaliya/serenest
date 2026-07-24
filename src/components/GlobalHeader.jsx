@@ -77,9 +77,10 @@ export default function GlobalHeader({ homeTo = '/preview', showTestBanner = tru
             aria-label={menuOpen ? 'Close menu' : 'Open menu'}
             aria-expanded={menuOpen}
             aria-controls="editorial-mobile-nav"
+            aria-haspopup="dialog"
             onClick={() => setMenuOpen((v) => !v)}
           >
-            <span />
+            <span aria-hidden="true" />
           </button>
         </div>
       </header>
