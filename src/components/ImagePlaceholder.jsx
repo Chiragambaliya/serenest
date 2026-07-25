@@ -5,7 +5,32 @@ import React from 'react';
  * plain — a flat neutral fill and a small caption naming the exact asset
  * needed — not decorative filler art pretending to be a finished image.
  */
-export default function ImagePlaceholder({ asset, direction, className = '' }) {
+export default function ImagePlaceholder({
+  asset,
+  direction,
+  className = '',
+  src,
+  alt = '',
+  loading = 'lazy',
+  objectPosition = 'center',
+  width = 1536,
+  height = 1024,
+}) {
+  if (src) {
+    return (
+      <img
+        className={`editorial-image ${className}`}
+        src={src}
+        alt={alt}
+        loading={loading}
+        decoding="async"
+        width={width}
+        height={height}
+        style={{ objectPosition }}
+      />
+    );
+  }
+
   return (
     <div className={`image-placeholder ${className}`}>
       <span className="image-placeholder__label">

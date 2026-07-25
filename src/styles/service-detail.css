@@ -182,6 +182,12 @@
 }
 .svd-split__media { position: relative; min-height: 300px; }
 .svd-split__media .image-placeholder { position: absolute; inset: 0; }
+.svd-split__media .editorial-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
 @media (max-width: 899px) {
   .svd-split__media { min-height: 240px; }
   .svd-split--reverse > :first-child,
@@ -469,6 +475,13 @@
   border-block: 1px solid var(--border);
 }
 .svd-hero-band .image-placeholder { position: absolute; inset: 0; border: none; }
+.svd-hero-band .editorial-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
 
 /* C. Tension opener — headline left, the page's core tension stated
    immediately as two short facing lines (Digital Consultations). */

@@ -1040,6 +1040,11 @@
   min-height: min(520px, 58vw);
   border: 1px solid var(--border);
 }
+.home .hp-hero__visual > .editorial-image {
+  height: min(520px, 58vw);
+  min-height: 300px;
+  object-fit: cover;
+}
 .home .hp-hero__visual figcaption {
   margin-top: 0.65rem;
   color: var(--subtle);

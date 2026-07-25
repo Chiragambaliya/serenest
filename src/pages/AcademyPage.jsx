@@ -110,7 +110,12 @@ export default function AcademyPage() {
           </div>
           <figure className="ed-figure" style={{ margin: 0 }}>
             <div className="ed-figure__media">
-              <ImagePlaceholder asset="academy-hero-desk-books.jpg" />
+              <ImagePlaceholder
+                asset="academy-hero-desk-books.jpg"
+                src="/images/editorial/academy-study-desk-v1.jpg"
+                alt="A study desk with books, notes, reading glasses, and a fountain pen"
+                loading="eager"
+              />
             </div>
             <figcaption className="ed-mono">Desk still life · study materials, no people</figcaption>
           </figure>

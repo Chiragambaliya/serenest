@@ -49,6 +49,11 @@ export default function AddictionCarePage() {
         <ImagePlaceholder
           asset="addiction-care-wide-path.jpg"
           direction="Wide landscape crop — an early-morning path or open doorway. Hopeful but restrained, no people, nothing that reads as stock recovery imagery."
+          src="/images/editorial/addiction-recovery-path-v1.jpg"
+          alt="A quiet stone path leading through an open doorway in early-morning light"
+          loading="eager"
+          width={1991}
+          height={790}
         />
       </div>
 
@@ -92,6 +97,8 @@ export default function AddictionCarePage() {
             <ImagePlaceholder
               asset="addiction-care-open-window.jpg"
               direction="A quiet room with an open window and morning light — suggesting recovery and space. No people, nothing clinical or clichéd."
+              src="/images/editorial/addiction-open-window-v1.jpg"
+              alt="Morning light entering a quiet room through an open wooden window"
             />
           </div>
         </div>

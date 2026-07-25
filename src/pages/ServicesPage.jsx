@@ -183,6 +183,9 @@ export default function ServicesPage() {
             <ImagePlaceholder
               asset="services-hero-clinic-daylight.jpg"
               direction="A calm, uncluttered consulting space in natural daylight — a chair, a side table, a window. No people, no stock-clinic sterility."
+              src="/images/editorial/services-consultation-space-v1.jpg"
+              alt="A calm consultation office with two guest chairs in natural daylight"
+              loading="eager"
             />
           </div>
         </div>

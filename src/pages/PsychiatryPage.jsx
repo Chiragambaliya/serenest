@@ -50,6 +50,9 @@ export default function PsychiatryPage() {
             <ImagePlaceholder
               asset="psychiatry-consultation-desk.jpg"
               direction="A psychiatrist's desk mid-consultation — notes, a laptop turned away from camera, daylight. No identifiable patient."
+              src="/images/editorial/psychiatry-consultation-desk-v1.jpg"
+              alt="A psychiatrist's desk prepared for a consultation with two guest chairs"
+              loading="eager"
             />
           </div>
         </div>
@@ -127,6 +130,8 @@ export default function PsychiatryPage() {
             <ImagePlaceholder
               asset="psychiatry-followup-notes.jpg"
               direction="Handwritten clinical notes and a prescription pad on a warm wooden surface, shallow depth of field."
+              src="/images/editorial/psychiatry-followup-notes-v1.jpg"
+              alt="Clinical follow-up notes, a blank prescription pad, pen, and reading glasses"
             />
           </div>
         </div>

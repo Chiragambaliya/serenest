@@ -93,6 +93,9 @@ export default function TherapyPage() {
             <ImagePlaceholder
               asset="therapy-two-chairs.jpg"
               direction="Two empty armchairs angled toward each other in a calm, softly lit room. No people, no clinical equipment."
+              src="/images/editorial/therapy-conversation-room-v1.jpg"
+              alt="Two empty armchairs arranged for a private therapy conversation"
+              loading="eager"
             />
           </div>
         </div>

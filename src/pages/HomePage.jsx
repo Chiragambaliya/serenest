@@ -177,6 +177,9 @@ export default function HomePage() {
             <ImagePlaceholder
               asset="home-hero-patient-consultation.jpg"
               direction="Quiet consulting room in warm daylight — empty chairs, a side table, a window. No people."
+              src="/images/editorial/home-consultation-room-v1.jpg"
+              alt="A quiet consultation room with two chairs and a notebook in warm daylight"
+              loading="eager"
             />
             <figcaption className="ed-mono">Consulting room · Rajkot practice context</figcaption>
           </figure>

@@ -568,6 +568,16 @@ h6 {
   color: var(--subtle);
 }
 
+.editorial-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  min-height: 220px;
+  border: 1px solid var(--border);
+  object-fit: cover;
+  background: var(--bg-2);
+}
+
 /* ── Thin-rule list — an editorial alternative to bordered card grids ── */
 .rule-list-block--narrow { max-width: 42rem; }
 
