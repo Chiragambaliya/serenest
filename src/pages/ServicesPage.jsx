@@ -167,7 +167,6 @@ export default function ServicesPage() {
       <section className="svd-hero">
         <div className="container svd-split">
           <div>
-            <p className="svd-eyebrow">Serenest · Pan-India</p>
             <h1>Find the care that fits what you&apos;re going through.</h1>
             <p className="svd-hero__lead">
               Four kinds of clinical support, one team. If you&apos;re not sure where to start,
