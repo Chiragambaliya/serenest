@@ -1,3 +1,8 @@
+/* Hero must not repeat the masthead wordmark. */
+.hp-hero .hp-brand-mark__name {
+  display: none !important;
+}
+
 /* Editorial masthead — brand-first, journal-like, not a SaaS nav strip. */
 
 .masthead {
