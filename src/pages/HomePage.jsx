@@ -148,7 +148,6 @@ export default function HomePage() {
         <div className="ed-shell ed-facing">
           <div className="hp-hero__copy">
             <p className="hp-brand-mark">
-              <span className="hp-brand-mark__name">Serenest</span>
               <span className="hp-brand-mark__meta ed-mono">Mental health · Clinical practice · Academy</span>
             </p>
             <h1 id="home-hero-title" className="hp-hero__title">
