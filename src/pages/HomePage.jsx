@@ -9,6 +9,7 @@ import EmailCapture from '../components/EmailCapture';
 import SharePanel from '../components/SharePanel';
 import InstagramFeed from '../components/InstagramFeed';
 import ImagePlaceholder from '../components/ImagePlaceholder';
+import '../styles/home-composition.css';
 
 const OUR_SERVICES = [
   {
@@ -143,82 +144,111 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Hero — brand-first, one composition, full-bleed media plane */}
-      <section className="hp-hero" aria-labelledby="home-hero-title">
-        <div className="ed-shell ed-facing">
-          <div className="hp-hero__copy">
-            <p className="hp-brand-mark">
-              <span className="hp-brand-mark__name">Serenest</span>
-              <span className="hp-brand-mark__meta ed-mono">Mental health · Clinical practice · Academy</span>
-            </p>
-            <h1 id="home-hero-title" className="hp-hero__title">
-              Care for the mind, grounded in clinical practice.
-            </h1>
-            <p className="hp-hero__body ed-measure">
+      {/* Opener. The headline carries the page at full display
+          scale — no facing image box competing with it, and the
+          supporting copy sits off the left axis so the block is
+          composed rather than stacked. */}
+      <section className="hpc-open" aria-labelledby="home-hero-title">
+        <div className="ed-shell">
+          <p className="hpc-open__meta">
+            <strong>Serenest</strong>
+            <span>Mental health</span>
+            <span>Clinical practice</span>
+            <span>Academy</span>
+          </p>
+          <h1 id="home-hero-title" className="hpc-open__title">
+            <span className="hpc-indent hpc-indent--1">Care for</span>
+            <span className="hpc-indent hpc-indent--2">the mind,</span>
+            <span className="hpc-indent hpc-indent--3"><em>grounded</em> in practice.</span>
+          </h1>
+          <div className="hpc-open__foot">
+            <p className="hpc-open__lede">
               Psychiatry, therapy, addiction support, and professional mental-health
               education — brought together with clinical responsibility and human
               understanding.
             </p>
-            <div className="hp-hero__actions">
-              <Link className="btn btn-primary btn-lg" to="/services">
-                Find the right service
-              </Link>
-              <Link className="btn btn-ghost btn-lg" to="/book">
-                Book an appointment
-              </Link>
+            <div>
+              <div className="hpc-open__actions">
+                <Link className="btn btn-primary btn-lg" to="/services">
+                  Find the right service
+                </Link>
+                <Link className="btn btn-ghost btn-lg" to="/book">
+                  Book an appointment
+                </Link>
+              </div>
+              <p className="hpc-open__note" style={{ marginTop: '1.25rem' }}>
+                Not for emergencies. If you or someone else is at immediate risk, contact
+                local emergency services or a crisis helpline.
+              </p>
             </div>
-            <p className="hp-hero__note">
-              Not for emergencies. If you or someone else is at immediate risk, contact local
-              emergency services or a crisis helpline.
-            </p>
           </div>
-
-          <figure className="hp-hero__visual">
-            <ImagePlaceholder
-              asset="home-hero-patient-consultation.jpg"
-              direction="Quiet consulting room in warm daylight — empty chairs, a side table, a window. No people."
-            />
-            <figcaption className="ed-mono">Consulting room · Rajkot practice context</figcaption>
-          </figure>
         </div>
       </section>
 
-      {/* Services — numbered editorial index, not icon rows */}
-      <section className="ed-pace" aria-labelledby="home-services-title">
+      {/* Ledger mode — numerals hang in the gutter, arrows appear
+          only on interaction. The section label sits out in the
+          margin rather than stacked above the heading. */}
+      <section className="hpc-pace" aria-labelledby="home-services-title">
         <div className="ed-shell">
-          <header className="ed-head">
-            <span className="ed-head__label">Care</span>
-            <h2 id="home-services-title">Four kinds of support, one clinical team.</h2>
-            <p>Choose a starting point. Your clinician can help redirect if another service fits better.</p>
+          <header className="hpc-head">
+            <span className="hpc-head__label">Care</span>
+            <h2 id="home-services-title" className="hpc-head__title">
+              Four kinds of support, one clinical team.
+            </h2>
+            <p className="hpc-head__sub">
+              Choose a starting point. Your clinician can help redirect if another service
+              fits better.
+            </p>
           </header>
-          <div className="ed-index">
+          <div className="hpc-ledger">
             {OUR_SERVICES.map((item, i) => (
-              <Link key={item.title} to={item.href} className="ed-index__row">
-                <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+              <Link key={item.title} to={item.href} className="hpc-ledger__row">
+                <span className="hpc-ledger__num">{String(i + 1).padStart(2, '0')}</span>
                 <span>
-                  <h3 className="ed-index__title">{item.title}</h3>
-                  <span className="ed-index__meta">{item.meta}</span>
+                  <h3 className="hpc-ledger__title">{item.title}</h3>
+                  <span className="hpc-ledger__meta">{item.meta}</span>
                 </span>
-                <p className="ed-index__body">{item.body}</p>
-                <span className="ed-index__go">View →</span>
+                <p className="hpc-ledger__body">{item.body}</p>
+                <span className="hpc-ledger__go">View →</span>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Journey — timeline on a soft band */}
-      <section className="ed-pace ed-band-soft" aria-labelledby="home-how-title">
-        <div className="ed-shell ed-facing">
-          <header className="ed-head">
-            <span className="ed-head__label">How care begins</span>
-            <h2 id="home-how-title">A care journey, not a one-off appointment.</h2>
-            <p>From first contact to ongoing follow-up — the same clinical thread.</p>
+      {/* Declaration — breaks the vertical rhythm. No kicker, no
+          grid, nothing to scan; it exists so the page stops
+          reading as a stack of equal bands. */}
+      <section className="hpc-declare hpc-bleed" aria-label="Clinical position">
+        <div className="ed-shell">
+          <p className="hpc-declare__text">
+            Clinical standards first. <em>Interface second.</em>
+          </p>
+          <p className="hpc-declare__foot">
+            <span>Founded and overseen by a practising psychiatrist</span>
+            <Link to="/about">About Serenest →</Link>
+          </p>
+        </div>
+      </section>
+
+      {/* Stepped sequence — horizontal and staggered, so it uses
+          the page width and changes density rather than being a
+          fourth stacked list. */}
+      <section className="hpc-pace ed-band-soft" aria-labelledby="home-how-title">
+        <div className="ed-shell">
+          <header className="hpc-head">
+            <span className="hpc-head__label">How care begins</span>
+            <h2 id="home-how-title" className="hpc-head__title">
+              A care journey, not a one-off appointment.
+            </h2>
+            <p className="hpc-head__sub">
+              From first contact to ongoing follow-up — the same clinical thread.
+            </p>
           </header>
-          <ol className="ed-timeline">
+          <ol className="hpc-steps">
             {HOW_WE_HELP.map((step) => (
               <li key={step.title}>
-                <span className="ed-timeline__stage">{step.stage}</span>
+                <span className="hpc-steps__n">{step.stage}</span>
                 <h3>{step.title}</h3>
                 <p>{step.body}</p>
               </li>
@@ -234,7 +264,7 @@ export default function HomePage() {
             <p className="ed-aside__label">Why Serenest</p>
             <div>
               <h2 id="home-why-title" className="ed-measure" style={{ marginBottom: '1.5rem' }}>
-                Clinical standards first. Interface second.
+                What that commitment looks like in practice.
               </h2>
               <table className="ed-table">
                 <caption className="ed-mono" style={{ textTransform: 'none', letterSpacing: 0, fontWeight: 400 }}>

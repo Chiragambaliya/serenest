@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, HashRouter } from 'react-router-dom';
 import App from './App';
 import './styles.css';
 import './styles/editorial.css';
@@ -20,6 +20,14 @@ import './styles/editorial-corrections.css';
 
 // Must match Vite `base` so routes and assets resolve when deployed under a subpath.
 const basename = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '') || undefined;
+
+/* The shareable single-file review build is served from an unknown
+   path on the artifact host, so path-based routing can never match.
+   That build alone sets VITE_PREVIEW_HASH_ROUTER and routes on the
+   hash instead. Unset everywhere else, so production is untouched. */
+const isHashPreview = import.meta.env.VITE_PREVIEW_HASH_ROUTER === '1';
+const Router = isHashPreview ? HashRouter : BrowserRouter;
+const routerProps = isHashPreview ? {} : { basename };
 
 class RootErrorBoundary extends React.Component {
   constructor(props) {
@@ -54,9 +62,9 @@ if (!rootEl) {
 ReactDOM.createRoot(rootEl).render(
   <React.StrictMode>
     <RootErrorBoundary>
-      <BrowserRouter basename={basename}>
+      <Router {...routerProps}>
         <App />
-      </BrowserRouter>
+      </Router>
     </RootErrorBoundary>
   </React.StrictMode>,
 );
