@@ -391,7 +391,7 @@ a.eda-hcard-item:hover {
 
 .eda-flagship-title {
   margin: 0 0 0.75rem;
-  font-family: var(--font-heading, Fraunces, Georgia, serif);
+  font-family: var(--font-heading, 'Instrument Serif', Georgia, serif);
   font-size: clamp(1.7rem, 3.5vw, 2.35rem);
   font-weight: 650;
   letter-spacing: -0.02em;

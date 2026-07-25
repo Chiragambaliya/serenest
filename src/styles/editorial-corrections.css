@@ -108,11 +108,20 @@
   border-bottom: 1px solid var(--border);
 }
 .about-page .abt-hero__inner,
+.about-page .abt-hero > .container,
 .pricing-page .pr-hero__inner,
-.team-page .tm-hero__inner {
+.pricing-page .pr-hero > .container,
+.team-page .tm-hero__inner,
+.team-page .tm-hero > .container {
   margin-inline: 0;
+  margin-right: auto;
   text-align: left;
   max-width: 46rem;
+}
+.about-page .abt-hero__actions,
+.pricing-page .pr-hero__actions,
+.team-page .tm-hero__actions {
+  justify-content: flex-start;
 }
 
 /* ── 6. Closing CTA bands: flat forest green, square corners ────── */

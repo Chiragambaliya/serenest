@@ -67,16 +67,16 @@
 /* ── Hero ───────────────────────────────────────────────────── */
 .about-page .abt-hero {
   padding: clamp(3.5rem, 9vw, 5rem) 0 clamp(2.5rem, 6vw, 3.25rem);
-  background:
-    radial-gradient(ellipse 80% 55% at 50% -15%, rgba(60, 74, 44, 0.08), transparent 62%),
-    linear-gradient(180deg, var(--a-cream) 0%, var(--a-cream-2) 100%);
+  background: var(--bg);
   border-bottom: 1px solid var(--a-line);
 }
 
-.about-page .abt-hero__inner {
-  max-width: 44rem;
-  margin-inline: auto;
-  text-align: center;
+.about-page .abt-hero__inner,
+.about-page .abt-hero > .container {
+  max-width: 46rem;
+  margin-inline: 0;
+  margin-right: auto;
+  text-align: left;
 }
 
 .about-page .abt-hero__title {
@@ -101,7 +101,7 @@
 .about-page .abt-hero__actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 0.625rem;
 }
 

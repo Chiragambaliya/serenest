@@ -260,43 +260,43 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Professionals + Academy — facing columns, pull quote, not a rounded promo card */}
+      {/* Professionals — full-width index; Academy pull quote as facing opener */}
       <section className="ed-pace ed-band-soft" aria-labelledby="home-professionals-title">
-        <div className="ed-shell ed-facing">
-          <div>
-            <header className="ed-head">
+        <div className="ed-shell">
+          <div className="ed-facing" style={{ marginBottom: '2.5rem' }}>
+            <header className="ed-head" style={{ marginBottom: 0 }}>
               <span className="ed-head__label">For professionals</span>
               <h2 id="home-professionals-title">Learning and resources for people shaping mental healthcare.</h2>
+              <p>
+                <Link className="ed-link" to="/professionals">Overview for clinicians</Link>
+              </p>
             </header>
-            <div className="ed-index">
-              {PRO_DESTINATIONS.map((item, i) => (
-                <Link key={item.title} to={item.href} className="ed-index__row">
-                  <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
-                  <span>
-                    <h3 className="ed-index__title">{item.title}</h3>
-                  </span>
-                  <p className="ed-index__body">{item.body}</p>
-                  <span className="ed-index__go">Open →</span>
-                </Link>
-              ))}
-            </div>
-            <p style={{ marginTop: '1.5rem' }}>
-              <Link className="ed-link" to="/professionals">Overview for clinicians</Link>
-            </p>
+            <aside>
+              <blockquote className="ed-pull">
+                <p>“Education is not just information. It is transformation in practice.”</p>
+                <cite>Serenest Academy</cite>
+              </blockquote>
+              <p className="ed-aside__note" style={{ marginTop: '1.25rem' }}>
+                Practical courses for psychiatrists, therapists, counsellors, and trainees —
+                designed beside a working clinical service, not apart from it.
+              </p>
+              <p style={{ marginTop: '1.25rem' }}>
+                <Link className="btn btn-primary" to="/academy">Visit the Academy</Link>
+              </p>
+            </aside>
           </div>
-          <aside>
-            <blockquote className="ed-pull">
-              <p>“Education is not just information. It is transformation in practice.”</p>
-              <cite>Serenest Academy</cite>
-            </blockquote>
-            <p className="ed-aside__note" style={{ marginTop: '1.5rem' }}>
-              Practical courses for psychiatrists, therapists, counsellors, and trainees —
-              designed beside a working clinical service, not apart from it.
-            </p>
-            <p style={{ marginTop: '1.25rem' }}>
-              <Link className="btn btn-primary" to="/academy">Visit the Academy</Link>
-            </p>
-          </aside>
+          <div className="ed-index">
+            {PRO_DESTINATIONS.map((item, i) => (
+              <Link key={item.title} to={item.href} className="ed-index__row">
+                <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <h3 className="ed-index__title">{item.title}</h3>
+                </span>
+                <p className="ed-index__body">{item.body}</p>
+                <span className="ed-index__go">Open →</span>
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
 
