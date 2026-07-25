@@ -3551,7 +3551,9 @@ a.pro-hub-tile:hover .learning-card-aux {
   flex: 1 1 160px;
   min-width: 0;
   padding: 10px 14px;
-  border-radius: var(--r-full);
+  /* Matches the adjacent Subscribe button. A full pill beside a
+     rectangular button read as two unrelated components. */
+  border-radius: var(--r-btn);
   border: 1px solid rgba(255,255,255,0.16);
   background: rgba(255,255,255,0.06);
   color: #fff;
@@ -3587,6 +3589,26 @@ a.pro-hub-tile:hover .learning-card-aux {
 @media (max-width: 760px) {
   .email-capture { margin-left: 0; max-width: none; }
 }
+
+/* Light variant. The base styles above are written for the dark footer —
+   white title, translucent-white input, white text. Rendered on the cream
+   canvas (the homepage newsletter block passes variant="light") every one
+   of those resolved to white-on-cream, so the whole form was invisible and
+   read as an empty box. These re-ground it on the light surface. */
+.email-capture--light .email-capture-title { color: var(--ink); }
+.email-capture--light .email-capture-sub { color: var(--ink-2); }
+.email-capture--light .email-capture-input {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--ink);
+}
+.email-capture--light .email-capture-input::placeholder { color: var(--muted); }
+.email-capture--light .email-capture-input:focus {
+  border-color: var(--teal-600);
+  background: var(--surface);
+}
+.email-capture--light .email-capture-done { color: var(--teal-600); }
+.email-capture--light .email-capture-error { color: #a3372c; }
 
 .footer-cols {
   display: grid;
