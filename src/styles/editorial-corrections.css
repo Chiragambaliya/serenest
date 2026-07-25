@@ -245,3 +245,100 @@
   color: var(--teal-500);
   font-family: var(--font-heading);
 }
+
+/* ── 12. Type system lock (Instrument Serif is single-weight) ─────
+   Legacy page CSS still declares heading weights 600/700. Those
+   faux-bold Instrument Serif. Force display faces to 400. */
+h1, h2, h3, h4,
+.brand-text,
+.hp-brand__name,
+.hp-brand-mark__name,
+.hp-hero__title,
+.hp-nav__wordmark,
+.eda-hero-h1,
+.eda-section-h2,
+.eda-cta-h2,
+.eda-teach-title,
+.eda-faculty-name,
+.eda-feature__body h3,
+.pr-hero__title,
+.pr-section__head h2,
+.pr-plan__name,
+.abt-hero__title,
+.abt-section__head h2,
+.tm-hero__title,
+.tm-section__head h2,
+.pros-hero__title,
+.pros-section__head h2,
+.svd-hero h1,
+.svd-section h2,
+.svc-section__head h2,
+.svc-card__title,
+.svc-programme__title,
+.ed-index__title,
+.ed-head h2,
+.ed-band__quote,
+.ed-lede,
+.ed-pull p,
+.ed-timeline h3,
+.ed-table tbody th {
+  font-family: var(--font-heading);
+  font-weight: 400;
+}
+
+/* Kickers / labels → IBM Plex Mono */
+.hp-eyebrow,
+.eda-kicker,
+.eda-section-kicker,
+.svd-eyebrow,
+.svd-sidelabel,
+.svc-eyebrow,
+.pr-eyebrow,
+.abt-eyebrow,
+.tm-eyebrow,
+.pros-eyebrow,
+.kicker,
+.ed-mono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* Sitewide brand mark used outside home */
+.hp-brand-mark { margin: 0; }
+.hp-brand-mark__name {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: clamp(1.85rem, 3.5vw, 2.4rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--teal-600);
+  line-height: 1;
+}
+.hp-brand-mark__meta {
+  display: block;
+  margin-top: 0.55rem;
+  color: var(--brown);
+}
+.hp-brand-mark--on-dark .hp-brand-mark__name { color: #fff; }
+
+/* Restrain leftover pill chrome on marketing surfaces */
+.hp-topic,
+.hp-nav__links a,
+.eda-inner-nav-link,
+.footer-pill {
+  border-radius: var(--r-btn);
+}
+
+/* Soften academy leftover card chrome when old classes remain */
+.eda-teach-card,
+.eda-feature,
+.eda-faculty-card,
+.eda-update-card {
+  border: none;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}

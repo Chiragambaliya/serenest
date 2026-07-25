@@ -55,23 +55,28 @@
 a.ed-index__row:hover { padding-left: 0.5rem; }
 a.ed-index__row:hover .ed-index__title { color: var(--teal-600); }
 .ed-index__num {
-  font-family: var(--font-heading);
-  font-size: 0.85rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
   color: var(--subtle);
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
 }
 .ed-index__title {
   font-family: var(--font-heading);
-  font-size: 1.15rem;
-  font-weight: 600;
+  font-size: 1.25rem;
+  font-weight: 400;
   line-height: 1.25;
   margin: 0;
 }
 .ed-index__meta {
   display: block;
   margin-top: 0.2rem;
-  font-size: 0.78rem;
-  letter-spacing: 0.04em;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--teal-500);
 }
 .ed-index__body {
@@ -106,16 +111,17 @@ a.ed-index__row:hover .ed-index__title { color: var(--teal-600); }
 }
 .ed-table thead th {
   border-bottom: 1px solid var(--ink);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.09em;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink);
 }
 .ed-table tbody th {
   font-family: var(--font-heading);
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 400;
   white-space: nowrap;
 }
 .ed-table td { color: var(--muted); }
@@ -150,8 +156,9 @@ a.ed-index__row:hover .ed-index__title { color: var(--teal-600); }
 }
 .ed-timeline__stage {
   display: block;
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
   letter-spacing: 0.09em;
   text-transform: uppercase;
   color: var(--teal-500);
@@ -159,8 +166,8 @@ a.ed-index__row:hover .ed-index__title { color: var(--teal-600); }
 }
 .ed-timeline h3 {
   font-family: var(--font-heading);
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.2rem;
+  font-weight: 400;
   margin: 0 0 0.35rem;
 }
 .ed-timeline p { margin: 0; color: var(--muted); font-size: 0.94rem; line-height: 1.6; max-width: 46ch; }
@@ -218,8 +225,9 @@ a.ed-index__row:hover .ed-index__title { color: var(--teal-600); }
   .ed-aside--right { grid-template-columns: minmax(0, 1fr) 14rem; }
 }
 .ed-aside__label {
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--teal-500);
@@ -242,22 +250,91 @@ a.ed-index__row:hover .ed-index__title { color: var(--teal-600); }
   padding-bottom: 0.7rem;
   margin-bottom: 1.1rem;
   border-bottom: 1px solid var(--ink);
-  font-size: 0.72rem;
-  font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--ink);
 }
 .ed-head h2 {
-  font-size: clamp(1.6rem, 3.2vw, 2.3rem);
-  font-weight: 600;
-  line-height: 1.15;
+  font-size: clamp(1.7rem, 3.4vw, 2.45rem);
+  font-weight: 400;
+  line-height: 1.12;
   letter-spacing: -0.015em;
   margin: 0 0 0.6rem;
   max-width: 20ch;
 }
 .ed-head p { margin: 0; color: var(--muted); line-height: 1.65; max-width: 52ch; }
 .ed-head--wide h2 { max-width: 30ch; }
+
+/* ── Pull quote ──────────────────────────────────────────────────── */
+.ed-pull {
+  margin: 0;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--border);
+  max-width: 28rem;
+}
+.ed-pull p {
+  font-family: var(--font-heading);
+  font-size: clamp(1.35rem, 2.8vw, 1.85rem);
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.35;
+  color: var(--ink);
+  margin: 0;
+}
+.ed-pull cite {
+  display: block;
+  margin-top: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-style: normal;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--subtle);
+}
+
+/* ── Facing columns (asymmetric) ─────────────────────────────────── */
+.ed-facing {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 900px) {
+  .ed-facing {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.35fr);
+    gap: 4.5rem;
+    align-items: start;
+  }
+  .ed-facing--flip { grid-template-columns: minmax(0, 1.35fr) minmax(0, 0.9fr); }
+  .ed-facing--narrow-wide { grid-template-columns: 11rem minmax(0, 1fr); gap: 3.5rem; }
+}
+
+/* ── Shell variants (varied measures, not one identical container) ─ */
+.ed-shell {
+  width: min(1120px, calc(100% - 2 * var(--page-gutter)));
+  margin-inline: auto;
+}
+.ed-shell--narrow { width: min(42rem, calc(100% - 2 * var(--page-gutter))); }
+.ed-shell--reading { width: min(34rem, calc(100% - 2 * var(--page-gutter))); }
+.ed-shell--wide { width: min(1280px, calc(100% - 2 * var(--page-gutter))); }
+
+/* Soft band — olive-stone wash, not another cream clone of the canvas */
+.ed-band-soft {
+  background: var(--bg-2);
+  border-block: 1px solid var(--border);
+}
+
+/* Mono utility for kickers / captions / numerals */
+.ed-mono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+}
 
 /* ── Inline prose link ─────────────────────────────────────────────
    For links inside running text. `.hp-text-link` appends an arrow via

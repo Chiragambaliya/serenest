@@ -7,22 +7,20 @@ import {
   ACADEMY_PROGRAMS, FEATURED_PROGRAMS,
 } from '../lib/academyPrograms';
 import { ACADEMY_FAQS } from '../lib/academyFaqs';
-import EdIcon from '../components/EdIcon';
 import AcademyGuide from '../components/AcademyGuide';
 import FaqAccordion from '../components/FaqAccordion';
 import ImagePlaceholder from '../components/ImagePlaceholder';
 import { academyContent } from '../lib/api';
 import '../styles/academy.css';
 
-/* ── Static data ─────────────────────────────────────────────────── */
 const WHAT_WE_TEACH = [
-  { icon: 'stethoscope', title: 'Clinical Psychiatry', body: 'Assessment, diagnosis and evidence-based management.' },
-  { icon: 'pill', title: 'Psychopharmacology', body: 'Practical prescribing principles and medication management.' },
-  { icon: 'chat', title: 'Psychotherapy', body: 'Major therapy approaches, techniques and clinical application.' },
-  { icon: 'heart', title: 'Addiction and Recovery', body: 'Counselling, relapse prevention and recovery-oriented care.' },
-  { icon: 'shield', title: 'Crisis and Risk Management', body: 'Suicide-risk assessment, crisis intervention and safety planning.' },
-  { icon: 'monitor', title: 'Digital Mental Health', body: 'Technology, ethics and digital practice in mental healthcare.' },
-  { icon: 'book', title: 'Research and Professional Growth', body: 'Research methods, clinical documentation and career development.' },
+  { title: 'Clinical Psychiatry', body: 'Assessment, diagnosis and evidence-based management.' },
+  { title: 'Psychopharmacology', body: 'Practical prescribing principles and medication management.' },
+  { title: 'Psychotherapy', body: 'Major therapy approaches, techniques and clinical application.' },
+  { title: 'Addiction and Recovery', body: 'Counselling, relapse prevention and recovery-oriented care.' },
+  { title: 'Crisis and Risk Management', body: 'Suicide-risk assessment, crisis intervention and safety planning.' },
+  { title: 'Digital Mental Health', body: 'Technology, ethics and digital practice in mental healthcare.' },
+  { title: 'Research and Professional Growth', body: 'Research methods, clinical documentation and career development.' },
 ];
 
 const WHY_LEARN = [
@@ -34,22 +32,20 @@ const WHY_LEARN = [
 ];
 
 const LEARNING_EXPERIENCE = [
-  { icon: 'book', title: 'Learn', body: 'Concepts that matter' },
-  { icon: 'search', title: 'Observe', body: 'Real-world cases and demonstrations' },
-  { icon: 'people', title: 'Practise', body: 'Role-plays and skill exercises' },
-  { icon: 'chat', title: 'Receive Feedback', body: 'Guided supervision and reflection' },
-  { icon: 'target', title: 'Apply', body: 'Use skills in real clinical practice' },
+  { stage: '01 · Learn', title: 'Concepts that matter', body: 'Core ideas selected for clinical usefulness, not syllabus padding.' },
+  { stage: '02 · Observe', title: 'Cases and demonstrations', body: 'Real-world case material and supervised demonstration.' },
+  { stage: '03 · Practise', title: 'Skill exercises', body: 'Role-plays and structured practice before application.' },
+  { stage: '04 · Feedback', title: 'Guided supervision', body: 'Reflection with faculty who still see patients.' },
+  { stage: '05 · Apply', title: 'Return to practice', body: 'Take the skill into real clinical work with clearer judgment.' },
 ];
 
-/* The four programs shown on the Academy home page, each with the
-   photograph its card needs. Real program data — only the shot
-   direction is added here. */
 const FEATURED_SHOTS = {
   'clinical-excellence': 'Open notebook with a hand-drawn case formulation diagram, pen resting on the page, warm desk light.',
   'psychiatry-training': 'A quiet consulting room — two armchairs, a side lamp, no people.',
   'counselling-skills': 'Spiral notebook and a fountain pen beside a cup, mid-session notes visible but not legible.',
   'student-training': 'A small stack of clinical texts next to a potted plant on a wooden desk.',
 };
+
 const FEATURED_ON_HOME = (FEATURED_PROGRAMS.length >= 4
   ? FEATURED_PROGRAMS
   : [...FEATURED_PROGRAMS, ...ACADEMY_PROGRAMS.filter((p) => !p.featured)]
@@ -61,13 +57,14 @@ const FEATURED_ON_HOME = (FEATURED_PROGRAMS.length >= 4
 const INSTRUCTOR_MAILTO =
   'mailto:support@serenest.in?subject=Serenest%20Academy%20%E2%80%94%20Become%20an%20Instructor';
 
-const TYPE_COLORS = {
-  announcement:   { bg: '#eff6ff', text: '#1d4ed8', dot: '#3b82f6' },
-  program_update: { bg: '#f0fdf4', text: '#15803d', dot: '#22c55e' },
-  event:          { bg: '#fef9c3', text: '#854d0e', dot: '#eab308' },
-};
+const ACADEMY_DESTINATIONS = [
+  { title: 'All programs', body: 'The full numbered catalogue across career stages.', href: '/academy/programs' },
+  { title: 'Learning paths', body: 'Sequences that group programs by where you are in practice.', href: '/academy/learning-paths' },
+  { title: 'Workshops', body: 'Shorter intensives — dates published when scheduled.', href: '/academy/workshops' },
+  { title: 'Faculty', body: 'Who teaches, and how to apply to teach.', href: '/academy/faculty' },
+  { title: 'FAQs', body: 'Scope, enrolment, and what Academy does not replace.', href: '/academy/faqs' },
+];
 
-/* ── Page ────────────────────────────────────────────────────────── */
 export default function AcademyPage() {
   useSEO({ path: '/academy', ...ROUTE_SEO['/academy'] });
   const { isProfessional } = useProfessionalAccess();
@@ -77,277 +74,330 @@ export default function AcademyPage() {
     academyContent.list().then((r) => setLiveContent(r.content ?? [])).catch(() => {});
   }, []);
 
-  const pinnedItems   = liveContent.filter((c) => c.pinned);
-  const regularItems  = liveContent.filter((c) => !c.pinned);
+  const pinnedItems = liveContent.filter((c) => c.pinned);
+  const regularItems = liveContent.filter((c) => !c.pinned);
 
   return (
     <div className="eda-page">
 
-      {/* ══ HERO ══════════════════════════════════════════════════ */}
-      <section className="eda-hero eda-hero--simple">
-        <div className="container">
-          <div className="eda-hero-body">
-            <div className="eda-hero-text">
-              <p className="eda-kicker">Serenest Academy</p>
-              <h1 className="eda-hero-h1">Learning that strengthens practice.</h1>
-              <p className="eda-hero-lead">
-                Practical, clinically grounded education for mental health professionals.
-                Learn. Apply. Grow.
+      {/* Hero — brand-first academy opener */}
+      <section className="ed-pace-open" aria-labelledby="academy-hero-title">
+        <div className="ed-shell ed-facing">
+          <div>
+            <p className="hp-brand-mark" style={{ marginBottom: '1.25rem' }}>
+              <span className="hp-brand-mark__name" style={{ color: 'var(--teal-600)' }}>Serenest Academy</span>
+              <span className="ed-mono" style={{ display: 'block', marginTop: '0.5rem', color: 'var(--brown)' }}>
+                Clinical education · Professional practice
+              </span>
+            </p>
+            <h1 id="academy-hero-title" style={{ maxWidth: '14ch' }}>
+              Learning that strengthens practice.
+            </h1>
+            <p className="ed-lede" style={{ marginTop: '1.25rem' }}>
+              Practical, clinically grounded education for mental health professionals.
+              Learn. Apply. Grow.
+            </p>
+            {isProfessional ? (
+              <p className="ed-aside__note" role="status" style={{ marginTop: '1.25rem', maxWidth: '36rem' }}>
+                <strong>Free for Serenest professionals.</strong>{' '}
+                Your approved practice account includes Academy at no charge.
               </p>
-              {isProfessional ? (
-                <div className="eda-pro-free-banner" role="status">
-                  <strong>Free for Serenest professionals.</strong>{' '}
-                  Your approved practice account includes Academy at no charge.
-                </div>
-              ) : null}
-              <div className="eda-hero-actions">
-                <a className="eda-btn eda-btn-primary eda-btn-lg" href="#programs">
-                  Explore Programs
-                </a>
-                <Link className="eda-btn eda-btn-outline eda-btn-lg" to="/academy/programs">
-                  View all courses
-                </Link>
-              </div>
-            </div>
-
-            <div className="eda-hero-photo">
-              <ImagePlaceholder asset="academy-hero-desk-books.jpg" />
+            ) : null}
+            <div className="hp-hero__actions" style={{ marginTop: '1.75rem' }}>
+              <a className="btn btn-primary btn-lg" href="#programs">Explore programs</a>
+              <Link className="btn btn-ghost btn-lg" to="/academy/programs">View all courses</Link>
             </div>
           </div>
+          <figure className="ed-figure" style={{ margin: 0 }}>
+            <div className="ed-figure__media">
+              <ImagePlaceholder asset="academy-hero-desk-books.jpg" />
+            </div>
+            <figcaption className="ed-mono">Desk still life · study materials, no people</figcaption>
+          </figure>
         </div>
       </section>
 
-      {/* ══ INNER STICKY NAV ══════════════════════════════════════ */}
-      <nav className="eda-inner-nav" aria-label="Jump to section">
-        <div className="container">
-          <div className="eda-inner-nav-links">
-            {[
-              ['#teach', 'What We Teach'],
-              ['#why', 'Why Serenest Academy'],
-              ['#programs', 'Featured Programs'],
-              ['#experience', 'Learning Experience'],
-              ['#faq', 'FAQ'],
-            ].map(([href, label]) => (
-              <a key={href} href={href} className="eda-inner-nav-link">{label}</a>
-            ))}
-          </div>
+      {/* Quiet text index instead of sticky pill nav */}
+      <nav className="ed-pace-tight" aria-label="On this page" style={{ borderBottom: '1px solid var(--border)' }}>
+        <div className="ed-shell" style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem 2rem' }}>
+          {[
+            ['#teach', 'What we teach'],
+            ['#why', 'Why Academy'],
+            ['#programs', 'Featured programs'],
+            ['#experience', 'Learning experience'],
+            ['#faculty', 'Faculty'],
+            ['#faq', 'FAQ'],
+          ].map(([href, label]) => (
+            <a key={href} href={href} className="ed-mono" style={{ color: 'var(--muted)', textDecoration: 'none' }}>
+              {label}
+            </a>
+          ))}
         </div>
       </nav>
 
-      {/* ══ LIVE ANNOUNCEMENTS / UPDATES ══════════════════════════ */}
+      {/* Live updates — ruled index, no pastel chips */}
       {liveContent.length > 0 && (
-        <section className="eda-updates" aria-label="Latest updates">
-          <div className="container">
+        <section className="ed-pace-tight" aria-label="Latest updates">
+          <div className="ed-shell">
             {pinnedItems.length > 0 && (
-              <div className="eda-pinned-banner">
-                <span className="eda-pinned-tag" aria-label="Pinned">📌</span>
-                <div className="eda-pinned-body">
-                  <strong>{pinnedItems[0].title}</strong>
-                  {pinnedItems[0].body && <span className="eda-pinned-text"> — {pinnedItems[0].body}</span>}
+              <div className="ed-aside" style={{ marginBottom: '2rem' }}>
+                <p className="ed-aside__label">Pinned</p>
+                <div>
+                  <h2 style={{ fontSize: '1.45rem', marginBottom: '0.5rem' }}>{pinnedItems[0].title}</h2>
+                  {pinnedItems[0].body && <p style={{ color: 'var(--muted)' }}>{pinnedItems[0].body}</p>}
                   {pinnedItems[0].link && (
-                    <a href={pinnedItems[0].link} className="eda-pinned-link">{pinnedItems[0].link_label || 'Learn more'} →</a>
+                    <p style={{ marginTop: '0.75rem' }}>
+                      <a className="ed-link" href={pinnedItems[0].link}>
+                        {pinnedItems[0].link_label || 'Learn more'}
+                      </a>
+                    </p>
                   )}
                 </div>
               </div>
             )}
             {regularItems.length > 0 && (
-              <div className="eda-updates-grid">
-                <h2 className="eda-updates-heading">Latest from the Academy</h2>
-                <div className="eda-updates-list">
-                  {regularItems.map((item) => {
-                    const colors = TYPE_COLORS[item.type] ?? TYPE_COLORS.announcement;
-                    return (
-                      <div key={item.id} className="eda-update-card" style={{ '--uda-bg': colors.bg, '--uda-text': colors.text, '--uda-dot': colors.dot }}>
-                        <span className="eda-update-dot" aria-hidden="true" />
-                        <div className="eda-update-body">
-                          <p className="eda-update-title">{item.title}</p>
-                          {item.body && <p className="eda-update-desc">{item.body}</p>}
-                          {item.link && (
-                            <a href={item.link} className="eda-update-link">{item.link_label || 'Learn more'} →</a>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+              <>
+                <header className="ed-head">
+                  <span className="ed-head__label">Updates</span>
+                  <h2>Latest from the Academy</h2>
+                </header>
+                <div className="ed-index">
+                  {regularItems.map((item, i) => (
+                    <div key={item.id} className="ed-index__row">
+                      <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                      <span>
+                        <h3 className="ed-index__title">{item.title}</h3>
+                        {item.type && <span className="ed-index__meta">{String(item.type).replace('_', ' ')}</span>}
+                      </span>
+                      <p className="ed-index__body">{item.body}</p>
+                      {item.link ? (
+                        <a className="ed-index__go" href={item.link}>{item.link_label || 'Open'} →</a>
+                      ) : (
+                        <span className="ed-index__go" aria-hidden="true" />
+                      )}
+                    </div>
+                  ))}
                 </div>
-              </div>
+              </>
             )}
           </div>
         </section>
       )}
 
-      {/* ══ WHAT WE TEACH ═════════════════════════════════════════ */}
-      <section id="teach" className="eda-section eda-section-alt">
-        <div className="container">
-          <div className="eda-section-head">
-            <p className="eda-section-kicker">What We Teach</p>
-          </div>
-          <div className="eda-teach-grid">
-            {WHAT_WE_TEACH.map((item) => (
-              <div key={item.title} className="eda-teach-card">
-                <span className="eda-teach-icon" aria-hidden="true"><EdIcon name={item.icon} size={26} /></span>
-                <h3 className="eda-teach-title">{item.title}</h3>
-                <p className="eda-teach-body">{item.body}</p>
+      {/* What we teach — numbered index, no icons */}
+      <section id="teach" className="ed-pace ed-band-soft" aria-labelledby="teach-title">
+        <div className="ed-shell">
+          <header className="ed-head">
+            <span className="ed-head__label">Curriculum domains</span>
+            <h2 id="teach-title">What we teach</h2>
+            <p>Seven domains that recur across programs — from assessment to professional growth.</p>
+          </header>
+          <div className="ed-index">
+            {WHAT_WE_TEACH.map((item, i) => (
+              <div key={item.title} className="ed-index__row">
+                <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <h3 className="ed-index__title">{item.title}</h3>
+                </span>
+                <p className="ed-index__body">{item.body}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ══ WHY LEARN ═════════════════════════════════════════════ */}
-      <section id="why" className="eda-section">
-        <div className="container eda-why-split">
+      {/* Why + pull quote */}
+      <section id="why" className="ed-pace" aria-labelledby="why-title">
+        <div className="ed-shell ed-facing">
           <div>
-            <p className="eda-section-kicker">Why Learn With Serenest Academy</p>
-            <ul className="eda-why-list">
-              {WHY_LEARN.map((item) => (
+            <header className="ed-head">
+              <span className="ed-head__label">Approach</span>
+              <h2 id="why-title">Why learn with Serenest Academy</h2>
+            </header>
+            <ol className="ed-timeline">
+              {WHY_LEARN.map((item, i) => (
                 <li key={item}>
-                  <EdIcon name="award" size={18} />
-                  <span>{item}</span>
+                  <span className="ed-timeline__stage">0{i + 1}</span>
+                  <p>{item}</p>
                 </li>
               ))}
-            </ul>
-            <a href={INSTRUCTOR_MAILTO} className="eda-link">More about our approach →</a>
+            </ol>
+            <p style={{ marginTop: '1.5rem' }}>
+              <a href={INSTRUCTOR_MAILTO} className="ed-link">Ask about teaching with us</a>
+            </p>
           </div>
-          <div className="eda-why-photo">
-            <ImagePlaceholder asset="academy-consultation-room.jpg" />
-            <blockquote className="eda-quote">
-              “Education is not just information. It is transformation in practice.”
+          <div>
+            <figure className="ed-figure" style={{ margin: 0 }}>
+              <div className="ed-figure__media">
+                <ImagePlaceholder asset="academy-consultation-room.jpg" />
+              </div>
+            </figure>
+            <blockquote className="ed-pull" style={{ marginTop: '1.5rem' }}>
+              <p>“Education is not just information. It is transformation in practice.”</p>
+              <cite>Serenest Academy</cite>
             </blockquote>
           </div>
         </div>
       </section>
 
-      {/* ══ FEATURED PROGRAMS ═════════════════════════════════════ */}
-      <section id="programs" className="eda-section eda-section-alt">
-        <div className="container">
-          <div className="eda-section-head eda-section-head--row">
-            <p className="eda-section-kicker">Featured Programs</p>
-            <Link to="/academy/programs" className="eda-link">View all programs →</Link>
-          </div>
-          <div className="eda-feature-grid">
-            {FEATURED_ON_HOME.map((p) => (
-              <article key={p.slug} className="eda-feature">
-                <div className="eda-feature__media">
-                  <ImagePlaceholder
-                    asset={`academy-program-${p.slug}.jpg`}
-                    direction={p.shot}
-                  />
-                </div>
-                <div className="eda-feature__body">
-                  <h3>{p.title}</h3>
-                  <p>{p.body}</p>
-                  <Link className="eda-feature__cta" to={`/academy/programs/${p.slug}`}>
-                    View Program <span aria-hidden="true">→</span>
-                  </Link>
-                </div>
-              </article>
+      {/* Featured programs — index, not photo cards */}
+      <section id="programs" className="ed-pace ed-band-soft" aria-labelledby="programs-title">
+        <div className="ed-shell">
+          <header className="ed-head ed-head--wide">
+            <span className="ed-head__label">Featured programs</span>
+            <h2 id="programs-title">A short list to begin with</h2>
+            <p>
+              Four entry points from the fuller catalogue.{' '}
+              <Link className="ed-link" to="/academy/programs">View all programs</Link>
+            </p>
+          </header>
+          <div className="ed-index">
+            {FEATURED_ON_HOME.map((p, i) => (
+              <Link key={p.slug} to={`/academy/programs/${p.slug}`} className="ed-index__row">
+                <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <h3 className="ed-index__title">{p.title}</h3>
+                  <span className="ed-index__meta">
+                    {p.subtitle || 'Program'}
+                  </span>
+                </span>
+                <p className="ed-index__body">{p.body}</p>
+                <span className="ed-index__go">View →</span>
+              </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ══ LEARNING EXPERIENCE ═══════════════════════════════════ */}
-      <section id="experience" className="eda-section">
-        <div className="container eda-experience-row">
-          <div className="eda-roadmap" role="list" aria-label="Learning experience">
-            {LEARNING_EXPERIENCE.map((step, i) => (
-              <div key={step.title} className="eda-roadmap-step" role="listitem">
-                <div className="eda-roadmap-ico">
-                  <EdIcon name={step.icon} size={22} />
-                </div>
-                <p className="eda-roadmap-title">{step.title}</p>
-                <p className="eda-roadmap-sub">{step.body}</p>
-                {i < LEARNING_EXPERIENCE.length - 1 && (
-                  <span className="eda-roadmap-arrow" aria-hidden="true">›</span>
-                )}
-              </div>
-            ))}
-          </div>
-          <aside className="eda-experience-callout">
-            <p>For professionals who want to make a real difference.</p>
-          </aside>
-        </div>
-      </section>
-
-      {/* ══ FACULTY ═══════════════════════════════════════════════ */}
-      <section id="faculty" className="eda-section eda-section-alt">
-        <div className="container">
-          <div className="eda-section-head">
-            <p className="eda-section-kicker">Faculty</p>
-            <h2 className="eda-section-h2">Learn from practising clinicians</h2>
-          </div>
-          <div className="eda-faculty-grid">
-            <div className="eda-faculty-card">
-              <div className="eda-faculty-avatar" aria-hidden="true">
-                <EdIcon name="stethoscope" size={28} />
-              </div>
-              <h3 className="eda-faculty-name">Dr. Chirag Aambalia</h3>
-              <p className="eda-faculty-role">Psychiatrist &amp; Founder</p>
-            </div>
-            <div className="eda-faculty-card eda-faculty-join">
-              <div className="eda-faculty-avatar" aria-hidden="true"><EdIcon name="cap" size={28} /></div>
-              <h3 className="eda-faculty-name">Faculty roster is growing</h3>
-              <p className="eda-faculty-role">We're adding clinician faculty as programs expand.</p>
-              <a href={INSTRUCTOR_MAILTO} className="eda-btn eda-btn-primary" style={{ marginTop: '1rem' }}>
-                Apply to teach →
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ══ FAQ ════════════════════════════════════════════════════ */}
-      <section id="faq" className="eda-section">
-        <div className="container">
-          <div className="eda-section-head">
-            <p className="eda-section-kicker">FAQ</p>
-            <h2 className="eda-section-h2">Frequently asked questions</h2>
-          </div>
-          <FaqAccordion items={ACADEMY_FAQS} />
-          <p className="eda-faq-footer">
-            Still have questions?{' '}
-            <a
-              href="mailto:support@serenest.in?subject=Serenest%20Academy%20Query"
-              className="eda-link"
-            >
-              Email us
-            </a>{' '}
-            and we'll get back to you.
+          <p className="ed-aside__note" style={{ marginTop: '1.5rem', maxWidth: '48rem' }}>
+            Photography for these programs is pending approval. Asset names follow the pattern{' '}
+            <span className="ed-mono" style={{ textTransform: 'none', letterSpacing: 0 }}>
+              academy-program-&lt;slug&gt;.jpg
+            </span>
+            . Shot direction remains place, materials, and light — never invented portraits.
           </p>
         </div>
       </section>
 
-      {/* ══ ACADEMY GUIDE ═════════════════════════════════════════
-          Sits after the FAQ — it answers the same kind of question,
-          and putting it directly under the hero interrupted the run
-          from the opener into "What We Teach". */}
-      <AcademyGuide />
+      {/* Learning experience — timeline */}
+      <section id="experience" className="ed-pace" aria-labelledby="experience-title">
+        <div className="ed-shell ed-facing">
+          <header className="ed-head">
+            <span className="ed-head__label">Learning experience</span>
+            <h2 id="experience-title">How a program typically moves</h2>
+            <p>A deliberate sequence from concept to supervised application.</p>
+          </header>
+          <ol className="ed-timeline">
+            {LEARNING_EXPERIENCE.map((step) => (
+              <li key={step.title}>
+                <span className="ed-timeline__stage">{step.stage}</span>
+                <h3>{step.title}</h3>
+                <p>{step.body}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </section>
 
-      {/* ══ FINAL CTA ═════════════════════════════════════════════ */}
-      <section className="eda-section eda-section-cta">
-        <div className="container">
-          <div className="eda-cta-block">
-            <div className="eda-cta-media">
-              <ImagePlaceholder
-                asset="academy-cta-open-book.jpg"
-                direction="Open book and a dark mug on a desk, shot dark and close — sits under a deep green overlay."
-              />
-            </div>
-            <div className="eda-cta-copy">
-              <h2 className="eda-cta-h2">Ready to strengthen your practice?</h2>
-              <p className="eda-cta-sub">
-                Explore our programs and find the right learning path for you.
-              </p>
-              <div className="eda-cta-actions">
-                <a href="#programs" className="eda-btn eda-btn-lg eda-btn-oncolor">
-                  Explore Programs
-                </a>
+      {/* Faculty — one real person + honest roster note */}
+      <section id="faculty" className="ed-pace ed-band-soft" aria-labelledby="faculty-title">
+        <div className="ed-shell ed-aside">
+          <div>
+            <p className="ed-aside__label">Faculty</p>
+            <p className="ed-aside__note" style={{ marginTop: '1rem' }}>
+              The roster lists only people who teach with us. It grows as programs expand —
+              we do not invent names to fill a page.
+            </p>
+          </div>
+          <div>
+            <h2 id="faculty-title" style={{ marginBottom: '1.25rem' }}>Learn from practising clinicians</h2>
+            <div className="ed-facing">
+              <div>
+                <p className="ed-mono">Director</p>
+                <h3 style={{ marginTop: '0.35rem' }}>Dr. Chirag Aambalia</h3>
+                <p style={{ color: 'var(--muted)', marginTop: '0.35rem' }}>Psychiatrist &amp; Founder</p>
+                <p style={{ marginTop: '1rem', maxWidth: '36ch', color: 'var(--muted)' }}>
+                  Clinical oversight of Academy curriculum sits beside an active psychiatry practice —
+                  teaching informed by current care, not abstracted theory alone.
+                </p>
+              </div>
+              <div>
+                <p className="ed-mono">Growing roster</p>
+                <h3 style={{ marginTop: '0.35rem' }}>Apply to teach</h3>
+                <p style={{ color: 'var(--muted)', marginTop: '0.5rem', maxWidth: '34ch' }}>
+                  Clinician faculty are added as programs need them. If you teach from practice, write to us.
+                </p>
+                <p style={{ marginTop: '1.25rem' }}>
+                  <a href={INSTRUCTOR_MAILTO} className="btn btn-primary">Apply to teach</a>
+                  {' '}
+                  <Link to="/academy/faculty" className="btn btn-ghost" style={{ marginLeft: '0.5rem' }}>Faculty page</Link>
+                </p>
               </div>
             </div>
           </div>
-          <p className="eda-disclaimer">
-            <span aria-hidden="true">ⓘ</span>{' '}
+        </div>
+      </section>
+
+      {/* Destinations index */}
+      <section className="ed-pace" aria-labelledby="destinations-title">
+        <div className="ed-shell">
+          <header className="ed-head">
+            <span className="ed-head__label">Navigate</span>
+            <h2 id="destinations-title">Academy sections</h2>
+          </header>
+          <div className="ed-index">
+            {ACADEMY_DESTINATIONS.map((item, i) => (
+              <Link key={item.href} to={item.href} className="ed-index__row">
+                <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <h3 className="ed-index__title">{item.title}</h3>
+                </span>
+                <p className="ed-index__body">{item.body}</p>
+                <span className="ed-index__go">Open →</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ */}
+      <section id="faq" className="ed-pace ed-band-soft" aria-labelledby="faq-title">
+        <div className="ed-shell ed-shell--narrow">
+          <header className="ed-head">
+            <span className="ed-head__label">FAQ</span>
+            <h2 id="faq-title">Frequently asked questions</h2>
+          </header>
+          <FaqAccordion items={ACADEMY_FAQS} />
+          <p style={{ marginTop: '1.5rem', color: 'var(--muted)' }}>
+            Still have questions?{' '}
+            <a
+              href="mailto:support@serenest.in?subject=Serenest%20Academy%20Query"
+              className="ed-link"
+            >
+              Email us
+            </a>
+            .
+          </p>
+        </div>
+      </section>
+
+      <AcademyGuide />
+
+      {/* One full-width band */}
+      <section className="ed-band" aria-labelledby="academy-cta-title">
+        <div className="ed-shell ed-facing">
+          <div>
+            <p className="ed-mono" style={{ color: 'rgba(255,255,255,0.65)' }}>Serenest Academy</p>
+            <h2 id="academy-cta-title" style={{ marginTop: '0.75rem', maxWidth: '16ch' }}>
+              Ready to strengthen your practice?
+            </h2>
+            <p style={{ marginTop: '0.75rem', maxWidth: '36ch' }}>
+              Explore programs and find the learning path that matches where you are.
+            </p>
+          </div>
+          <div style={{ alignSelf: 'end' }}>
+            <a href="#programs" className="btn btn-ghost-dark btn-lg">Explore programs</a>
+          </div>
+        </div>
+        <div className="ed-shell" style={{ marginTop: '2rem' }}>
+          <p className="ed-mono" style={{ color: 'rgba(255,255,255,0.55)', textTransform: 'none', letterSpacing: 0, fontWeight: 400, lineHeight: 1.55 }}>
             Serenest Academy programs support professional learning and skill development.
             They do not replace a recognised degree, professional registration, supervised
             clinical requirements, or legal scope of practice.

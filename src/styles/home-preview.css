@@ -975,3 +975,136 @@
   .hp-portal__actions { width: 100%; }
   .hp-portal__actions .btn { flex: 1; justify-content: center; }
 }
+
+/* ── Home structural redesign (2026-07) ─────────────────────────
+   Brand-first hero, indexes/timelines/tables instead of icon grids,
+   pastel cards, and pill topics. */
+.home .hp-hero {
+  padding: clamp(2.75rem, 6vw, 4.5rem) 0 clamp(3rem, 6vw, 5rem);
+  border-bottom: 1px solid var(--border);
+}
+.home .hp-hero .ed-facing {
+  align-items: end;
+}
+.home .hp-brand-mark {
+  margin: 0 0 1.35rem;
+}
+.home .hp-brand-mark__name {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: clamp(1.85rem, 3.5vw, 2.4rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--teal-600);
+  line-height: 1;
+}
+.home .hp-brand-mark__meta {
+  display: block;
+  margin-top: 0.55rem;
+  color: var(--brown);
+}
+.home .hp-brand-mark--on-dark .hp-brand-mark__name { color: #fff; }
+
+.home .hp-hero__title {
+  font-weight: 400;
+  font-size: clamp(2.5rem, 5.6vw, 3.75rem);
+  letter-spacing: -0.025em;
+  line-height: 1.04;
+  max-width: 14ch;
+}
+.home .hp-hero__body {
+  margin: 1.25rem 0 1.75rem;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--muted);
+}
+.home .hp-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.1rem;
+}
+.home .hp-hero__note {
+  margin: 0;
+  max-width: 42ch;
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--subtle);
+}
+.home .hp-hero__visual {
+  margin: 0;
+  width: 100%;
+}
+.home .hp-hero__visual .image-placeholder,
+.home .hp-hero__visual > div {
+  min-height: min(520px, 58vw);
+  border: 1px solid var(--border);
+}
+.home .hp-hero__visual figcaption {
+  margin-top: 0.65rem;
+  color: var(--subtle);
+}
+
+.home .hp-cta__contact a { color: rgba(255,255,255,0.85); text-decoration: underline; text-underline-offset: 3px; }
+.home .hp-cta__share { margin-top: 1.75rem; }
+
+.home .hp-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 26, 23, 0.5);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.home .hp-modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-md);
+  padding: 2rem;
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+}
+.home .hp-modal h2 {
+  margin: 0.5rem 0 0.75rem;
+  font-size: 1.65rem;
+}
+.home .hp-modal > p:not(.ed-mono) {
+  color: var(--muted);
+  font-size: 0.94rem;
+  line-height: 1.6;
+  margin: 0 0 1.5rem;
+}
+.home .hp-modal__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: none;
+  font-size: 1.15rem;
+  cursor: pointer;
+  color: var(--muted);
+  line-height: 1;
+}
+.home .hp-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+.home .hp-modal__dismiss {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  font-size: 0.86rem;
+  padding: 6px 0;
+  text-align: left;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home .hp-hero__copy { animation: hp-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .home .hp-hero__visual { animation: hp-rise 0.9s 0.08s cubic-bezier(0.22, 1, 0.36, 1) both; }
+  .home .ed-index__row { transition: padding-left 180ms ease, background 180ms ease; }
+}
