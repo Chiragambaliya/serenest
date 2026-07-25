@@ -1336,3 +1336,205 @@ a.eda-hcard-item:hover {
   color: var(--muted);
   line-height: 1.6;
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   Reference-alignment pass — matching the locked Academy comp more
+   closely: photography-led cards, ruled teaching row, overlapping
+   quote, and a full-bleed hero image.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Hero: image bleeds to the right viewport edge and runs taller. */
+@media (min-width: 900px) {
+  .eda-hero--simple .eda-hero-body {
+    grid-template-columns: minmax(0, 0.86fr) minmax(0, 1.14fr);
+    gap: 3rem;
+    align-items: center;
+  }
+  .eda-hero-photo {
+    min-height: 420px;
+    margin-right: calc(50% - 50vw);
+  }
+}
+
+/* What We Teach: fine vertical rules between subjects, as in the comp. */
+.eda-teach-grid {
+  gap: 0;
+  border-top: 1px solid var(--border);
+  padding-top: 2rem;
+}
+.eda-teach-card { padding: 0 1.5rem; border-left: 1px solid var(--border); }
+.eda-teach-card:first-child { border-left: none; padding-left: 0; }
+@media (max-width: 900px) {
+  .eda-teach-card { border-left: none; padding: 0; }
+  .eda-teach-grid { gap: 1.75rem; }
+}
+
+/* Why Learn: the quote card overlaps the photograph. */
+.eda-why-photo { padding: 0; display: block; }
+.eda-why-photo .image-placeholder { position: absolute; inset: 0; }
+.eda-quote {
+  position: absolute;
+  left: -2rem;
+  bottom: 1.75rem;
+  z-index: 2;
+  margin: 0;
+  max-width: 24rem;
+}
+@media (max-width: 899px) {
+  .eda-quote { position: static; max-width: none; margin-top: 1rem; }
+  .eda-why-photo { min-height: 260px; }
+}
+
+/* Featured programs: photo-topped cards, four across. */
+.eda-feature-grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+}
+.eda-feature {
+  display: flex;
+  flex-direction: column;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+.eda-feature__media { position: relative; aspect-ratio: 16 / 10; }
+.eda-feature__media .image-placeholder { position: absolute; inset: 0; border: none; border-bottom: 1px solid var(--border); }
+.eda-feature__body { padding: 1.15rem 1.25rem 1.35rem; display: flex; flex-direction: column; flex: 1; }
+.eda-feature__body h3 {
+  font-family: var(--font-heading);
+  font-size: 1.08rem;
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 0 0 0.5rem;
+}
+.eda-feature__body p {
+  margin: 0 0 1rem;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  color: var(--muted);
+  flex: 1;
+}
+.eda-feature__cta {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--teal-600);
+  text-decoration: none;
+}
+.eda-feature__cta:hover { text-decoration: underline; }
+
+/* Closing CTA: dark green band with an image panel on the left. */
+.eda-section-cta .eda-cta-block {
+  display: grid;
+  gap: 0;
+  align-items: stretch;
+  background: var(--teal-600);
+  border-radius: 0;
+  overflow: hidden;
+  padding: 0;
+}
+@media (min-width: 820px) {
+  .eda-section-cta .eda-cta-block { grid-template-columns: 0.85fr 1.15fr; }
+}
+.eda-cta-media { position: relative; min-height: 200px; }
+.eda-cta-media .image-placeholder { position: absolute; inset: 0; border: none; background: #35422a; }
+.eda-cta-media .image-placeholder__label,
+.eda-cta-media .image-placeholder__direction { color: rgba(255,255,255,0.5); }
+.eda-cta-copy { padding: clamp(1.75rem, 4vw, 2.75rem); color: #fff; }
+.eda-section-cta .eda-cta-h2 { color: #fff; margin-bottom: 0.5rem; }
+.eda-section-cta .eda-cta-sub { color: rgba(255,255,255,0.82); margin-bottom: 1.25rem; }
+
+/* Align the Academy's local palette with the site system. This file
+   predates the shared tokens and defined its own cool blue-teal and
+   gray scale, which made Academy read colder than the rest of the
+   site. Point them at the warm ivory / forest green tokens instead. */
+.eda-page {
+  --teal:       var(--teal-600);
+  --teal-dark:  #2a3320;
+  --teal-light: #e3dcc4;
+  --teal-50:    var(--bg-2);
+  --ink:        var(--ink);
+  --ink-2:      var(--ink-2);
+  --muted:      var(--muted);
+  --bg:         var(--bg);
+  --bg-alt:     var(--bg-2);
+  --surface:    var(--surface);
+  --border:     var(--border);
+  letter-spacing: normal;
+}
+.eda-page h1, .eda-page h2, .eda-page h3, .eda-page h4 {
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+/* Drop the gradient washes — flat warm grounds only. */
+.eda-hero { background: var(--bg); }
+.eda-section-teal { background: var(--teal-600); }
+.eda-section-cta { background: none; padding-top: 0; }
+
+/* Light button for use on the dark green CTA band. */
+.eda-btn-oncolor {
+  background: var(--bg);
+  color: var(--teal-600);
+  border-color: var(--bg);
+}
+.eda-btn-oncolor:hover { background: #fff; border-color: #fff; color: var(--teal-600); }
+
+/* ── Fixes for the reference-alignment pass ───────────────────────
+   1. The hero's `margin-right: calc(50% - 50vw)` bleed overflowed the
+      document horizontally and squeezed every section. Drop the bleed;
+      widen and heighten the image column within the grid instead.
+   2. .image-placeholder carries a 220px min-height for standalone use,
+      which broke out of the shorter aspect-ratio card slots and
+      overlapped the copy beneath. Reset it inside fixed slots.
+   3. Seven teaching columns left too little room for long words. */
+
+@media (min-width: 900px) {
+  .eda-hero-photo { margin-right: 0; min-height: 440px; }
+}
+
+.eda-feature__media .image-placeholder,
+.eda-cta-media .image-placeholder,
+.eda-hero-photo .image-placeholder,
+.eda-why-photo .image-placeholder { min-height: 0; }
+
+.eda-teach-card { padding: 0 1rem; min-width: 0; }
+.eda-teach-title { hyphens: auto; overflow-wrap: anywhere; font-size: 0.98rem; }
+.eda-teach-body { font-size: 0.82rem; }
+
+/* Learning experience: open row with dotted connectors between steps,
+   matching the reference, instead of a bordered/shadowed panel. */
+.eda-roadmap {
+  background: none;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  align-items: start;
+}
+.eda-roadmap-ico {
+  background: none;
+  border-radius: 0;
+  width: auto;
+  height: auto;
+  color: var(--teal-600);
+  margin-bottom: 0.5rem;
+}
+.eda-roadmap-title { font-weight: 700; font-size: 0.9rem; }
+.eda-roadmap-sub { font-size: 0.78rem; color: var(--muted); line-height: 1.45; }
+/* Dotted connector drawn between steps. */
+.eda-roadmap-step + .eda-roadmap-step::after {
+  content: '';
+  position: absolute;
+  top: 0.85rem;
+  left: -50%;
+  width: 100%;
+  border-top: 1px dashed var(--border-strong, var(--border));
+  z-index: 0;
+}
+.eda-roadmap-step { z-index: 1; }
+.eda-roadmap-arrow { display: none; }
+@media (max-width: 820px) {
+  .eda-roadmap { grid-template-columns: repeat(2, 1fr); gap: 1.75rem; }
+  .eda-roadmap-step + .eda-roadmap-step::after { display: none; }
+}

@@ -41,6 +41,23 @@ const LEARNING_EXPERIENCE = [
   { icon: 'target', title: 'Apply', body: 'Use skills in real clinical practice' },
 ];
 
+/* The four programs shown on the Academy home page, each with the
+   photograph its card needs. Real program data — only the shot
+   direction is added here. */
+const FEATURED_SHOTS = {
+  'clinical-excellence': 'Open notebook with a hand-drawn case formulation diagram, pen resting on the page, warm desk light.',
+  'psychiatry-training': 'A quiet consulting room — two armchairs, a side lamp, no people.',
+  'counselling-skills': 'Spiral notebook and a fountain pen beside a cup, mid-session notes visible but not legible.',
+  'student-training': 'A small stack of clinical texts next to a potted plant on a wooden desk.',
+};
+const FEATURED_ON_HOME = (FEATURED_PROGRAMS.length >= 4
+  ? FEATURED_PROGRAMS
+  : [...FEATURED_PROGRAMS, ...ACADEMY_PROGRAMS.filter((p) => !p.featured)]
+).slice(0, 4).map((p) => ({
+  ...p,
+  shot: FEATURED_SHOTS[p.slug] || 'Warm, natural still life from a clinical learning setting — books, notes, or a quiet consulting space. No people.',
+}));
+
 const INSTRUCTOR_MAILTO =
   'mailto:support@serenest.in?subject=Serenest%20Academy%20%E2%80%94%20Become%20an%20Instructor';
 
@@ -116,9 +133,6 @@ export default function AcademyPage() {
           </div>
         </div>
       </nav>
-
-      {/* ══ ACADEMY GUIDE ═════════════════════════════════════════ */}
-      <AcademyGuide />
 
       {/* ══ LIVE ANNOUNCEMENTS / UPDATES ══════════════════════════ */}
       {liveContent.length > 0 && (
@@ -211,27 +225,25 @@ export default function AcademyPage() {
             <p className="eda-section-kicker">Featured Programs</p>
             <Link to="/academy/programs" className="eda-link">View all programs →</Link>
           </div>
-          <div className="eda-pcard-grid">
-            {(FEATURED_PROGRAMS.length ? FEATURED_PROGRAMS : ACADEMY_PROGRAMS.slice(0, 4)).map((p) => (
-              <article key={p.slug} className={`eda-pcard eda-pcard--${p.accent}`}>
-                {p.popular && <span className="eda-pcard-badge">POPULAR</span>}
-                <div className="eda-pcard-header">
-                  <div className="eda-pcard-ico">
-                    <EdIcon name={p.iconName} size={22} />
-                  </div>
-                  <div>
-                    <h3 className="eda-pcard-title">{p.title}</h3>
-                    <p className="eda-pcard-sub">{p.subtitle}</p>
-                  </div>
+          <div className="eda-feature-grid">
+            {FEATURED_ON_HOME.map((p) => (
+              <article key={p.slug} className="eda-feature">
+                <div className="eda-feature__media">
+                  <ImagePlaceholder
+                    asset={`academy-program-${p.slug}.jpg`}
+                    direction={p.shot}
+                  />
                 </div>
-                <p className="eda-pcard-body">{p.body}</p>
-                <Link className="eda-pcard-cta" to={`/academy/programs/${p.slug}`}>
-                  View Program <span aria-hidden="true">→</span>
-                </Link>
+                <div className="eda-feature__body">
+                  <h3>{p.title}</h3>
+                  <p>{p.body}</p>
+                  <Link className="eda-feature__cta" to={`/academy/programs/${p.slug}`}>
+                    View Program <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
               </article>
             ))}
           </div>
-
         </div>
       </section>
 
@@ -306,23 +318,36 @@ export default function AcademyPage() {
         </div>
       </section>
 
+      {/* ══ ACADEMY GUIDE ═════════════════════════════════════════
+          Sits after the FAQ — it answers the same kind of question,
+          and putting it directly under the hero interrupted the run
+          from the opener into "What We Teach". */}
+      <AcademyGuide />
+
       {/* ══ FINAL CTA ═════════════════════════════════════════════ */}
       <section className="eda-section eda-section-cta">
         <div className="container">
           <div className="eda-cta-block">
-            <div>
+            <div className="eda-cta-media">
+              <ImagePlaceholder
+                asset="academy-cta-open-book.jpg"
+                direction="Open book and a dark mug on a desk, shot dark and close — sits under a deep green overlay."
+              />
+            </div>
+            <div className="eda-cta-copy">
               <h2 className="eda-cta-h2">Ready to strengthen your practice?</h2>
               <p className="eda-cta-sub">
                 Explore our programs and find the right learning path for you.
               </p>
-            </div>
-            <div className="eda-cta-actions">
-              <a href="#programs" className="eda-btn eda-btn-outline eda-btn-lg">
-                Explore Programs
-              </a>
+              <div className="eda-cta-actions">
+                <a href="#programs" className="eda-btn eda-btn-lg eda-btn-oncolor">
+                  Explore Programs
+                </a>
+              </div>
             </div>
           </div>
           <p className="eda-disclaimer">
+            <span aria-hidden="true">ⓘ</span>{' '}
             Serenest Academy programs support professional learning and skill development.
             They do not replace a recognised degree, professional registration, supervised
             clinical requirements, or legal scope of practice.
