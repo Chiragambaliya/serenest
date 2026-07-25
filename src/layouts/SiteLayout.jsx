@@ -174,8 +174,9 @@ export default function SiteLayout() {
                   : 'Sign in'}
               </NavLink>
 
-              <Link className="header-cta" to="/book">
-                Book appointment
+              <Link className="header-cta masthead__cta" to="/book">
+                <span className="masthead__cta-label">Book appointment</span>
+                <span className="masthead__cta-arrow" aria-hidden="true">→</span>
               </Link>
             </div>
           </nav>
@@ -270,11 +271,12 @@ export default function SiteLayout() {
             {/* CTA */}
             <div className="menu-drawer-foot">
               <Link
-                className="btn btn-primary btn-full btn-lg"
+                className="header-cta masthead__cta masthead__cta--drawer"
                 to="/book"
                 onClick={() => setMenuOpen(false)}
               >
-                Book an appointment →
+                <span className="masthead__cta-label">Book appointment</span>
+                <span className="masthead__cta-arrow" aria-hidden="true">→</span>
               </Link>
               <p className="menu-drawer-note">
                 Prefer a time — we confirm by phone or WhatsApp
