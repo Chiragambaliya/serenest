@@ -90,6 +90,62 @@
   text-wrap: balance;
 }
 
+/* Hero supporting line — a touch larger */
+.home--lean .hp-hero__body {
+  font-size: clamp(1.12rem, 2.1vw, 1.35rem);
+  line-height: 1.65;
+  max-width: 36ch;
+}
+
+/* Section subheads — centered, slightly larger */
+.home--lean .hp-care .ed-head,
+.home--lean .hp-close .ed-shell {
+  text-align: center;
+}
+
+.home--lean .hp-care .ed-head__label,
+.home--lean .hp-academy .ed-head__label {
+  display: block;
+  text-align: center;
+}
+
+.home--lean .hp-care .ed-head h2,
+.home--lean .hp-close h2 {
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+.home--lean .ed-head p,
+.home--lean .hp-close .hp-cta__contact {
+  font-size: clamp(1.12rem, 2.2vw, 1.35rem);
+  line-height: 1.6;
+  max-width: 38ch;
+  margin-inline: auto;
+  text-align: center;
+  color: var(--muted);
+}
+
+.home--lean .hp-academy .ed-head {
+  text-align: center;
+}
+
+.home--lean .hp-academy .ed-head h2 {
+  margin-inline: auto;
+  text-wrap: balance;
+}
+
+.home--lean .hp-academy .ed-head p {
+  margin-inline: auto;
+}
+
+.home--lean .hp-academy__actions {
+  justify-content: center;
+}
+
+.home--lean .hp-close__actions {
+  justify-content: center;
+}
+
 .home--lean .hp-hero__frame {
   overflow: hidden;
   border: 1px solid var(--border);
