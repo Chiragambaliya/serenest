@@ -56,6 +56,56 @@ const NAV_LINKS = [
   { to: '/contact', label: 'Contact' },
 ];
 
+const FOOTER_GROUPS = [
+  {
+    title: 'Care',
+    links: [
+      { to: '/book', label: 'Book appointment' },
+      { to: '/patient/find-professional', label: 'Find a professional' },
+      { to: '/screening', label: 'Self screening' },
+      { to: '/pricing', label: 'Pricing' },
+    ],
+  },
+  {
+    title: 'Learn',
+    links: [
+      { to: '/academy', label: 'Serenest Academy' },
+      { to: '/blog', label: 'Blog' },
+      { to: '/guides', label: 'Guides' },
+      { to: '/faq', label: 'FAQ' },
+    ],
+  },
+  {
+    title: 'Business',
+    links: [
+      { to: '/corporate', label: 'Corporate EAP' },
+      { to: '/partner', label: 'Partner with us' },
+      { to: '/careers', label: 'Careers' },
+      { to: '/professionals', label: 'For professionals' },
+    ],
+  },
+  {
+    title: 'Company',
+    links: [
+      { to: '/about', label: 'About Serenest' },
+      { to: '/team', label: 'Our team' },
+      { to: '/contact', label: 'Contact us' },
+    ],
+  },
+  {
+    title: 'Legal',
+    links: [
+      { to: '/legal', label: 'All policies' },
+      { to: '/privacy', label: 'Privacy policy' },
+      { to: '/terms', label: 'Terms & conditions' },
+      { to: '/refund-policy', label: 'Refund policy' },
+      { to: '/grievance-policy', label: 'Grievances' },
+      { to: '/cookie-policy', label: 'Cookies' },
+      { to: '/emergency-disclaimer', label: 'Emergency disclaimer' },
+    ],
+  },
+];
+
 /* Secondary links kept in the footer and on their parent pages rather
    than the header, to keep the nav bar from getting oversized:
    Book a Consultation (/book), Find a Professional
@@ -66,6 +116,7 @@ const NAV_LINKS = [
 export default function SiteLayout() {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
+  const [footerWide, setFooterWide] = useState(true);
   const location                   = useLocation();
   const { user }                   = useAuth();
 
@@ -78,6 +129,15 @@ export default function SiteLayout() {
   useEffect(() => {
     setMenuOpen(false);
   }, [location]);
+
+  // Footer groups: accordion on small screens, open columns on desktop
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 1024px)');
+    const sync = () => setFooterWide(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
 
   // Footer / in-app links change the route but keep the old scroll offset,
   // so the new page looks like it "didn't load" (still stuck at the bottom).
@@ -374,53 +434,28 @@ export default function SiteLayout() {
             </div>
 
             <div className="ed-footer__cols">
-              <div>
-                <h3 className="ed-footer__title">Care</h3>
-                <nav aria-label="Care links">
-                  <Link to="/book">Book appointment</Link>
-                  <Link to="/patient/find-professional">Find a professional</Link>
-                  <Link to="/screening">Self screening</Link>
-                  <Link to="/pricing">Pricing</Link>
-                </nav>
-              </div>
-              <div>
-                <h3 className="ed-footer__title">Learn</h3>
-                <nav aria-label="Learn links">
-                  <Link to="/academy">Serenest Academy</Link>
-                  <Link to="/blog">Blog</Link>
-                  <Link to="/guides">Guides</Link>
-                  <Link to="/faq">FAQ</Link>
-                </nav>
-              </div>
-              <div>
-                <h3 className="ed-footer__title">Business</h3>
-                <nav aria-label="Business links">
-                  <Link to="/corporate">Corporate EAP</Link>
-                  <Link to="/partner">Partner with us</Link>
-                  <Link to="/careers">Careers</Link>
-                  <Link to="/professionals">For professionals</Link>
-                </nav>
-              </div>
-              <div>
-                <h3 className="ed-footer__title">Company</h3>
-                <nav aria-label="Company">
-                  <Link to="/about">About Serenest</Link>
-                  <Link to="/team">Our team</Link>
-                  <a href="mailto:support@serenest.in">Contact us</a>
-                </nav>
-              </div>
-              <div>
-                <h3 className="ed-footer__title">Legal</h3>
-                <nav aria-label="Legal links">
-                  <Link to="/legal">All policies</Link>
-                  <Link to="/privacy">Privacy policy</Link>
-                  <Link to="/terms">Terms &amp; conditions</Link>
-                  <Link to="/refund-policy">Refund policy</Link>
-                  <Link to="/grievance-policy">Grievances</Link>
-                  <Link to="/cookie-policy">Cookies</Link>
-                  <Link to="/emergency-disclaimer">Emergency disclaimer</Link>
-                </nav>
-              </div>
+              {FOOTER_GROUPS.map((group) => (
+                <details
+                  key={group.title}
+                  className="ed-footer__drop"
+                  open={footerWide ? true : undefined}
+                >
+                  <summary
+                    className="ed-footer__title"
+                    onClick={(e) => {
+                      if (footerWide) e.preventDefault();
+                    }}
+                  >
+                    <span>{group.title}</span>
+                    <span className="ed-footer__chevron" aria-hidden="true" />
+                  </summary>
+                  <nav aria-label={`${group.title} links`}>
+                    {group.links.map((link) => (
+                      <Link key={link.to} to={link.to}>{link.label}</Link>
+                    ))}
+                  </nav>
+                </details>
+              ))}
             </div>
 
             <div className="ed-footer__subscribe">
