@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import '../styles/editorial-structures.css';
 
 const HERO_NAV = [
   { label: 'Sessions', href: '#plans' },
@@ -229,73 +230,97 @@ export default function PricingPage() {
         </div>
       </section>
 
-      <section className="pr-section pr-section--cream" id="included">
+      {/* What's included — a specification table, since it is a
+          uniform list of entitlements against a condition. */}
+      <section className="pr-section pr-section--cream ed-pace" id="included">
         <div className="container">
-          <header className="pr-section__head">
-            <p className="pr-eyebrow">Always included</p>
+          <div className="ed-head ed-measure-wide">
+            <span className="ed-head__label">Always included</span>
             <h2>Everything that comes with every session</h2>
             <p>No matter which clinician you book, these are included at no extra cost.</p>
-          </header>
-          <div className="pr-included">
-            {INCLUDED.map((item) => (
-              <article key={item.label} className="pr-included__item">
-                <div className="pr-included__label">{item.label}</div>
-                <div className="pr-included__note">{item.note}</div>
-              </article>
-            ))}
           </div>
+          <table className="ed-table ed-measure-wide">
+            <thead>
+              <tr>
+                <th scope="col">Included</th>
+                <th scope="col">Applies</th>
+              </tr>
+            </thead>
+            <tbody>
+              {INCLUDED.map((item) => (
+                <tr key={item.label}>
+                  <th scope="row" style={{ whiteSpace: 'normal' }}>{item.label}</th>
+                  <td data-label="Applies">{item.note}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
-      <section className="pr-section" id="organisations">
-        <div className="container">
-          <header className="pr-section__head">
-            <p className="pr-eyebrow">For organisations</p>
-            <h2>Custom plans for corporates, schools &amp; colleges</h2>
-            <p>Monthly programme packages tailored to your size and needs.</p>
-          </header>
-          <div className="pr-orgs">
-            {ORGS.map((org) => (
-              <article key={org.title} className="pr-org">
-                <span className="pr-org__tag">{org.tag}</span>
-                <h3>{org.title}</h3>
-                <p>{org.body}</p>
+      {/* Organisations — an index, each row leading to its own quote. */}
+      <section className="pr-section ed-pace" id="organisations">
+        <div className="container ed-aside">
+          <div>
+            <p className="ed-aside__label">For organisations</p>
+            <p className="ed-aside__note">
+              Monthly programme packages tailored to your size and needs.
+            </p>
+          </div>
+          <div>
+            <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.9rem)', fontWeight: 600, lineHeight: 1.2, maxWidth: '18ch', marginBottom: '1.5rem' }}>
+              Custom plans for corporates, schools &amp; colleges
+            </h2>
+            <div className="ed-index">
+              {ORGS.map((org) => (
                 <a
-                  className="btn btn-ghost btn-sm"
+                  key={org.title}
+                  className="ed-index__row"
                   href={`mailto:support@serenest.in?subject=${org.subject}%20Enquiry`}
                 >
-                  Get a quote
+                  <span />
+                  <span>
+                    <h3 className="ed-index__title">{org.title}</h3>
+                    <span className="ed-index__meta">{org.tag}</span>
+                  </span>
+                  <p className="ed-index__body">{org.body}</p>
+                  <span className="ed-index__go" aria-hidden="true">Get a quote →</span>
                 </a>
-              </article>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="pr-section pr-section--cream">
-        <div className="container">
-          <header className="pr-section__head">
-            <p className="pr-eyebrow">Payment</p>
-            <h2>Secure, flexible payments</h2>
-            <p>Powered by Razorpay with 256-bit encryption. Pay however you like.</p>
-          </header>
-          <div className="pr-payments">
-            {PAYMENTS.map((m) => (
-              <span key={m} className="pr-payment">{m}</span>
-            ))}
+      {/* Payment methods stay as chips — they read as labels — but the
+          section is tightened so it doesn't claim equal weight. */}
+      <section className="pr-section pr-section--cream ed-pace-tight">
+        <div className="container ed-aside">
+          <div>
+            <p className="ed-aside__label">Payment</p>
+            <p className="ed-aside__note">
+              Powered by Razorpay with 256-bit encryption.
+            </p>
           </div>
-          <p className="pr-payment-note">
-            All transactions are secured and encrypted. Serenest never stores your card details.
-          </p>
+          <div>
+            <div className="pr-payments">
+              {PAYMENTS.map((m) => (
+                <span key={m} className="pr-payment">{m}</span>
+              ))}
+            </div>
+            <p className="pr-payment-note" style={{ marginTop: '1rem' }}>
+              All transactions are secured and encrypted. Serenest never stores your card details.
+            </p>
+          </div>
         </div>
       </section>
 
-      <section className="pr-section" id="faq">
-        <div className="container">
-          <header className="pr-section__head">
-            <p className="pr-eyebrow">FAQ</p>
-            <h2>Common pricing questions</h2>
-          </header>
+      <section className="pr-section ed-pace" id="faq">
+        <div className="container ed-aside">
+          <div>
+            <p className="ed-aside__label">FAQ</p>
+            <p className="ed-aside__note">Common questions about fees and payment.</p>
+          </div>
           <div className="pr-faq">
             {FAQ.map((f) => (
               <FaqItem key={f.q} q={f.q} a={f.a} />

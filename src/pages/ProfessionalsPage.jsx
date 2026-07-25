@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import '../styles/editorial-structures.css';
 
 const HERO_NAV = [
   { label: 'Why Serenest', href: '#why' },
@@ -188,44 +189,57 @@ export default function ProfessionalsPage() {
         </div>
       </section>
 
-      <section className="pros-section pros-section--cream" id="why">
-        <div className="container">
-          <header className="pros-section__head">
-            <p className="pros-eyebrow">Built for clinical practice</p>
-            <h2>Everything you need, end-to-end</h2>
-            <p>Reduce admin load, keep documentation consistent, and support continuity across sessions.</p>
-          </header>
-          <div className="pros-features">
-            {FEATURES.map((item) => (
-              <article key={item.title} className="pros-feature">
-                <span className="pros-feature__tag">{item.tag}</span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </article>
-            ))}
+      {/* What the platform provides — a numbered index of capabilities. */}
+      <section className="pros-section pros-section--cream ed-pace" id="why">
+        <div className="container ed-aside">
+          <div>
+            <p className="ed-aside__label">Built for practice</p>
+            <p className="ed-aside__note">
+              Reduce admin load, keep documentation consistent, and support continuity across
+              sessions.
+            </p>
+          </div>
+          <div>
+            <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.9rem)', fontWeight: 600, lineHeight: 1.2, maxWidth: '18ch', marginBottom: '1.5rem' }}>
+              Everything you need, end-to-end
+            </h2>
+            <div className="ed-index">
+              {FEATURES.map((item, i) => (
+                <div key={item.title} className="ed-index__row">
+                  <span className="ed-index__num" aria-hidden="true">
+                    {String(i + 1).padStart(2, '0')}
+                  </span>
+                  <span>
+                    <h3 className="ed-index__title">{item.title}</h3>
+                    <span className="ed-index__meta">{item.tag}</span>
+                  </span>
+                  <p className="ed-index__body">{item.body}</p>
+                  <span />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="pros-section" id="onboarding">
+      {/* Onboarding is genuinely sequential — a timeline. */}
+      <section className="pros-section ed-pace" id="onboarding">
         <div className="container">
-          <header className="pros-section__head">
-            <p className="pros-eyebrow">Step by step</p>
+          <div className="ed-head ed-measure-wide">
+            <span className="ed-head__label">Step by step</span>
             <h2>Go live in less than a week</h2>
             <p>Structured, verified onboarding so patients trust who they book with.</p>
-          </header>
-          <ol className="pros-steps">
+          </div>
+          <ol className="ed-timeline">
             {STEPS.map(([title, desc], i) => (
-              <li key={title} className="pros-step">
-                <span className="pros-step__num">{i + 1}</span>
-                <div>
-                  <strong>{title}</strong>
-                  <p>{desc}</p>
-                </div>
+              <li key={title}>
+                <span className="ed-timeline__stage">{`Step ${i + 1}`}</span>
+                <h3>{title}</h3>
+                <p>{desc}</p>
               </li>
             ))}
           </ol>
-          <div className="pros-mid-cta">
+          <div className="pros-mid-cta" style={{ marginTop: '2.25rem' }}>
             <Link className="btn btn-primary btn-lg" to="/professionals/apply">
               Start your application
             </Link>
@@ -233,21 +247,30 @@ export default function ProfessionalsPage() {
         </div>
       </section>
 
-      <section className="pros-section pros-section--cream" id="compliance">
+      {/* Compliance is reference material — a table. */}
+      <section className="pros-section pros-section--cream ed-pace" id="compliance">
         <div className="container">
-          <header className="pros-section__head">
-            <p className="pros-eyebrow">Trust &amp; compliance</p>
+          <div className="ed-head ed-measure-wide">
+            <span className="ed-head__label">Trust &amp; compliance</span>
             <h2>Designed around India&apos;s telemedicine and privacy expectations</h2>
-          </header>
-          <div className="pros-compliance">
-            {COMPLIANCE.map((item) => (
-              <article key={item.title} className="pros-compliance__item">
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </article>
-            ))}
           </div>
-          <div className="pros-note">
+          <table className="ed-table ed-measure-wide">
+            <thead>
+              <tr>
+                <th scope="col">Area</th>
+                <th scope="col">How Serenest handles it</th>
+              </tr>
+            </thead>
+            <tbody>
+              {COMPLIANCE.map((item) => (
+                <tr key={item.title}>
+                  <th scope="row" style={{ whiteSpace: 'normal', maxWidth: '16rem' }}>{item.title}</th>
+                  <td data-label="How Serenest handles it">{item.body}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="pros-note" style={{ marginTop: '1.75rem' }}>
             <strong>Note.</strong> Serenest is a clinical platform and does not support
             prescriptions without a consultation. Schedule H regulations are respected and
             restricted to verified MD psychiatrists.
@@ -255,22 +278,32 @@ export default function ProfessionalsPage() {
         </div>
       </section>
 
-      <section className="pros-section" id="hub">
-        <div className="container">
-          <header className="pros-section__head">
-            <p className="pros-eyebrow">Professional hub</p>
-            <h2>Everything for your ongoing practice</h2>
-            <p>Learning, resources, and guidelines stay with you after you join.</p>
-          </header>
-          <div className="pros-hub">
-            {HUB.map((item) => (
-              <Link key={item.title} to={item.href} className="pros-hub__card">
-                <span className="pros-hub__tag">{item.tag}</span>
-                <h3 className="pros-hub__title">{item.title}</h3>
-                <p className="pros-hub__body">{item.body}</p>
-                <span className="pros-hub__cta">{item.cta}</span>
-              </Link>
-            ))}
+      {/* The hub is a set of destinations — an index of links. */}
+      <section className="pros-section ed-pace" id="hub">
+        <div className="container ed-aside">
+          <div>
+            <p className="ed-aside__label">Professional hub</p>
+            <p className="ed-aside__note">
+              Learning, resources, and guidelines stay with you after you join.
+            </p>
+          </div>
+          <div>
+            <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.9rem)', fontWeight: 600, lineHeight: 1.2, maxWidth: '18ch', marginBottom: '1.5rem' }}>
+              Everything for your ongoing practice
+            </h2>
+            <div className="ed-index">
+              {HUB.map((item) => (
+                <Link key={item.title} to={item.href} className="ed-index__row">
+                  <span />
+                  <span>
+                    <h3 className="ed-index__title">{item.title}</h3>
+                    <span className="ed-index__meta">{item.tag}</span>
+                  </span>
+                  <p className="ed-index__body">{item.body}</p>
+                  <span className="ed-index__go" aria-hidden="true">{item.cta} →</span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
