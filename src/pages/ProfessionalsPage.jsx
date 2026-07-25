@@ -8,7 +8,6 @@ const HERO_NAV = [
   { label: 'Why Serenest', href: '#why' },
   { label: 'How it works', href: '#onboarding' },
   { label: 'Compliance', href: '#compliance' },
-  { label: 'Hub', href: '#hub' },
 ];
 
 const ROLES = [
@@ -23,7 +22,6 @@ const PRACTICE = [
   'SOAP notes and digital prescriptions',
   'PHQ-9 / GAD-7 trends across visits',
   'Privacy-first records under DPDP',
-  'Academy access free for approved clinicians',
 ];
 
 const FEATURES = [
@@ -78,37 +76,6 @@ const COMPLIANCE = [
   },
 ];
 
-const HUB = [
-  {
-    tag: 'Academy',
-    title: 'Serenest Academy · Free',
-    body: 'Approved professionals get Academy programs at no charge — certificates, CPD, and fellowships included.',
-    href: '/academy',
-    cta: 'Open Academy',
-  },
-  {
-    tag: 'Learning',
-    title: 'Learning hub',
-    body: 'Clinical framing, pharmacology, and platform training for clinicians and trainees.',
-    href: '/professionals/learning',
-    cta: 'Explore learning',
-  },
-  {
-    tag: 'Resources',
-    title: 'Resources',
-    body: 'Handouts, template requests, ops checklists, and partnership decks ready to share.',
-    href: '/professionals/resources',
-    cta: 'Browse resources',
-  },
-  {
-    tag: 'Guidelines',
-    title: 'Guidelines',
-    body: 'Telemedicine, privacy, and prescribing — orientation, not legal advice.',
-    href: '/professionals/guidelines',
-    cta: 'Read guidelines',
-  },
-];
-
 export default function ProfessionalsPage() {
   useSEO({ path: '/professionals', ...ROUTE_SEO['/professionals'] });
 
@@ -158,8 +125,6 @@ export default function ProfessionalsPage() {
               <p className="pros-hero__panel-note">
                 Already verified?{' '}
                 <Link to="/professionals/login">Sign in</Link>
-                {' '}·{' '}
-                <Link to="/academy">Academy free</Link>
               </p>
             </aside>
           </div>
@@ -274,36 +239,6 @@ export default function ProfessionalsPage() {
             <strong>Note.</strong> Serenest is a clinical platform and does not support
             prescriptions without a consultation. Schedule H regulations are respected and
             restricted to verified MD psychiatrists.
-          </div>
-        </div>
-      </section>
-
-      {/* The hub is a set of destinations — an index of links. */}
-      <section className="pros-section ed-pace" id="hub">
-        <div className="container ed-aside">
-          <div>
-            <p className="ed-aside__label">Professional hub</p>
-            <p className="ed-aside__note">
-              Learning, resources, and guidelines stay with you after you join.
-            </p>
-          </div>
-          <div>
-            <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.9rem)', fontWeight: 600, lineHeight: 1.2, maxWidth: '18ch', marginBottom: '1.5rem' }}>
-              Everything for your ongoing practice
-            </h2>
-            <div className="ed-index">
-              {HUB.map((item) => (
-                <Link key={item.title} to={item.href} className="ed-index__row">
-                  <span />
-                  <span>
-                    <h3 className="ed-index__title">{item.title}</h3>
-                    <span className="ed-index__meta">{item.tag}</span>
-                  </span>
-                  <p className="ed-index__body">{item.body}</p>
-                  <span className="ed-index__go" aria-hidden="true">{item.cta} →</span>
-                </Link>
-              ))}
-            </div>
           </div>
         </div>
       </section>

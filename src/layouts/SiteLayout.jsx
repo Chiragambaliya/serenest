@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
-import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
 import EmailCapture from '../components/EmailCapture';
 import { useAuth } from '../lib/useAuth';
 import { useMainReveal } from '../hooks/useReveal';
@@ -241,8 +240,6 @@ export default function SiteLayout() {
           </button>
         </div>
       </header>
-
-      {location.pathname.startsWith('/professionals') ? <ProfessionalsSubNav /> : null}
 
       {/* ── Mobile Drawer ──────────────────────────────────── */}
       {menuOpen && (
