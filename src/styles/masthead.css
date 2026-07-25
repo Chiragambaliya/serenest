@@ -601,23 +601,11 @@
   }
 }
 
-/* ── Footer dropdown groups ────────────────────────────────────── */
-/* Stack as accordion below desktop; columns reopen at 1024px */
-@media (max-width: 1023px) {
-  .ed-footer__cols {
-    grid-template-columns: 1fr;
-    gap: 0;
-  }
-
-  .ed-footer__cols > :last-child {
-    grid-column: auto;
-  }
-}
-
+/* ── Footer accordion (mobile / tablet) ────────────────────────── */
 .ed-footer__drop {
-  border-top: 1px solid rgba(28, 26, 23, 0.1);
   margin: 0;
   min-width: 0;
+  border-top: 1px solid rgba(28, 26, 23, 0.08);
 }
 
 .ed-footer__cols .ed-footer__drop:first-child {
@@ -630,12 +618,12 @@
   justify-content: space-between;
   gap: 0.75rem;
   margin: 0;
-  padding: 0.95rem 0;
+  padding: 1rem 0;
   list-style: none;
   cursor: pointer;
   user-select: none;
-  color: rgba(28, 26, 23, 0.72);
-  transition: color 180ms ease;
+  color: rgba(28, 26, 23, 0.7);
+  transition: color 160ms ease;
 }
 
 .ed-footer__drop > .ed-footer__title::-webkit-details-marker {
@@ -647,41 +635,65 @@
 }
 
 .ed-footer__drop > .ed-footer__title:hover {
-  color: var(--teal-700, #3c4a2c);
+  color: var(--ds-sage-deep, #3c4a2c);
 }
 
-.ed-footer__chevron {
-  width: 0.55rem;
-  height: 0.55rem;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  transform: rotate(45deg);
-  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+.ed-footer__toggle {
+  position: relative;
+  width: 14px;
+  height: 14px;
   flex-shrink: 0;
-  opacity: 0.7;
+  opacity: 0.55;
 }
 
-.ed-footer__drop[open] > .ed-footer__title .ed-footer__chevron {
-  transform: rotate(-135deg);
-  opacity: 1;
+.ed-footer__toggle::before,
+.ed-footer__toggle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  background: currentColor;
+  border-radius: 1px;
+  transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease;
+}
+
+.ed-footer__toggle::before {
+  width: 12px;
+  height: 1.5px;
+  transform: translate(-50%, -50%);
+}
+
+.ed-footer__toggle::after {
+  width: 1.5px;
+  height: 12px;
+  transform: translate(-50%, -50%);
 }
 
 .ed-footer__drop[open] > .ed-footer__title {
-  color: var(--ink, #1c1a17);
+  color: var(--ds-ink, #1c1a17);
+}
+
+.ed-footer__drop[open] > .ed-footer__title .ed-footer__toggle {
+  opacity: 0.8;
+}
+
+.ed-footer__drop[open] > .ed-footer__title .ed-footer__toggle::after {
+  transform: translate(-50%, -50%) scaleY(0);
+  opacity: 0;
 }
 
 .ed-footer__drop nav {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
-  padding: 0 0 1.15rem;
-  animation: ed-footer-drop 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  gap: 0.55rem;
+  padding: 0 0 1.05rem;
+  animation: ed-footer-drop 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
 @keyframes ed-footer-drop {
   from {
     opacity: 0;
-    transform: translateY(-4px);
+    transform: translateY(-3px);
   }
   to {
     opacity: 1;
@@ -694,31 +706,27 @@
   line-height: 1.4;
   color: rgba(28, 26, 23, 0.78);
   text-decoration: none;
-  transition: color 160ms ease, padding-left 220ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: color 150ms ease;
 }
 
 .ed-footer__drop nav a:hover {
-  color: var(--teal-700, #3c4a2c);
-  padding-left: 0.25rem;
+  color: var(--ds-sage-deep, #3c4a2c);
 }
 
 /* Desktop: open columns, no accordion chrome */
-@media (min-width: 1024px) {
-  .ed-footer__cols {
-    align-items: start;
-  }
-
+@media (min-width: 900px) {
   .ed-footer__drop {
     border-top: none;
   }
 
   .ed-footer__drop > .ed-footer__title {
-    padding: 0 0 0.85rem;
+    padding: 0 0 0.75rem;
     pointer-events: none;
     cursor: default;
+    color: rgba(28, 26, 23, 0.5);
   }
 
-  .ed-footer__chevron {
+  .ed-footer__toggle {
     display: none;
   }
 
@@ -728,7 +736,6 @@
     animation: none;
   }
 
-  /* Keep groups expanded on desktop even if details is closed */
   .ed-footer__drop:not([open]) nav {
     display: flex !important;
   }
@@ -736,7 +743,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ed-footer__drop nav,
-  .ed-footer__chevron,
+  .ed-footer__toggle::before,
+  .ed-footer__toggle::after,
   .ed-footer__drop nav a {
     animation: none !important;
     transition: none !important;

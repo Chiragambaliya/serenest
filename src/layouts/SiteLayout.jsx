@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
-import EdIcon from '../components/EdIcon';
 import EmailCapture from '../components/EmailCapture';
 import { useAuth } from '../lib/useAuth';
 
@@ -69,17 +68,17 @@ const FOOTER_GROUPS = [
   {
     title: 'Learn',
     links: [
-      { to: '/academy', label: 'Serenest Academy' },
+      { to: '/academy', label: 'Academy' },
       { to: '/blog', label: 'Blog' },
       { to: '/guides', label: 'Guides' },
       { to: '/faq', label: 'FAQ' },
     ],
   },
   {
-    title: 'Business',
+    title: 'Work with us',
     links: [
       { to: '/corporate', label: 'Corporate EAP' },
-      { to: '/partner', label: 'Partner with us' },
+      { to: '/partner', label: 'Partner' },
       { to: '/careers', label: 'Careers' },
       { to: '/professionals', label: 'For professionals' },
     ],
@@ -87,23 +86,19 @@ const FOOTER_GROUPS = [
   {
     title: 'Company',
     links: [
-      { to: '/about', label: 'About Serenest' },
-      { to: '/team', label: 'Our team' },
-      { to: '/contact', label: 'Contact us' },
+      { to: '/about', label: 'About' },
+      { to: '/team', label: 'Team' },
+      { to: '/contact', label: 'Contact' },
     ],
   },
-  {
-    title: 'Legal',
-    links: [
-      { to: '/legal', label: 'All policies' },
-      { to: '/privacy', label: 'Privacy policy' },
-      { to: '/terms', label: 'Terms & conditions' },
-      { to: '/refund-policy', label: 'Refund policy' },
-      { to: '/grievance-policy', label: 'Grievances' },
-      { to: '/cookie-policy', label: 'Cookies' },
-      { to: '/emergency-disclaimer', label: 'Emergency disclaimer' },
-    ],
-  },
+];
+
+const FOOTER_LEGAL = [
+  { to: '/privacy', label: 'Privacy' },
+  { to: '/terms', label: 'Terms' },
+  { to: '/refund-policy', label: 'Refunds' },
+  { to: '/cookie-policy', label: 'Cookies' },
+  { to: '/legal', label: 'All policies' },
 ];
 
 /* Secondary links kept in the footer and on their parent pages rather
@@ -132,7 +127,7 @@ export default function SiteLayout() {
 
   // Footer groups: accordion on small screens, open columns on desktop
   useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1024px)');
+    const mq = window.matchMedia('(min-width: 900px)');
     const sync = () => setFooterWide(mq.matches);
     sync();
     mq.addEventListener('change', sync);
@@ -354,15 +349,14 @@ export default function SiteLayout() {
       {/* ── Footer ─────────────────────────────────────────── */}
       <footer className="ed-footer" aria-label="Site footer">
         <div className="ed-footer__shell">
-          {/* Pre-footer CTA */}
           <div className="ed-footer__cta">
-            <div>
+            <div className="ed-footer__cta-copy">
               <h3>Need help today?</h3>
               <p>Book a consultation with a qualified mental health professional.</p>
             </div>
             <div className="ed-footer__cta-actions">
               <Link
-                className="btn btn-primary btn-lg"
+                className="btn btn-primary"
                 to="/book"
                 onClick={() => {
                   if (location.pathname.startsWith('/book')) {
@@ -373,7 +367,7 @@ export default function SiteLayout() {
                 Book appointment
               </Link>
               <a
-                className="btn btn-whatsapp btn-lg"
+                className="btn btn-whatsapp"
                 href="https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest"
                 target="_blank"
                 rel="noreferrer"
@@ -383,52 +377,32 @@ export default function SiteLayout() {
             </div>
           </div>
 
-          <div className="ed-footer__grid">
+          <div className="ed-footer__main">
             <div className="ed-footer__brand">
               <Link to="/" className="ed-footer__logo">
-                <BrandMark size={30} />
+                <BrandMark size={28} />
                 <span>Serenest</span>
               </Link>
-              <p>
-                Doctor-led mental healthcare, professional learning, and thoughtful
-                resources — connected in one calm platform.
-              </p>
+              <p>Doctor-led mental healthcare across India.</p>
               <div className="ed-footer__contact">
-                <a href="mailto:support@serenest.in"><EdIcon name="mail" size={16} /> support@serenest.in</a>
-                <a href="tel:917777936367"><EdIcon name="phone" size={16} /> +91 77779 36367</a>
+                <a href="mailto:support@serenest.in">support@serenest.in</a>
+                <span aria-hidden="true" className="ed-footer__dot" />
+                <a href="tel:+917777936367">+91 77779 36367</a>
               </div>
               <div className="ed-footer__social" aria-label="Social links">
                 <a
                   href="https://www.instagram.com/serenest.fit"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="Instagram"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-                    <rect x="2" y="2" width="20" height="20" rx="5" />
-                    <circle cx="12" cy="12" r="4.5" />
-                    <circle cx="17.5" cy="6.5" r="0.8" fill="currentColor" stroke="none" />
-                  </svg>
+                  Instagram
                 </a>
                 <a
                   href="https://www.linkedin.com/company/serenest-mind-pvt-ltd/"
                   target="_blank"
                   rel="noreferrer"
-                  aria-label="LinkedIn"
                 >
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-                    <rect x="2" y="2" width="20" height="20" rx="4" />
-                    <path d="M8 11v5M8 8v.5M12 16v-3a2 2 0 0 1 4 0v3M12 11v5" />
-                  </svg>
-                </a>
-                <a
-                  className="ed-footer__wa"
-                  href="https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest"
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label="WhatsApp"
-                >
-                  <EdIcon name="chat" size={18} />
+                  LinkedIn
                 </a>
               </div>
             </div>
@@ -447,7 +421,7 @@ export default function SiteLayout() {
                     }}
                   >
                     <span>{group.title}</span>
-                    <span className="ed-footer__chevron" aria-hidden="true" />
+                    <span className="ed-footer__toggle" aria-hidden="true" />
                   </summary>
                   <nav aria-label={`${group.title} links`}>
                     {group.links.map((link) => (
@@ -457,16 +431,23 @@ export default function SiteLayout() {
                 </details>
               ))}
             </div>
+          </div>
 
-            <div className="ed-footer__subscribe">
-              <h3 className="ed-footer__title">Stay in the loop</h3>
-              <p>Occasional updates from Serenest. No spam.</p>
-              <EmailCapture source="footer_newsletter" variant="light" />
+          <div className="ed-footer__subscribe">
+            <div className="ed-footer__subscribe-copy">
+              <h3>Stay in the loop</h3>
+              <p>Occasional updates. No spam.</p>
             </div>
+            <EmailCapture source="footer_newsletter" variant="light" />
           </div>
 
           <div className="ed-footer__bottom">
             <p>© {new Date().getFullYear()} Serenest Education Pvt Ltd</p>
+            <nav className="ed-footer__legal" aria-label="Legal">
+              {FOOTER_LEGAL.map((link) => (
+                <Link key={link.to} to={link.to}>{link.label}</Link>
+              ))}
+            </nav>
             <p className="ed-footer__made">Made with care in India</p>
           </div>
         </div>
