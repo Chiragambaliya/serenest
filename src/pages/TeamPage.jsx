@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom';
 import { TEAM_MEMBERS } from '../lib/team';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import ImagePlaceholder from '../components/ImagePlaceholder';
+import '../styles/editorial-structures.css';
+import '../styles/service-detail.css';
 
+/* How the network is run. Presented as an annotated set rather than
+   three equal cards — each point is a different kind of commitment. */
 const NETWORK = [
   {
     tag: 'Verification',
@@ -25,95 +30,122 @@ const NETWORK = [
 export default function TeamPage() {
   useSEO({ path: '/team', ...ROUTE_SEO['/team'] });
 
+  const [lead, ...rest] = TEAM_MEMBERS;
+
   return (
     <div className="team-page">
-      <section className="tm-hero">
-        <div className="container tm-hero__inner">
-          <p className="tm-eyebrow">Our team</p>
-          <h1 className="tm-hero__title">
-            The clinicians and operators behind Serenest.
-          </h1>
-          <p className="tm-hero__lead">
-            A carefully verified network of psychiatrists, psychologists, and counsellors —
-            each profile lists qualifications, focus areas, languages, and registration details.
-          </p>
-        </div>
-      </section>
-
-      <section className="tm-section">
-        <div className="container">
-          <header className="tm-section__head">
-            <p className="tm-eyebrow">People</p>
-            <h2>Leadership &amp; core team</h2>
-            <p>
-              We expand this roster as advisors and core collaborators come on board. Every clinician
-              listed has completed verification.
+      {/* Opener: title left, portrait right — the page's one real
+          human asset gets the entry position. */}
+      <section className="tm-hero ed-pace">
+        <div className="container svd-split">
+          <div>
+            <p className="tm-eyebrow">Our team</p>
+            <h1 className="tm-hero__title">The clinicians and operators behind Serenest.</h1>
+            <p className="ed-lede" style={{ marginTop: '1.1rem' }}>
+              A verified network of psychiatrists, psychologists, and counsellors — every
+              profile carries qualifications, focus areas, languages, and registration details.
             </p>
-          </header>
-
-          <div className="tm-members">
-            {TEAM_MEMBERS.map((m) => (
-              <article key={m.name} className="tm-member">
-                <div className="tm-member__head">
-                  <div className="tm-member__avatar" aria-hidden="true">
-                    {m.initials}
-                  </div>
-                  <div>
-                    <h3 className="tm-member__name">{m.name}</h3>
-                    {m.role && <p className="tm-member__role">{m.role}</p>}
-                    {m.subtitle && <p className="tm-member__sub">{m.subtitle}</p>}
-                  </div>
-                </div>
-
-                <div className="tm-member__bio">
-                  {(Array.isArray(m.bio) ? m.bio : [m.bio]).map((para) => (
-                    <p key={para}>{para}</p>
-                  ))}
-                </div>
-
-                {m.credentials?.length ? (
-                  <div className="tm-creds" aria-label="Credentials">
-                    {m.credentials.map((c) => (
-                      <span key={c} className="tm-cred">{c}</span>
-                    ))}
-                  </div>
-                ) : null}
-              </article>
-            ))}
           </div>
+          <div className="svd-split__media">
+            <ImagePlaceholder
+              asset="team-founder-portrait.jpg"
+              direction="Environmental portrait of Dr. Aambalia in his consulting room, seated, natural light, looking to camera. Not a studio headshot."
+            />
+          </div>
+        </div>
+      </section>
 
-          <p className="tm-apply">
-            Are you a verified psychiatrist, psychologist, or counsellor?{' '}
-            <Link to="/professionals/apply">Apply to join Serenest</Link>{' '}
-            or <a href="mailto:support@serenest.in">email us</a>.
+      {/* The founder gets a full editorial profile, not a card. */}
+      {lead && (
+        <section className="svd-section ed-pace">
+          <div className="container ed-aside">
+            <div>
+              <p className="ed-aside__label">Founder</p>
+              <p className="ed-aside__note">
+                {lead.credentials?.join(' · ')}
+              </p>
+            </div>
+            <div>
+              <h2 style={{ fontSize: 'clamp(1.5rem, 3vw, 2.1rem)', fontWeight: 600, marginBottom: '0.3rem' }}>
+                {lead.name}
+              </h2>
+              {lead.role && (
+                <p className="ed-index__meta" style={{ marginBottom: '0.2rem' }}>{lead.role}</p>
+              )}
+              {lead.subtitle && (
+                <p style={{ color: 'var(--muted)', fontSize: '0.92rem', marginBottom: '1.5rem' }}>
+                  {lead.subtitle}
+                </p>
+              )}
+              <div className="ed-measure">
+                {(Array.isArray(lead.bio) ? lead.bio : [lead.bio]).map((para) => (
+                  <p key={para} style={{ marginBottom: '1rem', lineHeight: 1.7, color: 'var(--ink-2)' }}>
+                    {para}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Any additional members listed after the founder. */}
+      {rest.length > 0 && (
+        <section className="svd-section ed-pace-tight">
+          <div className="container">
+            <div className="ed-index">
+              {rest.map((m) => (
+                <div key={m.name} className="ed-index__row">
+                  <span className="ed-index__num" aria-hidden="true">{m.initials}</span>
+                  <span>
+                    <h3 className="ed-index__title">{m.name}</h3>
+                    {m.role && <span className="ed-index__meta">{m.role}</span>}
+                  </span>
+                  <p className="ed-index__body">
+                    {Array.isArray(m.bio) ? m.bio[0] : m.bio}
+                  </p>
+                  <span />
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* An honest note about roster size, set as a marginal aside
+          rather than dressed up as a card. */}
+      <section className="svd-section ed-pace-tight">
+        <div className="container ed-aside">
+          <div>
+            <p className="ed-aside__label">Joining</p>
+          </div>
+          <p className="ed-measure" style={{ margin: 0, lineHeight: 1.7, color: 'var(--ink-2)' }}>
+            The roster grows as advisors and collaborators come on board, and every clinician
+            listed has completed verification. If you're a verified psychiatrist, psychologist,
+            or counsellor,{' '}
+            <Link to="/professionals/apply" className="ed-link">apply to join Serenest</Link>{' '}
+            or <a href="mailto:support@serenest.in" className="ed-link">email us</a>.
           </p>
         </div>
       </section>
 
-      <section className="tm-section tm-section--cream" aria-label="Extended network">
+      {/* How the network runs — a timeline, since these are stages of
+          the same commitment rather than parallel features. */}
+      <section className="svd-section svd-section--soft ed-pace">
         <div className="container">
-          <header className="tm-section__head">
-            <p className="tm-eyebrow">Beyond HQ</p>
+          <div className="ed-head ed-measure-wide">
+            <span className="ed-head__label">Beyond HQ</span>
             <h2>A verified clinician network across India</h2>
-          </header>
-
-          <div className="tm-grid tm-grid--3">
+          </div>
+          <ol className="ed-timeline">
             {NETWORK.map((item) => (
-              <article key={item.tag} className="tm-card">
-                <span className="tm-card__tag">{item.tag}</span>
+              <li key={item.tag}>
+                <span className="ed-timeline__stage">{item.tag}</span>
                 <h3>{item.title}</h3>
                 <p>{item.body}</p>
-              </article>
+              </li>
             ))}
-          </div>
-
-          <p className="tm-links">
-            Read the fuller story on{' '}
-            <Link to="/about">About Serenest</Link>{' '}— or browse{' '}
-            <Link to="/patient/find-professional">verified professionals</Link>.
-            To book, see our{' '}
-            <Link to="/services">services overview</Link>.
-          </p>
+          </ol>
         </div>
       </section>
 

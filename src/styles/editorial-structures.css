@@ -1,0 +1,272 @@
+/* ══════════════════════════════════════════════════════════════════
+   Editorial structures
+   ------------------------------------------------------------------
+   Real layout primitives for pages that were previously stacks of
+   equal-width card grids. These are structures, not skins: an index,
+   a comparison table, a timeline, an annotated figure, a lede.
+
+   Section pacing is explicit here. The old stylesheets gave every
+   section the same padding, so nothing read as emphasised or quiet.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Measures ──────────────────────────────────────────────────────
+   A readable prose measure, and a wide measure for structures. */
+.ed-measure      { max-width: 34rem; }
+.ed-measure-wide { max-width: 52rem; }
+
+/* ── Section pacing ────────────────────────────────────────────────
+   Three deliberate densities rather than one uniform rhythm. */
+.ed-pace-tight { padding-block: clamp(2rem, 4vw, 2.75rem); }
+.ed-pace       { padding-block: clamp(3.25rem, 6vw, 4.5rem); }
+.ed-pace-open  { padding-block: clamp(5rem, 10vw, 8rem); }
+
+/* ── Lede ──────────────────────────────────────────────────────────
+   An opening paragraph set larger than body, in the display face —
+   the standard magazine device for entering an article. */
+.ed-lede {
+  font-family: var(--font-heading);
+  font-size: clamp(1.15rem, 2.2vw, 1.5rem);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 34rem;
+}
+
+/* ── Index ─────────────────────────────────────────────────────────
+   A numbered contents list. Replaces card grids where the content is
+   really an enumerable set: programs, learning paths, roles. */
+.ed-index { border-top: 1px solid var(--ink); }
+.ed-index__row {
+  display: grid;
+  gap: 0.35rem 2rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+  align-items: baseline;
+  transition: background 140ms ease, padding-left 140ms ease;
+}
+@media (min-width: 800px) {
+  .ed-index__row {
+    grid-template-columns: 3.5rem minmax(0, 20rem) minmax(0, 1fr) auto;
+    gap: 2.5rem;
+  }
+}
+a.ed-index__row:hover { padding-left: 0.5rem; }
+a.ed-index__row:hover .ed-index__title { color: var(--teal-600); }
+.ed-index__num {
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  color: var(--subtle);
+  font-variant-numeric: tabular-nums;
+}
+.ed-index__title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 600;
+  line-height: 1.25;
+  margin: 0;
+}
+.ed-index__meta {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  color: var(--teal-500);
+}
+.ed-index__body {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--muted);
+  margin: 0;
+}
+.ed-index__go {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--teal-600);
+  white-space: nowrap;
+}
+
+/* ── Comparison table ──────────────────────────────────────────────
+   For genuinely tabular content. Rules only — no zebra fills, no
+   rounded container. */
+.ed-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.ed-table caption {
+  text-align: left;
+  padding-bottom: 0.9rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+.ed-table th,
+.ed-table td {
+  text-align: left;
+  padding: 0.95rem 1.25rem 0.95rem 0;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.ed-table thead th {
+  border-bottom: 1px solid var(--ink);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.ed-table tbody th {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.ed-table td { color: var(--muted); }
+.ed-table__num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (max-width: 720px) {
+  .ed-table thead { display: none; }
+  .ed-table tr { display: block; padding: 1.1rem 0; border-bottom: 1px solid var(--border); }
+  .ed-table th, .ed-table td { display: block; border: none; padding: 0.15rem 0; }
+  .ed-table td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--subtle);
+  }
+}
+
+/* ── Timeline ──────────────────────────────────────────────────────
+   A vertical run of stages against a single rule. */
+.ed-timeline { border-left: 1px solid var(--border); margin: 0; padding: 0; list-style: none; }
+.ed-timeline > li { position: relative; padding: 0 0 2.25rem 2.5rem; }
+.ed-timeline > li:last-child { padding-bottom: 0; }
+.ed-timeline > li::before {
+  content: '';
+  position: absolute;
+  left: -4px;
+  top: 0.55rem;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--teal-600);
+}
+.ed-timeline__stage {
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--teal-500);
+  margin-bottom: 0.3rem;
+}
+.ed-timeline h3 {
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 0.35rem;
+}
+.ed-timeline p { margin: 0; color: var(--muted); font-size: 0.94rem; line-height: 1.6; max-width: 46ch; }
+
+/* ── Figure with annotation ────────────────────────────────────────
+   A photograph carrying a caption in the margin, as in print. */
+.ed-figure { margin: 0; display: grid; gap: 1rem; }
+@media (min-width: 900px) {
+  .ed-figure--annotated { grid-template-columns: minmax(0, 1fr) 13rem; gap: 2rem; align-items: end; }
+}
+.ed-figure__media { position: relative; min-height: 300px; }
+.ed-figure__media .image-placeholder { position: absolute; inset: 0; }
+.ed-figure figcaption {
+  font-size: 0.82rem;
+  line-height: 1.55;
+  color: var(--muted);
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Full-width editorial band ─────────────────────────────────────
+   Breaks the column rhythm. Use sparingly — once per page at most. */
+.ed-band {
+  background: var(--teal-600);
+  color: #fff;
+  padding-block: clamp(3rem, 7vw, 5rem);
+}
+.ed-band h2, .ed-band h3 { color: #fff; }
+.ed-band p { color: rgba(255,255,255,0.82); }
+.ed-band__quote {
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 3.2vw, 2.1rem);
+  font-weight: 500;
+  line-height: 1.35;
+  max-width: 22ch;
+  margin: 0;
+  color: #fff;
+}
+.ed-band__attrib {
+  margin: 1.25rem 0 0;
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+}
+
+/* ── Marginal note ─────────────────────────────────────────────────
+   A small aside set beside the main column. */
+.ed-aside {
+  display: grid;
+  gap: 2rem;
+}
+@media (min-width: 900px) {
+  .ed-aside { grid-template-columns: 12rem minmax(0, 1fr); gap: 4rem; }
+  .ed-aside--right { grid-template-columns: minmax(0, 1fr) 14rem; }
+}
+.ed-aside__label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal-500);
+  margin: 0;
+}
+.ed-aside__note {
+  font-size: 0.86rem;
+  line-height: 1.6;
+  color: var(--muted);
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  margin: 0;
+}
+
+/* ── Section head, editorial ───────────────────────────────────────
+   Left-aligned, with the label sitting above a rule. */
+.ed-head { margin-bottom: 2.25rem; }
+.ed-head__label {
+  display: block;
+  padding-bottom: 0.7rem;
+  margin-bottom: 1.1rem;
+  border-bottom: 1px solid var(--ink);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.ed-head h2 {
+  font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  margin: 0 0 0.6rem;
+  max-width: 20ch;
+}
+.ed-head p { margin: 0; color: var(--muted); line-height: 1.65; max-width: 52ch; }
+.ed-head--wide h2 { max-width: 30ch; }
+
+/* ── Inline prose link ─────────────────────────────────────────────
+   For links inside running text. `.hp-text-link` appends an arrow via
+   ::after, which is right for standalone calls to action but breaks
+   the line when used mid-sentence. */
+.ed-link {
+  color: var(--teal-600);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+.ed-link:hover { color: var(--teal-700); }

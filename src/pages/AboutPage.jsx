@@ -2,32 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
-
-const HERO_NAV = [
-  { label: 'The gap', href: '#problem' },
-  { label: 'Founder', href: '#founder' },
-  { label: 'Platform', href: '#platform' },
-  { label: 'Trust', href: '#trust' },
-  { label: 'Team', href: '/team', route: true },
-];
-
-const PILLARS = [
-  {
-    title: 'An access problem',
-    body: 'India’s psychiatrist shortage leaves most people without care.',
-    href: '#problem',
-  },
-  {
-    title: 'Built by a clinician',
-    body: 'Designed in a real clinic — not by a team guessing at healthcare.',
-    href: '#founder',
-  },
-  {
-    title: 'A full platform',
-    body: 'Scheduling, sessions, notes, prescriptions, and follow-up in one place.',
-    href: '#platform',
-  },
-];
+import ImagePlaceholder from '../components/ImagePlaceholder';
+import '../styles/editorial-structures.css';
 
 const STATS = [
   { value: '0.75', label: 'Psychiatrists per 1 lakh population' },
@@ -110,66 +86,71 @@ export default function AboutPage() {
 
   return (
     <div className="about-page">
-      <section className="abt-hero">
-        <div className="container abt-hero__inner">
+      {/* Opener: a single strong statement, no jump-nav strip. */}
+      <section className="abt-hero ed-pace-open">
+        <div className="container">
           <p className="abt-eyebrow">About Serenest</p>
-          <h1 className="abt-hero__title">Built by a psychiatrist who saw the gap firsthand.</h1>
-          <p className="abt-hero__lead">
+          <h1 className="abt-hero__title" style={{ maxWidth: '16ch' }}>
+            Built by a psychiatrist who saw the gap firsthand.
+          </h1>
+          <p className="ed-lede" style={{ marginTop: '1.25rem' }}>
             Serenest started in a clinic in Rajkot, Gujarat — where patients drove hours for a
             fifteen-minute consultation. We built the platform we wish had existed.
           </p>
-          <div className="abt-hero__actions">
+          <div className="abt-hero__actions" style={{ marginTop: '2rem' }}>
             <Link className="btn btn-primary btn-lg" to="/book">Book a consultation</Link>
             <Link className="btn btn-ghost btn-lg" to="/team">Meet the team</Link>
           </div>
-          <nav className="abt-hero__nav" aria-label="On this page">
-            {HERO_NAV.map((item) =>
-              item.route ? (
-                <Link key={item.label} to={item.href}>{item.label}</Link>
-              ) : (
-                <a key={item.label} href={item.href}>{item.label}</a>
-              ),
-            )}
-          </nav>
         </div>
       </section>
 
-      <section className="abt-pillars" aria-label="About Serenest">
+      {/* The scale of the gap, as a figure with the numbers annotated
+          beside it rather than three equal stat boxes. */}
+      <section className="abt-section ed-pace" id="problem">
         <div className="container">
-          <div className="abt-pillars__grid">
-            {PILLARS.map((item) => (
-              <a key={item.title} className="abt-pillar" href={item.href}>
-                <h2 className="abt-pillar__title">{item.title}</h2>
-                <p className="abt-pillar__body">{item.body}</p>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="abt-section" id="problem">
-        <div className="container">
-          <header className="abt-section__head">
-            <p className="abt-eyebrow">The reality in India</p>
+          <div className="ed-head ed-measure-wide">
+            <span className="ed-head__label">The reality in India</span>
             <h2>800 million Indians have no access to a psychiatrist.</h2>
             <p>Stigma, distance, and waitlists keep people from the care they need.</p>
-          </header>
-
-          <div className="abt-stats">
-            {STATS.map((stat) => (
-              <article key={stat.label} className="abt-stat">
-                <div className="abt-stat__value">{stat.value}</div>
-                <div className="abt-stat__label">{stat.label}</div>
-              </article>
-            ))}
           </div>
 
-          <div className="abt-prose">
-            <p>
+          <figure className="ed-figure ed-figure--annotated" style={{ marginBottom: '2.5rem' }}>
+            <div className="ed-figure__media">
+              <ImagePlaceholder
+                asset="about-rural-clinic-waiting.jpg"
+                direction="A district clinic waiting area in daylight — chairs, a corridor, distance implied. Documentary, unposed, no identifiable faces."
+              />
+            </div>
+            <figcaption>
+              Patients across North Gujarat routinely travel several hours to reach the nearest
+              psychiatrist.
+            </figcaption>
+          </figure>
+
+          <table className="ed-table ed-measure-wide">
+            <caption>Publicly reported figures on psychiatric access in India.</caption>
+            <thead>
+              <tr>
+                <th scope="col">Measure</th>
+                <th scope="col">Figure</th>
+              </tr>
+            </thead>
+            <tbody>
+              {STATS.map((stat) => (
+                <tr key={stat.label}>
+                  <th scope="row" style={{ whiteSpace: 'normal' }}>{stat.label}</th>
+                  <td className="ed-table__num" data-label="Figure">{stat.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="ed-measure" style={{ marginTop: '2.5rem' }}>
+            <p style={{ marginBottom: '1rem', lineHeight: 1.75, color: 'var(--ink-2)' }}>
               India carries one of the world&apos;s largest mental health burdens — yet infrastructure
               remains critically underfunded. When people do seek help, waitlists stretch for weeks.
             </p>
-            <p>
+            <p style={{ margin: 0, lineHeight: 1.75, color: 'var(--ink-2)' }}>
               This is not a technology problem. It is an access problem. Technology is how we close it.
             </p>
           </div>
@@ -232,90 +213,117 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="abt-section">
-        <div className="container">
-          <header className="abt-section__head">
-            <p className="abt-eyebrow">Our difference</p>
-            <h2>Not just another app. A clinical platform.</h2>
-          </header>
-          <div className="abt-grid abt-grid--3">
-            {DIFFERENCE.map((item) => (
-              <article key={item.tag} className="abt-card">
-                <span className="abt-card__tag">{item.tag}</span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </article>
-            ))}
+      {/* Three principles, set against a heading held in the margin —
+          not a third equal-column grid. */}
+      <section className="abt-section ed-pace">
+        <div className="container ed-aside">
+          <div>
+            <p className="ed-aside__label">Our difference</p>
+          </div>
+          <div>
+            <h2 style={{ fontSize: 'clamp(1.5rem, 3vw, 2.1rem)', fontWeight: 600, lineHeight: 1.2, maxWidth: '16ch', marginBottom: '2rem' }}>
+              Not just another app. A clinical platform.
+            </h2>
+            <dl className="ed-index" style={{ margin: 0 }}>
+              {DIFFERENCE.map((item) => (
+                <div key={item.tag} className="ed-index__row">
+                  <span />
+                  <dt>
+                    <span className="ed-index__title" style={{ display: 'block' }}>{item.title}</span>
+                    <span className="ed-index__meta">{item.tag}</span>
+                  </dt>
+                  <dd className="ed-index__body" style={{ margin: 0 }}>{item.body}</dd>
+                  <span />
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
       </section>
 
-      <section className="abt-section abt-section--cream">
+      {/* Mission as a full-width band — the page's one raised voice,
+          and the break that stops the column rhythm. */}
+      <section className="ed-band">
         <div className="container">
-          <header className="abt-section__head">
-            <p className="abt-eyebrow">Mission</p>
-            <h2>Make psychiatric care as accessible as a phone call.</h2>
-          </header>
-          <div className="abt-mission">
-            <p>
-              Mental health is health — not a luxury, not something to travel hours for.
-            </p>
-            <p>
-              Serenest connects every Indian with a qualified psychiatrist — in English, Hindi, or
-              Gujarati — from anywhere, in minutes.
-            </p>
-          </div>
+          <p className="ed-band__quote">
+            Make psychiatric care as accessible as a phone call.
+          </p>
+          <p style={{ maxWidth: '42ch', marginTop: '1.5rem', lineHeight: 1.7 }}>
+            Mental health is health — not a luxury, and not something to travel hours for.
+            Serenest connects every Indian with a qualified psychiatrist, in English, Hindi, or
+            Gujarati, from anywhere.
+          </p>
         </div>
       </section>
 
-      <section className="abt-section" id="platform">
+      {/* What we've built — a numbered index, since it is a set of
+          discrete capabilities rather than six equal features. */}
+      <section className="abt-section ed-pace" id="platform">
         <div className="container">
-          <header className="abt-section__head">
-            <p className="abt-eyebrow">What we&apos;ve built</p>
+          <div className="ed-head ed-measure-wide">
+            <span className="ed-head__label">What we&apos;ve built</span>
             <h2>A complete clinical ecosystem</h2>
             <p>Scheduling, sessions, documentation, prescriptions, and Academy learning — together.</p>
-          </header>
-          <div className="abt-grid abt-grid--6">
-            {PLATFORM.map((item) => (
-              <article key={item.tag} className="abt-card">
-                <span className="abt-card__tag">{item.tag}</span>
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </article>
+          </div>
+          <div className="ed-index">
+            {PLATFORM.map((item, i) => (
+              <div key={item.tag} className="ed-index__row">
+                <span className="ed-index__num" aria-hidden="true">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span>
+                  <h3 className="ed-index__title">{item.title}</h3>
+                  <span className="ed-index__meta">{item.tag}</span>
+                </span>
+                <p className="ed-index__body">{item.body}</p>
+                <span />
+              </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="abt-section abt-section--cream" id="trust">
+      {/* Regulatory framework — genuinely tabular, so a table. */}
+      <section className="abt-section abt-section--cream ed-pace" id="trust">
         <div className="container">
-          <header className="abt-section__head">
-            <p className="abt-eyebrow">Trust &amp; safety</p>
+          <div className="ed-head ed-measure-wide">
+            <span className="ed-head__label">Trust &amp; safety</span>
             <h2>Built on India&apos;s regulatory framework</h2>
-          </header>
-          <div className="abt-grid abt-grid--2">
-            {TRUST.map((item) => (
-              <article key={item.title} className="abt-card">
-                <h3>{item.title}</h3>
-                <p>{item.body}</p>
-              </article>
-            ))}
           </div>
+          <table className="ed-table ed-measure-wide">
+            <thead>
+              <tr>
+                <th scope="col">Framework</th>
+                <th scope="col">What it means here</th>
+              </tr>
+            </thead>
+            <tbody>
+              {TRUST.map((item) => (
+                <tr key={item.title}>
+                  <th scope="row" style={{ whiteSpace: 'normal', maxWidth: '18rem' }}>{item.title}</th>
+                  <td data-label="What it means here">{item.body}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </section>
 
-      <section className="abt-section">
-        <div className="container">
-          <header className="abt-section__head">
-            <p className="abt-eyebrow">Where we&apos;re going</p>
-            <h2>Objective, accessible, clinician-led psychiatry for India</h2>
-          </header>
-          <div className="abt-prose">
-            <p>
+      {/* Closing note — narrow measure, marginal label, plenty of air. */}
+      <section className="abt-section ed-pace-open">
+        <div className="container ed-aside">
+          <div>
+            <p className="ed-aside__label">Where we&apos;re going</p>
+          </div>
+          <div className="ed-measure">
+            <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.9rem)', fontWeight: 600, marginBottom: '1.25rem', lineHeight: 1.25 }}>
+              Objective, accessible, clinician-led psychiatry for India
+            </h2>
+            <p style={{ marginBottom: '1rem', lineHeight: 1.75, color: 'var(--ink-2)' }}>
               Our vision goes beyond video calls — toward tools that help psychiatrists make better
               clinical decisions faster, while keeping the human relationship at the centre.
             </p>
-            <p>
+            <p style={{ margin: 0, lineHeight: 1.75, color: 'var(--ink-2)' }}>
               This is how we close India&apos;s mental health gap — one consultation at a time.
             </p>
           </div>
