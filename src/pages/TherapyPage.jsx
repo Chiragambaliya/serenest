@@ -37,12 +37,13 @@ export default function TherapyPage() {
 
   return (
     <div className="svd-page">
-      <section className="svd-hero">
+      {/* Statement opener — type only, oversized, deliberately quiet. */}
+      <section className="svd-hero svd-hero--statement">
         <div className="container">
           <p className="svd-eyebrow">Services · Therapy and Counselling</p>
           <h1>Structured talk therapy, from wherever you are</h1>
           <p className="svd-hero__lead">
-            Individual, couples, and family therapy with a professional matched to what you're
+            Individual, couples, and family therapy with a professional matched to what you&apos;re
             working through — not a one-size-fits-all chat.
           </p>
           <div className="svd-hero__actions">

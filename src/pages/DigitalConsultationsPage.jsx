@@ -35,17 +35,30 @@ export default function DigitalConsultationsPage() {
 
   return (
     <div className="svd-page">
-      <section className="svd-hero">
+      {/* Tension opener — the page's central honesty stated up front. */}
+      <section className="svd-hero svd-hero--tension">
         <div className="container">
-          <p className="svd-eyebrow">Services · Digital Consultations</p>
-          <h1>Secure care, over video, audio, or chat</h1>
-          <p className="svd-hero__lead">
-            Teleconsultation built around India's telemedicine guidelines — with clear, upfront
-            boundaries on what it can and can't do.
-          </p>
-          <div className="svd-hero__actions">
-            <Link className="btn btn-primary btn-lg" to="/book">Book an Appointment</Link>
+          <div>
+            <p className="svd-eyebrow">Services · Digital Consultations</p>
+            <h1>Secure care, over video, audio, or chat</h1>
+            <p className="svd-hero__lead">
+              Teleconsultation built around India&apos;s telemedicine guidelines — with clear,
+              upfront boundaries on what it can and can&apos;t do.
+            </p>
+            <div className="svd-hero__actions">
+              <Link className="btn btn-primary btn-lg" to="/book">Book an Appointment</Link>
+            </div>
           </div>
+          <dl className="svd-hero-tension__pair">
+            <div>
+              <dt>Works well online</dt>
+              <dd>Assessment, ongoing therapy, and medication follow-up.</dd>
+            </div>
+            <div>
+              <dt>Still needs in person</dt>
+              <dd>Physical examination, emergencies, and some first prescriptions.</dd>
+            </div>
+          </dl>
         </div>
       </section>
 

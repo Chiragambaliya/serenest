@@ -292,3 +292,65 @@
   .svd-hero__actions .btn,
   .svd-cta__actions .btn { flex: 1 1 auto; justify-content: center; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   Hero openers — each service page gets a different entry treatment.
+   In editorial layout the opener is what distinguishes one piece from
+   the next; a shared system doesn't mean a shared first impression.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* A. Statement opener — type only, oversized, generous air.
+   Used where the page should feel quiet and unhurried (Therapy). */
+.svd-hero--statement { padding-block: clamp(4rem, 10vw, 7rem) clamp(3rem, 6vw, 4rem); }
+.svd-hero--statement h1 {
+  font-size: clamp(2.4rem, 5.6vw, 4rem);
+  line-height: 1.04;
+  max-width: 16ch;
+  margin-bottom: 1.6rem;
+}
+.svd-hero--statement .svd-hero__lead {
+  font-family: var(--font-heading);
+  font-size: clamp(1.15rem, 2.1vw, 1.45rem);
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--ink-2);
+  max-width: 34ch;
+  padding-bottom: 1.75rem;
+  margin-bottom: 1.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+/* B. Banded opener — compact type block, then a full-bleed image band.
+   Used where the page benefits from a breath before dense content
+   (Addiction and Recovery). */
+.svd-hero--banded { padding-bottom: clamp(2rem, 4vw, 2.75rem); border-bottom: none; }
+.svd-hero-band {
+  position: relative;
+  height: clamp(220px, 30vw, 340px);
+  border-block: 1px solid var(--border);
+}
+.svd-hero-band .image-placeholder { position: absolute; inset: 0; border: none; }
+
+/* C. Tension opener — headline left, the page's core tension stated
+   immediately as two short facing lines (Digital Consultations). */
+@media (min-width: 900px) {
+  .svd-hero--tension .container { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: 4rem; align-items: end; }
+}
+.svd-hero-tension__pair { display: grid; gap: 1.25rem; }
+.svd-hero-tension__pair div { padding-top: 0.9rem; border-top: 2px solid var(--teal-600); }
+.svd-hero-tension__pair div + div { border-top-color: var(--brown); }
+.svd-hero-tension__pair dt {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+.svd-hero-tension__pair dd {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.02rem;
+  line-height: 1.45;
+  color: var(--ink);
+}

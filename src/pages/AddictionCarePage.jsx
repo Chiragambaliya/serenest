@@ -31,7 +31,8 @@ export default function AddictionCarePage() {
 
   return (
     <div className="svd-page">
-      <section className="svd-hero">
+      {/* Banded opener — compact type, then a full-bleed image band. */}
+      <section className="svd-hero svd-hero--banded">
         <div className="container">
           <p className="svd-eyebrow">Services · Addiction and Recovery</p>
           <h1>Recovery support, without judgement</h1>
@@ -44,6 +45,12 @@ export default function AddictionCarePage() {
           </div>
         </div>
       </section>
+      <div className="svd-hero-band">
+        <ImagePlaceholder
+          asset="addiction-care-wide-path.jpg"
+          direction="Wide landscape crop — an early-morning path or open doorway. Hopeful but restrained, no people, nothing that reads as stock recovery imagery."
+        />
+      </div>
 
       {/* The journey as an ordered sequence — this page's distinct spine. */}
       <section className="svd-section">
