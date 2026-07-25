@@ -63,11 +63,12 @@ export default function AddictionCarePage() {
           </div>
           <div>
             <h2>What recovery support on Serenest covers</h2>
-            <ol className="svd-sequence">
-              {JOURNEY.map((item) => (
+            <ol className="ed-timeline">
+              {JOURNEY.map((item, i) => (
                 <li key={item.title}>
-                  <strong>{item.title}</strong>
-                  <span>{item.body}</span>
+                  <span className="ed-timeline__stage">Stage {String(i + 1).padStart(2, '0')}</span>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
                 </li>
               ))}
             </ol>

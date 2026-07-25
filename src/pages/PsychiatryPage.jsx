@@ -64,14 +64,18 @@ export default function PsychiatryPage() {
             This is not a diagnostic tool — it's a guide to when psychiatric assessment is often
             appropriate. Your psychiatrist will make the actual clinical assessment.
           </p>
-          <ul className="svd-list svd-list--wide">
-            {ASSESSED.map((item) => (
-              <li key={item.title}>
-                <strong>{item.title}</strong>
-                <span>{item.body}</span>
-              </li>
+          <div className="ed-index">
+            {ASSESSED.map((item, i) => (
+              <article key={item.title} className="ed-index__row">
+                <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <h3 className="ed-index__title">{item.title}</h3>
+                </span>
+                <p className="ed-index__body">{item.body}</p>
+                <span />
+              </article>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 

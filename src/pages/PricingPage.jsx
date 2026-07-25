@@ -165,7 +165,7 @@ export default function PricingPage() {
             <Link className="btn btn-primary btn-lg" to="/book">Book a session</Link>
             <Link className="btn btn-ghost btn-lg" to="/patient/find-professional">Meet our clinicians</Link>
           </div>
-          <nav className="pr-hero__nav" aria-label="On this page">
+          <nav className="pr-hero__nav pr-hero__nav--quiet" aria-label="On this page">
             {HERO_NAV.map((item) => (
               <a key={item.label} href={item.href}>{item.label}</a>
             ))}
@@ -181,52 +181,62 @@ export default function PricingPage() {
             <p>Every session includes encrypted video, audio, or chat, clinical notes, and permanent records.</p>
           </header>
 
-          <div className="pr-plans">
-            {PLANS.map((plan) => (
-              <article
-                key={plan.name}
-                className={`pr-plan${plan.featured ? ' pr-plan--featured' : ''}`}
-              >
-                {plan.featured && <span className="pr-plan__badge">Most popular</span>}
-                <span className="pr-plan__tag">{plan.tag}</span>
-                <h3 className="pr-plan__name">{plan.name}</h3>
-                <div className="pr-plan__price">
-                  <span className="pr-plan__price-from">From</span>
-                  <span className="pr-plan__price-amt">{plan.price}</span>
-                </div>
-                <p className="pr-plan__range">{plan.range}</p>
-                <p className="pr-plan__note">{plan.note}</p>
-                <div className="pr-plan__divider" />
-                <ul className="pr-plan__features">
-                  {plan.features.map((f) => (
-                    <li key={f}>{f}</li>
-                  ))}
-                </ul>
-                <div className="pr-plan__actions">
-                  <Link className="btn btn-primary btn-sm" to="/book">Book now</Link>
-                  <a
-                    className="btn btn-ghost btn-sm"
-                    href={`mailto:support@serenest.in?subject=${encodeURIComponent(`Pricing: ${plan.name}`)}`}
-                  >
-                    Ask a question
-                  </a>
-                </div>
-              </article>
-            ))}
-          </div>
+          <table className="ed-table pr-plan-table">
+            <thead>
+              <tr>
+                <th scope="col">Clinician type</th>
+                <th scope="col">From</th>
+                <th scope="col">Range</th>
+                <th scope="col">Note</th>
+                <th scope="col">Key inclusions</th>
+                <th scope="col">Next step</th>
+              </tr>
+            </thead>
+            <tbody>
+              {PLANS.map((plan) => (
+                <tr key={plan.name} className={plan.featured ? 'pr-plan-table__featured' : undefined}>
+                  <th scope="row">
+                    {plan.name}
+                    {plan.featured && <span className="ed-index__meta">Most popular</span>}
+                  </th>
+                  <td data-label="From" className="ed-table__num">{plan.price}</td>
+                  <td data-label="Range" className="ed-table__num">{plan.range}</td>
+                  <td data-label="Note">{plan.note}</td>
+                  <td data-label="Key inclusions">{plan.features.join(' · ')}</td>
+                  <td data-label="Next step">
+                    <Link className="ed-link" to="/book">Book now</Link>
+                    <br />
+                    <a
+                      className="ed-link"
+                      href={`mailto:support@serenest.in?subject=${encodeURIComponent(`Pricing: ${plan.name}`)}`}
+                    >
+                      Ask a question
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
 
-          <div className="pr-note">
-            <strong>How fees work.</strong> Psychiatrist fees vary by experience, appointment
-            duration, and specialty focus. Counselling and therapy fees may vary by clinician
-            type, duration, and programme structure. The exact fee is shown before you confirm
-            so there are no surprises.
+          <div className="ed-aside pr-fee-notes">
+            <div>
+              <p className="ed-aside__label">Fee notes</p>
+              <p className="ed-aside__note">All prices are inclusive of GST.</p>
+            </div>
+            <div>
+              <p className="pr-note">
+                <strong>How fees work.</strong> Psychiatrist fees vary by experience, appointment
+                duration, and specialty focus. Counselling and therapy fees may vary by clinician
+                type, duration, and programme structure. The exact fee is shown before you confirm
+                so there are no surprises.
+              </p>
+              <p className="pr-note">
+                <strong>About prescriptions.</strong> When clinically appropriate, a registered
+                doctor may issue a digital prescription after consultation. Some medicines or
+                conditions may require in-person evaluation. Clinical judgment comes first.
+              </p>
+            </div>
           </div>
-          <div className="pr-note">
-            <strong>About prescriptions.</strong> When clinically appropriate, a registered
-            doctor may issue a digital prescription after consultation. Some medicines or
-            conditions may require in-person evaluation. Clinical judgment comes first.
-          </div>
-          <p className="pr-fineprint">All prices are inclusive of GST.</p>
         </div>
       </section>
 
@@ -292,8 +302,6 @@ export default function PricingPage() {
         </div>
       </section>
 
-      {/* Payment methods stay as chips — they read as labels — but the
-          section is tightened so it doesn't claim equal weight. */}
       <section className="pr-section pr-section--cream ed-pace-tight">
         <div className="container ed-aside">
           <div>
@@ -303,11 +311,7 @@ export default function PricingPage() {
             </p>
           </div>
           <div>
-            <div className="pr-payments">
-              {PAYMENTS.map((m) => (
-                <span key={m} className="pr-payment">{m}</span>
-              ))}
-            </div>
+            <p className="pr-payment-methods">{PAYMENTS.join(' · ')}</p>
             <p className="pr-payment-note" style={{ marginTop: '1rem' }}>
               All transactions are secured and encrypted. Serenest never stores your card details.
             </p>

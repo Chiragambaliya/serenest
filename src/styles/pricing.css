@@ -117,6 +117,29 @@
   color: var(--p-sage);
 }
 
+.pricing-page .pr-hero__nav--quiet {
+  gap: 0.9rem;
+}
+
+.pricing-page .pr-hero__nav--quiet a {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.pricing-page .pr-hero__nav--quiet a:hover {
+  background: none;
+  color: var(--p-sage);
+}
+
 /* ── Sections ───────────────────────────────────────────────── */
 .pricing-page .pr-section {
   padding: var(--p-section) 0;
@@ -274,16 +297,28 @@
 }
 
 /* ── Disclaimer notes ───────────────────────────────────────── */
+.pricing-page .pr-plan-table__featured th {
+  color: var(--p-sage);
+}
+
+.pricing-page .pr-fee-notes {
+  margin-top: clamp(2rem, 5vw, 3.5rem);
+}
+
 .pricing-page .pr-note {
   max-width: 44rem;
-  margin: 1rem auto 0;
-  padding: 1rem 1.25rem;
-  border: 1px solid var(--p-line);
-  border-radius: var(--p-radius);
-  background: var(--p-white);
+  margin: 0;
+  padding: 1rem 0;
+  border-top: 1px solid var(--p-line);
+  border-radius: 0;
+  background: none;
   font-size: 0.875rem;
   line-height: 1.65;
   color: var(--p-muted);
+}
+
+.pricing-page .pr-note + .pr-note {
+  margin-top: 0.25rem;
 }
 
 .pricing-page .pr-note strong {
@@ -416,10 +451,20 @@
 
 .pricing-page .pr-payment-note {
   max-width: 44rem;
-  margin: 0 auto;
-  text-align: center;
+  margin: 0;
   font-size: 0.875rem;
   color: var(--p-muted);
+}
+
+.pricing-page .pr-payment-methods {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--p-sage-mid);
+  line-height: 1.8;
 }
 
 /* ── FAQ ────────────────────────────────────────────────────── */

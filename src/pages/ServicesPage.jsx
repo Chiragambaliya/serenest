@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
@@ -159,76 +159,6 @@ const CONDITIONS = [
   { name: 'Stress & burnout', symptoms: 'Exhaustion, work-related stress' },
 ];
 
-function ProgrammeCard({ tag, title, body, features, href, cta, external, mailSubject }) {
-  const isMail = external || href?.startsWith('mailto:');
-  const ctaHref = mailSubject ? `mailto:support@serenest.in?subject=${mailSubject}` : href;
-
-  return (
-    <article className="svc-programme">
-      <p className="svc-programme__tag">{tag}</p>
-      <h3 className="svc-programme__title">{title}</h3>
-      <p className="svc-programme__body">{body}</p>
-      <ul className="svc-programme__list">
-        {features.map((item) => (
-          <li key={item}>{item}</li>
-        ))}
-      </ul>
-      {isMail ? (
-        <a className="btn btn-ghost btn-sm svc-programme__cta" href={ctaHref}>{cta}</a>
-      ) : (
-        <Link className="btn btn-ghost btn-sm svc-programme__cta" to={href}>{cta}</Link>
-      )}
-    </article>
-  );
-}
-
-function ServiceCard({ tag, badge, title, lead, detail, included, forWho, price, book, link }) {
-  const [open, setOpen] = useState(false);
-  const expandable = included || forWho;
-
-  return (
-    <article className="svc-card">
-      <div className="svc-card__head">
-        {tag && <span className="svc-card__tag">{tag}</span>}
-        {badge && <span className="svc-card__badge">{badge}</span>}
-      </div>
-      <h3 className="svc-card__title">{title}</h3>
-      <p className="svc-card__lead">{lead}</p>
-      {detail && <p className="svc-card__detail">{detail}</p>}
-
-      {expandable && (
-        <button type="button" className="svc-card__toggle" onClick={() => setOpen((v) => !v)} aria-expanded={open}>
-          {open ? 'Hide details' : 'What\'s included'}
-        </button>
-      )}
-
-      {open && expandable && (
-        <div className="svc-card__details">
-          {included && (
-            <ul className="svc-card__list">
-              {included.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          )}
-          {forWho && <p className="svc-card__for">{forWho}</p>}
-        </div>
-      )}
-
-      {price && <p className="svc-card__price">{price}</p>}
-
-      <div className="svc-card__foot">
-        {book && (
-          <Link className="btn btn-primary btn-sm" to="/book">Book now</Link>
-        )}
-        {link && (
-          <Link className="btn btn-ghost btn-sm" to={link.to}>{link.label}</Link>
-        )}
-      </div>
-    </article>
-  );
-}
-
 export default function ServicesPage() {
   useSEO({ path: '/services', ...ROUTE_SEO['/services'] });
 
@@ -258,156 +188,262 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* The four specialties lead the page — each links to its own page. */}
       <section className="svd-section" id="specialties" aria-label="Service comparison">
-        <div className="container">
-          <p className="svd-sidelabel">Choose a starting point</p>
-          <h2>Which service is right for you?</h2>
-          <ul className="svd-list svd-list--split">
-            {SPECIALTIES.map((item) => (
-              <li key={item.title}>
-                <strong>{item.title}</strong>
-                <span>
-                  {item.body}{' '}
-                  <Link className="hp-text-link" to={item.href}>Learn more</Link>
-                </span>
-              </li>
-            ))}
-          </ul>
+        <div className="ed-shell ed-aside">
+          <div>
+            <p className="ed-aside__label">Choose a starting point</p>
+            <p className="ed-aside__note">
+              Each specialty has its own page with clinical scope and limits.
+            </p>
+          </div>
+          <div>
+            <div className="ed-head">
+              <h2>Which service is right for you?</h2>
+            </div>
+            <div className="ed-index">
+              {SPECIALTIES.map((item, i) => (
+                <Link key={item.title} className="ed-index__row" to={item.href}>
+                  <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                  <span>
+                    <h3 className="ed-index__title">{item.title}</h3>
+                    <span className="ed-index__meta">Specialty</span>
+                  </span>
+                  <p className="ed-index__body">{item.body}</p>
+                  <span className="ed-index__go" aria-hidden="true">Learn more →</span>
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
       <section className="svc-section" id="core-services">
-        <div className="container">
-          <header className="svc-section__head">
-            <p className="svc-eyebrow">Clinical services</p>
+        <div className="ed-shell">
+          <header className="ed-head ed-head--wide">
+            <span className="ed-head__label">Clinical services</span>
             <h2>Six services for end-to-end care</h2>
             <p>Verified clinicians, structured intake, and continuity — anywhere in India.</p>
           </header>
-          <div className="svc-grid">
-            {CORE_SERVICES.map((svc) => (
-              <ServiceCard key={svc.title} {...svc} />
-            ))}
+
+          <table className="ed-table svc-core-table">
+            <thead>
+              <tr>
+                <th scope="col">Service</th>
+                <th scope="col">Type</th>
+                <th scope="col">Price / status</th>
+                <th scope="col">Clinical use</th>
+                <th scope="col">Next step</th>
+              </tr>
+            </thead>
+            <tbody>
+              {CORE_SERVICES.map((svc) => (
+                <tr key={svc.title} className={svc.badge ? 'svc-core-table__featured' : undefined}>
+                  <th scope="row">
+                    {svc.title}
+                    {svc.badge && <span className="ed-index__meta">{svc.badge}</span>}
+                  </th>
+                  <td data-label="Type">{svc.tag}</td>
+                  <td data-label="Price / status">{svc.price || '—'}</td>
+                  <td data-label="Clinical use">{svc.lead}</td>
+                  <td data-label="Next step">
+                    {svc.book && <Link className="ed-link" to="/book">Book now</Link>}
+                    {svc.link && <Link className="ed-link" to={svc.link.to}>{svc.link.label}</Link>}
+                    {!svc.book && !svc.link && <span>—</span>}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="svc-detail-index">
+            <p className="ed-mono">What is included</p>
+            <div className="ed-index">
+              {CORE_SERVICES.map((svc, i) => (
+                <article key={svc.title} className="ed-index__row">
+                  <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                  <span>
+                    <h3 className="ed-index__title">{svc.title}</h3>
+                    <span className="ed-index__meta">{svc.tag}</span>
+                  </span>
+                  <div className="ed-index__body">
+                    {svc.detail && <p>{svc.detail}</p>}
+                    {svc.included && <p>{svc.included.join(' · ')}</p>}
+                    {svc.forWho && <p>{svc.forWho}</p>}
+                  </div>
+                  <span className="ed-index__go" aria-hidden="true">{svc.price || ''}</span>
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       <section className="svc-section svc-section--cream" id="academy">
-        <div className="container">
-          <header className="svc-section__head">
-            <p className="svc-eyebrow">Serenest Academy</p>
-            <h2>Literacy and learning — not a substitute for clinical care</h2>
-            <p>
-              Serenest Education Pvt Ltd publishes guides, clinician tracks, and partnership programmes
-              on the same site as telepsychiatry.
+        <div className="ed-shell ed-aside">
+          <div>
+            <p className="ed-aside__label">Serenest Academy</p>
+            <p className="ed-aside__note">
+              Educational material sits beside care, but does not replace clinical assessment.
             </p>
-          </header>
-
-          <div className="svc-academy__banner">
-            <div className="svc-academy__copy">
-              <p className="svc-academy__brand">Serenest Academy</p>
+          </div>
+          <div>
+            <header className="ed-head ed-head--wide">
+              <h2>Literacy and learning — not a substitute for clinical care</h2>
               <p>
-                Understand symptoms, reduce stigma, and find the right next step. For appointments,
-                use Book or Screening — Academy content is educational.
+                Serenest Education Pvt Ltd publishes guides, clinician tracks, and partnership programmes
+                on the same site as telepsychiatry.
               </p>
-              <div className="svc-academy__actions">
-                <Link className="btn btn-primary" to="/academy">Explore Academy</Link>
-                <Link className="btn btn-ghost" to="/academy#guide">Ask Academy Guide</Link>
+            </header>
+
+            <div className="svc-academy__banner">
+              <div className="svc-academy__copy">
+                <p className="svc-academy__brand">Serenest Academy</p>
+                <p>
+                  Understand symptoms, reduce stigma, and find the right next step. For appointments,
+                  use Book or Screening — Academy content is educational.
+                </p>
+                <div className="svc-academy__actions">
+                  <Link className="btn btn-primary" to="/academy">Explore Academy</Link>
+                  <Link className="btn btn-ghost" to="/academy#guide">Ask Academy Guide</Link>
+                </div>
               </div>
             </div>
-            <ul className="svc-academy__links">
-              <li><Link to="/guides">Patient guides</Link></li>
-              <li><Link to="/professionals/learning">Clinician learning hub</Link></li>
-              <li><Link to="/academy#contact">Partnerships</Link></li>
-            </ul>
-          </div>
 
-          <div className="svc-programme-grid svc-programme-grid--4">
-            {ACADEMY_SERVICES.map((item) => (
-              <ProgrammeCard key={item.tag} {...item} />
-            ))}
+            <div className="ed-index">
+              {ACADEMY_SERVICES.map((item, i) => (
+                <Link key={item.tag} className="ed-index__row" to={item.href}>
+                  <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                  <span>
+                    <h3 className="ed-index__title">{item.title}</h3>
+                    <span className="ed-index__meta">{item.tag}</span>
+                  </span>
+                  <p className="ed-index__body">
+                    {item.body} {item.features.join(' · ')}
+                  </p>
+                  <span className="ed-index__go" aria-hidden="true">{item.cta} →</span>
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       <section className="svc-section" id="organisations">
-        <div className="container">
-          <header className="svc-section__head">
-            <p className="svc-eyebrow">Organisations</p>
-            <h2>Workplace, school &amp; campus programmes</h2>
-            <p>Clinical telepsychiatry and follow-up for teams and communities.</p>
-          </header>
-          <div className="svc-programme-grid svc-programme-grid--3">
-            {ORG_PROGRAMMES.map((prog) => (
-              <ProgrammeCard key={prog.tag} {...prog} external mailSubject={prog.mailSubject} />
-            ))}
+        <div className="ed-shell ed-aside">
+          <div>
+            <p className="ed-aside__label">Organisations</p>
+            <p className="ed-aside__note">
+              Clinical telepsychiatry and follow-up for teams and communities.
+            </p>
           </div>
-          <div className="svc-band-cta">
-            <p>Need a custom plan for your organisation?</p>
-            <a className="btn btn-primary" href="mailto:support@serenest.in?subject=Organisation%20Partnership">
-              Get in touch
-            </a>
+          <div>
+            <header className="ed-head">
+              <h2>Workplace, school &amp; campus programmes</h2>
+              <p>Request a quote for your organisation and we will route it to support.</p>
+            </header>
+            <div className="ed-index">
+              {ORG_PROGRAMMES.map((prog, i) => (
+                <a
+                  key={prog.tag}
+                  className="ed-index__row"
+                  href={`mailto:support@serenest.in?subject=${prog.mailSubject}`}
+                >
+                  <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                  <span>
+                    <h3 className="ed-index__title">{prog.title}</h3>
+                    <span className="ed-index__meta">{prog.tag}</span>
+                  </span>
+                  <p className="ed-index__body">
+                    {prog.body} {prog.features.join(' · ')}
+                  </p>
+                  <span className="ed-index__go" aria-hidden="true">{prog.cta} →</span>
+                </a>
+              ))}
+            </div>
+            <div className="svc-band-cta">
+              <p>Need a custom plan for your organisation?</p>
+              <a className="btn btn-primary" href="mailto:support@serenest.in?subject=Organisation%20Partnership">
+                Get in touch
+              </a>
+            </div>
           </div>
         </div>
       </section>
 
       <section className="svc-section svc-section--cream" id="how">
-        <div className="container">
-          <header className="svc-section__head">
-            <p className="svc-eyebrow">How it works</p>
+        <div className="ed-shell ed-aside">
+          <div>
+            <p className="ed-aside__label">How it works</p>
+            <p className="ed-aside__note">From booking to care plan.</p>
+          </div>
+          <div>
             <h2>Book to first session</h2>
-          </header>
-          <ol className="svc-steps">
-            {STEPS.map(([title, desc], i) => (
-              <li key={title} className="svc-step">
-                <span className="svc-step__num">{i + 1}</span>
-                <div>
-                  <strong>{title}</strong>
+            <ol className="ed-timeline">
+              {STEPS.map(([title, desc], i) => (
+                <li key={title}>
+                  <span className="ed-timeline__stage">Stage {String(i + 1).padStart(2, '0')}</span>
+                  <h3>{title}</h3>
                   <p>{desc}</p>
-                </div>
-              </li>
-            ))}
-          </ol>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
       </section>
 
       <section className="svc-section">
-        <div className="container">
-          <header className="svc-section__head">
-            <p className="svc-eyebrow">Made for</p>
+        <div className="ed-shell ed-aside">
+          <div>
+            <p className="ed-aside__label">Made for</p>
+            <p className="ed-aside__note">The platform supports several different care contexts.</p>
+          </div>
+          <div>
             <h2>Who uses Serenest</h2>
-          </header>
-          <div className="svc-audience">
-            {AUDIENCES.map(([title, desc]) => (
-              <article key={title} className="svc-audience__item">
-                <h3>{title}</h3>
-                <p>{desc}</p>
-              </article>
-            ))}
+            <div className="ed-index">
+              {AUDIENCES.map(([title, desc], i) => (
+                <article key={title} className="ed-index__row">
+                  <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                  <span>
+                    <h3 className="ed-index__title">{title}</h3>
+                  </span>
+                  <p className="ed-index__body">{desc}</p>
+                  <span />
+                </article>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       <section className="svc-section svc-section--cream" id="conditions">
-        <div className="container">
-          <header className="svc-section__head">
-            <p className="svc-eyebrow">Clinical areas</p>
-            <h2>Conditions we support</h2>
-          </header>
-          <div className="svc-conditions">
-            <div className="svc-conditions__head">
-              <span>Condition</span>
-              <span>Common symptoms</span>
-            </div>
-            {CONDITIONS.map(({ name, symptoms }) => (
-              <div key={name} className="svc-conditions__row">
-                <span>{name}</span>
-                <span>{symptoms}</span>
-              </div>
-            ))}
+        <div className="ed-shell ed-aside">
+          <div>
+            <p className="ed-aside__label">Clinical areas</p>
+            <p className="ed-aside__note">
+              Common presentations supported through assessment and care planning.
+            </p>
           </div>
-          <div style={{ marginTop: '2rem' }}>
-            <EmergencyNotice />
+          <div>
+            <h2>Conditions we support</h2>
+            <table className="ed-table ed-measure-wide">
+              <thead>
+                <tr>
+                  <th scope="col">Condition</th>
+                  <th scope="col">Common symptoms</th>
+                </tr>
+              </thead>
+              <tbody>
+                {CONDITIONS.map(({ name, symptoms }) => (
+                  <tr key={name}>
+                    <th scope="row">{name}</th>
+                    <td data-label="Common symptoms">{symptoms}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <div className="svc-emergency-wrap">
+              <EmergencyNotice />
+            </div>
           </div>
         </div>
       </section>

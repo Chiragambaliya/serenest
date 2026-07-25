@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import '../styles/service-detail.css';
 
 const FAQS = [
   {
@@ -63,126 +64,136 @@ export default function FAQPage() {
   }, [query, cat]);
 
   return (
-    <div className="page">
-      <section className="section about-hero">
-        <div className="container">
-          <div className="section-head about-hero-head">
-            <p className="kicker">FAQ</p>
-            <h1 className="page-title">Answers to common questions.</h1>
-            <p className="about-subtext">
-              Search and filter by topic. If you don’t find what you need, contact support.
+    <div className="svd-page faq-editorial-page">
+      <section className="svd-hero faq-editorial-hero">
+        <div className="ed-shell ed-facing ed-facing--narrow-wide">
+          <p className="ed-mono">FAQ</p>
+          <div>
+            <h1>Answers to common questions.</h1>
+            <p className="svd-hero__lead">
+              Search and filter by topic. If you don&apos;t find what you need, contact support.
               For service-specific questions, see our{' '}
-              <Link to="/services">services overview</Link>.
+              <Link className="ed-link" to="/services">services overview</Link>.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="section">
-        <div className="container">
-          <div className="faq-toolbar tile">
-            <label className="field" style={{ margin: 0 }}>
-              <span className="field-label">Search</span>
+      <section className="svd-section">
+        <div className="ed-shell ed-aside">
+          <div>
+            <p className="ed-aside__label">Find an answer</p>
+            <p className="ed-aside__note">
+              Use a keyword or narrow the list by category.
+            </p>
+          </div>
+          <div>
+            <label className="faq-editorial-search">
+              <span className="ed-mono">Search</span>
               <input
-                className="input"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search privacy, prescriptions, refunds…"
               />
             </label>
 
-            <div className="faq-tabs" role="tablist" aria-label="FAQ categories">
+            <div className="faq-category-tabs" role="tablist" aria-label="FAQ categories">
               {CATEGORIES.map((c) => (
                 <button
                   key={c}
                   type="button"
                   role="tab"
                   aria-selected={cat === c}
-                  className={`slot-chip ${cat === c ? 'is-selected' : ''}`}
+                  className={`faq-category-tab ed-mono${cat === c ? ' is-selected' : ''}`}
                   onClick={() => setCat(c)}
                 >
                   {c}
                 </button>
               ))}
             </div>
-          </div>
 
-          <div className="faq-list" style={{ marginTop: 14 }}>
-            {filtered.length === 0 ? (
-              <div className="callout">
-                <div className="callout-title">No results</div>
-                <p className="muted" style={{ margin: 0 }}>
-                  Try a different search or category, or email{' '}
-                  <a href="mailto:support@serenest.in">support@serenest.in</a>.
-                </p>
-              </div>
-            ) : (
-              filtered.map((f) => (
-                <details key={`${f.category}:${f.q}`} className="faq-item">
-                  <summary className="faq-q">
-                    <span className="faq-pill">{f.category}</span>
-                    <span>{f.q}</span>
-                  </summary>
-                  <div className="faq-a muted">{f.a}</div>
-                </details>
-              ))
-            )}
-          </div>
-        </div>
-      </section>
-
-      <section className="section">
-        <div className="container">
-          <div className="section-head center">
-            <div className="section-kicker">Topic-specific guides</div>
-            <h2>Detailed pages for common questions</h2>
-          </div>
-          <div className="grid-3">
-            <article className="tile">
-              <h3><Link to="/online-psychiatrist-prescription-india">Online prescription validity (India)</Link></h3>
-              <p>How psychiatric prescriptions work online under India&apos;s telemedicine guidelines.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/online-psychiatrist-for-depression-india">Depression — online care</Link></h3>
-              <p>Screening, therapy, medication review, and the difference between counselling and psychiatry.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/anxiety-counselling-online-india">Anxiety — online care</Link></h3>
-              <p>GAD-7, stepped care, regulated medication categories, and how online therapy works.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/adhd-assessment-online-india">Adult ADHD — assessment online</Link></h3>
-              <p>Structured assessment process, validated scales, and why prescribing is careful.</p>
-            </article>
-            <article className="tile">
-              <h3><Link to="/ocd-treatment-online-india">OCD — online treatment</Link></h3>
-              <p>Structured assessment, ERP-focused therapy, and medication review where clinically appropriate.</p>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section className="section alt">
-        <div className="container">
-          <div className="cta about-cta">
-            <div>
-              <h2 className="h2" style={{ margin: 0 }}>
-                Still have questions?
-              </h2>
-              <p className="muted" style={{ margin: '6px 0 0' }}>
-                Email support or book a consultation.
-              </p>
+            <div className="faq-editorial-list">
+              {filtered.length === 0 ? (
+                <div className="faq-editorial-empty">
+                  <h2>No results</h2>
+                  <p>
+                    Try a different search or category, or email{' '}
+                    <a className="ed-link" href="mailto:support@serenest.in">support@serenest.in</a>.
+                  </p>
+                </div>
+              ) : (
+                filtered.map((f) => (
+                  <details key={`${f.category}:${f.q}`} className="faq-editorial-item">
+                    <summary>
+                      <span className="ed-mono">{f.category}</span>
+                      <span>{f.q}</span>
+                    </summary>
+                    <p>{f.a}</p>
+                  </details>
+                ))
+              )}
             </div>
-            <div className="stack about-cta-actions">
-              <a className="btn btn-primary btn-full" href="mailto:support@serenest.in?subject=FAQ%20Question">
+          </div>
+        </div>
+      </section>
+
+      <section className="svd-section svd-section--soft">
+        <div className="ed-shell ed-aside">
+          <div>
+            <p className="ed-aside__label">Topic-specific guides</p>
+            <p className="ed-aside__note">Detailed pages for common questions.</p>
+          </div>
+          <div>
+            <h2>Detailed pages for common questions</h2>
+            <div className="ed-index">
+              <Link className="ed-index__row" to="/online-psychiatrist-prescription-india">
+                <span className="ed-index__num">01</span>
+                <span><h3 className="ed-index__title">Online prescription validity (India)</h3></span>
+                <p className="ed-index__body">How psychiatric prescriptions work online under India&apos;s telemedicine guidelines.</p>
+                <span className="ed-index__go" aria-hidden="true">Read →</span>
+              </Link>
+              <Link className="ed-index__row" to="/online-psychiatrist-for-depression-india">
+                <span className="ed-index__num">02</span>
+                <span><h3 className="ed-index__title">Depression — online care</h3></span>
+                <p className="ed-index__body">Screening, therapy, medication review, and the difference between counselling and psychiatry.</p>
+                <span className="ed-index__go" aria-hidden="true">Read →</span>
+              </Link>
+              <Link className="ed-index__row" to="/anxiety-counselling-online-india">
+                <span className="ed-index__num">03</span>
+                <span><h3 className="ed-index__title">Anxiety — online care</h3></span>
+                <p className="ed-index__body">GAD-7, stepped care, regulated medication categories, and how online therapy works.</p>
+                <span className="ed-index__go" aria-hidden="true">Read →</span>
+              </Link>
+              <Link className="ed-index__row" to="/adhd-assessment-online-india">
+                <span className="ed-index__num">04</span>
+                <span><h3 className="ed-index__title">Adult ADHD — assessment online</h3></span>
+                <p className="ed-index__body">Structured assessment process, validated scales, and why prescribing is careful.</p>
+                <span className="ed-index__go" aria-hidden="true">Read →</span>
+              </Link>
+              <Link className="ed-index__row" to="/ocd-treatment-online-india">
+                <span className="ed-index__num">05</span>
+                <span><h3 className="ed-index__title">OCD — online treatment</h3></span>
+                <p className="ed-index__body">Structured assessment, ERP-focused therapy, and medication review where clinically appropriate.</p>
+                <span className="ed-index__go" aria-hidden="true">Read →</span>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="svd-cta">
+        <div className="ed-shell">
+          <div className="ed-facing">
+            <div>
+              <p className="ed-mono">Still have questions?</p>
+              <h2>Email support or book a consultation.</h2>
+            </div>
+            <div className="faq-editorial-actions">
+              <a className="btn btn-primary" href="mailto:support@serenest.in?subject=FAQ%20Question">
                 Contact support →
               </a>
-              <Link className="btn btn-ghost btn-full" to="/book">
-                Book now
-              </Link>
-              <Link className="btn btn-ghost btn-full" to="/privacy">
-                Privacy policy
-              </Link>
+              <Link className="btn btn-ghost" to="/book">Book now</Link>
+              <Link className="btn btn-ghost" to="/privacy">Privacy policy</Link>
             </div>
           </div>
         </div>

@@ -58,14 +58,18 @@ export default function TherapyPage() {
         <div className="container">
           <p className="svd-sidelabel">What people bring</p>
           <h2>What therapy can help with</h2>
-          <ul className="svd-list svd-list--split">
-            {HELPS_WITH.map((item) => (
-              <li key={item.title}>
-                <strong>{item.title}</strong>
-                <span>{item.body}</span>
-              </li>
+          <div className="ed-index">
+            {HELPS_WITH.map((item, i) => (
+              <article key={item.title} className="ed-index__row">
+                <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <h3 className="ed-index__title">{item.title}</h3>
+                </span>
+                <p className="ed-index__body">{item.body}</p>
+                <span />
+              </article>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 
@@ -99,14 +103,18 @@ export default function TherapyPage() {
         <div className="container">
           <p className="svd-sidelabel">Modalities</p>
           <h2>Approaches used on Serenest</h2>
-          <ul className="svd-list svd-list--split">
-            {APPROACHES.map((item) => (
-              <li key={item.title}>
-                <strong>{item.title}</strong>
-                <span>{item.body}</span>
-              </li>
+          <div className="ed-index">
+            {APPROACHES.map((item, i) => (
+              <article key={item.title} className="ed-index__row">
+                <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <h3 className="ed-index__title">{item.title}</h3>
+                </span>
+                <p className="ed-index__body">{item.body}</p>
+                <span />
+              </article>
             ))}
-          </ul>
+          </div>
         </div>
       </section>
 

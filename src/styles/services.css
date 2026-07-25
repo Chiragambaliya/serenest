@@ -179,6 +179,31 @@
   background: var(--s-cream-2);
 }
 
+.services-page .svc-core-table__featured th {
+  color: var(--s-sage);
+}
+
+.services-page .svc-detail-index {
+  margin-top: clamp(2rem, 5vw, 3.5rem);
+}
+
+.services-page .svc-detail-index > .ed-mono {
+  margin: 0 0 1rem;
+  color: var(--s-sage-mid);
+}
+
+.services-page .ed-index__body p {
+  margin: 0;
+}
+
+.services-page .ed-index__body p + p {
+  margin-top: 0.45rem;
+}
+
+.services-page .svc-emergency-wrap {
+  margin-top: 2rem;
+}
+
 /* ── Core service cards ───────────────────────────────────────── */
 .services-page .svc-grid {
   display: grid;

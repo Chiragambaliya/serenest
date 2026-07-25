@@ -71,28 +71,36 @@ export default function DigitalConsultationsPage() {
             Being upfront about the boundaries is part of practising responsibly — here's the
             honest split.
           </p>
-          <div className="svd-compare">
-            <div className="svd-compare__col">
+          <div className="ed-facing">
+            <div>
               <h3>Manageable online</h3>
-              <ul className="svd-list">
-                {CAN_MANAGE.map((item) => (
-                  <li key={item.title}>
-                    <strong>{item.title}</strong>
-                    <span>{item.body}</span>
-                  </li>
+              <div className="ed-index">
+                {CAN_MANAGE.map((item, i) => (
+                  <article key={item.title} className="ed-index__row">
+                    <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                    <span>
+                      <h4 className="ed-index__title">{item.title}</h4>
+                    </span>
+                    <p className="ed-index__body">{item.body}</p>
+                    <span />
+                  </article>
                 ))}
-              </ul>
+              </div>
             </div>
-            <div className="svd-compare__col svd-compare__col--limits">
+            <div>
               <h3>Needs in-person assessment</h3>
-              <ul className="svd-list">
-                {NEEDS_IN_PERSON.map((item) => (
-                  <li key={item.title}>
-                    <strong>{item.title}</strong>
-                    <span>{item.body}</span>
-                  </li>
+              <div className="ed-index">
+                {NEEDS_IN_PERSON.map((item, i) => (
+                  <article key={item.title} className="ed-index__row">
+                    <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                    <span>
+                      <h4 className="ed-index__title">{item.title}</h4>
+                    </span>
+                    <p className="ed-index__body">{item.body}</p>
+                    <span />
+                  </article>
                 ))}
-              </ul>
+              </div>
             </div>
           </div>
         </div>

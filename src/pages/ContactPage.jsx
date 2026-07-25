@@ -70,54 +70,74 @@ export default function ContactPage() {
       </section>
 
       <section className="svd-section">
-        <div className="container">
-          <div style={{ display: 'grid', gap: '0.75rem', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', marginBottom: '2rem' }}>
-            {REASONS.map((r) => (
-              <button
-                key={r.key}
-                type="button"
-                onClick={() => setSelected(r.key)}
-                className={`svd-reason-btn${selected === r.key ? ' is-active' : ''}`}
-                aria-pressed={selected === r.key}
-              >
-                {r.label}
-              </button>
-            ))}
+        <div className="ed-shell ed-facing">
+          <div>
+            <p className="ed-mono">Reasons</p>
+            <div className="ed-index contact-reason-index" role="list" aria-label="Contact reasons">
+              {REASONS.map((r, i) => (
+                <button
+                  key={r.key}
+                  type="button"
+                  onClick={() => setSelected(r.key)}
+                  className={`ed-index__row contact-reason-index__row${selected === r.key ? ' is-active' : ''}`}
+                  aria-pressed={selected === r.key}
+                >
+                  <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                  <span>
+                    <span className="ed-index__title">{r.label}</span>
+                    <span className="ed-index__meta">{selected === r.key ? 'Selected' : 'Choose'}</span>
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div className="svd-list" style={{ gridTemplateColumns: '1fr', maxWidth: '36rem' }}>
-            <li>
-              <strong>{reason.label}</strong>
-              <span>{reason.body}</span>
-              <div style={{ marginTop: '1rem', display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
-                <a
-                  className="btn btn-primary"
-                  href={`mailto:support@serenest.in?subject=${reason.subject}`}
-                >
-                  Email us
-                </a>
-                {reason.extra && (
-                  <Link className="btn btn-ghost" to={reason.extra.to}>{reason.extra.label}</Link>
-                )}
-              </div>
-            </li>
+          <div className="contact-reason-detail">
+            <p className="ed-aside__label">Selected route</p>
+            <h2>{reason.label}</h2>
+            <p className="ed-lede">{reason.body}</p>
+            <div className="contact-reason-detail__actions">
+              <a
+                className="btn btn-primary"
+                href={`mailto:support@serenest.in?subject=${reason.subject}`}
+              >
+                Email us
+              </a>
+              {reason.extra && (
+                <Link className="btn btn-ghost" to={reason.extra.to}>{reason.extra.label}</Link>
+              )}
+            </div>
           </div>
         </div>
       </section>
 
       <section className="svd-section svd-section--soft">
-        <div className="container">
-          <h2>Other ways to reach us</h2>
-          <ul className="svd-list">
-            <li>
-              <strong>Email</strong>
-              <span><a href="mailto:support@serenest.in">support@serenest.in</a></span>
-            </li>
-            <li>
-              <strong>Phone / WhatsApp</strong>
-              <span><a href="tel:917777936367">+91 77779 36367</a></span>
-            </li>
-          </ul>
+        <div className="ed-shell ed-aside">
+          <div>
+            <p className="ed-aside__label">Direct contact</p>
+            <p className="ed-aside__note">Email and Phone / WhatsApp.</p>
+          </div>
+          <div>
+            <h2>Other ways to reach us</h2>
+            <div className="ed-index">
+              <a className="ed-index__row" href="mailto:support@serenest.in">
+                <span className="ed-index__num">01</span>
+                <span>
+                  <h3 className="ed-index__title">Email</h3>
+                </span>
+                <p className="ed-index__body">support@serenest.in</p>
+                <span className="ed-index__go" aria-hidden="true">Write →</span>
+              </a>
+              <a className="ed-index__row" href="tel:917777936367">
+                <span className="ed-index__num">02</span>
+                <span>
+                  <h3 className="ed-index__title">Phone / WhatsApp</h3>
+                </span>
+                <p className="ed-index__body">+91 77779 36367</p>
+                <span className="ed-index__go" aria-hidden="true">Call →</span>
+              </a>
+            </div>
+          </div>
         </div>
       </section>
     </div>
