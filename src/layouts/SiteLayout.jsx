@@ -4,6 +4,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import ProfessionalsSubNav from '../components/ProfessionalsSubNav';
 import EmailCapture from '../components/EmailCapture';
 import { useAuth } from '../lib/useAuth';
+import { useMainReveal } from '../hooks/useReveal';
 
 /* Editorial seal — filled oval with a drawn S, not a generic leaf. */
 function BrandMark({ size = 42 }) {
@@ -114,6 +115,7 @@ export default function SiteLayout() {
   const [footerOpen, setFooterOpen] = useState(null);
   const location                   = useLocation();
   const { user }                   = useAuth();
+  const mainRef                    = useMainReveal(location.pathname);
 
   const isPatient = user?.user_metadata?.role === 'patient' || Boolean(user);
   const patientFirstName = user
@@ -333,7 +335,7 @@ export default function SiteLayout() {
       )}
 
       {/* ── Main Content ───────────────────────────────────── */}
-      <main id="main">
+      <main id="main" ref={mainRef}>
         <Outlet />
       </main>
 

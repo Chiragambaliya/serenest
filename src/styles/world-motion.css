@@ -1,0 +1,465 @@
+/* ============================================================
+   Serenest — site-wide world-class motion & hover
+   ----------------------------------------------------------
+   Calm editorial language (not generic SaaS):
+   forest ink, thin rules, short rises, arrow slides.
+   No purple glow, pills, multi-shadow lift, or emoji chrome.
+   ============================================================ */
+
+:root {
+  --wm-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --wm-forest: var(--teal-700, #3c4a2c);
+  --wm-forest-deep: #2a3320;
+  --wm-cream: #fffdf8;
+  --wm-ink: var(--ink, #1c1a17);
+}
+
+/* ── Global scroll reveal ──────────────────────────────────── */
+.srn-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity 700ms var(--wm-ease),
+    transform 700ms var(--wm-ease);
+}
+
+.srn-reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+/* First viewport sections should not flash blank */
+.hp-hero.srn-reveal,
+.svd-hero.srn-reveal,
+[class*="hero"].srn-reveal:first-child {
+  opacity: 1;
+  transform: none;
+}
+
+/* Stagger children inside revealed sections */
+.srn-reveal.is-revealed > .ed-shell > .ed-head,
+.srn-reveal.is-revealed > .ed-shell > .ed-index,
+.srn-reveal.is-revealed > .ds-shell > *:first-child {
+  animation: wm-rise 680ms var(--wm-ease) both;
+}
+
+@keyframes wm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ── Buttons — site-wide polish ────────────────────────────── */
+.btn,
+.theme-editorial .ds-btn,
+.eda-btn {
+  --wm-btn-ease: var(--wm-ease);
+  border-radius: 2px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  transition:
+    color 280ms var(--wm-btn-ease),
+    border-color 280ms var(--wm-btn-ease),
+    background-color 280ms var(--wm-btn-ease),
+    background-position 520ms var(--wm-btn-ease),
+    transform 280ms var(--wm-btn-ease),
+    box-shadow 280ms var(--wm-btn-ease) !important;
+}
+
+.btn:hover,
+.theme-editorial .ds-btn:hover,
+.eda-btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active,
+.theme-editorial .ds-btn:active,
+.eda-btn:active {
+  transform: translateY(0);
+}
+
+.btn:focus-visible,
+.theme-editorial .ds-btn:focus-visible,
+.eda-btn:focus-visible,
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--wm-forest);
+  outline-offset: 3px;
+}
+
+/* Primary: quiet invert wipe toward cream */
+.btn-primary,
+.theme-editorial .ds-btn--primary,
+.eda-btn-primary {
+  border-color: var(--wm-forest) !important;
+  color: #fff !important;
+  background-color: var(--wm-forest) !important;
+  background-image: linear-gradient(
+    90deg,
+    var(--wm-cream) 0 50%,
+    transparent 50% 100%
+  ) !important;
+  background-size: 220% 100% !important;
+  background-position: 100% 0 !important;
+  background-repeat: no-repeat !important;
+  box-shadow: none !important;
+}
+
+.btn-primary:hover,
+.theme-editorial .ds-btn--primary:hover,
+.eda-btn-primary:hover {
+  color: var(--wm-forest) !important;
+  border-color: var(--wm-forest) !important;
+  background-position: 0 0 !important;
+  box-shadow: none !important;
+}
+
+/* Ghost */
+.btn-ghost,
+.theme-editorial .ds-btn--ghost,
+.eda-btn-outline,
+.eda-btn-ghost {
+  background-color: transparent !important;
+  background-image: linear-gradient(
+    90deg,
+    var(--wm-forest) 0 50%,
+    transparent 50% 100%
+  ) !important;
+  background-size: 220% 100% !important;
+  background-position: 100% 0 !important;
+  background-repeat: no-repeat !important;
+  box-shadow: none !important;
+}
+
+.btn-ghost:hover,
+.theme-editorial .ds-btn--ghost:hover,
+.eda-btn-outline:hover,
+.eda-btn-ghost:hover {
+  color: #fff !important;
+  border-color: var(--wm-forest) !important;
+  background-position: 0 0 !important;
+}
+
+/* Dark-band ghosts */
+.btn-ghost-dark:hover,
+.btn-outline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #fff;
+}
+
+/* WhatsApp — keep green, no glow blob */
+.btn-whatsapp {
+  transition:
+    transform 280ms var(--wm-ease),
+    filter 220ms ease,
+    background-color 220ms ease !important;
+  box-shadow: none !important;
+}
+
+.btn-whatsapp:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.05);
+  box-shadow: none !important;
+}
+
+/* ── Editorial index / list rows ───────────────────────────── */
+.ed-index__row,
+.hp-arrive__path {
+  transition:
+    padding-left 340ms var(--wm-ease),
+    background-color 220ms ease,
+    border-color 220ms ease !important;
+}
+
+a.ed-index__row:hover,
+.hp-arrive__path:hover {
+  padding-left: 0.65rem;
+  background: linear-gradient(
+    90deg,
+    rgba(60, 74, 44, 0.055),
+    transparent 58%
+  );
+}
+
+a.ed-index__row:hover .ed-index__title,
+a.ed-index__row:hover .ed-index__num {
+  color: var(--wm-forest);
+}
+
+.ed-index__title,
+.ed-index__num,
+.ed-index__go {
+  transition: color 220ms ease, transform 320ms var(--wm-ease);
+}
+
+a.ed-index__row:hover .ed-index__go {
+  color: var(--wm-forest);
+  transform: translateX(4px);
+}
+
+/* ── Text links ────────────────────────────────────────────── */
+.ed-link,
+.hp-text-link,
+.svd-inline-link {
+  transition:
+    color 200ms ease,
+    border-color 220ms ease,
+    letter-spacing 280ms var(--wm-ease),
+    gap 280ms var(--wm-ease);
+}
+
+.ed-link {
+  position: relative;
+  text-decoration: none;
+  color: var(--wm-forest);
+  border-bottom: 1px solid transparent;
+}
+
+.ed-link:hover {
+  border-bottom-color: currentColor;
+  color: var(--wm-forest-deep);
+}
+
+/* ── Editorial imagery ─────────────────────────────────────── */
+.editorial-image,
+.svd-hero__media img,
+.svd-figure img,
+.about-photo img,
+.team-photo img,
+figure img {
+  transition: transform 900ms var(--wm-ease), filter 500ms ease;
+}
+
+figure:hover > .editorial-image,
+figure:hover > img,
+.svd-figure:hover img,
+.about-photo:hover img,
+.team-photo:hover img {
+  transform: scale(1.04);
+}
+
+/* ── FAQ / accordion ───────────────────────────────────────── */
+.faq-accordion__question,
+.faq-item__question,
+details summary {
+  transition: color 200ms ease;
+}
+
+.faq-accordion__question:hover,
+.faq-item__question:hover {
+  color: var(--wm-forest);
+}
+
+.faq-accordion__icon,
+.faq-item__icon {
+  transition: transform 280ms var(--wm-ease);
+}
+
+.faq-accordion__item[open] .faq-accordion__icon,
+.faq-item[open] .faq-item__icon {
+  transform: rotate(45deg);
+}
+
+/* ── Service detail reasons / chips → quieter ──────────────── */
+.svd-reason-btn {
+  border-radius: 2px !important;
+  transition:
+    border-color 220ms ease,
+    background-color 220ms ease,
+    transform 280ms var(--wm-ease),
+    color 200ms ease !important;
+}
+
+.svd-reason-btn:hover {
+  border-color: var(--wm-forest) !important;
+  background: rgba(60, 74, 44, 0.05) !important;
+  transform: translateY(-1px);
+  color: var(--wm-forest);
+}
+
+.faq-category-tab {
+  border-radius: 2px !important;
+  transition: color 200ms ease, border-color 200ms ease, background 200ms ease !important;
+}
+
+.faq-category-tab:hover {
+  color: var(--wm-forest);
+  border-color: rgba(60, 74, 44, 0.35);
+}
+
+/* ── Academy — de-SaaS the card language ───────────────────── */
+.eda-pcard--purple {
+  --acc: #3c4a2c !important;
+  --acc-bg: rgba(60, 74, 44, 0.08) !important;
+}
+
+.eda-pcard,
+.eda-hero-card,
+.eda-path-card,
+.pro-hub-card,
+.pricing-card,
+.svc-card,
+.guide-card {
+  box-shadow: none !important;
+  border-radius: 2px !important;
+  transition:
+    border-color 240ms ease,
+    background-color 240ms ease,
+    transform 320ms var(--wm-ease),
+    opacity 220ms ease !important;
+}
+
+.eda-pcard:hover,
+.eda-path-card:hover,
+.pro-hub-card:hover,
+.pricing-card:hover,
+.svc-card:hover,
+.guide-card:hover {
+  transform: translateY(-3px);
+  opacity: 1 !important;
+  border-color: rgba(60, 74, 44, 0.35) !important;
+  box-shadow: none !important;
+}
+
+.eda-hero-card {
+  box-shadow: none !important;
+  border: 1px solid rgba(28, 26, 23, 0.12);
+}
+
+.eda-hcard-item:hover {
+  background: rgba(60, 74, 44, 0.05) !important;
+  transform: translateX(4px) !important;
+}
+
+.eda-btn-primary:hover {
+  box-shadow: none !important;
+}
+
+.eda-inner-nav-link {
+  transition: color 200ms ease, letter-spacing 280ms var(--wm-ease) !important;
+}
+
+.eda-inner-nav-link:hover {
+  color: var(--wm-forest) !important;
+  letter-spacing: 0.02em;
+}
+
+/* ── Page surfaces: about / team / pricing / services / pros ─ */
+.about-card,
+.team-card,
+.pricing-tier,
+.professionals-card,
+.svc-tile {
+  box-shadow: none !important;
+  transition:
+    transform 320ms var(--wm-ease),
+    border-color 240ms ease,
+    background-color 240ms ease !important;
+}
+
+.about-card:hover,
+.team-card:hover,
+.pricing-tier:hover,
+.professionals-card:hover,
+.svc-tile:hover {
+  transform: translateY(-3px);
+  border-color: rgba(60, 74, 44, 0.32);
+}
+
+/* Table rows */
+.ed-table tbody tr {
+  transition: background-color 180ms ease;
+}
+
+.ed-table tbody tr:hover {
+  background: rgba(60, 74, 44, 0.04);
+}
+
+/* Forms */
+input:not([type="checkbox"]):not([type="radio"]),
+textarea,
+select {
+  transition:
+    border-color 200ms ease,
+    box-shadow 220ms var(--wm-ease),
+    background-color 200ms ease !important;
+}
+
+input:not([type="checkbox"]):not([type="radio"]):focus,
+textarea:focus,
+select:focus {
+  border-color: rgba(60, 74, 44, 0.55) !important;
+  box-shadow: 0 0 0 3px rgba(60, 74, 44, 0.1) !important;
+  outline: none;
+}
+
+/* Main content page enter */
+#main > *:first-child {
+  animation: wm-page-in 560ms var(--wm-ease) both;
+}
+
+@keyframes wm-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Professionals subnav */
+.pro-subnav-link {
+  transition:
+    color 200ms ease,
+    border-color 220ms ease,
+    letter-spacing 280ms var(--wm-ease) !important;
+}
+
+.pro-subnav-link:hover {
+  color: var(--wm-forest) !important;
+}
+
+/* Service pillars / nav already patched in services.css */
+
+/* Footer CTA buttons inherit polish; quiet social underline already set */
+
+/* ── Reduced motion ────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .srn-reveal,
+  .srn-reveal.is-revealed,
+  #main > *:first-child,
+  .btn,
+  .theme-editorial .ds-btn,
+  .eda-btn,
+  .ed-index__row,
+  .hp-arrive__path,
+  .editorial-image,
+  figure img,
+  .eda-pcard,
+  .pricing-card,
+  .svc-card,
+  .guide-card,
+  .about-card,
+  .team-card,
+  .pro-hub-card {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .btn-primary:hover,
+  .theme-editorial .ds-btn--primary:hover,
+  .eda-btn-primary:hover,
+  .btn-ghost:hover,
+  .theme-editorial .ds-btn--ghost:hover {
+    background-position: 0 0 !important;
+  }
+}

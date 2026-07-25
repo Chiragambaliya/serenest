@@ -46,7 +46,9 @@
   text-decoration: none;
   color: inherit;
   align-items: baseline;
-  transition: background 140ms ease, padding-left 140ms ease;
+  transition:
+    background 220ms ease,
+    padding-left 340ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 .ed-index__body {
   grid-column: 2;
@@ -70,8 +72,10 @@
   }
   .ed-index__go { justify-self: end; }
 }
-a.ed-index__row:hover { padding-left: 0.5rem; }
-a.ed-index__row:hover .ed-index__title { color: var(--teal-600); }
+a.ed-index__row:hover { padding-left: 0.65rem; }
+a.ed-index__row:hover .ed-index__title,
+a.ed-index__row:hover .ed-index__num { color: var(--teal-700); }
+a.ed-index__row:hover .ed-index__go { transform: translateX(4px); }
 .ed-index__num {
   font-family: var(--font-mono);
   font-size: 0.78rem;
@@ -365,9 +369,13 @@ a.ed-index__row:hover .ed-index__title { color: var(--teal-600); }
    ::after, which is right for standalone calls to action but breaks
    the line when used mid-sentence. */
 .ed-link {
-  color: var(--teal-600);
+  color: var(--teal-700);
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
+  transition: color 200ms ease, text-underline-offset 220ms ease;
 }
-.ed-link:hover { color: var(--teal-700); }
+.ed-link:hover {
+  color: #2a3320;
+  text-underline-offset: 5px;
+}
