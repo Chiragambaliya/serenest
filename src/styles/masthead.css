@@ -3,6 +3,11 @@
   display: none !important;
 }
 
+/* Services opener — brand already lives in the masthead. */
+.services-page .svd-hero .svd-eyebrow {
+  display: none !important;
+}
+
 /* Editorial masthead — brand-first, with intentional motion. */
 
 .masthead {
