@@ -6,26 +6,53 @@ import EdIcon from '../components/EdIcon';
 import EmailCapture from '../components/EmailCapture';
 import { useAuth } from '../lib/useAuth';
 
-/* Simple line-art leaf mark for the brand wordmark. */
-function LeafMark({ size = 24 }) {
+/* Editorial seal — filled oval with a drawn S, not a generic leaf. */
+function BrandMark({ size = 42 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true" className="brand-mark">
-      <path
-        d="M5 19c-1-6 1.5-11.5 7-14 5.5-1.5 9 1 9 1s-1 6-6 9.5C10.5 18.5 5 19 5 19Z"
-        stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 48 48"
+      fill="none"
+      aria-hidden="true"
+      className="brand-mark"
+    >
+      <ellipse cx="24" cy="24" rx="22" ry="23.5" className="brand-mark__fill" />
+      <ellipse
+        cx="24"
+        cy="24"
+        rx="20.25"
+        ry="21.75"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        className="brand-mark__ring"
       />
-      <path d="M5 19c3-4 6.5-7.5 11.5-12.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <path
+        d="M30.6 15.2c-1.9-1.7-4.4-2.55-7.3-2.55-5.2 0-8.55 2.7-8.55 6.35 0 3.15 2.1 4.9 6.45 5.95l3.7.85c2.7.65 3.9 1.5 3.9 3.05 0 2-2 3.4-5.2 3.4-2.5 0-4.65-.65-6.55-1.95"
+        stroke="currentColor"
+        strokeWidth="2.1"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M17.4 32.8c1.85 1.6 4.25 2.45 7.05 2.45 5.05 0 8.35-2.6 8.35-6.2 0-3-2-4.8-6.25-5.75l-3.65-.85c-2.9-.65-4.15-1.55-4.15-3.15 0-1.85 1.8-3.15 4.75-3.15 2.2 0 4.15.6 5.9 1.75"
+        stroke="currentColor"
+        strokeWidth="2.1"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        opacity="0.42"
+      />
     </svg>
   );
 }
 
-/* ── Primary navigation (flat — matches the locked nav structure) ── */
+/* Primary navigation — editorial masthead, not a SaaS link strip. */
 const NAV_LINKS = [
   { to: '/services', label: 'Services' },
-  { to: '/professionals', label: 'For Professionals' },
+  { to: '/professionals', label: 'Professionals' },
   { to: '/academy', label: 'Academy' },
   { to: '/about', label: 'About' },
-  { to: '/resources', label: 'Resources' },
+  { to: '/resources', label: 'Reading' },
   { to: '/contact', label: 'Contact' },
 ];
 
@@ -111,50 +138,48 @@ export default function SiteLayout() {
     <div className="theme-editorial">
       <a className="skip-link" href="#main">Skip to content</a>
 
-      <header className={`header ${scrolled ? 'is-scrolled' : 'is-top'}`}>
-        <div className="container header-inner">
-          {/* Brand */}
+      <header className={`header masthead ${scrolled ? 'is-scrolled' : 'is-top'}`}>
+        <div className="container header-inner masthead__inner">
           <Link
             to="/"
             className="brand"
             aria-label="Serenest — Home"
           >
-            <LeafMark size={24} />
+            <BrandMark size={44} />
             <span className="brand-wordmark">
               <span className="brand-text">Serenest</span>
-              <span className="brand-tagline">Mental health</span>
+              <span className="brand-tagline">Clinical practice</span>
             </span>
           </Link>
 
-          {/* Desktop nav (default site) */}
           <nav
-            className="header-links"
+            className="header-links masthead__nav"
             aria-label="Main navigation"
           >
-            {NAV_LINKS.map((item) => (
-              <NavLink key={item.to} to={item.to} className={navClass}>
-                {item.label}
+            <div className="masthead__links" role="list">
+              {NAV_LINKS.map((item) => (
+                <NavLink key={item.to} to={item.to} className={navClass} role="listitem">
+                  {item.label}
+                </NavLink>
+              ))}
+            </div>
+
+            <div className="masthead__actions">
+              <NavLink
+                to={user ? '/patient/dashboard' : '/patient/login'}
+                className="masthead__account"
+              >
+                {user
+                  ? (patientFirstName ? `Hi, ${patientFirstName}` : 'Account')
+                  : 'Sign in'}
               </NavLink>
-            ))}
 
-            <span className="nav-divider" aria-hidden="true" />
-
-            <NavLink
-              to={user ? '/patient/dashboard' : '/patient/login'}
-              className={navClass}
-              style={{ fontWeight: 600 }}
-            >
-              {user
-                ? (patientFirstName ? `Hi, ${patientFirstName}` : 'My account')
-                : 'Sign in'}
-            </NavLink>
-
-            <Link className="header-cta" to="/book">
-              Book an Appointment
-            </Link>
+              <Link className="header-cta" to="/book">
+                Book appointment
+              </Link>
+            </div>
           </nav>
 
-          {/* Hamburger */}
           <button
             type="button"
             className={`menu-btn ${menuOpen ? 'is-open' : ''}`}
@@ -186,9 +211,11 @@ export default function SiteLayout() {
           >
             {/* Drawer header */}
             <div className="menu-drawer-head">
-              <Link to="/" className="brand" style={{ fontSize: 13 }} onClick={() => setMenuOpen(false)}>
+              <Link to="/" className="brand" onClick={() => setMenuOpen(false)}>
+                <BrandMark size={32} />
                 <span className="brand-wordmark">
                   <span className="brand-text">Serenest</span>
+                  <span className="brand-tagline">Clinical practice</span>
                 </span>
               </Link>
               <button
@@ -197,7 +224,7 @@ export default function SiteLayout() {
                 aria-label="Close menu"
                 onClick={() => setMenuOpen(false)}
               >
-                ✕
+                Close
               </button>
             </div>
 
@@ -297,7 +324,7 @@ export default function SiteLayout() {
           <div className="ed-footer__grid">
             <div className="ed-footer__brand">
               <Link to="/" className="ed-footer__logo">
-                <LeafMark size={26} />
+                <BrandMark size={30} />
                 <span>Serenest</span>
               </Link>
               <p>

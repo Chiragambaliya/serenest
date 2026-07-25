@@ -1,0 +1,318 @@
+/* Hero must not repeat the masthead wordmark. */
+.hp-hero .hp-brand-mark__name {
+  display: none !important;
+}
+
+/* Editorial masthead — brand-first, journal-like, not a SaaS nav strip. */
+
+.masthead {
+  background: var(--bg, #f7f2ea) !important;
+  border-bottom: 1px solid rgba(28, 26, 23, 0.1) !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+}
+
+.masthead.is-top,
+.masthead.is-scrolled {
+  background: var(--bg, #f7f2ea) !important;
+  border-bottom: 1px solid rgba(28, 26, 23, 0.1) !important;
+  box-shadow: none !important;
+}
+
+.masthead__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: clamp(1rem, 2.5vw, 2.5rem);
+  min-height: 84px;
+  padding-block: 0.85rem;
+}
+
+/* ── Brand ─────────────────────────────────────────────────────── */
+.masthead .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0;
+  color: var(--ink, #1c1a17);
+}
+
+.masthead .brand-mark {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  color: var(--teal-700, #3c4a2c);
+}
+
+.masthead .brand-mark__fill {
+  fill: rgba(60, 74, 44, 0.08);
+}
+
+.masthead .brand-mark__ring {
+  fill: none;
+}
+
+.masthead .brand-wordmark {
+  display: flex;
+  flex-direction: column;
+  gap: 0.28rem;
+  padding: 0;
+  line-height: 1;
+}
+
+.masthead .brand-text {
+  font-family: var(--font-heading);
+  font-size: clamp(1.85rem, 2.5vw, 2.25rem);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 0.92;
+  color: var(--ink, #1c1a17);
+}
+
+.masthead .brand-tagline {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(28, 26, 23, 0.72);
+  line-height: 1.2;
+}
+
+.masthead .brand:hover {
+  opacity: 1;
+}
+
+.masthead .brand:hover .brand-text {
+  color: var(--teal-700, #3c4a2c);
+}
+
+/* ── Nav ───────────────────────────────────────────────────────── */
+.masthead__nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(1.25rem, 3vw, 2.75rem);
+  flex: 1;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.masthead__links {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.1rem 0.15rem;
+}
+
+.masthead__links .nav-link {
+  position: relative;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 450;
+  letter-spacing: 0.015em;
+  color: rgba(28, 26, 23, 0.7);
+  padding: 0.4rem 0.85rem;
+  border-radius: 0;
+  background: transparent !important;
+  text-decoration: none;
+}
+
+.masthead__links .nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0.7rem;
+  right: 0.7rem;
+  bottom: 0.1rem;
+  height: 1px;
+  border-radius: 0;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 180ms ease;
+}
+
+.masthead__links .nav-link:hover {
+  color: var(--ink, #1c1a17);
+  background: transparent !important;
+}
+
+.masthead__links .nav-link:hover::after,
+.masthead__links .nav-link.nav-link-active::after {
+  transform: scaleX(1);
+}
+
+.masthead__links .nav-link.nav-link-active {
+  color: var(--ink, #1c1a17);
+  font-weight: 500;
+  background: transparent !important;
+}
+
+.masthead__actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-shrink: 0;
+  padding-left: 1.1rem;
+  border-left: 1px solid rgba(28, 26, 23, 0.14);
+}
+
+.masthead__account {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(28, 26, 23, 0.62);
+  text-decoration: none;
+  padding: 0.2rem 0;
+  border-bottom: 1px solid transparent;
+  transition: color 140ms ease, border-color 140ms ease;
+}
+
+.masthead__account:hover,
+.masthead__account.nav-link-active {
+  color: var(--ink, #1c1a17);
+  border-bottom-color: currentColor;
+  background: transparent !important;
+}
+
+.masthead .header-cta {
+  margin-left: 0;
+  padding: 0.7rem 1.15rem;
+  border-radius: 2px;
+  border: 1px solid var(--teal-700, #3c4a2c);
+  background: var(--teal-700, #3c4a2c);
+  color: #fff !important;
+  font-family: var(--font-body);
+  font-size: 0.84rem;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  box-shadow: none;
+  text-decoration: none;
+}
+
+.masthead .header-cta:hover {
+  background: #2a3320;
+  border-color: #2a3320;
+  color: #fff !important;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Menu button — quiet, no card chrome */
+.masthead .menu-btn {
+  width: 42px;
+  height: 42px;
+  border-radius: 0;
+  border: 1px solid rgba(28, 26, 23, 0.18);
+  background: transparent;
+}
+
+.masthead .menu-btn:hover {
+  background: rgba(28, 26, 23, 0.04);
+  border-color: rgba(28, 26, 23, 0.35);
+  transform: none;
+}
+
+.menu-drawer-head .brand {
+  gap: 0.65rem;
+}
+
+.menu-drawer-head .brand-mark {
+  color: var(--teal-700, #3c4a2c);
+}
+
+.menu-drawer-head .brand-text {
+  font-size: 1.45rem;
+  font-weight: 400;
+  color: var(--ink, #1c1a17);
+}
+
+.menu-drawer-head .brand-tagline {
+  display: block;
+}
+
+.menu-close-btn {
+  font-family: var(--font-mono) !important;
+  font-size: 0.68rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border: none;
+  background: transparent;
+  color: rgba(28, 26, 23, 0.65);
+  padding: 0.4rem 0.2rem;
+  cursor: pointer;
+}
+
+@media (max-width: 1100px) {
+  .masthead__links .nav-link {
+    padding-inline: 0.5rem;
+    font-size: 0.86rem;
+  }
+
+  .masthead__actions {
+    gap: 0.75rem;
+    padding-left: 0.85rem;
+  }
+}
+
+@media (max-width: 960px) {
+  .masthead__nav {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .masthead__inner.header-inner {
+    display: flex;
+    grid-template-columns: unset;
+    min-height: 72px;
+    padding-block: 0.7rem;
+  }
+
+  .masthead .brand {
+    grid-column: unset;
+    justify-self: unset;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .masthead .brand-wordmark {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .masthead .brand-mark {
+    width: 38px;
+    height: 38px;
+  }
+
+  .masthead .brand-text {
+    font-size: 1.65rem;
+  }
+
+  .masthead .brand-tagline {
+    display: block;
+  }
+
+  .masthead .menu-btn {
+    display: flex;
+    grid-column: unset;
+    justify-self: unset;
+    margin-left: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .masthead .brand-tagline {
+    display: none;
+  }
+
+  .masthead .brand-text {
+    font-size: 1.35rem;
+  }
+}
