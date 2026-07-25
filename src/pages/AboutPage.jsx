@@ -119,6 +119,8 @@ export default function AboutPage() {
               <ImagePlaceholder
                 asset="about-rural-clinic-waiting.jpg"
                 direction="A district clinic waiting area in daylight — chairs, a corridor, distance implied. Documentary, unposed, no identifiable faces."
+                src="/images/editorial/about-clinic-waiting-room-v1.png"
+                alt="A quiet clinic waiting area in daylight"
               />
             </div>
             <figcaption>

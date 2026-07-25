@@ -8,10 +8,10 @@ import ExitIntentPopup from './components/ExitIntentPopup';
 
 captureUtm();
 
-const HomePage = lazy(() => import('./pages/HomePage'));
+const HomePage = lazy(() => import('./pages/HomePageLocked'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
-const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const ServicesPage = lazy(() => import('./pages/ServicesPageLocked'));
 const PsychiatryPage = lazy(() => import('./pages/PsychiatryPage'));
 const TherapyPage = lazy(() => import('./pages/TherapyPage'));
 const AddictionCarePage = lazy(() => import('./pages/AddictionCarePage'));

@@ -234,7 +234,11 @@ export default function AcademyPage() {
           <div>
             <figure className="ed-figure" style={{ margin: 0 }}>
               <div className="ed-figure__media">
-                <ImagePlaceholder asset="academy-consultation-room.jpg" />
+                <ImagePlaceholder
+                  asset="academy-consultation-room.jpg"
+                  src="/images/editorial/academy-teaching-room-v1.png"
+                  alt="An intimate teaching room with notebooks and a whiteboard"
+                />
               </div>
             </figure>
             <blockquote className="ed-pull" style={{ marginTop: '1.5rem' }}>

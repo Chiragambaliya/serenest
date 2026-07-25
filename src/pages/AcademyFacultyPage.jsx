@@ -54,6 +54,8 @@ export default function AcademyFacultyPage() {
             <ImagePlaceholder
               asset="academy-faculty-teaching.jpg"
               direction="A clinician mid-teaching beside a whiteboard with a case formulation sketched out. Room, not studio. No identifiable patient material."
+              src="/images/editorial/academy-teaching-room-v1.png"
+              alt="A quiet clinical teaching room prepared for a small seminar"
             />
           </div>
         </div>

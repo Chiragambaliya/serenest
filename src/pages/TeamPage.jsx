@@ -49,7 +49,9 @@ export default function TeamPage() {
           <div className="svd-split__media">
             <ImagePlaceholder
               asset="team-founder-portrait.jpg"
-              direction="Environmental portrait of Dr. Aambalia in his consulting room, seated, natural light, looking to camera. Not a studio headshot."
+              direction="A thoughtful, unoccupied consulting room. A real founder portrait can replace this image when available."
+              src="/images/editorial/team-consulting-room-v1.png"
+              alt="A calm consulting room with a desk, visitor chair, and books"
             />
           </div>
         </div>
