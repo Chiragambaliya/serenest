@@ -1,0 +1,471 @@
+/* Lean homepage — world-class editorial motion + buttons */
+
+.home--lean {
+  --hp-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --hp-forest: var(--teal-700, #3c4a2c);
+  --hp-forest-deep: #2a3320;
+  --hp-cream: #fffdf8;
+  --hp-ink: var(--ink, #1c1a17);
+}
+
+/* Scroll reveal for top-level sections */
+.home--lean > section.srn-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 700ms var(--hp-ease),
+    transform 700ms var(--hp-ease);
+}
+
+.home--lean > section.srn-reveal.is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+.home--lean > section.hp-hero.srn-reveal {
+  opacity: 1;
+  transform: none;
+}
+
+/* ── Hero entrance ─────────────────────────────────────────────── */
+@media (prefers-reduced-motion: no-preference) {
+  .home--lean .hp-hero__copy > * {
+    animation: hp-rise 720ms var(--hp-ease) both;
+  }
+  .home--lean .hp-hero__copy > *:nth-child(1) { animation-delay: 40ms; }
+  .home--lean .hp-hero__copy > *:nth-child(2) { animation-delay: 100ms; }
+  .home--lean .hp-hero__copy > *:nth-child(3) { animation-delay: 160ms; }
+  .home--lean .hp-hero__copy > *:nth-child(4) { animation-delay: 220ms; }
+  .home--lean .hp-hero__copy > *:nth-child(5) { animation-delay: 280ms; }
+
+  .home--lean .hp-hero__visual {
+    animation: hp-rise 900ms var(--hp-ease) 160ms both;
+  }
+}
+
+@keyframes hp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.home--lean .hp-brand-mark__meta {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 0.35rem;
+}
+
+.home--lean .hp-brand-mark__meta::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  opacity: 0.35;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 700ms var(--hp-ease);
+}
+
+.home--lean .hp-hero.is-revealed .hp-brand-mark__meta::after,
+.home--lean .hp-hero .hp-brand-mark__meta::after {
+  transform: scaleX(1);
+  animation: hp-rule 900ms var(--hp-ease) 200ms both;
+}
+
+@keyframes hp-rule {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.home--lean .hp-hero__title {
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+.home--lean .hp-hero__frame {
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-2);
+}
+
+.home--lean .hp-hero__frame .editorial-image {
+  border: 0;
+  min-height: 280px;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+  transform: scale(1.02);
+  transition: transform 900ms var(--hp-ease);
+}
+
+.home--lean .hp-hero__visual:hover .editorial-image {
+  transform: scale(1.06);
+}
+
+.home--lean .hp-hero__visual figcaption {
+  margin-top: 0.75rem;
+  transition: letter-spacing 320ms var(--hp-ease), color 220ms ease;
+}
+
+.home--lean .hp-hero__visual:hover figcaption {
+  letter-spacing: 0.08em;
+  color: var(--hp-forest);
+}
+
+/* ── Buttons ───────────────────────────────────────────────────── */
+.hp-btn {
+  --btn-pad-x: 1.35rem;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  min-height: 52px;
+  padding: 0.95rem var(--btn-pad-x);
+  border-radius: 2px;
+  border: 1.5px solid transparent;
+  font-family: var(--font-body);
+  font-size: 0.94rem;
+  font-weight: 500;
+  letter-spacing: 0.03em;
+  line-height: 1;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+  transition:
+    color 280ms var(--hp-ease),
+    border-color 280ms var(--hp-ease),
+    transform 280ms var(--hp-ease),
+    background-position 520ms var(--hp-ease);
+}
+
+.hp-btn__label,
+.hp-btn__arrow {
+  position: relative;
+  z-index: 1;
+  transition: transform 320ms var(--hp-ease);
+}
+
+.hp-btn__arrow {
+  display: inline-block;
+}
+
+.hp-btn:hover {
+  transform: translateY(-2px);
+}
+
+.hp-btn:hover .hp-btn__arrow {
+  transform: translateX(5px);
+}
+
+.hp-btn:active {
+  transform: translateY(0);
+}
+
+.hp-btn:focus-visible {
+  outline: 2px solid var(--hp-forest);
+  outline-offset: 3px;
+}
+
+/* Solid forest → cream invert */
+.hp-btn--solid {
+  border-color: var(--hp-forest);
+  color: #fff;
+  background-color: var(--hp-forest);
+  background-image: linear-gradient(
+    90deg,
+    var(--hp-cream) 0 50%,
+    transparent 50% 100%
+  );
+  background-size: 220% 100%;
+  background-position: 100% 0;
+  background-repeat: no-repeat;
+}
+
+.hp-btn--solid:hover {
+  color: var(--hp-forest);
+  border-color: var(--hp-forest);
+  background-position: 0 0;
+}
+
+/* Ghost → forest fill */
+.hp-btn--ghost {
+  border-color: rgba(28, 26, 23, 0.28);
+  color: var(--hp-ink);
+  background-color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    var(--hp-forest) 0 50%,
+    transparent 50% 100%
+  );
+  background-size: 220% 100%;
+  background-position: 100% 0;
+  background-repeat: no-repeat;
+}
+
+.hp-btn--ghost:hover {
+  color: #fff;
+  border-color: var(--hp-forest);
+  background-position: 0 0;
+}
+
+/* Dark band ghost */
+.hp-btn--ghost-dark {
+  border-color: rgba(255, 255, 255, 0.42);
+  color: #fff;
+  background-color: transparent;
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.12) 0 50%,
+    transparent 50% 100%
+  );
+  background-size: 220% 100%;
+  background-position: 100% 0;
+  background-repeat: no-repeat;
+}
+
+.hp-btn--ghost-dark:hover {
+  color: #fff;
+  border-color: #fff;
+  background-position: 0 0;
+}
+
+/* Light solid on dark band */
+.hp-btn--solid-light {
+  border-color: var(--hp-cream);
+  color: var(--hp-forest);
+  background-color: var(--hp-cream);
+  background-image: linear-gradient(
+    90deg,
+    #fff 0 50%,
+    transparent 50% 100%
+  );
+  background-size: 220% 100%;
+  background-position: 100% 0;
+  background-repeat: no-repeat;
+}
+
+.hp-btn--solid-light:hover {
+  color: var(--hp-forest-deep);
+  border-color: #fff;
+  background-position: 0 0;
+}
+
+.hp-text-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--hp-forest);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition:
+    border-color 220ms ease,
+    letter-spacing 280ms var(--hp-ease),
+    gap 280ms var(--hp-ease);
+}
+
+.hp-text-link:hover {
+  border-bottom-color: currentColor;
+  letter-spacing: 0.02em;
+  gap: 0.45rem;
+}
+
+.hp-hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.85rem;
+  align-items: center;
+}
+
+.hp-academy__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.25rem;
+  margin-top: 1.75rem;
+}
+
+/* ── Care index hover ──────────────────────────────────────────── */
+.home--lean .hp-index .ed-index__row {
+  transition:
+    padding-left 320ms var(--hp-ease),
+    background-color 220ms ease,
+    border-color 220ms ease;
+}
+
+.home--lean .hp-index .ed-index__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--subtle);
+  transition: color 220ms ease;
+}
+
+.home--lean .hp-index__arrow {
+  display: inline-block;
+  transition: transform 320ms var(--hp-ease);
+}
+
+.home--lean .hp-index .ed-index__row:hover {
+  padding-left: 0.65rem;
+  background: linear-gradient(
+    90deg,
+    rgba(60, 74, 44, 0.05),
+    transparent 55%
+  );
+}
+
+.home--lean .hp-index .ed-index__row:hover .ed-index__num {
+  color: var(--hp-forest);
+}
+
+.home--lean .hp-index .ed-index__row:hover .ed-index__title {
+  color: var(--hp-forest);
+}
+
+.home--lean .hp-index .ed-index__row:hover .ed-index__go {
+  color: var(--hp-forest);
+}
+
+.home--lean .hp-index .ed-index__row:hover .hp-index__arrow {
+  transform: translateX(5px);
+}
+
+.home--lean .hp-index .ed-index__title {
+  transition: color 220ms ease;
+}
+
+.home--lean .hp-index .ed-index__num {
+  transition: color 220ms ease, transform 320ms var(--hp-ease);
+}
+
+.home--lean .hp-index .ed-index__row:hover .ed-index__num {
+  transform: translateY(-1px);
+}
+
+/* ── Academy pull quote ────────────────────────────────────────── */
+.home--lean .hp-pull {
+  position: relative;
+  transition: transform 400ms var(--hp-ease);
+}
+
+.home--lean .hp-pull::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--hp-forest);
+  transform: scaleY(0.35);
+  transform-origin: top;
+  transition: transform 500ms var(--hp-ease);
+}
+
+.home--lean .hp-academy:hover .hp-pull,
+.home--lean .hp-pull:hover {
+  transform: translateY(-3px);
+}
+
+.home--lean .hp-academy:hover .hp-pull::before,
+.home--lean .hp-pull:hover::before {
+  transform: scaleY(1);
+}
+
+/* ── Closing band ──────────────────────────────────────────────── */
+.home--lean .hp-close {
+  position: relative;
+  overflow: hidden;
+}
+
+.home--lean .hp-close::after {
+  content: "";
+  position: absolute;
+  inset: auto -10% -40% auto;
+  width: 50%;
+  height: 80%;
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 253, 248, 0.08),
+    transparent 70%
+  );
+  pointer-events: none;
+}
+
+.home--lean .hp-cta__contact {
+  margin-top: 1rem;
+}
+
+.home--lean .hp-cta__contact a {
+  color: rgba(255, 255, 255, 0.82);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: color 200ms ease, border-color 200ms ease;
+}
+
+.home--lean .hp-cta__contact a:hover {
+  color: #fff;
+  border-bottom-color: rgba(255, 255, 255, 0.55);
+}
+
+.home--lean .hp-close__actions {
+  margin-top: 1.85rem;
+}
+
+@media (max-width: 720px) {
+  .hp-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hp-hero__actions,
+  .hp-academy__actions,
+  .hp-close__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hp-text-link {
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home--lean > section.srn-reveal,
+  .home--lean .hp-hero__copy > *,
+  .home--lean .hp-hero__visual,
+  .home--lean .hp-hero__frame .editorial-image,
+  .hp-btn,
+  .hp-btn__arrow,
+  .home--lean .hp-index .ed-index__row,
+  .home--lean .hp-pull {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .hp-btn--solid:hover,
+  .hp-btn--ghost:hover,
+  .hp-btn--ghost-dark:hover,
+  .hp-btn--solid-light:hover {
+    background-position: 0 0 !important;
+  }
+}

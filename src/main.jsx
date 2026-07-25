@@ -7,6 +7,7 @@ import './styles/editorial.css';
 import './styles/editorial-structures.css';
 import './styles/home.css';
 import './styles/home-preview.css';
+import './styles/home-world.css';
 import './styles/guides.css';
 import './styles/services.css';
 import './styles/about.css';
