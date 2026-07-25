@@ -111,7 +111,7 @@ const FOOTER_LEGAL = [
 export default function SiteLayout() {
   const [scrolled, setScrolled]   = useState(false);
   const [menuOpen, setMenuOpen]   = useState(false);
-  const [footerWide, setFooterWide] = useState(true);
+  const [footerOpen, setFooterOpen] = useState(null);
   const location                   = useLocation();
   const { user }                   = useAuth();
 
@@ -124,15 +124,6 @@ export default function SiteLayout() {
   useEffect(() => {
     setMenuOpen(false);
   }, [location]);
-
-  // Footer groups: accordion on small screens, open columns on desktop
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 900px)');
-    const sync = () => setFooterWide(mq.matches);
-    sync();
-    mq.addEventListener('change', sync);
-    return () => mq.removeEventListener('change', sync);
-  }, []);
 
   // Footer / in-app links change the route but keep the old scroll offset,
   // so the new page looks like it "didn't load" (still stuck at the bottom).
@@ -408,28 +399,32 @@ export default function SiteLayout() {
             </div>
 
             <div className="ed-footer__cols">
-              {FOOTER_GROUPS.map((group) => (
-                <details
-                  key={group.title}
-                  className="ed-footer__drop"
-                  open={footerWide ? true : undefined}
-                >
-                  <summary
-                    className="ed-footer__title"
-                    onClick={(e) => {
-                      if (footerWide) e.preventDefault();
-                    }}
+              {FOOTER_GROUPS.map((group) => {
+                const isOpen = footerOpen === group.title;
+                return (
+                  <details
+                    key={group.title}
+                    className="ed-footer__drop"
+                    open={isOpen}
                   >
-                    <span>{group.title}</span>
-                    <span className="ed-footer__toggle" aria-hidden="true" />
-                  </summary>
-                  <nav aria-label={`${group.title} links`}>
-                    {group.links.map((link) => (
-                      <Link key={link.to} to={link.to}>{link.label}</Link>
-                    ))}
-                  </nav>
-                </details>
-              ))}
+                    <summary
+                      className="ed-footer__title"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setFooterOpen(isOpen ? null : group.title);
+                      }}
+                    >
+                      <span>{group.title}</span>
+                      <span className="ed-footer__toggle" aria-hidden="true" />
+                    </summary>
+                    <nav aria-label={`${group.title} links`}>
+                      {group.links.map((link) => (
+                        <Link key={link.to} to={link.to}>{link.label}</Link>
+                      ))}
+                    </nav>
+                  </details>
+                );
+              })}
             </div>
           </div>
 
