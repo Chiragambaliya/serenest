@@ -27,7 +27,7 @@ export default function Gad7Page() {
           <>The Generalized Anxiety Disorder-7 (GAD-7) is a validated 7-item self-report scale used by clinicians worldwide to screen for anxiety severity. Take the screening privately on Serenest — your result is not a diagnosis and does not replace clinical evaluation.</>
         }
         primaryHref="/screening"
-        primaryLabel="Take the screening now"
+        primaryLabel="Open Mental Health Center"
         secondaryHref="/anxiety-counselling-online-india"
         secondaryLabel="Read about anxiety care"
       />
@@ -109,7 +109,7 @@ export default function Gad7Page() {
       <RelatedTopics items={[
         { to: '/anxiety-counselling-online-india', title: 'Anxiety counselling online', body: 'When GAD-7 suggests it may help, this page explains how online anxiety care works.' },
         { to: '/phq-9-depression-screening', title: 'PHQ-9 depression screening', body: 'Depression and anxiety often overlap. PHQ-9 is a parallel screening tool for depression.' },
-        { to: '/screening', title: 'Full PHQ-9 + GAD-7 screening', body: 'Take a combined PHQ-9 and GAD-7 self-screening on Serenest.' },
+        { to: '/screening', title: 'Mental Health Center', body: 'Mood, anxiety, and other validated checks — with education before care options.' },
       ]} />
 
       <References items={[
@@ -119,10 +119,10 @@ export default function Gad7Page() {
       ]} />
 
       <CTA
-        heading="Take a confidential GAD-7 screening on Serenest"
-        body="A 3-minute self-screening. Screening is not a diagnosis."
-        primaryHref="/screening"
-        primaryLabel="Start PHQ-9 / GAD-7 screening"
+        heading="Understand your anxiety on Serenest"
+        body="Start in the Mental Health Center. Checks are screening aids — not diagnoses."
+        primaryHref="/screening/pathway/mood-anxiety"
+        primaryLabel="Check mood & anxiety"
         secondaryHref="/book"
         secondaryLabel="Book a consultation"
       />

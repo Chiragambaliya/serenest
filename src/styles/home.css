@@ -1,14 +1,14 @@
 /* ── Home — world-class calm clinical landing ───────────────── */
 .home {
-  --h-ink: #1c2418;
-  --h-muted: rgba(28, 36, 24, 0.62);
-  --h-subtle: rgba(28, 36, 24, 0.45);
-  --h-line: rgba(28, 36, 24, 0.1);
-  --h-sage: #3c4a2c;
-  --h-sage-mid: #57683f;
-  --h-sage-dark: #2a3320;
-  --h-cream: #faf7f1;
-  --h-cream-2: #f1ebe1;
+  --h-ink: var(--ink);
+  --h-muted: var(--muted);
+  --h-subtle: var(--subtle);
+  --h-line: var(--border);
+  --h-sage: var(--teal-800);
+  --h-sage-mid: var(--sage-deep);
+  --h-sage-dark: var(--teal-900);
+  --h-cream: var(--palette-cream-light);
+  --h-cream-2: var(--palette-sage-light);
   --h-white: #ffffff;
   --h-radius: 1.125rem;
   --h-shadow: 0 1px 2px rgba(28, 36, 24, 0.04), 0 12px 32px rgba(28, 36, 24, 0.06);

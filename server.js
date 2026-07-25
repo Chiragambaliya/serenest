@@ -820,6 +820,29 @@ app.get('/api/professionals/directory', async (req, res) => {
   return ok(res, { professionals: data ?? [] });
 });
 
+/**
+ * GET /api/professionals/verify?email= — is this email a joined (approved) professional?
+ * Used to gate Academy clinician content. Returns only a boolean, no profile data.
+ */
+app.get('/api/professionals/verify', async (req, res) => {
+  if (!requireDb(res)) return;
+
+  const email = String(req.query.email ?? '').trim().toLowerCase();
+  if (!email) return err(res, 'email is required');
+
+  const { count, error } = await supabase
+    .from('professional_applications')
+    .select('id', { count: 'exact', head: true })
+    .eq('status', 'approved')
+    .ilike('email', email);
+
+  if (error) {
+    console.error('[GET /api/professionals/verify]', error);
+    return err(res, 'Failed to verify professional', 500);
+  }
+  return ok(res, { joined: (count ?? 0) > 0 });
+});
+
 /** GET /api/professionals/list — all approved professionals with booking counts */
 app.get('/api/professionals/list', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;
@@ -2354,6 +2377,9 @@ const VALID_ROUTES = new Set([
   '/corporate',
   '/partner',
   '/screening',
+  '/screening/pathway/mood-anxiety',
+  '/burnout-check',
+  '/evidence',
   '/academy',
   '/academy/login',
   '/academy/learn',
@@ -2371,7 +2397,7 @@ const VALID_ROUTES = new Set([
 ]);
 
 // Dynamic-route prefixes that the SPA legitimately serves.
-const VALID_PREFIXES = ['/blog/', '/consultation/', '/academy/program/', '/screening/tool/'];
+const VALID_PREFIXES = ['/blog/', '/consultation/', '/academy/program/', '/screening/tool/', '/evidence/'];
 
 // Known stale URLs surfaced in search from prior site contents. These have no
 // healthcare replacement, so return 410 Gone to ask Google to drop them.

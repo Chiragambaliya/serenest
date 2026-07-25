@@ -33,6 +33,10 @@ const AdminPage = lazy(() => import('./pages/AdminPage'));
 const PatientFindProfessionalPage = lazy(() => import('./pages/PatientFindProfessionalPage'));
 const ScreeningPage = lazy(() => import('./pages/ScreeningPage'));
 const ScreeningToolPage = lazy(() => import('./pages/ScreeningToolPage'));
+const MoodAnxietyPathwayPage = lazy(() => import('./pages/MoodAnxietyPathwayPage'));
+const BurnoutCheckLandingPage = lazy(() => import('./pages/BurnoutCheckLandingPage'));
+const EvidenceCenterPage = lazy(() => import('./pages/EvidenceCenterPage'));
+const EvidenceDetailPage = lazy(() => import('./pages/EvidenceDetailPage'));
 const ConsultationPage = lazy(() => import('./pages/ConsultationPage'));
 const PrescriptionPage = lazy(() => import('./pages/PrescriptionPage'));
 const AcademyAuthPage = lazy(() => import('./pages/AcademyAuthPage'));
@@ -126,6 +130,11 @@ function MarketingWidgets() {
     || pathname.startsWith('/book')
     || pathname.startsWith('/patient/login')
     || pathname.startsWith('/professionals/apply')
+    || pathname.startsWith('/screening')
+    || pathname.startsWith('/burnout-check')
+    || pathname.startsWith('/evidence')
+    || pathname.startsWith('/emergency')
+    || pathname.startsWith('/patient/')
   ) {
     return null;
   }
@@ -200,6 +209,10 @@ export default function App() {
           <Route path="patient/dashboard"        element={<S><PatientDashboardPage /></S>} />
           <Route path="screening" element={<S><ScreeningPage /></S>} />
           <Route path="screening/tool/:toolId" element={<S><ScreeningToolPage /></S>} />
+          <Route path="screening/pathway/mood-anxiety" element={<S><MoodAnxietyPathwayPage /></S>} />
+          <Route path="burnout-check" element={<S><BurnoutCheckLandingPage /></S>} />
+          <Route path="evidence" element={<S><EvidenceCenterPage /></S>} />
+          <Route path="evidence/:slug" element={<S><EvidenceDetailPage /></S>} />
           <Route path="consultation/:appointmentId" element={<S><ConsultationPage /></S>} />
           <Route path="consultation/:appointmentId/prescription" element={<S><PrescriptionPage /></S>} />
           <Route path="online-psychiatrist-consultation-india" element={<Navigate to="/services" replace />} />

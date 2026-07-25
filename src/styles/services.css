@@ -1,14 +1,14 @@
 /* ── Services page — full layout (matches home calm clinical) ── */
 .services-page {
-  --s-ink: #1c2418;
-  --s-muted: rgba(28, 36, 24, 0.62);
-  --s-subtle: rgba(28, 36, 24, 0.45);
-  --s-line: rgba(28, 36, 24, 0.1);
-  --s-sage: #3c4a2c;
-  --s-sage-mid: #57683f;
-  --s-sage-dark: #2a3320;
-  --s-cream: #faf7f1;
-  --s-cream-2: #f1ebe1;
+  --s-ink: var(--ink);
+  --s-muted: var(--muted);
+  --s-subtle: var(--subtle);
+  --s-line: var(--border);
+  --s-sage: var(--teal-800);
+  --s-sage-mid: var(--sage-deep);
+  --s-sage-dark: var(--teal-900);
+  --s-cream: var(--palette-cream-light);
+  --s-cream-2: var(--palette-sage-light);
   --s-white: #ffffff;
   --s-radius: 1.125rem;
   --s-section: clamp(4rem, 8vw, 5.5rem);

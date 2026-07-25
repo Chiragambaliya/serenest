@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Professional Dashboard — Serenest</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .dashboard-page { min-height: 100vh; padding: 6rem 1.5rem 3rem; }
+    .dashboard-header { margin-bottom: 2.5rem; }
+    .dashboard-header h1 { font-family: var(--font-serif, 'Cormorant Garamond', serif); font-size: 2.2rem; margin-bottom: 0.4rem; }
+    .dashboard-header p { color: var(--color-text-muted, #666); }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 3rem; }
+    .dash-card { background: var(--color-surface, #fafafa); border: 1px solid var(--color-border, #e8e4dd); border-radius: 12px; padding: 1.8rem; }
+    .dash-card h3 { font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; }
+    .dash-card p  { font-size: 0.9rem; color: var(--color-text-muted, #666); line-height: 1.6; }
+    .dash-card .dash-count { font-size: 2rem; font-weight: 700; color: var(--color-accent, #4a6fa5); margin-bottom: 0.3rem; }
+    .dash-section { margin-bottom: 3rem; }
+    .dash-section h2 { font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; border-bottom: 1px solid var(--color-border, #e8e4dd); padding-bottom: 0.5rem; }
+    .dash-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .dash-table th { text-align: left; padding: 0.5rem 0.8rem; background: var(--color-surface, #f5f3ef); font-weight: 600; }
+    .dash-table td { padding: 0.5rem 0.8rem; border-top: 1px solid var(--color-border, #e8e4dd); }
+    .dash-table tr:hover td { background: var(--color-surface, #fafafa); }
+    .logout-btn { background: none; border: 1px solid var(--color-border, #ccc); padding: 0.4rem 1rem; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+    .logout-btn:hover { background: #f5f3ef; }
+    .auth-loading { text-align: center; padding: 4rem; color: #999; }
+    .empty-state { color: #999; font-size: 0.9rem; padding: 1rem 0; }
+    #dashboard-content { display: none; }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <nav class="nav">
+      <a href="index.html" class="logo">
+        <img src="assets/logo.png" alt="Serenest" class="logo-img">
+        <span class="logo-text">Serenest</span>
+      </a>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="for-professionals.html">For professionals</a></li>
+        <li><button class="logout-btn" onclick="serenestLogout()">Log out</button></li>
+      </ul>
+      <button class="nav-toggle" aria-label="Toggle menu"><span></span><span></span><span></span></button>
+    </nav>
+  </header>
+
+  <main>
+    <div class="auth-loading" id="auth-loading">Verifying session&hellip;</div>
+
+    <div id="dashboard-content">
+      <section class="dashboard-page container">
+        <div class="dashboard-header">
+          <h1>Welcome, <span id="dash-name">Professional</span></h1>
+          <p id="dash-email" style="color:#999;"></p>
+        </div>
+
+        <!-- stat cards -->
+        <div class="dashboard-grid">
+          <div class="dash-card">
+            <div class="dash-count" id="stat-signups">&#8230;</div>
+            <h3>Patient sign-ups</h3>
+            <p>Total patients who have signed up on Serenest.</p>
+          </div>
+          <div class="dash-card">
+            <div class="dash-count" id="stat-professionals">&#8230;</div>
+            <h3>Professionals registered</h3>
+            <p>Colleagues who have joined the professional network.</p>
+          </div>
+          <div class="dash-card">
+            <div class="dash-count" id="stat-screenings">&#8230;</div>
+            <h3>Screenings completed</h3>
+            <p>Questionnaire responses submitted by patients.</p>
+          </div>
+        </div>
+
+        <!-- recent screenings table -->
+        <div class="dash-section">
+          <h2>Recent screening responses</h2>
+          <div id="screenings-wrap">
+            <p class="empty-state">Loading&hellip;</p>
+          </div>
+        </div>
+
+        <!-- recent signups table -->
+        <div class="dash-section">
+          <h2>Recent patient sign-ups</h2>
+          <div id="signups-wrap">
+            <p class="empty-state">Loading&hellip;</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="js/config.js" onerror="console.warn('config.js missing')"></script>
+  <script src="js/supabase-loader.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="main.js"></script>
+  <script>
+    // Guard: require auth before showing dashboard
+    (function () {
+      // Wait briefly for supabase-loader to initialise (it uses dynamic import)
+      function tryAuth(attempts) {
+        if (window.__supabase) {
+          serenestRequireAuth('for-professionals.html');
+          document.addEventListener('serenest:authed', function (e) {
+            var user = e.detail;
+            document.getElementById('auth-loading').style.display = 'none';
+            document.getElementById('dashboard-content').style.display = '';
+            // fill name + email
+            var name = (user.user_metadata && user.user_metadata.full_name) || user.email;
+            document.getElementById('dash-name').textContent = name;
+            document.getElementById('dash-email').textContent = user.email;
+            loadDashboardData();
+          });
+        } else if (attempts > 0) {
+          setTimeout(function () { tryAuth(attempts - 1); }, 300);
+        } else {
+          window.location.href = 'for-professionals.html';
+        }
+      }
+      tryAuth(10);
+    })();
+
+    function loadDashboardData() {
+      var sb = window.__supabase;
+      if (!sb) return;
+
+      // count sign-ups
+      sb.from('signups').select('*', { count: 'exact', head: true }).then(function (r) {
+        document.getElementById('stat-signups').textContent = r.count !== null ? r.count : '—';
+      });
+
+      // count professionals
+      sb.from('professionals').select('*', { count: 'exact', head: true }).then(function (r) {
+        document.getElementById('stat-professionals').textContent = r.count !== null ? r.count : '—';
+      });
+
+      // count + list screenings
+      sb.from('screening_responses').select('*', { count: 'exact' }).order('created_at', { ascending: false }).limit(10).then(function (r) {
+        document.getElementById('stat-screenings').textContent = r.count !== null ? r.count : '—';
+        var wrap = document.getElementById('screenings-wrap');
+        if (!r.data || r.data.length === 0) { wrap.innerHTML = '<p class="empty-state">No responses yet.</p>'; return; }
+        var html = '<table class="dash-table"><thead><tr><th>Reason</th><th>Format</th><th>Frequency</th><th>Conditions</th><th>Date</th></tr></thead><tbody>';
+        r.data.forEach(function (row) {
+          html += '<tr>';
+          html += '<td>' + (row.reason || '—') + '</td>';
+          html += '<td>' + (row.format || '—') + '</td>';
+          html += '<td>' + (row.frequency || '—') + '</td>';
+          html += '<td>' + (row.conditions ? row.conditions.join(', ') : '—') + '</td>';
+          html += '<td>' + (row.created_at ? row.created_at.slice(0, 10) : '—') + '</td>';
+          html += '</tr>';
+        });
+        html += '</tbody></table>';
+        wrap.innerHTML = html;
+      });
+
+      // list recent patient signups
+      sb.from('signups').select('email, mobile, created_at').order('created_at', { ascending: false }).limit(10).then(function (r) {
+        var wrap = document.getElementById('signups-wrap');
+        if (!r.data || r.data.length === 0) { wrap.innerHTML = '<p class="empty-state">No sign-ups yet.</p>'; return; }
+        var html = '<table class="dash-table"><thead><tr><th>Email</th><th>Mobile</th><th>Date</th></tr></thead><tbody>';
+        r.data.forEach(function (row) {
+          html += '<tr>';
+          html += '<td>' + (row.email || '—') + '</td>';
+          html += '<td>' + (row.mobile || '—') + '</td>';
+          html += '<td>' + (row.created_at ? row.created_at.slice(0, 10) : '—') + '</td>';
+          html += '</tr>';
+        });
+        html += '</tbody></table>';
+        wrap.innerHTML = html;
+      });
+    }
+  </script>
+</body>
+</html>

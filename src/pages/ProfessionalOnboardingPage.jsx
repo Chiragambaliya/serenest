@@ -183,8 +183,8 @@ export default function ProfessionalOnboardingPage() {
             </p>
             <p className="muted" style={{ marginTop: 12 }}>
               New here?{' '}
-              <Link to="/professionals/learning" style={{ fontWeight: 700, color: 'var(--teal-700)' }}>
-                Browse the clinician learning hub →
+              <Link to="/academy/learn" style={{ fontWeight: 700, color: 'var(--teal-700)' }}>
+                Browse the Academy learning hub →
               </Link>
             </p>
           </div>

@@ -28,7 +28,7 @@ export default function Phq9Page() {
           <>The Patient Health Questionnaire-9 (PHQ-9) is a validated 9-item self-report tool used by clinicians around the world to screen for depression and to monitor severity. Take the screening privately on Serenest — your result is not a diagnosis and does not replace clinical evaluation.</>
         }
         primaryHref="/screening"
-        primaryLabel="Take the screening now"
+        primaryLabel="Open Mental Health Center"
         secondaryHref="/online-psychiatrist-for-depression-india"
         secondaryLabel="Read about depression care"
       />
@@ -115,7 +115,7 @@ export default function Phq9Page() {
       <RelatedTopics items={[
         { to: '/online-psychiatrist-for-depression-india', title: 'Online psychiatrist for depression', body: 'When PHQ-9 suggests it may help, this page explains how online depression care works.' },
         { to: '/gad-7-anxiety-screening', title: 'GAD-7 anxiety screening', body: 'Depression and anxiety often overlap. GAD-7 is a parallel screening tool for anxiety.' },
-        { to: '/screening', title: 'Full PHQ-9 + GAD-7 screening', body: 'Take a combined PHQ-9 and GAD-7 self-screening on Serenest.' },
+        { to: '/screening', title: 'Mental Health Center', body: 'Mood, anxiety, and other validated checks — with education before care options.' },
       ]} />
 
       <References items={[
@@ -125,10 +125,10 @@ export default function Phq9Page() {
       ]} />
 
       <CTA
-        heading="Take a confidential PHQ-9 screening on Serenest"
-        body="A 3-minute self-screening. Screening is not a diagnosis."
-        primaryHref="/screening"
-        primaryLabel="Start PHQ-9 / GAD-7 screening"
+        heading="Understand your mood on Serenest"
+        body="Start in the Mental Health Center. Checks are screening aids — not diagnoses."
+        primaryHref="/screening/pathway/mood-anxiety"
+        primaryLabel="Check mood & anxiety"
         secondaryHref="/book"
         secondaryLabel="Book a consultation"
       />

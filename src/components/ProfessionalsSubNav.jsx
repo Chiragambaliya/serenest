@@ -12,8 +12,8 @@ export default function ProfessionalsSubNav() {
         <NavLink to="/professionals" end className={linkClass}>
           Overview
         </NavLink>
-        <NavLink to="/professionals/learning" className={linkClass}>
-          Learning
+        <NavLink to="/academy/learn" className={linkClass}>
+          Academy learning
         </NavLink>
         <NavLink to="/academy" className={linkClass}>
           Academy · Free
