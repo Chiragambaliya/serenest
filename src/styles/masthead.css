@@ -271,10 +271,13 @@
   background: transparent !important;
 }
 
-/* ── Book appointment CTA ──────────────────────────────────────── */
+/* ── Book appointment CTA ────────────────────────────────────────
+   Gradient wipe (no ::before) — cream slides in from the left. */
 .masthead .header-cta.masthead__cta,
+.theme-editorial .masthead .header-cta.masthead__cta,
 .masthead__cta {
   --cta-pad-x: 1.25rem;
+  --cta-cream: #fffdf8;
 
   position: relative;
   display: inline-flex;
@@ -283,11 +286,18 @@
   gap: 0.65rem;
   margin-left: 0 !important;
   overflow: hidden;
-  isolation: isolate;
   padding: 0.9rem var(--cta-pad-x) !important;
   border-radius: 2px !important;
   border: 1.5px solid var(--mh-forest) !important;
-  background: var(--mh-forest) !important;
+  background-color: var(--mh-forest) !important;
+  background-image: linear-gradient(
+    90deg,
+    var(--cta-cream) 0 50%,
+    transparent 50% 100%
+  ) !important;
+  background-size: 220% 100% !important;
+  background-position: 100% 0 !important;
+  background-repeat: no-repeat !important;
   color: #fff !important;
   font-family: var(--font-body) !important;
   font-size: 0.9rem !important;
@@ -297,27 +307,17 @@
   box-shadow: none !important;
   text-decoration: none;
   transition:
+    background-position 520ms var(--mh-ease),
     color 280ms var(--mh-ease),
     border-color 280ms var(--mh-ease),
     transform 280ms var(--mh-ease) !important;
-}
-
-.masthead__cta::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: #fffdf8;
-  transform: scaleX(0);
-  transform-origin: left center;
-  transition: transform 480ms var(--mh-ease);
 }
 
 .masthead__cta-label,
 .masthead__cta-arrow {
   position: relative;
   z-index: 1;
-  transition: transform 320ms var(--mh-ease), color 280ms var(--mh-ease);
+  transition: transform 320ms var(--mh-ease);
 }
 
 .masthead__cta-arrow {
@@ -328,16 +328,20 @@
 }
 
 .masthead .header-cta.masthead__cta:hover,
+.theme-editorial .masthead .header-cta.masthead__cta:hover,
 .masthead__cta:hover {
-  background: var(--mh-forest) !important;
+  background-color: var(--mh-forest) !important;
+  background-image: linear-gradient(
+    90deg,
+    var(--cta-cream) 0 50%,
+    transparent 50% 100%
+  ) !important;
+  background-size: 220% 100% !important;
+  background-position: 0 0 !important;
   border-color: var(--mh-forest) !important;
   color: var(--mh-forest) !important;
   transform: translateY(-2px) !important;
   box-shadow: none !important;
-}
-
-.masthead__cta:hover::before {
-  transform: scaleX(1);
 }
 
 .masthead__cta:hover .masthead__cta-arrow {
@@ -543,9 +547,16 @@
 
 @media (prefers-reduced-motion: reduce) {
   .masthead,
-  .masthead *,
-  .masthead *::before,
-  .masthead *::after,
+  .masthead__inner,
+  .masthead__links .nav-link,
+  .masthead__account,
+  .masthead__cta,
+  .masthead__cta-label,
+  .masthead__cta-arrow,
+  .masthead .brand,
+  .masthead .brand-mark,
+  .masthead .brand-text,
+  .masthead .brand-tagline,
   .menu-overlay,
   .menu-drawer,
   .menu-drawer .menu-link {
@@ -553,8 +564,28 @@
     transition: none !important;
   }
 
-  .masthead__cta:hover,
-  .masthead__links .nav-link:hover,
+  /* Instant invert still required for affordance */
+  .masthead .header-cta.masthead__cta:hover,
+  .masthead__cta:hover {
+    background-color: #fffdf8 !important;
+    background-image: none !important;
+    color: var(--mh-forest) !important;
+    transform: none !important;
+  }
+
+  .masthead__cta:hover .masthead__cta-arrow {
+    transform: none !important;
+  }
+
+  .masthead__links .nav-link:hover {
+    transform: none !important;
+  }
+
+  .masthead__links .nav-link:hover::after,
+  .masthead__links .nav-link.nav-link-active::after {
+    transform: scaleX(1) !important;
+  }
+
   .masthead .brand:hover .brand-mark {
     transform: none !important;
   }
