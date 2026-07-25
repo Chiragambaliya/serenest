@@ -14,6 +14,8 @@ import './styles/pricing.css';
 import './styles/professionals.css';
 import './styles/admin.css';
 import './styles/prescription.css';
+// Loaded last so it corrects the older per-page stylesheets above.
+import './styles/editorial-corrections.css';
 
 // Must match Vite `base` so routes and assets resolve when deployed under a subpath.
 const basename = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '') || undefined;

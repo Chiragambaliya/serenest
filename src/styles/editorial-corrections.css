@@ -1,0 +1,247 @@
+/* ══════════════════════════════════════════════════════════════════
+   Editorial corrections — site-wide
+   ------------------------------------------------------------------
+   About, Pricing, Professionals, Team and Guides each predate the
+   current design system. Every one of them re-declares its own copy
+   of the OLD palette (cream #faf7f1, ink #1c2418) and styles its
+   content as bordered, rounded, shadowed cards.
+
+   This file does two things for all of them at once:
+     1. repoints those local tokens at the live design tokens, and
+     2. replaces the card treatment with thin rules and left-aligned
+        section heads, matching the corrected Home / Academy /
+        Services pages.
+
+   Loaded last in main.jsx so it wins without needing !important.
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── 1. Repoint stale local palettes at the live tokens ─────────── */
+.about-page {
+  --a-ink: var(--ink);   --a-muted: var(--muted);  --a-subtle: var(--subtle);
+  --a-line: var(--border); --a-sage: var(--teal-600); --a-sage-mid: var(--teal-500);
+  --a-sage-dark: #2a3320; --a-cream: var(--bg); --a-cream-2: var(--bg-2);
+  --a-white: var(--surface);
+}
+.pricing-page {
+  --p-ink: var(--ink);   --p-muted: var(--muted);  --p-subtle: var(--subtle);
+  --p-line: var(--border); --p-sage: var(--teal-600); --p-sage-mid: var(--teal-500);
+  --p-sage-dark: #2a3320; --p-cream: var(--bg); --p-cream-2: var(--bg-2);
+  --p-white: var(--surface);
+}
+.pros-page {
+  --pr-ink: var(--ink);  --pr-muted: var(--muted); --pr-subtle: var(--subtle);
+  --pr-line: var(--border); --pr-sage: var(--teal-600); --pr-sage-mid: var(--teal-500);
+  --pr-sage-dark: #2a3320; --pr-cream: var(--bg); --pr-cream-2: var(--bg-2);
+  --pr-white: var(--surface); --pr-shadow: none;
+}
+.team-page {
+  --t-ink: var(--ink);   --t-muted: var(--muted);  --t-subtle: var(--subtle);
+  --t-line: var(--border); --t-sage: var(--teal-600); --t-sage-mid: var(--teal-500);
+  --t-sage-dark: #2a3320; --t-cream: var(--bg); --t-cream-2: var(--bg-2);
+  --t-white: var(--surface);
+}
+
+/* ── 2. Section heads: left-aligned, not centered ───────────────── */
+.about-page .abt-section__head,
+.pricing-page .pr-section__head,
+.pros-page .pros-section__head,
+.team-page .tm-section__head {
+  max-width: 46rem;
+  margin-inline: 0;
+  text-align: left;
+}
+.about-page .abt-section__head h2,
+.about-page .abt-section__head p,
+.pricing-page .pr-section__head h2,
+.pricing-page .pr-section__head p,
+.pros-page .pros-section__head h2,
+.pros-page .pros-section__head p,
+.team-page .tm-section__head h2,
+.team-page .tm-section__head p {
+  margin-inline: 0;
+}
+
+/* ── 3. Cards → thin-rule entries ───────────────────────────────── */
+.about-page .abt-card,
+.about-page .abt-stat,
+.about-page .abt-founder__card,
+.pricing-page .pr-included__item,
+.pricing-page .pr-faq__item,
+.pros-page .pros-feature,
+.pros-page .pros-compliance__item,
+.team-page .tm-card,
+.team-page .tm-member {
+  border: none;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  padding-inline: 0;
+}
+
+/* ── 4. Tags and pills → quiet labels ───────────────────────────── */
+.about-page .abt-card__tag,
+.about-page .abt-cred,
+.pros-page .pros-feature__tag,
+.team-page .tm-card__tag,
+.team-page .tm-cred {
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  color: var(--teal-500);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+/* Credential chips read as a comma-free inline list once de-pilled. */
+.about-page .abt-creds,
+.team-page .tm-creds { gap: 1.25rem; }
+
+/* ── 5. Hero blocks: drop gradient washes for flat warm ground ─── */
+.about-page .abt-hero,
+.pricing-page .pr-hero,
+.pros-page .pros-hero,
+.team-page .tm-hero {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+}
+.about-page .abt-hero__inner,
+.pricing-page .pr-hero__inner,
+.team-page .tm-hero__inner {
+  margin-inline: 0;
+  text-align: left;
+  max-width: 46rem;
+}
+
+/* ── 6. Closing CTA bands: flat forest green, square corners ────── */
+.about-page .abt-cta,
+.pricing-page .pr-cta,
+.pros-page .pros-cta,
+.team-page .tm-cta {
+  background: var(--teal-600);
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* ── 7. Avatars: circular initials, no heavy fills ──────────────── */
+.about-page .abt-founder__avatar,
+.team-page .tm-member__avatar {
+  background: var(--bg-2);
+  color: var(--teal-600);
+  box-shadow: none;
+  border: 1px solid var(--border);
+}
+
+/* ── 8. Guides: topic chips → thin-rule list rows ───────────────── */
+.guides-page .gd-card,
+.guides-page .gd-topic {
+  border: none;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* ── 9. Pricing: flatten the plan comparison ────────────────────
+   Plan cards keep a border — a price comparison genuinely needs the
+   columns delineated — but lose the shadow, the lift, and the heavy
+   radius so they sit inside the system rather than floating. */
+.pricing-page .pr-plan {
+  border: 1px solid var(--border);
+  border-radius: var(--r-sm);
+  background: var(--surface);
+  box-shadow: none;
+  transform: none;
+}
+.pricing-page .pr-plan--featured {
+  border-color: var(--teal-600);
+  box-shadow: none;
+  transform: none;
+}
+.pricing-page .pr-plan__badge {
+  background: var(--teal-600);
+  border-radius: var(--r-pill);
+  box-shadow: none;
+}
+.pricing-page .pr-plan__tag {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--teal-500);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+/* Organisation cards → thin-rule entries. */
+.pricing-page .pr-org {
+  border: none;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  padding-inline: 0;
+}
+.pricing-page .pr-org__tag {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--teal-500);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+/* Payment method chips stay pills — they read as logos/labels — but
+   drop the shadow. */
+.pricing-page .pr-payment { box-shadow: none; }
+
+/* ── 10. About: remaining boxed blocks ──────────────────────────── */
+.about-page .abt-pillar,
+.about-page .abt-founder__story,
+.about-page .abt-mission {
+  border: none;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  padding-inline: 0;
+}
+/* The mission line is the page's one raised voice — set it as a
+   statement on a rule rather than inside a panel. */
+.about-page .abt-mission {
+  border-top: none;
+  border-left: 2px solid var(--teal-500);
+  padding-left: 1.5rem;
+  max-width: 40rem;
+  margin-inline: 0;
+  text-align: left;
+}
+.about-page .abt-founder__quote {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  line-height: 1.5;
+}
+.about-page .abt-prose { margin-inline: 0; max-width: 60ch; }
+
+/* ── 11. Professionals: panels, steps and hub cards ─────────────── */
+.pros-page .pros-hero__panel,
+.pros-page .pros-hub__card,
+.pros-page .pros-step {
+  border: none;
+  border-top: 1px solid var(--border);
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  padding-inline: 0;
+}
+.pros-page .pros-step__num {
+  background: none;
+  border: none;
+  width: auto;
+  height: auto;
+  color: var(--teal-500);
+  font-family: var(--font-heading);
+}
