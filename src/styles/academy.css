@@ -38,19 +38,19 @@
 }
 
 /* ── Accent palette ─────────────────────────────────────────────── */
-.eda-pcard--green  { --acc: #2f7d4f; --acc-bg: #eaf4ed; }
-.eda-pcard--purple { --acc: #6d4aa7; --acc-bg: #efe9f7; }
-.eda-pcard--amber  { --acc: #b07d12; --acc-bg: #faf1da; }
-.eda-pcard--blue   { --acc: #2563a8; --acc-bg: #e7eff8; }
-.eda-pcard--teal   { --acc: #0F766E; --acc-bg: #F0FDFA; }
-.eda-pcard--coral  { --acc: #c0562d; --acc-bg: #fbe9e0; }
+.eda-pcard--green  { --acc: #3c4a2c; --acc-bg: rgba(60, 74, 44, 0.08); }
+.eda-pcard--purple { --acc: #3c4a2c; --acc-bg: rgba(60, 74, 44, 0.08); }
+.eda-pcard--amber  { --acc: #5c5346; --acc-bg: rgba(92, 83, 70, 0.08); }
+.eda-pcard--blue   { --acc: #3c4a2c; --acc-bg: rgba(60, 74, 44, 0.08); }
+.eda-pcard--teal   { --acc: #3c4a2c; --acc-bg: rgba(60, 74, 44, 0.08); }
+.eda-pcard--coral  { --acc: #5c5346; --acc-bg: rgba(92, 83, 70, 0.08); }
 
-.eda-acc-green  { background: #2f7d4f; }
-.eda-acc-purple { background: #6d4aa7; }
-.eda-acc-amber  { background: #b07d12; }
-.eda-acc-blue   { background: #2563a8; }
-.eda-acc-teal   { background: #0F766E; }
-.eda-acc-coral  { background: #c0562d; }
+.eda-acc-green  { background: #3c4a2c; }
+.eda-acc-purple { background: #3c4a2c; }
+.eda-acc-amber  { background: #5c5346; }
+.eda-acc-blue   { background: #3c4a2c; }
+.eda-acc-teal   { background: #3c4a2c; }
+.eda-acc-coral  { background: #5c5346; }
 
 /* ── Buttons ────────────────────────────────────────────────────── */
 .eda-btn {
@@ -78,7 +78,7 @@
 .eda-btn-primary:hover {
   background: var(--teal-dark);
   border-color: var(--teal-dark);
-  box-shadow: 0 4px 14px rgba(15,118,110,0.35);
+  box-shadow: none;
 }
 
 .eda-btn-outline {

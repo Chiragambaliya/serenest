@@ -7,6 +7,7 @@ import './styles/editorial.css';
 import './styles/editorial-structures.css';
 import './styles/home.css';
 import './styles/home-preview.css';
+import './styles/home-world.css';
 import './styles/guides.css';
 import './styles/services.css';
 import './styles/about.css';
@@ -18,6 +19,7 @@ import './styles/prescription.css';
 // Loaded last so it corrects the older per-page stylesheets above.
 import './styles/editorial-corrections.css';
 import './styles/masthead.css';
+import './styles/world-motion.css';
 
 // Must match Vite `base` so routes and assets resolve when deployed under a subpath.
 const basename = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '') || undefined;
