@@ -1565,6 +1565,199 @@ app.patch('/api/prescriptions/:id/lock', async (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════
+//  ISSUED DOCUMENTS (certificate / joining / experience letters)
+// ══════════════════════════════════════════════════════════════
+
+const DOC_TYPES = new Set(['certificate', 'joining_letter', 'experience_letter']);
+
+function makeDocRef(docType) {
+  const prefix = {
+    certificate: 'SER-CERT',
+    joining_letter: 'SER-JOIN',
+    experience_letter: 'SER-EXP',
+  }[docType] || 'SER-DOC';
+  const year = new Date().getFullYear();
+  const rand = crypto.randomBytes(2).toString('hex').toUpperCase();
+  return `${prefix}-${year}-${rand}`;
+}
+
+/**
+ * GET /api/documents — admin list
+ */
+app.get('/api/documents', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  let query = supabase
+    .from('issued_documents')
+    .select('*')
+    .order('created_at', { ascending: false })
+    .limit(300);
+
+  if (req.query.doc_type && DOC_TYPES.has(String(req.query.doc_type))) {
+    query = query.eq('doc_type', String(req.query.doc_type));
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    console.error('[GET /api/documents]', error);
+    return err(res, 'Failed to load documents — has the issued_documents migration been applied?', 500);
+  }
+
+  const documents = (data || []).map((d) => ({
+    ...d,
+    view_path: `/documents/${d.id}`,
+  }));
+  return ok(res, { documents, count: documents.length });
+});
+
+/**
+ * GET /api/documents/:id — public view (issued only; drafts need admin)
+ */
+app.get('/api/documents/:id', async (req, res) => {
+  if (!requireDb(res)) return;
+
+  const { data, error } = await supabase
+    .from('issued_documents')
+    .select('*')
+    .eq('id', req.params.id)
+    .maybeSingle();
+
+  if (error) {
+    console.error('[GET /api/documents/:id]', error);
+    return err(res, 'Failed to load document', 500);
+  }
+  if (!data) return err(res, 'Document not found', 404);
+  if (data.status === 'revoked') return err(res, 'This document has been revoked', 410);
+  if (data.status === 'draft' && !requireAdmin(req, res)) return;
+
+  return ok(res, { document: data, view_path: `/documents/${data.id}` });
+});
+
+/**
+ * POST /api/documents — admin create / issue
+ * Body: doc fields + optional send / lock
+ */
+app.post('/api/documents', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const docType = String(req.body.doc_type || '').trim();
+  if (!DOC_TYPES.has(docType)) {
+    return err(res, 'doc_type must be certificate, joining_letter, or experience_letter');
+  }
+
+  const recipientName = String(req.body.recipient_name || '').trim();
+  if (!recipientName) return err(res, 'recipient_name is required');
+
+  if (docType === 'certificate' && !String(req.body.program_title || req.body.program_slug || '').trim()) {
+    return err(res, 'program_title or program_slug is required for certificates');
+  }
+  if (docType !== 'certificate' && !String(req.body.join_date || '').trim()) {
+    return err(res, 'join_date is required for joining and experience letters');
+  }
+
+  const shouldSend = Boolean(req.body.send);
+  const wantLock = req.body.lock === undefined ? true : Boolean(req.body.lock);
+
+  const row = {
+    doc_type: docType,
+    status: 'draft',
+    professional_id: req.body.professional_id || null,
+    recipient_name: recipientName,
+    recipient_email: String(req.body.recipient_email || '').trim() || null,
+    recipient_phone: String(req.body.recipient_phone || '').trim() || null,
+    program_slug: String(req.body.program_slug || '').trim() || null,
+    program_title: String(req.body.program_title || '').trim() || null,
+    completion_date: req.body.completion_date || null,
+    role_title: String(req.body.role_title || '').trim() || null,
+    department: String(req.body.department || '').trim() || null,
+    join_date: req.body.join_date || null,
+    end_date: req.body.end_date || null,
+    employment_type: String(req.body.employment_type || '').trim() || null,
+    ref_code: makeDocRef(docType),
+    issuer_name: String(req.body.issuer_name || 'Serenest Education Pvt Ltd').trim(),
+    signatory_name: String(req.body.signatory_name || 'Dr. Chirag Aambalia').trim(),
+    signatory_title: String(req.body.signatory_title || 'Psychiatrist & Founder').trim(),
+    body_extra: String(req.body.body_extra || '').trim() || null,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { data, error } = await supabase
+    .from('issued_documents')
+    .insert(row)
+    .select()
+    .single();
+
+  if (error) {
+    console.error('[POST /api/documents]', error);
+    return err(res, 'Failed to save document — has the issued_documents migration been applied?', 500);
+  }
+
+  let document = data;
+  let sent = false;
+  let sendError = null;
+
+  if (shouldSend) {
+    if (!notify.isPatientEmailEnabled()) {
+      sendError = 'Email is not configured (set RESEND_API_KEY)';
+    } else if (!document.recipient_email) {
+      sendError = 'No recipient email — share the document link instead';
+    } else {
+      sent = await notify.documentIssued(document);
+      if (!sent) sendError = 'Email failed to send — share the link manually';
+    }
+  }
+
+  const doLock = shouldSend ? sent : wantLock;
+  if (doLock && document?.id) {
+    const { data: locked, error: lockErr } = await supabase
+      .from('issued_documents')
+      .update({
+        status: 'issued',
+        is_locked: true,
+        locked_at: new Date().toISOString(),
+        issued_at: new Date().toISOString(),
+        issued_by: 'admin',
+      })
+      .eq('id', document.id)
+      .select()
+      .single();
+    if (lockErr) {
+      console.error('[POST /api/documents] lock', lockErr);
+    } else {
+      document = locked;
+    }
+  }
+
+  return ok(res, {
+    document,
+    sent,
+    locked: Boolean(document?.is_locked),
+    send_error: sendError,
+    view_path: `/documents/${document.id}`,
+  }, 201);
+});
+
+/**
+ * PATCH /api/documents/:id/revoke — admin
+ */
+app.patch('/api/documents/:id/revoke', async (req, res) => {
+  if (!requireDb(res) || !requireAdmin(req, res)) return;
+
+  const { data, error } = await supabase
+    .from('issued_documents')
+    .update({
+      status: 'revoked',
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', req.params.id)
+    .select()
+    .single();
+
+  if (error) return err(res, 'Failed to revoke document', 500);
+  return ok(res, { document: data });
+});
+
+// ══════════════════════════════════════════════════════════════
 //  ADMIN — aggregated helpers
 // ══════════════════════════════════════════════════════════════
 

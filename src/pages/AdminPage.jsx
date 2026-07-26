@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PrescriptionDocument from '../components/PrescriptionDocument';
+import AdminDocumentsPanel from '../components/AdminDocumentsPanel';
 
 // ── API helper ──────────────────────────────────────────────────────────────
 const BASE = import.meta.env.VITE_API_URL ?? '';
@@ -125,6 +126,7 @@ const TAB_GROUPS = [
     items: [
       { id: 'professionals', label: 'Professionals', icon: '◻' },
       { id: 'applications',  label: 'Applications',  icon: '◻' },
+      { id: 'documents',     label: 'Documents',     icon: '◻' },
       { id: 'hr',            label: 'HR / Hiring',   icon: '◻' },
     ],
   },
@@ -166,6 +168,7 @@ const TAB_ICONS = {
   bookings: '▷',
   professionals: '◆',
   applications: '◇',
+  documents: '▤',
   hr: '◈',
   messages: '◉',
   screenings: '◌',
@@ -181,6 +184,7 @@ const TAB_HELP = {
   bookings: 'Search bookings, update status, and manage patient requests.',
   professionals: 'View approved professionals and update their profiles.',
   applications: 'Review professional onboarding applications.',
+  documents: 'Issue certificates, joining letters, and experience letters.',
   hr: 'Manage job applications, postings, interviews, and offers.',
   messages: 'Read incoming contact/enquiry messages.',
   screenings: 'Review self-screening submissions and callback leads.',
@@ -434,7 +438,7 @@ export default function AdminPage() {
         setBookings(rBookings.bookings ?? []);
         setPrescriptions(rRx.prescriptions ?? []);
       }),
-      (which === 'all' || which === 'applications') && safe(async () => {
+      (which === 'all' || which === 'applications' || which === 'documents') && safe(async () => {
         const r = await adminFetch('/api/professionals/applications', secret);
         setApps(r.applications ?? []);
       }),
@@ -2526,6 +2530,11 @@ export default function AdminPage() {
               </div>
             )}
           </div>
+        )}
+
+        {/* ── DOCUMENTS (certificate / joining / experience) ── */}
+        {tab === 'documents' && (
+          <AdminDocumentsPanel secret={secret} adminFetch={adminFetch} apps={apps} />
         )}
 
         {/* ── HR / HIRING ── */}

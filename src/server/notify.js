@@ -666,6 +666,50 @@ export const notify = {
     });
   },
 
+  /**
+   * Email a recipient a link to an issued certificate / joining / experience letter.
+   * Returns true when the recipient email was accepted.
+   */
+  async documentIssued(doc = {}) {
+    const typeLabel = {
+      certificate: 'Certificate of completion',
+      joining_letter: 'Joining letter',
+      experience_letter: 'Experience letter',
+    }[doc.doc_type] || 'Document';
+
+    const viewUrl = `https://serenest.in/documents/${doc.id}`;
+    const ref = doc.ref_code || '';
+
+    fire(sendEmail({
+      subject: `${typeLabel} issued — ${doc.recipient_name || 'recipient'}${ref ? ` · ${ref}` : ''}`,
+      html: `
+        <p style="margin:0 0 8px;font-size:16px">${esc(typeLabel)} issued for <strong>${esc(doc.recipient_name)}</strong>.</p>
+        ${table([
+          row('Type', esc(typeLabel)),
+          row('Email', esc(doc.recipient_email)),
+          row('Role / program', esc(doc.role_title || doc.program_title)),
+          row('Reference', ref ? `<code style="font-family:monospace">${esc(ref)}</code>` : ''),
+        ])}
+        <p style="margin:12px 0 0"><a href="${viewUrl}" style="display:inline-block;background:#3c4a2c;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">Open document</a></p>
+      `,
+    }));
+
+    const to = doc.recipient_email?.trim();
+    if (!to) return false;
+
+    const first = esc((doc.recipient_name || 'there').trim().split(/\s+/)[0]);
+    return sendPatientEmail({
+      subject: `Your Serenest ${typeLabel.toLowerCase()} is ready`,
+      html:
+        `<p style="margin:0 0 12px">Hi ${first},</p>`
+        + `<p style="margin:0 0 12px">Your <strong>${esc(typeLabel)}</strong> from Serenest is ready. You can view, print, or save it as a PDF from the link below.</p>`
+        + `<p style="margin:0 0 12px"><a href="${viewUrl}" style="display:inline-block;background:#3c4a2c;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">View document</a></p>`
+        + (ref ? `<p style="margin:0 0 12px;color:#64748b;font-size:13px">Reference: <code style="font-family:monospace">${esc(ref)}</code></p>` : '')
+        + `<p style="margin:0;font-size:13px;color:#64748b">Questions? WhatsApp <a href="https://wa.me/917777936367" style="color:#0f766e">+91 77779 36367</a>.</p>`,
+      to,
+    });
+  },
+
   custom(subject, html, opts) {
     fire(sendEmail({ subject, html, ...opts }));
   },
