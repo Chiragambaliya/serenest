@@ -180,8 +180,8 @@ const TAB_HELP = {
   website: 'Every public route — open in a new tab, copy links for QA or campaigns, ping API health.',
   bookings: 'Search bookings, update status, and manage patient requests.',
   professionals: 'View approved professionals and update their profiles.',
-  applications: 'Review professional onboarding applications.',
-  hr: 'Manage job applications, postings, interviews, and offers.',
+  applications: 'Approve clinicians to enroll them on the platform — they then appear under Professionals.',
+  hr: 'Staff hiring pipeline: Reviewing → Shortlist → Interview → Extend Offer (marks hired).',
   messages: 'Read incoming contact/enquiry messages.',
   screenings: 'Review self-screening submissions and callback leads.',
   subscribers: 'People who opted in to email updates — export and reach out.',
@@ -1360,8 +1360,8 @@ export default function AdminPage() {
                 { id: 'bookings',      icon: '📅', label: 'Manage Bookings',        desc: 'View, confirm & assign appointments' },
                 { id: 'prescriptions', icon: '📋', label: 'Past prescriptions',     desc: 'View, reopen, resend issued Rx' },
                 { id: 'professionals', icon: '🩺', label: 'Professionals',          desc: 'Manage psychiatrists, psychologists & therapists' },
-                { id: 'applications',  icon: '👩‍⚕️', label: 'Applications',          desc: 'Approve or reject professional sign-ups' },
-                { id: 'hr',            icon: '🧑‍💼', label: 'HR / Hiring',           desc: 'Review and manage job applications' },
+                { id: 'applications',  icon: '👩‍⚕️', label: 'Applications',          desc: 'Approve clinicians to enroll them' },
+                { id: 'hr',            icon: '🧑‍💼', label: 'HR / Hiring',           desc: 'Staff jobs — offer / mark hired' },
                 { id: 'messages',      icon: '💬', label: 'Contact Messages',       desc: 'Read enquiries from patients & orgs' },
                 { id: 'screenings',    icon: '🧠', label: 'Screenings',             desc: 'PHQ-9 / GAD-7 exports & safety flags' },
                 { id: 'signups',       icon: '📋', label: 'Waitlist',               desc: 'People who signed up before launch' },
@@ -2458,15 +2458,85 @@ export default function AdminPage() {
         {/* ── APPLICATIONS ── */}
         {tab === 'applications' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>Professional Applications <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({apps.length})</span></h2>
-              <Link to="/professionals/apply" className="btn btn-primary btn-sm">+ Add application</Link>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem', flexWrap: 'wrap', gap: 10 }}>
+              <div style={{ minWidth: 0, flex: '1 1 220px' }}>
+                <h2 style={{ fontWeight: 800, fontSize: '1.4rem', margin: 0 }}>
+                  Professional Applications{' '}
+                  <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({apps.length})</span>
+                </h2>
+                <p className="admin-section-hint">
+                  Clinicians applying to join Serenest (not staff HR). Tap <strong>Approve</strong> to enroll them — they appear under Professionals and can take bookings.
+                </p>
+              </div>
+              <Link to="/professionals/apply" className="btn btn-primary btn-sm" style={{ flexShrink: 0 }}>+ Add application</Link>
             </div>
 
             {apps.length === 0 ? (
               <EmptyState icon="👩‍⚕️" text="No applications yet" />
             ) : (
-              <div style={{ overflowX: 'auto' }}>
+              <>
+              {/* Mobile cards — Approve / Reject always visible */}
+              <div className="admin-mobile-only admin-booking-cards">
+                {apps.map((a) => {
+                  const waUrl = a.status === 'approved' && a.phone
+                    ? waMeUrlForProfessional(a, waGroupInvite || WA_GROUP_FALLBACK)
+                    : null;
+                  return (
+                    <article key={a.id} className="admin-booking-card">
+                      <div className="admin-booking-card-head">
+                        <div style={{ minWidth: 0 }}>
+                          <strong style={{ fontSize: '1rem' }}>{a.full_name}</strong>
+                          <div className="admin-booking-card-meta">
+                            {a.phone}{a.email ? ` · ${a.email}` : ''}
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                          <Badge status={a.status} />
+                          <div className="admin-booking-card-meta" style={{ marginTop: 4 }}>{fmt(a.created_at)}</div>
+                        </div>
+                      </div>
+                      <div className="admin-booking-card-meta">
+                        <strong style={{ color: 'var(--text)' }}>{a.role_label ?? a.role}</strong>
+                        {a.city ? ` · ${a.city}` : ''}
+                        {a.fee_inr ? ` · ₹${a.fee_inr}` : ''}
+                        {a.duration_min ? ` / ${a.duration_min} min` : ''}
+                        {a.languages ? <><br />Languages: {a.languages}</> : null}
+                      </div>
+                      <div className="admin-booking-card-actions">
+                        {a.status !== 'approved' && (
+                          <ActionBtn label="Approve · Enroll" onClick={() => updateAppStatus(a.id, 'approved')} color="#198754" />
+                        )}
+                        {a.status !== 'rejected' && (
+                          <ActionBtn label="Reject" onClick={() => updateAppStatus(a.id, 'rejected')} color="#dc3545" />
+                        )}
+                        {a.status !== 'pending' && (
+                          <ActionBtn label="Reset" onClick={() => updateAppStatus(a.id, 'pending')} color="#6c757d" />
+                        )}
+                        {waUrl && (
+                          <a
+                            href={waUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="btn btn-sm"
+                            style={{
+                              background: '#25d366',
+                              color: '#fff',
+                              textDecoration: 'none',
+                              border: 'none',
+                              fontWeight: 700,
+                            }}
+                          >
+                            WA · SERENEST
+                          </a>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              {/* Desktop table */}
+              <div className="admin-desktop-only" style={{ overflowX: 'auto' }}>
                 <table style={tableStyle}>
                   <thead>
                     <tr>
@@ -2490,7 +2560,7 @@ export default function AdminPage() {
                         <td style={tdStyle}><Badge status={a.status} /></td>
                         <td style={tdStyle}>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                            {a.status !== 'approved' && <ActionBtn label="Approve" onClick={() => updateAppStatus(a.id, 'approved')} color="#198754" />}
+                            {a.status !== 'approved' && <ActionBtn label="Approve · Enroll" onClick={() => updateAppStatus(a.id, 'approved')} color="#198754" />}
                             {a.status !== 'rejected' && <ActionBtn label="Reject"  onClick={() => updateAppStatus(a.id, 'rejected')} color="#dc3545" />}
                             {a.status !== 'pending'  && <ActionBtn label="Reset"   onClick={() => updateAppStatus(a.id, 'pending')}  color="#6c757d" />}
                             {a.status === 'approved' && a.phone && (() => {
@@ -2524,6 +2594,7 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               </div>
+              </>
             )}
           </div>
         )}
@@ -2531,10 +2602,13 @@ export default function AdminPage() {
         {/* ── HR / HIRING ── */}
         {tab === 'hr' && (
           <div>
-            <h2 style={{ fontWeight: 800, fontSize: '1.4rem', marginBottom: '1rem' }}>HR / Hiring</h2>
+            <h2 style={{ fontWeight: 800, fontSize: '1.4rem', marginBottom: '0.35rem' }}>HR / Hiring</h2>
+            <p className="admin-section-hint" style={{ marginBottom: '1rem' }}>
+              Staff and ops roles (not clinicians). Pipeline: Reviewing → Shortlist → Interview → <strong>Extend Offer</strong> (sets hired). Or tap <strong>Mark Hired</strong> when an offer is already accepted offline.
+            </p>
 
             {/* HR sub-tabs */}
-            <div style={{ display: 'flex', gap: 4, marginBottom: '1.5rem', borderBottom: '2px solid var(--border)', paddingBottom: 0 }}>
+            <div className="admin-hr-subtabs" style={{ display: 'flex', gap: 4, marginBottom: '1.5rem', borderBottom: '2px solid var(--border)', paddingBottom: 0, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
               {[
                 { id: 'applications', label: `Applications (${jobs.length})` },
                 { id: 'postings',     label: `Job Postings (${jobPostings.length})` },
@@ -2545,7 +2619,7 @@ export default function AdminPage() {
                   fontSize: '0.88rem', fontWeight: hrTab === st.id ? 700 : 500,
                   color: hrTab === st.id ? 'var(--brand-600)' : 'var(--text-muted)',
                   borderBottom: hrTab === st.id ? '2px solid var(--brand-500)' : '2px solid transparent',
-                  marginBottom: -2, transition: 'all 0.15s',
+                  marginBottom: -2, transition: 'all 0.15s', whiteSpace: 'nowrap', flexShrink: 0,
                 }}>{st.label}</button>
               ))}
             </div>
@@ -2580,20 +2654,22 @@ export default function AdminPage() {
                 </div>
 
                 {jobs.length === 0 ? <EmptyState icon="🧑‍💼" text="No job applications yet" /> : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div className="admin-hr-app-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     {jobs.map((j) => {
                       const appInterviews = interviews.filter((i) => i.application_id === j.id);
                       return (
-                        <div key={j.id} style={{ background:'var(--surface)', border:'1px solid var(--border)', borderRadius:12, padding:'1.25rem 1.5rem' }}>
+                        <div key={j.id} className="admin-hr-app-card" style={{ background:'var(--surface)', border:'1px solid var(--border)', borderRadius:12, padding:'1.25rem 1.5rem' }}>
                           {/* Header */}
                           <div style={{ display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:8, marginBottom:8 }}>
-                            <div>
+                            <div style={{ minWidth: 0 }}>
                               <strong style={{ fontSize:'1rem' }}>{j.full_name}</strong>
-                              <span style={{ marginLeft:10, fontSize:'0.82rem', color:'var(--text-muted)' }}>{j.email}</span>
-                              {j.phone && <span style={{ marginLeft:8, fontSize:'0.82rem', color:'var(--text-muted)' }}>{j.phone}</span>}
-                              {j.city  && <span style={{ marginLeft:8, fontSize:'0.82rem', color:'var(--text-muted)' }}>📍 {j.city}</span>}
+                              <div style={{ fontSize:'0.82rem', color:'var(--text-muted)', marginTop:2, wordBreak:'break-word' }}>
+                                {j.email}
+                                {j.phone && <> · {j.phone}</>}
+                                {j.city  && <> · {j.city}</>}
+                              </div>
                             </div>
-                            <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                            <div style={{ display:'flex', alignItems:'center', gap:8, flexShrink: 0 }}>
                               <Badge status={j.status} />
                               <small style={{ color:'var(--text-muted)' }}>{fmt(j.created_at)}</small>
                             </div>
@@ -2623,7 +2699,7 @@ export default function AdminPage() {
                                   {iv.meeting_link && <a href={iv.meeting_link} target="_blank" rel="noreferrer" style={{ color:'var(--brand-600)', fontSize:'0.8rem' }}>Join ↗</a>}
                                   <Badge status={iv.outcome} />
                                   {iv.outcome === 'pending' && (
-                                    <div style={{ display:'flex', gap:4 }}>
+                                    <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
                                       <ActionBtn label="Pass"    onClick={() => setInterviewOutcome(iv.id, 'pass')}    color="#198754" />
                                       <ActionBtn label="Fail"    onClick={() => setInterviewOutcome(iv.id, 'fail')}    color="#dc3545" />
                                       <ActionBtn label="No-show" onClick={() => setInterviewOutcome(iv.id, 'no_show')} color="#6c757d" />
@@ -2647,24 +2723,33 @@ export default function AdminPage() {
 
                           {/* HR notes */}
                           <div style={{ marginBottom:10, marginTop:8 }}>
-                            <div style={{ display:'flex', gap:6 }}>
+                            <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
                               <input
                                 value={noteEdit[j.id] !== undefined ? noteEdit[j.id] : (j.hr_notes ?? '')}
                                 onChange={(e) => setNoteEdit((p) => ({ ...p, [j.id]: e.target.value }))}
                                 placeholder="HR notes…"
-                                style={{ flex:1, padding:'6px 10px', fontSize:'0.85rem', border:'1px solid var(--border)', borderRadius:6, background:'var(--bg)', color:'var(--text)' }}
+                                style={{ flex:1, minWidth: 0, padding:'6px 10px', fontSize:'0.85rem', border:'1px solid var(--border)', borderRadius:6, background:'var(--bg)', color:'var(--text)' }}
                               />
                               {noteEdit[j.id] !== undefined && <button onClick={() => saveJobNote(j.id)} className="btn btn-sm btn-primary">Save</button>}
                             </div>
                           </div>
 
                           {/* Actions */}
-                          <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
-                            {j.status !== 'reviewing'   && <ActionBtn label="Reviewing"   onClick={() => updateJobStatus(j.id,'reviewing')}   color="#6f42c1" />}
-                            {j.status !== 'shortlisted' && <ActionBtn label="Shortlist"   onClick={() => updateJobStatus(j.id,'shortlisted')} color="#e67e22" />}
-                            <ActionBtn label="+ Interview" onClick={() => setScheduleFor(j)} color="#fd7e14" />
+                          <div className="admin-hr-app-actions" style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
+                            {j.status !== 'reviewing'   && j.status !== 'hired' && <ActionBtn label="Reviewing"   onClick={() => updateJobStatus(j.id,'reviewing')}   color="#6f42c1" />}
+                            {j.status !== 'shortlisted' && j.status !== 'hired' && <ActionBtn label="Shortlist"   onClick={() => updateJobStatus(j.id,'shortlisted')} color="#e67e22" />}
+                            {j.status !== 'hired' && <ActionBtn label="+ Interview" onClick={() => setScheduleFor(j)} color="#fd7e14" />}
                             {j.status !== 'hired' && !j.offer_salary && <ActionBtn label="Extend Offer" onClick={() => setOfferFor(j)} color="#198754" />}
-                            {j.status !== 'rejected' && <ActionBtn label="Reject" onClick={() => { const r = prompt('Rejection reason (optional):'); rejectWithReason(j.id, r ?? ''); }} color="#dc3545" />}
+                            {j.status !== 'hired' && (
+                              <ActionBtn
+                                label="Mark Hired"
+                                onClick={() => {
+                                  if (window.confirm(`Mark ${j.full_name} as hired?`)) updateJobStatus(j.id, 'hired');
+                                }}
+                                color="#0a3622"
+                              />
+                            )}
+                            {j.status !== 'rejected' && j.status !== 'hired' && <ActionBtn label="Reject" onClick={() => { const r = prompt('Rejection reason (optional):'); rejectWithReason(j.id, r ?? ''); }} color="#dc3545" />}
                           </div>
                         </div>
                       );
