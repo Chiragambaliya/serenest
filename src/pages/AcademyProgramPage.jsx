@@ -20,7 +20,7 @@ export default function AcademyProgramPage() {
 
   if (!program) return <Navigate to="/academy" replace />;
 
-  const related = ACADEMY_PROGRAMS.filter((p) => p.slug !== program.slug).slice(0, 3);
+  const related = ACADEMY_PROGRAMS.filter((p) => p.slug !== program.slug).slice(0, 6);
   const enquirySubject = isProfessional
     ? `Serenest Academy FREE seat — ${program.title}`
     : `Serenest Academy — ${program.title}`;
@@ -85,9 +85,9 @@ export default function AcademyProgramPage() {
       <section className="svd-section ed-pace">
         <div className="container ed-aside">
           <div>
-            <p className="ed-aside__label">Curriculum</p>
+            <p className="ed-aside__label">Synopsis</p>
             <p className="ed-aside__note">
-              What the program covers, in the order it is taught.
+              Full curriculum synopsis — what the program covers, in teaching order.
             </p>
           </div>
           <div>

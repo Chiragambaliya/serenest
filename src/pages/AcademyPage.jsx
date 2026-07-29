@@ -4,7 +4,7 @@ import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { useProfessionalAccess } from '../lib/useProfessionalAccess';
 import {
-  ACADEMY_PROGRAMS, FEATURED_PROGRAMS,
+  ACADEMY_PROGRAMS, ACADEMY_CATEGORIES,
 } from '../lib/academyPrograms';
 import { ACADEMY_FAQS } from '../lib/academyFaqs';
 import AcademyGuide from '../components/AcademyGuide';
@@ -38,21 +38,6 @@ const LEARNING_EXPERIENCE = [
   { stage: '04 · Feedback', title: 'Guided supervision', body: 'Reflection with faculty who still see patients.' },
   { stage: '05 · Apply', title: 'Return to practice', body: 'Take the skill into real clinical work with clearer judgment.' },
 ];
-
-const FEATURED_SHOTS = {
-  'clinical-excellence': 'Open notebook with a hand-drawn case formulation diagram, pen resting on the page, warm desk light.',
-  'psychiatry-training': 'A quiet consulting room — two armchairs, a side lamp, no people.',
-  'counselling-skills': 'Spiral notebook and a fountain pen beside a cup, mid-session notes visible but not legible.',
-  'student-training': 'A small stack of clinical texts next to a potted plant on a wooden desk.',
-};
-
-const FEATURED_ON_HOME = (FEATURED_PROGRAMS.length >= 4
-  ? FEATURED_PROGRAMS
-  : [...FEATURED_PROGRAMS, ...ACADEMY_PROGRAMS.filter((p) => !p.featured)]
-).slice(0, 4).map((p) => ({
-  ...p,
-  shot: FEATURED_SHOTS[p.slug] || 'Warm, natural still life from a clinical learning setting — books, notes, or a quiet consulting space. No people.',
-}));
 
 const INSTRUCTOR_MAILTO =
   'mailto:support@serenest.in?subject=Serenest%20Academy%20%E2%80%94%20Become%20an%20Instructor';
@@ -249,38 +234,58 @@ export default function AcademyPage() {
         </div>
       </section>
 
-      {/* Featured programs — index, not photo cards */}
+      {/* Full program catalogue — same completeness as /academy/programs */}
       <section id="programs" className="ed-pace ed-band-soft" aria-labelledby="programs-title">
         <div className="ed-shell">
           <header className="ed-head ed-head--wide">
-            <span className="ed-head__label">Featured programs</span>
-            <h2 id="programs-title">A short list to begin with</h2>
+            <span className="ed-head__label">Programs</span>
+            <h2 id="programs-title">Full Academy catalogue</h2>
             <p>
-              Four entry points from the fuller catalogue.{' '}
-              <Link className="ed-link" to="/academy/programs">View all programs</Link>
+              All {ACADEMY_PROGRAMS.length} programs — Career Entry, Clinical Practice, and Professional Growth.
+              Open any row for the full synopsis (what you&apos;ll learn, who it&apos;s for, format).
             </p>
           </header>
-          <div className="ed-index">
-            {FEATURED_ON_HOME.map((p, i) => (
-              <Link key={p.slug} to={`/academy/programs/${p.slug}`} className="ed-index__row">
-                <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
-                <span>
-                  <h3 className="ed-index__title">{p.title}</h3>
-                  <span className="ed-index__meta">
-                    {p.subtitle || 'Program'}
-                  </span>
-                </span>
-                <p className="ed-index__body">{p.body}</p>
-                <span className="ed-index__go">View →</span>
-              </Link>
-            ))}
-          </div>
-          <p className="ed-aside__note" style={{ marginTop: '1.5rem', maxWidth: '48rem' }}>
-            Photography for these programs is pending approval. Asset names follow the pattern{' '}
-            <span className="ed-mono" style={{ textTransform: 'none', letterSpacing: 0 }}>
-              academy-program-&lt;slug&gt;.jpg
-            </span>
-            . Shot direction remains place, materials, and light — never invented portraits.
+
+          {(() => {
+            let n = 0;
+            return ACADEMY_CATEGORIES.map((cat) => (
+              <div key={cat.label} style={{ marginTop: '2rem' }}>
+                <div className="ed-aside" style={{ marginBottom: '0.75rem' }}>
+                  <div>
+                    <p className="ed-aside__label">{cat.label}</p>
+                    <p className="ed-aside__note">{cat.tagline}</p>
+                  </div>
+                  <div />
+                </div>
+                <div className="ed-index">
+                  {ACADEMY_PROGRAMS.filter((p) => p.category === cat.label).map((p) => {
+                    n += 1;
+                    const duration = p.metrics?.[0];
+                    return (
+                      <Link key={p.slug} to={`/academy/programs/${p.slug}`} className="ed-index__row">
+                        <span className="ed-index__num">{String(n).padStart(2, '0')}</span>
+                        <span>
+                          <h3 className="ed-index__title">{p.title}</h3>
+                          <span className="ed-index__meta">
+                            {p.subtitle}
+                            {duration ? ` · ${duration.top} ${duration.sub}` : ''}
+                          </span>
+                        </span>
+                        <p className="ed-index__body">{p.body}</p>
+                        <span className="ed-index__go">Synopsis →</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ));
+          })()}
+
+          <p style={{ marginTop: '1.5rem' }}>
+            Prefer a guided sequence?{' '}
+            <Link className="ed-link" to="/academy/learning-paths">View learning paths</Link>
+            {' · '}
+            <Link className="ed-link" to="/academy/programs">Programs page</Link>
           </p>
         </div>
       </section>
