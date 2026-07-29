@@ -89,8 +89,10 @@ export default function AcademyPage() {
               </p>
             ) : null}
             <div className="hp-hero__actions" style={{ marginTop: '1.75rem' }}>
-              <a className="btn btn-primary btn-lg" href="#programs">Explore programs</a>
-              <Link className="btn btn-ghost btn-lg" to="/academy/programs">View all courses</Link>
+              <Link className="btn btn-primary btn-lg" to="/academy/programs/student-training">
+                Start as a student
+              </Link>
+              <a className="btn btn-ghost btn-lg" href="#programs">All programs</a>
             </div>
           </div>
           <figure className="ed-figure" style={{ margin: 0 }}>
@@ -113,7 +115,8 @@ export default function AcademyPage() {
           {[
             ['#teach', 'What we teach'],
             ['#why', 'Why Academy'],
-            ['#programs', 'Featured programs'],
+            ['#students', 'Student training'],
+            ['#programs', 'All programs'],
             ['#experience', 'Learning experience'],
             ['#faculty', 'Faculty'],
             ['#faq', 'FAQ'],
@@ -231,6 +234,38 @@ export default function AcademyPage() {
               <cite>Serenest Academy</cite>
             </blockquote>
           </div>
+        </div>
+      </section>
+
+      {/* Student training cluster */}
+      <section id="students" className="ed-pace" aria-labelledby="students-title">
+        <div className="ed-shell">
+          <header className="ed-head ed-head--wide">
+            <span className="ed-head__label">For students</span>
+            <h2 id="students-title">More student training — a full starter pathway</h2>
+            <p>
+              Begin with the flagship <strong>Student Training</strong> course, then add focused
+              modules for assessment, formulation, ethics, and internship prep.
+            </p>
+          </header>
+          <div className="ed-index">
+            {ACADEMY_PROGRAMS.filter((p) => p.slug.startsWith('student-')).map((p, i) => (
+              <Link key={p.slug} to={`/academy/programs/${p.slug}`} className="ed-index__row">
+                <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <h3 className="ed-index__title">{p.title}</h3>
+                  <span className="ed-index__meta">{p.subtitle}</span>
+                </span>
+                <p className="ed-index__body">{p.body}</p>
+                <span className="ed-index__go">Open →</span>
+              </Link>
+            ))}
+          </div>
+          <p style={{ marginTop: '1.25rem' }}>
+            <Link className="ed-link" to="/academy/learning-paths">
+              See undergraduate &amp; postgraduate learning paths →
+            </Link>
+          </p>
         </div>
       </section>
 
