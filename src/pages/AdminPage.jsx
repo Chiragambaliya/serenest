@@ -181,7 +181,7 @@ const TAB_HELP = {
   bookings: 'Search bookings, update status, and manage patient requests.',
   professionals: 'View approved professionals and update their profiles.',
   applications: 'Approve clinicians to enroll them on the platform — they then appear under Professionals.',
-  hr: 'Staff hiring pipeline: Reviewing → Shortlist → Interview → Extend Offer (marks hired).',
+  hr: 'Hire staff applicants: Reviewing → Shortlist → Interview → Hire (or Extend Offer).',
   messages: 'Read incoming contact/enquiry messages.',
   screenings: 'Review self-screening submissions and callback leads.',
   subscribers: 'People who opted in to email updates — export and reach out.',
@@ -1361,7 +1361,7 @@ export default function AdminPage() {
                 { id: 'prescriptions', icon: '📋', label: 'Past prescriptions',     desc: 'View, reopen, resend issued Rx' },
                 { id: 'professionals', icon: '🩺', label: 'Professionals',          desc: 'Manage psychiatrists, psychologists & therapists' },
                 { id: 'applications',  icon: '👩‍⚕️', label: 'Applications',          desc: 'Approve clinicians to enroll them' },
-                { id: 'hr',            icon: '🧑‍💼', label: 'HR / Hiring',           desc: 'Staff jobs — offer / mark hired' },
+                { id: 'hr',            icon: '🧑‍💼', label: 'HR / Hiring',           desc: 'Staff jobs — tap Hire to hire' },
                 { id: 'messages',      icon: '💬', label: 'Contact Messages',       desc: 'Read enquiries from patients & orgs' },
                 { id: 'screenings',    icon: '🧠', label: 'Screenings',             desc: 'PHQ-9 / GAD-7 exports & safety flags' },
                 { id: 'signups',       icon: '📋', label: 'Waitlist',               desc: 'People who signed up before launch' },
@@ -2604,7 +2604,7 @@ export default function AdminPage() {
           <div>
             <h2 style={{ fontWeight: 800, fontSize: '1.4rem', marginBottom: '0.35rem' }}>HR / Hiring</h2>
             <p className="admin-section-hint" style={{ marginBottom: '1rem' }}>
-              Staff and ops roles (not clinicians). Pipeline: Reviewing → Shortlist → Interview → <strong>Extend Offer</strong> (sets hired). Or tap <strong>Mark Hired</strong> when an offer is already accepted offline.
+              To hire someone: move them through Reviewing → Shortlist → Interview if needed, then tap <strong>Hire</strong>. Use <strong>Extend Offer</strong> when you want salary / joining details on record (also marks hired).
             </p>
 
             {/* HR sub-tabs */}
@@ -2739,16 +2739,16 @@ export default function AdminPage() {
                             {j.status !== 'reviewing'   && j.status !== 'hired' && <ActionBtn label="Reviewing"   onClick={() => updateJobStatus(j.id,'reviewing')}   color="#6f42c1" />}
                             {j.status !== 'shortlisted' && j.status !== 'hired' && <ActionBtn label="Shortlist"   onClick={() => updateJobStatus(j.id,'shortlisted')} color="#e67e22" />}
                             {j.status !== 'hired' && <ActionBtn label="+ Interview" onClick={() => setScheduleFor(j)} color="#fd7e14" />}
-                            {j.status !== 'hired' && !j.offer_salary && <ActionBtn label="Extend Offer" onClick={() => setOfferFor(j)} color="#198754" />}
                             {j.status !== 'hired' && (
                               <ActionBtn
-                                label="Mark Hired"
+                                label="Hire"
                                 onClick={() => {
-                                  if (window.confirm(`Mark ${j.full_name} as hired?`)) updateJobStatus(j.id, 'hired');
+                                  if (window.confirm(`Hire ${j.full_name}? Their status will be set to hired.`)) updateJobStatus(j.id, 'hired');
                                 }}
-                                color="#0a3622"
+                                color="#198754"
                               />
                             )}
+                            {j.status !== 'hired' && !j.offer_salary && <ActionBtn label="Extend Offer" onClick={() => setOfferFor(j)} color="#0a3622" />}
                             {j.status !== 'rejected' && j.status !== 'hired' && <ActionBtn label="Reject" onClick={() => { const r = prompt('Rejection reason (optional):'); rejectWithReason(j.id, r ?? ''); }} color="#dc3545" />}
                           </div>
                         </div>
