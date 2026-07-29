@@ -379,6 +379,22 @@
   max-width: 62ch;
 }
 
+.admin-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+}
+
+.admin-clickable-card {
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.admin-clickable-card:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 2px;
+}
+
 .admin-topbar {
   background: rgba(255, 255, 255, 0.82);
   -webkit-backdrop-filter: saturate(180%) blur(12px);
@@ -796,8 +812,14 @@
   }
 
   /* Professional cards shouldn't overflow ~390px */
-  .admin-content [style*="minmax(340px"] {
+  .admin-content [style*="minmax(340px"],
+  .admin-content [style*="minmax(min(100%, 300px"],
+  .admin-pro-grid {
     grid-template-columns: 1fr !important;
+  }
+
+  .admin-detail-grid {
+    grid-template-columns: 1fr;
   }
 
   /* Past Rx / dense tables: prefer readable cards feel via scroll + larger cells */
