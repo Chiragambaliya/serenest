@@ -180,8 +180,8 @@ const TAB_HELP = {
   website: 'Every public route — open in a new tab, copy links for QA or campaigns, ping API health.',
   bookings: 'Search bookings, update status, and manage patient requests.',
   professionals: 'View approved professionals and update their profiles.',
-  applications: 'Review professional onboarding applications.',
-  hr: 'Manage job applications, postings, interviews, and offers.',
+  applications: 'Approve clinicians to enroll them on the platform — they then appear under Professionals.',
+  hr: 'Hire staff applicants: Reviewing → Shortlist → Interview → Hire (or Extend Offer).',
   messages: 'Read incoming contact/enquiry messages.',
   screenings: 'Review self-screening submissions and callback leads.',
   subscribers: 'People who opted in to email updates — export and reach out.',
@@ -322,6 +322,8 @@ export default function AdminPage() {
   const [editPro, setEditPro]         = useState(null);
   const [editProData, setEditProData] = useState({});
   const [assignBooking, setAssignBooking] = useState(null);
+  const [selectedApp, setSelectedApp] = useState(null);
+  const [selectedProDetail, setSelectedProDetail] = useState(null);
   const [prescribeBooking, setPrescribeBooking] = useState(null);
   const [rxForm, setRxForm] = useState(null);
   const [rxSaving, setRxSaving] = useState(false);
@@ -1109,6 +1111,7 @@ export default function AdminPage() {
         body: JSON.stringify({ status }),
       });
       setApps((prev) => prev.map((a) => a.id === id ? { ...a, status } : a));
+      setSelectedApp((prev) => (prev?.id === id ? { ...prev, status } : prev));
       if (r.wa_group_invite) {
         setWaGroupInvite(r.wa_group_invite);
         setWaGroupConfigured(true);
@@ -1229,7 +1232,7 @@ export default function AdminPage() {
 
   // ── dashboard ──────────────────────────────────────────────
   const activeTabLabel = TABS.find((t) => t.id === tab)?.label ?? 'Dashboard';
-  const anyModalOpen = Boolean(prescribeBooking || assignBooking || scheduleFor || offerFor);
+  const anyModalOpen = Boolean(prescribeBooking || assignBooking || scheduleFor || offerFor || selectedApp || selectedProDetail);
 
   return (
     <div className={`admin-page admin-dashboard${anyModalOpen ? ' has-modal' : ''}`}>
@@ -1360,8 +1363,8 @@ export default function AdminPage() {
                 { id: 'bookings',      icon: '📅', label: 'Manage Bookings',        desc: 'View, confirm & assign appointments' },
                 { id: 'prescriptions', icon: '📋', label: 'Past prescriptions',     desc: 'View, reopen, resend issued Rx' },
                 { id: 'professionals', icon: '🩺', label: 'Professionals',          desc: 'Manage psychiatrists, psychologists & therapists' },
-                { id: 'applications',  icon: '👩‍⚕️', label: 'Applications',          desc: 'Approve or reject professional sign-ups' },
-                { id: 'hr',            icon: '🧑‍💼', label: 'HR / Hiring',           desc: 'Review and manage job applications' },
+                { id: 'applications',  icon: '👩‍⚕️', label: 'Applications',          desc: 'Approve clinicians to enroll them' },
+                { id: 'hr',            icon: '🧑‍💼', label: 'HR / Hiring',           desc: 'Staff jobs — tap Hire to hire' },
                 { id: 'messages',      icon: '💬', label: 'Contact Messages',       desc: 'Read enquiries from patients & orgs' },
                 { id: 'screenings',    icon: '🧠', label: 'Screenings',             desc: 'PHQ-9 / GAD-7 exports & safety flags' },
                 { id: 'signups',       icon: '📋', label: 'Waitlist',               desc: 'People who signed up before launch' },
@@ -2310,24 +2313,37 @@ export default function AdminPage() {
                     const totalCount  = bookingList.length;
 
                     return (
-                      <div key={p.id} style={{
+                      <div
+                        key={p.id}
+                        className="admin-clickable-card"
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => { if (!isEditing) setSelectedProDetail(p); }}
+                        onKeyDown={(e) => { if (!isEditing && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); setSelectedProDetail(p); } }}
+                        style={{
                         background: 'var(--surface)',
                         border: `1px solid ${isEditing ? 'var(--brand-500)' : 'var(--border)'}`,
                         borderRadius: 12,
                         padding: '1.25rem',
                         display: 'flex', flexDirection: 'column', gap: 10,
                         transition: 'border-color 0.2s',
+                        cursor: isEditing ? 'default' : 'pointer',
                       }}>
                         {/* Name + role */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                           <div>
-                            <div style={{ fontWeight: 800, fontSize: '1rem' }}>{p.full_name}</div>
+                            <div style={{ fontWeight: 800, fontSize: '1rem', color: 'var(--brand-700)' }}>{p.full_name}</div>
                             <span style={{
                               display: 'inline-block', marginTop: 3,
                               padding: '2px 10px', borderRadius: 99, fontSize: '0.72rem', fontWeight: 700,
                               background: (ROLE_COLORS[p.role] ?? '#888') + '18',
                               color: ROLE_COLORS[p.role] ?? '#888',
                             }}>{ROLE_LABELS[p.role] ?? p.role}</span>
+                            {!isEditing && (
+                              <div style={{ marginTop: 6, fontSize: '0.75rem', color: 'var(--brand-600)', fontWeight: 600 }}>
+                                View full details →
+                              </div>
+                            )}
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
                             <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{activeCount} active · {totalCount} total sessions</span>
@@ -2344,7 +2360,7 @@ export default function AdminPage() {
 
                         {/* SERENEST WA invite */}
                         {(p.phone || p.email) && (
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }} onClick={(e) => e.stopPropagation()}>
                             {p.phone && waMeUrlForProfessional(p, waGroupInvite) && (
                               <a
                                 href={waMeUrlForProfessional(p, waGroupInvite)}
@@ -2377,7 +2393,7 @@ export default function AdminPage() {
                             {p.specialities && <InfoRow label="Specialities" value={p.specialities} style={{ gridColumn: '1/-1' }} />}
                           </div>
                         ) : (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }} onClick={(e) => e.stopPropagation()}>
                             {[
                               { key: 'fee_inr',      label: 'Fee (INR)',    placeholder: '1500' },
                               { key: 'duration_min', label: 'Session (min)', placeholder: '50' },
@@ -2402,11 +2418,12 @@ export default function AdminPage() {
                         )}
 
                         {/* Actions */}
-                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }}>
+                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 4 }} onClick={(e) => e.stopPropagation()}>
                           {!isEditing ? (
                             <>
-                              <ActionBtn label="Edit Profile" onClick={() => { setEditPro(p.id); setEditProData({}); }} color="var(--brand-600)" />
-                              <ActionBtn label="Assign to Booking" onClick={() => setAssignBooking(p)} color="#0d6efd" />
+                              <ActionBtn label="View details" onClick={() => setSelectedProDetail(p)} color="var(--brand-600)" />
+                              <ActionBtn label="Edit Profile" onClick={() => { setEditPro(p.id); setEditProData({}); }} color="#0d6efd" />
+                              <ActionBtn label="Assign to Booking" onClick={() => setAssignBooking(p)} color="#6f42c1" />
                               <ActionBtn label="Deactivate" onClick={() => { if (window.confirm(`Deactivate ${p.full_name}?`)) deactivateProfessional(p.id); }} color="#dc3545" />
                             </>
                           ) : (
@@ -2419,6 +2436,60 @@ export default function AdminPage() {
                       </div>
                     );
                   })}
+                </div>
+              )}
+
+              {/* Professional detail modal */}
+              {selectedProDetail && (
+                <div
+                  className="admin-modal-overlay"
+                  style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1300, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0.75rem' }}
+                  onClick={() => setSelectedProDetail(null)}
+                >
+                  <div
+                    className="admin-modal-panel"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={`Professional details for ${selectedProDetail.full_name}`}
+                    style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.25rem 1.35rem', maxWidth: 520, width: '100%', maxHeight: '88vh', overflowY: 'auto', marginTop: '2vh' }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+                      <div>
+                        <h3 style={{ fontWeight: 800, margin: 0, fontSize: '1.15rem' }}>{selectedProDetail.full_name}</h3>
+                        <span style={{
+                          display: 'inline-block', marginTop: 6,
+                          padding: '2px 10px', borderRadius: 99, fontSize: '0.72rem', fontWeight: 700,
+                          background: (ROLE_COLORS[selectedProDetail.role] ?? '#888') + '18',
+                          color: ROLE_COLORS[selectedProDetail.role] ?? '#888',
+                        }}>{ROLE_LABELS[selectedProDetail.role] ?? selectedProDetail.role}</span>
+                      </div>
+                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSelectedProDetail(null)}>Close</button>
+                    </div>
+                    <div className="admin-detail-grid">
+                      <InfoRow label="Phone" value={selectedProDetail.phone || '—'} />
+                      <InfoRow label="Email" value={selectedProDetail.email || '—'} />
+                      <InfoRow label="Registration" value={selectedProDetail.registration || '—'} />
+                      <InfoRow label="Degree" value={selectedProDetail.degree || '—'} />
+                      <InfoRow label="City" value={selectedProDetail.city || '—'} />
+                      <InfoRow label="Clinic" value={selectedProDetail.clinic || '—'} />
+                      <InfoRow label="Languages" value={selectedProDetail.languages || '—'} />
+                      <InfoRow label="Specialities" value={selectedProDetail.specialities || '—'} />
+                      <InfoRow label="Fee" value={selectedProDetail.fee_inr ? `₹${selectedProDetail.fee_inr} / ${selectedProDetail.duration_min ?? 50} min` : '—'} />
+                      <InfoRow label="Modes" value={selectedProDetail.modes || '—'} />
+                      <InfoRow label="Availability" value={selectedProDetail.availability || '—'} style={{ gridColumn: '1 / -1' }} />
+                      <InfoRow
+                        label="Sessions"
+                        value={`${(Array.isArray(selectedProDetail.appointments) ? selectedProDetail.appointments.filter((b) => b.status === 'confirmed').length : 0)} active · ${(Array.isArray(selectedProDetail.appointments) ? selectedProDetail.appointments.length : 0)} total`}
+                        style={{ gridColumn: '1 / -1' }}
+                      />
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+                      <ActionBtn label="Edit Profile" onClick={() => { setEditPro(selectedProDetail.id); setEditProData({}); setSelectedProDetail(null); }} color="#0d6efd" />
+                      <ActionBtn label="Assign to Booking" onClick={() => { setAssignBooking(selectedProDetail); setSelectedProDetail(null); }} color="#6f42c1" />
+                      <ActionBtn label="Deactivate" onClick={() => { if (window.confirm(`Deactivate ${selectedProDetail.full_name}?`)) { deactivateProfessional(selectedProDetail.id); setSelectedProDetail(null); } }} color="#dc3545" />
+                    </div>
+                  </div>
                 </div>
               )}
 
@@ -2458,15 +2529,93 @@ export default function AdminPage() {
         {/* ── APPLICATIONS ── */}
         {tab === 'applications' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-              <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>Professional Applications <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({apps.length})</span></h2>
-              <Link to="/professionals/apply" className="btn btn-primary btn-sm">+ Add application</Link>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.75rem', flexWrap: 'wrap', gap: 10 }}>
+              <div style={{ minWidth: 0, flex: '1 1 220px' }}>
+                <h2 style={{ fontWeight: 800, fontSize: '1.4rem', margin: 0 }}>
+                  Professional Applications{' '}
+                  <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({apps.length})</span>
+                </h2>
+                <p className="admin-section-hint">
+                  Tap an applicant to open full details. Use <strong>Approve · Enroll</strong> to add them under Professionals.
+                </p>
+              </div>
+              <Link to="/professionals/apply" className="btn btn-primary btn-sm" style={{ flexShrink: 0 }}>+ Add application</Link>
             </div>
 
             {apps.length === 0 ? (
               <EmptyState icon="👩‍⚕️" text="No applications yet" />
             ) : (
-              <div style={{ overflowX: 'auto' }}>
+              <>
+              {/* Mobile cards — tap for full details; Approve / Reject always visible */}
+              <div className="admin-mobile-only admin-booking-cards">
+                {apps.map((a) => {
+                  const waUrl = a.status === 'approved' && a.phone
+                    ? waMeUrlForProfessional(a, waGroupInvite || WA_GROUP_FALLBACK)
+                    : null;
+                  return (
+                    <article
+                      key={a.id}
+                      className="admin-booking-card admin-clickable-card"
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setSelectedApp(a)}
+                      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setSelectedApp(a); } }}
+                    >
+                      <div className="admin-booking-card-head">
+                        <div style={{ minWidth: 0 }}>
+                          <strong style={{ fontSize: '1rem' }}>{a.full_name}</strong>
+                          <div className="admin-booking-card-meta">
+                            {a.phone}{a.email ? ` · ${a.email}` : ''}
+                          </div>
+                        </div>
+                        <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                          <Badge status={a.status} />
+                          <div className="admin-booking-card-meta" style={{ marginTop: 4 }}>{fmt(a.created_at)}</div>
+                        </div>
+                      </div>
+                      <div className="admin-booking-card-meta">
+                        <strong style={{ color: 'var(--text)' }}>{a.role_label ?? a.role}</strong>
+                        {a.city ? ` · ${a.city}` : ''}
+                        {a.fee_inr ? ` · ₹${a.fee_inr}` : ''}
+                        <div style={{ marginTop: 4, color: 'var(--brand-600)', fontWeight: 600 }}>View full details →</div>
+                      </div>
+                      <div className="admin-booking-card-actions" onClick={(e) => e.stopPropagation()}>
+                        <ActionBtn label="Details" onClick={() => setSelectedApp(a)} color="var(--brand-600)" />
+                        {a.status !== 'approved' && (
+                          <ActionBtn label="Approve · Enroll" onClick={() => updateAppStatus(a.id, 'approved')} color="#198754" />
+                        )}
+                        {a.status !== 'rejected' && (
+                          <ActionBtn label="Reject" onClick={() => updateAppStatus(a.id, 'rejected')} color="#dc3545" />
+                        )}
+                        {a.status !== 'pending' && (
+                          <ActionBtn label="Reset" onClick={() => updateAppStatus(a.id, 'pending')} color="#6c757d" />
+                        )}
+                        {waUrl && (
+                          <a
+                            href={waUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="btn btn-sm"
+                            onClick={(e) => e.stopPropagation()}
+                            style={{
+                              background: '#25d366',
+                              color: '#fff',
+                              textDecoration: 'none',
+                              border: 'none',
+                              fontWeight: 700,
+                            }}
+                          >
+                            WA · SERENEST
+                          </a>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
+
+              {/* Desktop table */}
+              <div className="admin-desktop-only" style={{ overflowX: 'auto' }}>
                 <table style={tableStyle}>
                   <thead>
                     <tr>
@@ -2477,9 +2626,16 @@ export default function AdminPage() {
                   </thead>
                   <tbody>
                     {apps.map((a) => (
-                      <tr key={a.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                      <tr
+                        key={a.id}
+                        style={{ borderBottom: '1px solid var(--border)', cursor: 'pointer' }}
+                        onClick={() => setSelectedApp(a)}
+                        onKeyDown={(e) => { if (e.key === 'Enter') setSelectedApp(a); }}
+                        tabIndex={0}
+                      >
                         <td style={tdStyle}>
-                          <strong>{a.full_name}</strong><br />
+                          <strong style={{ color: 'var(--brand-700)' }}>{a.full_name}</strong>
+                          <span style={{ display: 'block', fontSize: '0.72rem', color: 'var(--brand-600)', fontWeight: 600, marginTop: 2 }}>View details →</span>
                           <small style={{ color: 'var(--text-muted)' }}>{a.phone}{a.email ? ` · ${a.email}` : ''}</small><br />
                           <small style={{ color: 'var(--text-muted)' }}>{fmt(a.created_at)}</small>
                         </td>
@@ -2488,9 +2644,10 @@ export default function AdminPage() {
                         <td style={tdStyle}>₹{a.fee_inr || '—'}<br /><small>{a.duration_min ? `${a.duration_min} min` : ''}</small></td>
                         <td style={tdStyle}>{a.languages || '—'}</td>
                         <td style={tdStyle}><Badge status={a.status} /></td>
-                        <td style={tdStyle}>
+                        <td style={tdStyle} onClick={(e) => e.stopPropagation()}>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                            {a.status !== 'approved' && <ActionBtn label="Approve" onClick={() => updateAppStatus(a.id, 'approved')} color="#198754" />}
+                            <ActionBtn label="Details" onClick={() => setSelectedApp(a)} color="var(--brand-600)" />
+                            {a.status !== 'approved' && <ActionBtn label="Approve · Enroll" onClick={() => updateAppStatus(a.id, 'approved')} color="#198754" />}
                             {a.status !== 'rejected' && <ActionBtn label="Reject"  onClick={() => updateAppStatus(a.id, 'rejected')} color="#dc3545" />}
                             {a.status !== 'pending'  && <ActionBtn label="Reset"   onClick={() => updateAppStatus(a.id, 'pending')}  color="#6c757d" />}
                             {a.status === 'approved' && a.phone && (() => {
@@ -2524,6 +2681,77 @@ export default function AdminPage() {
                   </tbody>
                 </table>
               </div>
+
+              {selectedApp && (
+                <div
+                  className="admin-modal-overlay"
+                  style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1300, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0.75rem' }}
+                  onClick={() => setSelectedApp(null)}
+                >
+                  <div
+                    className="admin-modal-panel"
+                    role="dialog"
+                    aria-modal="true"
+                    aria-label={`Application details for ${selectedApp.full_name}`}
+                    style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.25rem 1.35rem', maxWidth: 520, width: '100%', maxHeight: '88vh', overflowY: 'auto', marginTop: '2vh' }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, marginBottom: 12 }}>
+                      <div style={{ minWidth: 0 }}>
+                        <h3 style={{ fontWeight: 800, margin: 0, fontSize: '1.15rem' }}>{selectedApp.full_name}</h3>
+                        <div style={{ marginTop: 6, display: 'flex', flexWrap: 'wrap', gap: 8, alignItems: 'center' }}>
+                          <Badge status={selectedApp.status} />
+                          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{selectedApp.role_label ?? selectedApp.role}</span>
+                        </div>
+                      </div>
+                      <button type="button" className="btn btn-ghost btn-sm" onClick={() => setSelectedApp(null)}>Close</button>
+                    </div>
+
+                    <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', margin: '0 0 1rem' }}>
+                      Applied {fmt(selectedApp.created_at)}
+                    </p>
+
+                    <div className="admin-detail-grid">
+                      <InfoRow label="Phone" value={selectedApp.phone || '—'} />
+                      <InfoRow label="Email" value={selectedApp.email || '—'} />
+                      <InfoRow label="Registration / license" value={selectedApp.registration || '—'} />
+                      <InfoRow label="Degree" value={selectedApp.degree || '—'} />
+                      <InfoRow label="City" value={selectedApp.city || '—'} />
+                      <InfoRow label="Clinic" value={selectedApp.clinic || '—'} />
+                      <InfoRow label="Languages" value={selectedApp.languages || '—'} />
+                      <InfoRow label="Specialities" value={selectedApp.specialities || '—'} />
+                      <InfoRow label="Fee" value={selectedApp.fee_inr ? `₹${selectedApp.fee_inr}${selectedApp.duration_min ? ` / ${selectedApp.duration_min} min` : ''}` : '—'} />
+                      <InfoRow label="Modes" value={selectedApp.modes || '—'} />
+                      <InfoRow label="Availability" value={selectedApp.availability || '—'} style={{ gridColumn: '1 / -1' }} />
+                      {selectedApp.social_handle && <InfoRow label="Social" value={selectedApp.social_handle} style={{ gridColumn: '1 / -1' }} />}
+                    </div>
+
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: '1.25rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
+                      {selectedApp.status !== 'approved' && (
+                        <ActionBtn label="Approve · Enroll" onClick={() => updateAppStatus(selectedApp.id, 'approved')} color="#198754" />
+                      )}
+                      {selectedApp.status !== 'rejected' && (
+                        <ActionBtn label="Reject" onClick={() => updateAppStatus(selectedApp.id, 'rejected')} color="#dc3545" />
+                      )}
+                      {selectedApp.status !== 'pending' && (
+                        <ActionBtn label="Reset to pending" onClick={() => updateAppStatus(selectedApp.id, 'pending')} color="#6c757d" />
+                      )}
+                      {selectedApp.status === 'approved' && selectedApp.phone && waMeUrlForProfessional(selectedApp, waGroupInvite || WA_GROUP_FALLBACK) && (
+                        <a
+                          href={waMeUrlForProfessional(selectedApp, waGroupInvite || WA_GROUP_FALLBACK)}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="btn btn-sm"
+                          style={{ background: '#25d366', color: '#fff', border: 'none', fontWeight: 700, textDecoration: 'none' }}
+                        >
+                          WA · SERENEST
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+              </>
             )}
           </div>
         )}
@@ -2531,10 +2759,13 @@ export default function AdminPage() {
         {/* ── HR / HIRING ── */}
         {tab === 'hr' && (
           <div>
-            <h2 style={{ fontWeight: 800, fontSize: '1.4rem', marginBottom: '1rem' }}>HR / Hiring</h2>
+            <h2 style={{ fontWeight: 800, fontSize: '1.4rem', marginBottom: '0.35rem' }}>HR / Hiring</h2>
+            <p className="admin-section-hint" style={{ marginBottom: '1rem' }}>
+              To hire someone: move them through Reviewing → Shortlist → Interview if needed, then tap <strong>Hire</strong>. Use <strong>Extend Offer</strong> when you want salary / joining details on record (also marks hired).
+            </p>
 
             {/* HR sub-tabs */}
-            <div style={{ display: 'flex', gap: 4, marginBottom: '1.5rem', borderBottom: '2px solid var(--border)', paddingBottom: 0 }}>
+            <div className="admin-hr-subtabs" style={{ display: 'flex', gap: 4, marginBottom: '1.5rem', borderBottom: '2px solid var(--border)', paddingBottom: 0, overflowX: 'auto', WebkitOverflowScrolling: 'touch' }}>
               {[
                 { id: 'applications', label: `Applications (${jobs.length})` },
                 { id: 'postings',     label: `Job Postings (${jobPostings.length})` },
@@ -2545,7 +2776,7 @@ export default function AdminPage() {
                   fontSize: '0.88rem', fontWeight: hrTab === st.id ? 700 : 500,
                   color: hrTab === st.id ? 'var(--brand-600)' : 'var(--text-muted)',
                   borderBottom: hrTab === st.id ? '2px solid var(--brand-500)' : '2px solid transparent',
-                  marginBottom: -2, transition: 'all 0.15s',
+                  marginBottom: -2, transition: 'all 0.15s', whiteSpace: 'nowrap', flexShrink: 0,
                 }}>{st.label}</button>
               ))}
             </div>
@@ -2580,20 +2811,22 @@ export default function AdminPage() {
                 </div>
 
                 {jobs.length === 0 ? <EmptyState icon="🧑‍💼" text="No job applications yet" /> : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                  <div className="admin-hr-app-list" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                     {jobs.map((j) => {
                       const appInterviews = interviews.filter((i) => i.application_id === j.id);
                       return (
-                        <div key={j.id} style={{ background:'var(--surface)', border:'1px solid var(--border)', borderRadius:12, padding:'1.25rem 1.5rem' }}>
+                        <div key={j.id} className="admin-hr-app-card" style={{ background:'var(--surface)', border:'1px solid var(--border)', borderRadius:12, padding:'1.25rem 1.5rem' }}>
                           {/* Header */}
                           <div style={{ display:'flex', justifyContent:'space-between', flexWrap:'wrap', gap:8, marginBottom:8 }}>
-                            <div>
+                            <div style={{ minWidth: 0 }}>
                               <strong style={{ fontSize:'1rem' }}>{j.full_name}</strong>
-                              <span style={{ marginLeft:10, fontSize:'0.82rem', color:'var(--text-muted)' }}>{j.email}</span>
-                              {j.phone && <span style={{ marginLeft:8, fontSize:'0.82rem', color:'var(--text-muted)' }}>{j.phone}</span>}
-                              {j.city  && <span style={{ marginLeft:8, fontSize:'0.82rem', color:'var(--text-muted)' }}>📍 {j.city}</span>}
+                              <div style={{ fontSize:'0.82rem', color:'var(--text-muted)', marginTop:2, wordBreak:'break-word' }}>
+                                {j.email}
+                                {j.phone && <> · {j.phone}</>}
+                                {j.city  && <> · {j.city}</>}
+                              </div>
                             </div>
-                            <div style={{ display:'flex', alignItems:'center', gap:8 }}>
+                            <div style={{ display:'flex', alignItems:'center', gap:8, flexShrink: 0 }}>
                               <Badge status={j.status} />
                               <small style={{ color:'var(--text-muted)' }}>{fmt(j.created_at)}</small>
                             </div>
@@ -2623,7 +2856,7 @@ export default function AdminPage() {
                                   {iv.meeting_link && <a href={iv.meeting_link} target="_blank" rel="noreferrer" style={{ color:'var(--brand-600)', fontSize:'0.8rem' }}>Join ↗</a>}
                                   <Badge status={iv.outcome} />
                                   {iv.outcome === 'pending' && (
-                                    <div style={{ display:'flex', gap:4 }}>
+                                    <div style={{ display:'flex', gap:4, flexWrap:'wrap' }}>
                                       <ActionBtn label="Pass"    onClick={() => setInterviewOutcome(iv.id, 'pass')}    color="#198754" />
                                       <ActionBtn label="Fail"    onClick={() => setInterviewOutcome(iv.id, 'fail')}    color="#dc3545" />
                                       <ActionBtn label="No-show" onClick={() => setInterviewOutcome(iv.id, 'no_show')} color="#6c757d" />
@@ -2647,24 +2880,33 @@ export default function AdminPage() {
 
                           {/* HR notes */}
                           <div style={{ marginBottom:10, marginTop:8 }}>
-                            <div style={{ display:'flex', gap:6 }}>
+                            <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
                               <input
                                 value={noteEdit[j.id] !== undefined ? noteEdit[j.id] : (j.hr_notes ?? '')}
                                 onChange={(e) => setNoteEdit((p) => ({ ...p, [j.id]: e.target.value }))}
                                 placeholder="HR notes…"
-                                style={{ flex:1, padding:'6px 10px', fontSize:'0.85rem', border:'1px solid var(--border)', borderRadius:6, background:'var(--bg)', color:'var(--text)' }}
+                                style={{ flex:1, minWidth: 0, padding:'6px 10px', fontSize:'0.85rem', border:'1px solid var(--border)', borderRadius:6, background:'var(--bg)', color:'var(--text)' }}
                               />
                               {noteEdit[j.id] !== undefined && <button onClick={() => saveJobNote(j.id)} className="btn btn-sm btn-primary">Save</button>}
                             </div>
                           </div>
 
                           {/* Actions */}
-                          <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
-                            {j.status !== 'reviewing'   && <ActionBtn label="Reviewing"   onClick={() => updateJobStatus(j.id,'reviewing')}   color="#6f42c1" />}
-                            {j.status !== 'shortlisted' && <ActionBtn label="Shortlist"   onClick={() => updateJobStatus(j.id,'shortlisted')} color="#e67e22" />}
-                            <ActionBtn label="+ Interview" onClick={() => setScheduleFor(j)} color="#fd7e14" />
-                            {j.status !== 'hired' && !j.offer_salary && <ActionBtn label="Extend Offer" onClick={() => setOfferFor(j)} color="#198754" />}
-                            {j.status !== 'rejected' && <ActionBtn label="Reject" onClick={() => { const r = prompt('Rejection reason (optional):'); rejectWithReason(j.id, r ?? ''); }} color="#dc3545" />}
+                          <div className="admin-hr-app-actions" style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
+                            {j.status !== 'reviewing'   && j.status !== 'hired' && <ActionBtn label="Reviewing"   onClick={() => updateJobStatus(j.id,'reviewing')}   color="#6f42c1" />}
+                            {j.status !== 'shortlisted' && j.status !== 'hired' && <ActionBtn label="Shortlist"   onClick={() => updateJobStatus(j.id,'shortlisted')} color="#e67e22" />}
+                            {j.status !== 'hired' && <ActionBtn label="+ Interview" onClick={() => setScheduleFor(j)} color="#fd7e14" />}
+                            {j.status !== 'hired' && (
+                              <ActionBtn
+                                label="Hire"
+                                onClick={() => {
+                                  if (window.confirm(`Hire ${j.full_name}? Their status will be set to hired.`)) updateJobStatus(j.id, 'hired');
+                                }}
+                                color="#198754"
+                              />
+                            )}
+                            {j.status !== 'hired' && !j.offer_salary && <ActionBtn label="Extend Offer" onClick={() => setOfferFor(j)} color="#0a3622" />}
+                            {j.status !== 'rejected' && j.status !== 'hired' && <ActionBtn label="Reject" onClick={() => { const r = prompt('Rejection reason (optional):'); rejectWithReason(j.id, r ?? ''); }} color="#dc3545" />}
                           </div>
                         </div>
                       );
@@ -4072,7 +4314,10 @@ function InfoRow({ label, value, style = {} }) {
 function ActionBtn({ label, onClick, color, disabled = false }) {
   return (
     <button
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation();
+        if (!disabled) onClick?.(e);
+      }}
       disabled={disabled}
       style={{
         padding: '4px 11px',
