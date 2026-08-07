@@ -2453,14 +2453,13 @@ function seoRouteKey(pathname) {
   return ROUTE_SEO[norm] ? norm : null;
 }
 
-// Optional Google Analytics 4 — injected only when GA_MEASUREMENT_ID is set
-// (e.g. G-XXXXXXXXXX). The ID is validated so an env typo can't inject markup.
+// Expose an optional, validated GA4 measurement ID without loading Google.
+// The browser loads the analytics script only after explicit consent.
 const GA_ID = /^[A-Za-z0-9-]{4,20}$/.test(process.env.GA_MEASUREMENT_ID || '')
   ? process.env.GA_MEASUREMENT_ID
   : '';
-const GA_SNIPPET = GA_ID
-  ? `<script async src="https://www.googletagmanager.com/gtag/js?id=${GA_ID}"></script>\n`
-    + `<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${GA_ID}');</script>\n`
+const GA_META = GA_ID
+  ? `<meta name="serenest-ga-id" content="${GA_ID}" />\n`
   : '';
 
 function buildHtmlForRequest(pathname, { status }) {
@@ -2476,7 +2475,7 @@ function buildHtmlForRequest(pathname, { status }) {
   const renderPath = routeKey || '/';
   const replacement = `<!--SEO_HEAD_START-->\n    ${renderSeoHead(renderPath, { noindex })}\n    <!--SEO_HEAD_END-->`;
   let html = tpl.replace(SEO_SENTINEL, replacement);
-  if (GA_SNIPPET) html = html.replace('</head>', `${GA_SNIPPET}</head>`);
+  if (GA_META) html = html.replace('</head>', `${GA_META}</head>`);
 
   // Admin is a separate installable PWA: on /admin routes we swap the web app
   // manifest, theme colour and title so it installs as its own "Serenest Admin"

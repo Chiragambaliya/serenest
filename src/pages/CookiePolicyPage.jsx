@@ -9,8 +9,8 @@ const COOKIES = [
   { name: 'Session / auth', essential: true, purpose: 'Keeps you logged in securely across pages.' },
   { name: 'CSRF protection', essential: true, purpose: 'Prevents cross-site request forgery attacks.' },
   { name: 'Cookie consent', essential: true, purpose: 'Stores your cookie preference so we don\'t ask repeatedly.' },
-  { name: 'Analytics (self-hosted)', essential: false, purpose: 'Aggregated page-view counts to understand which content is useful. No personal data shared externally.' },
-  { name: 'UTM / referral', essential: false, purpose: 'Tracks campaign source (e.g. from a link in a WhatsApp message) for a single session.' },
+  { name: 'Usage analytics', essential: false, purpose: 'Page-view and referral information used to understand which content is useful. Loaded only after you opt in.' },
+  { name: 'UTM / referral', essential: false, purpose: 'Remembers campaign source for a single browser session after you opt in.' },
 ];
 
 export default function CookiePolicyPage() {
@@ -63,12 +63,12 @@ export default function CookiePolicyPage() {
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>Third-party cookies</h2>
-              <p className="muted">Serenest does not use Google Analytics, Meta Pixel, or any third-party advertising cookies. We do not sell or share cookie data with advertisers. If you use a video consultation, the video provider (e.g. Daily.co) may set its own cookies necessary for the session — these are governed by that provider's privacy policy.</p>
+              <p className="muted">Serenest may use Google Analytics only after you choose “Allow analytics.” Advertising storage, signals, and personalisation remain disabled. We do not use Meta Pixel, sell cookie data, or share it with advertisers. If you use a video consultation, the video provider (e.g. Daily.co) may set cookies necessary for that session under its own privacy policy.</p>
             </div>
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>How to control cookies</h2>
-              <p className="muted">You can accept or decline non-essential cookies via the consent banner shown on your first visit. You can also control cookies through your browser settings:</p>
+              <p className="muted">You can allow or decline non-essential storage through the privacy banner on your first visit. The “Privacy choices” link in every page footer lets you change your selection later. You can also control cookies through your browser settings:</p>
               <ul className="list">
                 <li><strong>Chrome:</strong> Settings → Privacy and security → Cookies and other site data</li>
                 <li><strong>Safari:</strong> Preferences → Privacy → Manage Website Data</li>

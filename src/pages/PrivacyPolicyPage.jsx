@@ -2,112 +2,145 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import { openPrivacyChoices } from '../lib/privacyConsent';
+
+const PRINCIPLES = [
+  {
+    title: 'No sale of your data',
+    body: 'We do not sell personal or health information, and we do not use advertising trackers.',
+  },
+  {
+    title: 'Least-access care',
+    body: 'Access is limited to you, your treating professional, and authorised staff who need it to operate the service.',
+  },
+  {
+    title: 'Choice before analytics',
+    body: 'Optional analytics remain off unless you allow them. You can change that choice at any time.',
+  },
+];
+
+const DATA_USES = [
+  {
+    title: 'Account and contact',
+    body: 'Name, phone, optional email, login details, and communication preferences. Used to create your account, verify access, and contact you about care.',
+  },
+  {
+    title: 'Appointments and care',
+    body: 'Bookings, assessment responses, clinical notes, and prescriptions where applicable. Used to deliver care and maintain clinical continuity.',
+  },
+  {
+    title: 'Payments and support',
+    body: 'Transaction references, invoices, and messages you send to support. Used for billing, assistance, and dispute resolution.',
+  },
+  {
+    title: 'Security and optional usage',
+    body: 'Basic device and access logs protect the service. Page and referral analytics are collected only if you opt in; they must not include clinical answers.',
+  },
+];
+
+const RIGHTS = [
+  { title: 'Access', body: 'Ask what personal data we hold about you.' },
+  { title: 'Correction', body: 'Ask us to correct incomplete or inaccurate details.' },
+  { title: 'Deletion', body: 'Request deletion, subject to medical and financial record duties.' },
+  { title: 'Grievance', body: 'Raise a privacy concern and receive a clear response.' },
+];
 
 export default function PrivacyPolicyPage() {
   useSEO({ path: '/privacy', ...ROUTE_SEO['/privacy'] });
   return (
-    <div className="page">
-      <section className="section about-hero">
+    <div className="page privacy-page">
+      <section className="privacy-page__hero">
+        <div className="container privacy-page__hero-grid">
+          <div>
+            <p className="kicker">Privacy at Serenest</p>
+            <h1 className="privacy-page__title">Your health information is yours.</h1>
+            <p className="privacy-page__lede">
+              Mental healthcare requires trust. This notice explains, in plain language, what Serenest
+              collects, why we need it, who can see it, and the choices you control.
+            </p>
+            <p className="privacy-page__meta">
+              Effective 7 August 2026 · Data controller: Serenest Education Pvt Ltd, India
+            </p>
+          </div>
+          <aside className="privacy-promise" aria-label="Our privacy promise">
+            <span className="privacy-promise__label">Our promise</span>
+            <p>Care first. Collect less. Never turn sensitive information into advertising.</p>
+            <small>Questions? support@serenest.in</small>
+          </aside>
+        </div>
+      </section>
+
+      <section className="privacy-section" aria-labelledby="privacy-principles-title">
         <div className="container">
-          <div className="section-head about-hero-head">
-            <p className="kicker">Privacy Policy</p>
-            <h1 className="page-title">Your health information is yours.</h1>
-            <p className="about-subtext">
-              We built Serenest with a privacy-first mindset and a least-access approach. This page explains
-              what we collect, why we collect it, and your choices.
-            </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>
-              Last updated: {new Date().toLocaleDateString()}
-            </p>
-            <p className="fineprint" style={{ marginTop: 8 }}>
-              <strong>Data controller:</strong> Serenest Education Pvt Ltd (brand name &quot;Serenest&quot;).
-            </p>
+          <header className="privacy-section__head">
+            <span className="privacy-section__label">01 · Commitments</span>
+            <h2 id="privacy-principles-title">Privacy principles you can hold us to.</h2>
+          </header>
+          <div className="privacy-principles">
+            {PRINCIPLES.map((item, index) => (
+              <article className="privacy-card" key={item.title}>
+                <span className="privacy-card__number">0{index + 1}</span>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section">
+      <section className="privacy-section privacy-section--dark" aria-labelledby="privacy-data-title">
         <div className="container">
-          <div className="legal-grid">
-            <article className="tile legal-card">
-              <h3>What we collect</h3>
-              <ul className="list">
-                <li>Account details: name, phone, optional email</li>
-                <li>Appointment details and communication preferences</li>
-                <li>Clinical inputs: assessments (PHQ-9/GAD-7), notes you submit</li>
-                <li>Consultation records: session notes and prescriptions (where applicable)</li>
-                <li>Technical data: basic device/log data to keep the service secure</li>
-              </ul>
-            </article>
-
-            <article className="tile legal-card">
-              <h3>Why we collect it</h3>
-              <ul className="list">
-                <li>To provide care and enable continuity across sessions</li>
-                <li>To schedule appointments and share confirmations</li>
-                <li>To meet clinical documentation expectations</li>
-                <li>To prevent fraud, abuse, and protect account security</li>
-                <li>To improve product reliability and safety</li>
-              </ul>
-            </article>
-
-            <article className="tile legal-card">
-              <h3>Who can see your data</h3>
-              <p className="muted">
-                We follow a least-access approach. Access is limited to you, your treating practitioner(s),
-                and authorized administrators as required for operations and compliance.
-              </p>
-              <div className="callout">
-                <div className="callout-title">We do not sell data</div>
-                <p className="muted" style={{ margin: 0 }}>
-                  We do not sell your personal or health information to advertisers.
-                </p>
-              </div>
-            </article>
-
-            <article className="tile legal-card">
-              <h3>Security</h3>
-              <p className="muted">
-                We use industry-standard controls (encryption in transit, access controls, auditability)
-                and design workflows to avoid unnecessary access.
-              </p>
-              <p className="muted" style={{ marginTop: 10 }}>
-                No system can be 100% secure. If you believe your account is compromised, contact us
-                immediately at{' '}
-                <a href="mailto:support@serenest.in">support@serenest.in</a>.
-              </p>
-            </article>
+          <header className="privacy-section__head">
+            <span className="privacy-section__label">02 · Data map</span>
+            <h2 id="privacy-data-title">What we use, and what it is for.</h2>
+          </header>
+          <div className="privacy-data-grid">
+            {DATA_USES.map((item) => (
+              <article className="privacy-card" key={item.title}>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
           </div>
+          <div className="privacy-page__actions">
+            <Link className="btn btn-ghost" to="/data-retention">See retention periods →</Link>
+            <Link className="btn btn-ghost" to="/cookie-policy">Read cookie details →</Link>
+          </div>
+        </div>
+      </section>
 
-          <div className="callout" style={{ marginTop: 16 }}>
-            <div className="callout-title">Emergency disclaimer</div>
+      <section className="privacy-section" aria-labelledby="privacy-rights-title">
+        <div className="container">
+          <header className="privacy-section__head">
+            <span className="privacy-section__label">03 · Your rights</span>
+            <h2 id="privacy-rights-title">You stay in control.</h2>
+          </header>
+          <div className="privacy-rights">
+            {RIGHTS.map((item, index) => (
+              <article className="privacy-card" key={item.title}>
+                <span className="privacy-card__number">0{index + 1}</span>
+                <h3>{item.title}</h3>
+                <p>{item.body}</p>
+              </article>
+            ))}
+          </div>
+          <div className="privacy-page__actions">
+            <button className="btn btn-primary" type="button" onClick={openPrivacyChoices}>
+              Manage privacy choices
+            </button>
+            <a className="btn btn-ghost" href="mailto:support@serenest.in?subject=Privacy%20request">
+              Make a privacy request
+            </a>
+            <Link className="btn btn-ghost" to="/grievance-policy">Grievance process</Link>
+          </div>
+          <div className="callout" style={{ marginTop: 40 }}>
+            <div className="callout-title">Security and necessary disclosure</div>
             <p className="muted" style={{ margin: 0 }}>
-              Serenest is not for psychiatric emergencies. If you or someone you know is in immediate danger,
-              call us: <a href="tel:7777936367">7777936367</a> or your nearest emergency service.
+              We use encryption in transit, access controls, and audit logs. No system is risk-free.
+              We may disclose data when required by law, to protect someone from serious harm, or to
+              providers that process data for us under appropriate safeguards. If you believe your account
+              is compromised, email <a href="mailto:support@serenest.in">support@serenest.in</a>.
             </p>
-          </div>
-        </div>
-      </section>
-
-      <section className="section alt">
-        <div className="container">
-          <div className="cta about-cta">
-            <div>
-              <h2 className="h2" style={{ margin: 0 }}>
-                Questions about privacy?
-              </h2>
-              <p className="muted" style={{ margin: '6px 0 0' }}>
-                Email us and we’ll help.
-              </p>
-            </div>
-            <div className="stack about-cta-actions">
-              <a className="btn btn-primary btn-full" href="mailto:support@serenest.in?subject=Privacy%20Question">
-                Contact support →
-              </a>
-              <Link className="btn btn-ghost btn-full" to="/">
-                Back to home
-              </Link>
-            </div>
           </div>
         </div>
       </section>
