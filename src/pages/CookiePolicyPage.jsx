@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 
-const UPDATED = 'June 2026';
+const UPDATED = '7 August 2026';
 
 const COOKIES = [
   { name: 'Session / auth', essential: true, purpose: 'Keeps you logged in securely across pages.' },

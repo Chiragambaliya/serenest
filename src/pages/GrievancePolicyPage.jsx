@@ -2,7 +2,7 @@ import React from 'react';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 
-const UPDATED = 'June 2026';
+const UPDATED = '7 August 2026';
 
 const STEPS = [
   { n: '1', title: 'Submit your grievance', desc: 'Email support@serenest.in with your name, booking reference (if applicable), and a clear description of the issue. You will receive an acknowledgement within 24 hours on business days.' },
