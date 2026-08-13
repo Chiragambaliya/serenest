@@ -81,6 +81,27 @@ create table if not exists public.professional_applications (
   availability text
 );
 
+-- Careers / HR hiring pipeline (/careers → Admin → HR / Hiring)
+create table if not exists public.job_applications (
+  id               uuid primary key default gen_random_uuid(),
+  created_at       timestamptz not null default now(),
+  updated_at       timestamptz not null default now(),
+  status           text not null default 'new'
+                     check (status in ('new','reviewing','shortlisted','interviewing','hired','rejected')),
+  full_name        text not null,
+  email            text not null,
+  phone            text,
+  city             text,
+  linkedin_url     text,
+  portfolio_url    text,
+  cover_note       text,
+  department       text not null,
+  role             text not null,
+  resume_url       text,
+  hr_notes         text,
+  rejection_reason text
+);
+
 -- ── Sign-ups (email capture / waitlist) ──────────────────────
 create table if not exists public.signups (
   id         uuid primary key default gen_random_uuid(),
