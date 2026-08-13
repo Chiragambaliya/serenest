@@ -87,7 +87,7 @@ export default function ProfessionalOnboardingPage() {
       return;
     }
     if (!consent) {
-      setStep2Error('Please tick the consent checkbox to submit.');
+      setStep2Error('Please confirm you agree to join Serenest and follow all rules and policies.');
       return;
     }
     setStep2Error('');
@@ -116,6 +116,8 @@ export default function ProfessionalOnboardingPage() {
       .join(', '),
     availability: availability.trim() || null,
     status: 'pending',
+    policies_accepted: true,
+    policies_accepted_at: new Date().toISOString(),
   };
 
   async function handleSubmit() {
@@ -424,8 +426,36 @@ export default function ProfessionalOnboardingPage() {
                   </label>
 
                   <label className="consent">
-                    <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                    <span>I confirm the information is accurate and I consent to credential verification.</span>
+                    <input
+                      type="checkbox"
+                      checked={consent}
+                      onChange={(e) => setConsent(e.target.checked)}
+                      required
+                    />
+                    <span>
+                      I confirm the information is accurate, I consent to credential verification, and by joining
+                      Serenest I agree to follow the{' '}
+                      <Link to="/professionals/terms" target="_blank" rel="noreferrer">
+                        Professional Terms
+                      </Link>
+                      ,{' '}
+                      <Link to="/professionals/code-of-conduct" target="_blank" rel="noreferrer">
+                        Code of Conduct
+                      </Link>
+                      ,{' '}
+                      <Link to="/professionals/guidelines" target="_blank" rel="noreferrer">
+                        Guidelines
+                      </Link>
+                      ,{' '}
+                      <Link to="/privacy" target="_blank" rel="noreferrer">
+                        Privacy Policy
+                      </Link>
+                      , and{' '}
+                      <Link to="/community-guidelines" target="_blank" rel="noreferrer">
+                        Community Guidelines
+                      </Link>
+                      .
+                    </span>
                   </label>
                 </div>
 

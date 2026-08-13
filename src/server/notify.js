@@ -401,6 +401,9 @@ export const notify = {
         row('City',           esc(p.city)),
         row('Fee / duration', p.fee_inr ? `₹${esc(p.fee_inr)} / ${esc(p.duration_min || 45)} min` : ''),
         row('Modes',          esc(p.modes)),
+        row('Policies',       p.policies_accepted_at
+          ? `Accepted ${esc(p.policies_accepted_at)} (Terms, Code of Conduct, Guidelines, Privacy, Community)`
+          : 'Accepted at submit'),
       ])}
       ${callouts({ phone: p.phone, email: p.email })}
       <p style="margin:12px 0 0;color:#64748b;font-size:13px">Review this application in <a href="https://serenest.in/admin" style="color:#0f766e;font-weight:600">Admin → Applications</a>.</p>
@@ -415,6 +418,7 @@ export const notify = {
       const confirmHtml = `
         <p style="font-size:16px;margin:0 0 12px">Hi <strong>${esc(p.full_name.split(' ')[0])}</strong>,</p>
         <p style="margin:0 0 12px">We received your application to join Serenest as a <strong>${esc(roleLabel)}</strong>. Our team will verify your credentials and reach out within <strong>1–2 business days</strong>.</p>
+        <p style="margin:0 0 12px">By applying, you agreed to our Professional Terms, Code of Conduct, Guidelines, Privacy Policy, and Community Guidelines. Please keep practising to those standards once you join.</p>
         <p style="margin:0 0 12px">If you have any questions in the meantime, you can reply to this email or WhatsApp us at <strong>+91 77779 36367</strong>.</p>
         <p style="margin:0;color:#64748b;font-size:13px">— The Serenest team</p>
       `;

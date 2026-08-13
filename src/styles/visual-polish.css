@@ -32,6 +32,14 @@
   overflow-wrap: anywhere;
   word-break: break-word;
   hyphens: auto;
+  line-height: 1.45;
+}
+.form-grid > .consent a,
+.consent a {
+  color: var(--ds-sage-deep, #3c4a2c);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 /* ── Masthead: tablet breathing room, no cramped wrap ────────── */

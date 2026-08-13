@@ -132,7 +132,7 @@ begin
   foreach col in array array[
     'role','role_label','designation','full_name','phone','email',
     'registration','medical_council_number','degree','city','languages',
-    'specialities','fee_inr','modes','availability','status'
+    'specialities','fee_inr','modes','availability','status','policies_accepted_at'
   ]
   loop
     if exists (

@@ -609,15 +609,23 @@ app.post('/api/professionals/apply', async (req, res) => {
     role, role_label, full_name, phone, email,
     registration, degree, city, languages, specialities,
     fee_inr, duration_min, modes, availability,
+    policies_accepted, policies_accepted_at,
   } = req.body;
 
   if (!role?.trim())      return err(res, 'role is required');
   if (!full_name?.trim()) return err(res, 'full_name is required');
   if (!phone?.trim())     return err(res, 'phone is required');
+  if (policies_accepted !== true && policies_accepted !== 'true' && policies_accepted !== 1) {
+    return err(res, 'You must agree to join Serenest and follow all rules and policies');
+  }
 
   const roleLabel = role_label?.trim() || role;
   const feeRaw = fee_inr != null ? String(fee_inr).trim() : '';
   const feeNum = feeRaw === '' ? null : Number(feeRaw);
+  const acceptedAt = (() => {
+    const raw = policies_accepted_at ? new Date(policies_accepted_at) : new Date();
+    return Number.isNaN(raw.getTime()) ? new Date().toISOString() : raw.toISOString();
+  })();
 
   // Prefer the current schema; include legacy aliases (designation) so older
   // production tables that still require them can accept the row.
@@ -643,6 +651,7 @@ app.post('/api/professionals/apply', async (req, res) => {
     modes: modes || null,
     availability: availability?.trim() || null,
     status: 'pending',
+    policies_accepted_at: acceptedAt,
   };
 
   // 1) Prefer RPC that inserts with triggers disabled (after FIX_APPLY_NOW.sql).
@@ -673,6 +682,7 @@ app.post('/api/professionals/apply', async (req, res) => {
   // Drop unknown/legacy columns one at a time and retry. This keeps apply
   // working across partially-migrated production schemas.
   const optionalDropOrder = [
+    'policies_accepted_at',
     'medical_council_number',
     'consultation_fee',
     'designation',
@@ -762,6 +772,7 @@ app.post('/api/professionals/apply', async (req, res) => {
           `Fee: ${row.fee_inr ?? '—'} / ${row.duration_min || 45} min`,
           `Modes: ${row.modes || '—'}`,
           `Availability: ${row.availability || '—'}`,
+          `Policies accepted at: ${row.policies_accepted_at || '—'}`,
           `DB error: ${error.message || 'insert failed'}`,
         ].join('\n'),
       });
