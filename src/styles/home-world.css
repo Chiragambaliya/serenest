@@ -264,12 +264,8 @@
 }
 
 .home--lean .hp-arrive__path:hover {
-  padding-left: 0.65rem;
-  background: linear-gradient(
-    90deg,
-    rgba(60, 74, 44, 0.06),
-    transparent 60%
-  );
+  border-color: rgba(30, 42, 33, 0.18);
+  background: #fff;
 }
 
 .home--lean .hp-arrive__path:hover .hp-arrive__num,
@@ -416,7 +412,7 @@
 }
 
 .hp-btn:hover {
-  transform: translateY(-2px);
+  transform: none;
 }
 
 .hp-btn:hover .hp-btn__arrow {
@@ -581,11 +577,7 @@
 
 .home--lean .hp-index .ed-index__row:hover {
   padding-left: 0.65rem;
-  background: linear-gradient(
-    90deg,
-    rgba(60, 74, 44, 0.05),
-    transparent 55%
-  );
+  background: rgba(60, 74, 44, 0.04);
 }
 
 .home--lean .hp-index .ed-index__row:hover .ed-index__num {

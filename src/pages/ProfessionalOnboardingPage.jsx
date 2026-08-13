@@ -340,12 +340,7 @@ export default function ProfessionalOnboardingPage() {
                 </div>
 
                 {step1Error && (
-                  <div style={{
-                    background: '#fdecea', border: '1px solid #f5c2c0',
-                    color: '#a02622', borderRadius: 10,
-                    padding: '12px 14px', marginTop: 14,
-                    fontSize: '0.9rem', fontWeight: 500,
-                  }}>
+                  <div className="form-alert form-alert--error" role="alert">
                     {step1Error}
                   </div>
                 )}
@@ -452,12 +447,7 @@ export default function ProfessionalOnboardingPage() {
                 </div>
 
                 {(step2Error || submitError) && (
-                  <div style={{
-                    background: '#fdecea', border: '1px solid #f5c2c0',
-                    color: '#a02622', borderRadius: 10,
-                    padding: '12px 14px', marginTop: 14,
-                    fontSize: '0.9rem', fontWeight: 500,
-                  }}>
+                  <div className="form-alert form-alert--error" role="alert">
                     {step2Error || submitError}
                   </div>
                 )}

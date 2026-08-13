@@ -617,28 +617,93 @@ app.post('/api/professionals/apply', async (req, res) => {
   if (!full_name?.trim()) return err(res, 'full_name is required');
   if (!phone?.trim())     return err(res, 'phone is required');
 
-  const { data, error } = await supabase
-    .from('professional_applications')
-    .insert({
-      role,
-      role_label: role_label?.trim() || role,
-      full_name: full_name.trim(),
-      phone: phone.trim(),
-      email: email?.trim() || null,
-      social_handle: social_handle?.trim() || null,
-      registration: registration?.trim() || null,
-      degree: degree?.trim() || null,
-      city: city?.trim() || null,
-      languages: languages?.trim() || null,
-      specialities: specialities?.trim() || null,
-      fee_inr: fee_inr?.trim() || null,
-      duration_min: duration_min ? Number(duration_min) : null,
-      modes: modes || null,
-      availability: availability?.trim() || null,
-      status: 'pending',
-    })
-    .select()
-    .single();
+  const roleLabel = role_label?.trim() || role;
+  const feeRaw = fee_inr != null ? String(fee_inr).trim() : '';
+  const feeNum = feeRaw === '' ? null : Number(feeRaw);
+
+  // Prefer the current schema; include legacy aliases (designation) so older
+  // production tables that still require them can accept the row.
+  const row = {
+    role: role.trim(),
+    role_label: roleLabel,
+    designation: roleLabel, // legacy NOT NULL column on older DBs
+    full_name: full_name.trim(),
+    phone: phone.trim(),
+    email: email?.trim() || null,
+    social_handle: social_handle?.trim() || null,
+    registration: registration?.trim() || null,
+    medical_council_number: registration?.trim() || null, // legacy alias
+    degree: degree?.trim() || null,
+    city: city?.trim() || null,
+    languages: languages?.trim() || null,
+    specialities: specialities?.trim() || null,
+    // fee_inr is text in schema.sql and numeric in a legacy migration —
+    // send a numeric when parseable so either column type accepts it.
+    fee_inr: Number.isFinite(feeNum) ? feeNum : (feeRaw || null),
+    consultation_fee: Number.isFinite(feeNum) ? feeNum : null, // legacy alias
+    duration_min: duration_min ? Number(duration_min) : null,
+    modes: modes || null,
+    availability: availability?.trim() || null,
+    status: 'pending',
+  };
+
+  // Drop unknown/legacy columns one at a time and retry. This keeps apply
+  // working across partially-migrated production schemas.
+  const optionalDropOrder = [
+    'social_handle',
+    'medical_council_number',
+    'consultation_fee',
+    'designation',
+    'degree',
+    'role_label',
+    'registration',
+    'specialities',
+    'languages',
+    'availability',
+    'modes',
+    'clinic',
+    'year',
+    'council',
+  ];
+
+  let attempt = { ...row };
+  let data = null;
+  let error = null;
+
+  for (let i = 0; i < optionalDropOrder.length + 1; i += 1) {
+    ({ data, error } = await supabase
+      .from('professional_applications')
+      .insert(attempt)
+      .select()
+      .single());
+
+    if (!error) break;
+
+    const msg = `${error.message || ''} ${error.details || ''} ${error.hint || ''}`;
+    console.warn('[POST /api/professionals/apply] insert failed', {
+      attempt: i,
+      message: error.message,
+      code: error.code,
+      details: error.details,
+    });
+
+    const missingCol = optionalDropOrder.find(
+      (col) => attempt[col] !== undefined && new RegExp(col, 'i').test(msg),
+    );
+    if (missingCol) {
+      const { [missingCol]: _omit, ...rest } = attempt;
+      attempt = rest;
+      continue;
+    }
+
+    // Null-constraint on an unexpected legacy column: try setting a safe default.
+    if (/null value in column "designation"/i.test(msg) && attempt.designation == null) {
+      attempt = { ...attempt, designation: roleLabel };
+      continue;
+    }
+
+    break;
+  }
 
   if (error) {
     console.error('[POST /api/professionals/apply]', error);
