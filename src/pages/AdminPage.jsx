@@ -707,16 +707,6 @@ export default function AdminPage() {
     } catch (e) { setError(e.message); }
   }
 
-  async function recordOfferResponse(applicationId, accepted) {
-    try {
-      const r = await adminFetch(`/api/hiring/offer/${applicationId}/response`, secret, {
-        method: 'PATCH', body: JSON.stringify({ accepted }),
-      });
-      setJobs((p) => p.map((j) => j.id === applicationId ? (r.application || { ...j, offer_accepted: accepted, status: accepted ? 'hired' : 'rejected' }) : j));
-      load('stats');
-    } catch (e) { setError(e.message); }
-  }
-
   // ── professionals management ───────────────────────────────
   async function saveProfessional(id) {
     try {
@@ -2727,14 +2717,6 @@ export default function AdminPage() {
                               💼 Offer: <strong>{j.offer_salary}</strong>
                               {j.offer_deadline && <span style={{ marginLeft:8, color:'#0a3622' }}>Deadline: {fmtDate(j.offer_deadline)}</span>}
                               {j.joining_date   && <span style={{ marginLeft:8, color:'#0a3622' }}>Joining: {fmtDate(j.joining_date)}</span>}
-                              {j.offer_accepted === true  && <span style={{ marginLeft:8, fontWeight:700, color:'#198754' }}>✓ Accepted</span>}
-                              {j.offer_accepted === false && <span style={{ marginLeft:8, fontWeight:700, color:'#dc3545' }}>✗ Declined</span>}
-                              {j.offer_salary && j.offer_accepted !== true && j.offer_accepted !== false && (
-                                <span style={{ marginLeft:8, display:'inline-flex', gap:6 }}>
-                                  <ActionBtn label="Accepted" onClick={() => recordOfferResponse(j.id, true)} color="#198754" />
-                                  <ActionBtn label="Declined" onClick={() => recordOfferResponse(j.id, false)} color="#dc3545" />
-                                </span>
-                              )}
                             </div>
                           )}
 
@@ -2754,12 +2736,8 @@ export default function AdminPage() {
                           {/* Actions */}
                           <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
                             {j.status !== 'hired' && <ActionBtn label="Accept" onClick={() => updateJobStatus(j.id,'hired')} color="#198754" />}
-                            {j.status !== 'reviewing'   && j.status !== 'hired' && <ActionBtn label="Reviewing"   onClick={() => updateJobStatus(j.id,'reviewing')}   color="#6f42c1" />}
-                            {j.status !== 'shortlisted' && j.status !== 'hired' && <ActionBtn label="Shortlist"   onClick={() => updateJobStatus(j.id,'shortlisted')} color="#e67e22" />}
-                            {j.status !== 'hired' && <ActionBtn label="+ Interview" onClick={() => setScheduleFor(j)} color="#fd7e14" />}
-                            {j.status !== 'hired' && !j.offer_salary && <ActionBtn label="Extend Offer" onClick={() => setOfferFor(j)} color="#0f766e" />}
-                            {j.status !== 'rejected' && j.status !== 'hired' && <ActionBtn label="Reject" onClick={() => { const r = prompt('Rejection reason (optional):'); rejectWithReason(j.id, r ?? ''); }} color="#dc3545" />}
-                            {j.status === 'hired' && <span style={{ fontSize:'0.82rem', fontWeight:700, color:'#198754', alignSelf:'center' }}>✓ Accepted</span>}
+                            {j.status !== 'rejected' && <ActionBtn label="Reject" onClick={() => { const r = prompt('Rejection reason (optional):'); rejectWithReason(j.id, r ?? ''); }} color="#dc3545" />}
+                            {j.status !== 'new' && <ActionBtn label="Reset" onClick={() => updateJobStatus(j.id,'new')} color="#6c757d" />}
                           </div>
                         </div>
                       );
