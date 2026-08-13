@@ -1,0 +1,27 @@
+# https://serenest.academy
+[build]
+  publish = "dist"
+  command = "npm install && npm run build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "https://www.serenest.academy/*"
+  to = "https://serenest.academy/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://serenest.academy/*"
+  to = "https://serenest.academy/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.serenest.academy/*"
+  to = "https://serenest.academy/:splat"
+  status = 301
+  force = true

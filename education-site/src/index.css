@@ -1,0 +1,141 @@
+/* Serenest Education — world-class design tokens */
+
+:root {
+  --ink: #0f1c16;
+  --ink-2: #3d4f46;
+  --muted: #6b7c72;
+  --line: rgba(15, 28, 22, 0.1);
+  --paper: #f7faf7;
+  --paper-2: #eef5ef;
+  --surface: #ffffff;
+  --forest: #1a3d32;
+  --forest-mid: #245a48;
+  --sage: #3d6b58;
+  --mint: #7eb89a;
+  --mint-soft: rgba(126, 184, 154, 0.16);
+  --amber: #c4783a;
+  --amber-soft: rgba(196, 120, 58, 0.14);
+  --on-dark: #f3f7f4;
+  --on-dark-muted: rgba(243, 247, 244, 0.72);
+
+  --font-display: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Sora', 'Segoe UI', system-ui, sans-serif;
+
+  --container: 1120px;
+  --narrow: 680px;
+  --radius: 1.1rem;
+  --radius-sm: 0.75rem;
+  --header-h: 4.25rem;
+
+  --shadow: 0 1px 2px rgba(15, 28, 22, 0.04), 0 16px 40px rgba(15, 28, 22, 0.07);
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100svh;
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--ink-2);
+  background:
+    radial-gradient(ellipse 90% 55% at 10% -10%, rgba(126, 184, 154, 0.18), transparent 50%),
+    radial-gradient(ellipse 70% 40% at 100% 0%, rgba(196, 120, 58, 0.08), transparent 45%),
+    var(--paper);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: var(--forest-mid);
+  text-underline-offset: 0.15em;
+}
+
+a:hover {
+  color: var(--forest);
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-weight: 550;
+  letter-spacing: -0.025em;
+  line-height: 1.12;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+p {
+  margin: 0 0 1rem;
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+ul,
+ol {
+  margin: 0 0 1rem;
+  padding-left: 1.2em;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+:focus-visible {
+  outline: 2px solid var(--sage);
+  outline-offset: 3px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
