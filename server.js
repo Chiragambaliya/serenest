@@ -617,32 +617,50 @@ app.post('/api/professionals/apply', async (req, res) => {
   if (!full_name?.trim()) return err(res, 'full_name is required');
   if (!phone?.trim())     return err(res, 'phone is required');
 
-  const { data, error } = await supabase
+  const row = {
+    role,
+    role_label: role_label?.trim() || role,
+    full_name: full_name.trim(),
+    phone: phone.trim(),
+    email: email?.trim() || null,
+    social_handle: social_handle?.trim() || null,
+    registration: registration?.trim() || null,
+    degree: degree?.trim() || null,
+    city: city?.trim() || null,
+    languages: languages?.trim() || null,
+    specialities: specialities?.trim() || null,
+    fee_inr: fee_inr?.trim() || null,
+    duration_min: duration_min ? Number(duration_min) : null,
+    modes: modes || null,
+    availability: availability?.trim() || null,
+    status: 'pending',
+  };
+
+  let { data, error } = await supabase
     .from('professional_applications')
-    .insert({
-      role,
-      role_label: role_label?.trim() || role,
-      full_name: full_name.trim(),
-      phone: phone.trim(),
-      email: email?.trim() || null,
-      social_handle: social_handle?.trim() || null,
-      registration: registration?.trim() || null,
-      degree: degree?.trim() || null,
-      city: city?.trim() || null,
-      languages: languages?.trim() || null,
-      specialities: specialities?.trim() || null,
-      fee_inr: fee_inr?.trim() || null,
-      duration_min: duration_min ? Number(duration_min) : null,
-      modes: modes || null,
-      availability: availability?.trim() || null,
-      status: 'pending',
-    })
+    .insert(row)
     .select()
     .single();
 
+  // Older DBs may lack social_handle — retry without it so apply stays online
+  // until migration 2026_08_13_professional_applications_social_handle is applied.
+  if (error && /social_handle/i.test(error.message || '')) {
+    console.warn('[POST /api/professionals/apply] retrying without social_handle — apply migration');
+    const { social_handle: _omit, ...rowWithoutSocial } = row;
+    ({ data, error } = await supabase
+      .from('professional_applications')
+      .insert(rowWithoutSocial)
+      .select()
+      .single());
+  }
+
   if (error) {
     console.error('[POST /api/professionals/apply]', error);
-    return err(res, 'Failed to submit application. Please try again.', 500);
+    // Surface schema/constraint hints in non-production so ops can fix quickly.
+    const detail = process.env.NODE_ENV === 'production'
+      ? 'Failed to submit application. Please try again.'
+      : `Failed to submit application. Please try again. (${error.message || 'database error'})`;
+    return err(res, detail, 500);
   }
 
   notify.professionalApplication(data);

@@ -1,0 +1,317 @@
+/* ============================================================
+   Visual polish pass — warm ivory / deep olive editorial system
+   Loaded last. Preserves routes, copy, and functionality.
+   ============================================================ */
+
+/* ── Shared form alert ───────────────────────────────────────── */
+.form-alert {
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--r-md, 10px);
+  font-size: 0.92rem;
+  font-weight: 500;
+  line-height: 1.45;
+}
+.form-alert--error {
+  background: #faf0ee;
+  border: 1px solid #e8c4bf;
+  color: #8a2a24;
+}
+
+/* Consent row: never clip / truncate label text */
+.form-grid > .consent,
+.consent {
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
+}
+.form-grid > .consent span,
+.consent > span {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+/* ── Masthead: tablet breathing room, no cramped wrap ────────── */
+@media (max-width: 1200px) and (min-width: 961px) {
+  .masthead__links .nav-link {
+    padding-inline: 0.55rem;
+    font-size: 0.86rem;
+  }
+  .masthead__actions {
+    gap: 0.65rem;
+  }
+}
+
+@media (max-width: 960px) {
+  .masthead__inner {
+    min-height: 72px;
+    padding-block: 0.65rem;
+  }
+  .masthead .menu-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 390px) {
+  .masthead .brand-text {
+    font-size: 1.55rem;
+  }
+  .masthead .brand-tagline {
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+  }
+}
+
+/* Account label: avoid awkward wrapping next to CTA */
+.masthead__account {
+  white-space: nowrap;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+}
+
+.masthead__cta,
+.masthead .header-cta {
+  min-height: 44px;
+  border-radius: var(--r-btn, 6px);
+}
+
+/* ── Homepage polish ─────────────────────────────────────────── */
+.home--lean {
+  --hp-forest: #3c4a2c;
+  --hp-forest-deep: #2a3320;
+  --hp-cream: #fffdf8;
+  --hp-ink: #1e2a21;
+  background: var(--bg, #f6f1e8);
+}
+
+/* Hero contrast: slightly warmer veil, keep text readable */
+.home--lean .hp-hero__veil {
+  background:
+    linear-gradient(
+      105deg,
+      rgba(30, 42, 33, 0.82) 0%,
+      rgba(30, 42, 33, 0.52) 48%,
+      rgba(30, 42, 33, 0.28) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(30, 42, 33, 0.18) 0%,
+      transparent 40%,
+      rgba(30, 42, 33, 0.5) 100%
+    );
+}
+
+.home--lean .hp-hero__body {
+  color: rgba(255, 253, 248, 0.88);
+}
+
+.home--lean .hp-hero__note {
+  color: rgba(255, 253, 248, 0.68);
+  font-size: 0.8rem;
+}
+
+/* Arrive paths → tactile white bands on sand */
+.home--lean .hp-arrive__paths {
+  border-top: none;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.home--lean .hp-arrive__path {
+  background: var(--surface, #fffdf8);
+  border: 1px solid var(--border, rgba(30, 42, 33, 0.12));
+  border-radius: var(--r-card, 14px);
+  padding: 1.25rem 1.2rem;
+  box-shadow: var(--shadow-xs);
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    background-color 200ms ease;
+}
+
+.home--lean .hp-arrive__path:hover {
+  padding-left: 1.2rem;
+  background: #fff;
+  border-color: var(--border-strong, rgba(30, 42, 33, 0.18));
+  box-shadow: var(--shadow-sm);
+}
+
+.home--lean .hp-arrive__path:focus-visible {
+  outline: 2px solid var(--hp-forest);
+  outline-offset: 2px;
+}
+
+@media (min-width: 820px) {
+  .home--lean .hp-arrive__path {
+    padding: 1.4rem 1.35rem;
+  }
+  .home--lean .hp-arrive__path:hover {
+    padding-left: 1.35rem;
+  }
+}
+
+/* Care index: calm hover, no SaaS gradient wash */
+.home--lean .hp-index .ed-index__row:hover,
+.home--lean .hp-arrive__path:hover {
+  background-image: none;
+}
+
+.home--lean .hp-index .ed-index__row:hover {
+  background: rgba(60, 74, 44, 0.04);
+}
+
+.home--lean .hp-index .ed-index__row:focus-visible {
+  outline: 2px solid var(--hp-forest);
+  outline-offset: 2px;
+}
+
+/* Academy visual: rounded tactile frame */
+.home--lean .hp-academy__visual {
+  border-radius: var(--r-card, 14px);
+  background: var(--surface, #fffdf8);
+  box-shadow: var(--shadow-sm);
+}
+
+.home--lean .hp-academy__visual .editorial-image {
+  border-radius: inherit;
+}
+
+/* Section heads: readable measure, no crowding */
+.home--lean .ed-head {
+  margin-bottom: clamp(1.75rem, 3.5vw, 2.5rem);
+}
+
+.home--lean .ed-head p {
+  color: var(--muted);
+}
+
+/* Buttons: calmer — drop aggressive lift, keep clear focus */
+.home--lean .hp-btn {
+  border-radius: var(--r-btn, 6px);
+  min-height: 48px;
+}
+
+.home--lean .hp-btn:hover {
+  transform: none;
+}
+
+@media (max-width: 720px) {
+  .home--lean .hp-hero--bleed {
+    min-height: min(78vh, 640px);
+    padding-top: 4.5rem;
+  }
+
+  .home--lean .hp-hero__content {
+    max-width: none;
+  }
+
+  .home--lean .hp-hero__title {
+    max-width: none;
+    font-size: clamp(1.55rem, 6.5vw, 1.9rem);
+  }
+
+  .home--lean .hp-hero__body {
+    max-width: 36ch;
+  }
+
+  .home--lean .hp-arrive__path {
+    gap: 0.65rem 1rem;
+  }
+
+  .home--lean .ed-pace {
+    padding-block: clamp(2.75rem, 8vw, 3.75rem);
+  }
+}
+
+@media (max-width: 390px) {
+  .home--lean .hp-hero__brand {
+    font-size: clamp(2.2rem, 12vw, 2.8rem);
+  }
+
+  .home--lean .hp-cta__contact {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    align-items: center;
+  }
+
+  .home--lean .hp-cta__contact span[aria-hidden="true"] {
+    display: none;
+  }
+}
+
+/* ── Footer: calm sand band, readable legal ──────────────────── */
+.theme-editorial .footer,
+.footer {
+  background: var(--bg-2, #eee6d8);
+}
+
+.footer-cta-copy h3 {
+  color: var(--ink, #1e2a21);
+}
+
+.footer-cta-copy p,
+.footer-legal,
+.footer-mini-links a {
+  color: var(--muted);
+}
+
+.footer .btn,
+.footer-cta-actions .btn {
+  min-height: 44px;
+}
+
+@media (max-width: 560px) {
+  .footer-cta-actions {
+    width: 100%;
+  }
+  .footer-cta-actions .btn {
+    flex: 1 1 100%;
+    justify-content: center;
+  }
+}
+
+/* ── Booking / apply shells: consistent rhythm ───────────────── */
+.booking-actions .btn {
+  min-height: 48px;
+  border-radius: var(--r-btn, 6px);
+}
+
+.choice-grid--modes {
+  gap: 0.75rem;
+}
+
+@media (max-width: 640px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .choice-grid--modes {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Select elements match input height */
+select.input,
+.input[type="date"],
+.input[type="time"] {
+  min-height: 48px;
+}
+
+/* ── Accessibility: skip-link already exists; strengthen focus ─ */
+.theme-editorial :focus-visible,
+.home--lean :focus-visible,
+.booking-shell :focus-visible {
+  outline: 2px solid var(--teal-600, #3c4a2c);
+  outline-offset: 2px;
+}
+
+/* Prevent horizontal scroll from motion transforms */
+.home--lean,
+.theme-editorial {
+  overflow-x: clip;
+}

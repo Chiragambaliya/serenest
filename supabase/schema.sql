@@ -66,6 +66,7 @@ create table if not exists public.professional_applications (
   full_name    text not null,
   phone        text not null,
   email        text,
+  social_handle text,
   registration text,
   degree       text,
   year         text,
