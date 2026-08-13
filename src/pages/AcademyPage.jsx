@@ -4,7 +4,9 @@ import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { useProfessionalAccess } from '../lib/useProfessionalAccess';
 import {
-  ACADEMY_PROGRAMS, FEATURED_PROGRAMS,
+  ACADEMY_PROGRAMS,
+  FEATURED_PROGRAMS,
+  PROGRAMS_BY_SLUG,
 } from '../lib/academyPrograms';
 import { ACADEMY_FAQS } from '../lib/academyFaqs';
 import AcademyGuide from '../components/AcademyGuide';
@@ -12,47 +14,111 @@ import FaqAccordion from '../components/FaqAccordion';
 import ImagePlaceholder from '../components/ImagePlaceholder';
 import { academyContent } from '../lib/api';
 import '../styles/academy.css';
+import '../styles/academy-world.css';
+
+const FLAGSHIP = PROGRAMS_BY_SLUG['clinical-excellence'];
 
 const WHAT_WE_TEACH = [
-  { title: 'Clinical Psychiatry', body: 'Assessment, diagnosis and evidence-based management.' },
-  { title: 'Psychopharmacology', body: 'Practical prescribing principles and medication management.' },
-  { title: 'Psychotherapy', body: 'Major therapy approaches, techniques and clinical application.' },
-  { title: 'Addiction and Recovery', body: 'Counselling, relapse prevention and recovery-oriented care.' },
-  { title: 'Crisis and Risk Management', body: 'Suicide-risk assessment, crisis intervention and safety planning.' },
-  { title: 'Digital Mental Health', body: 'Technology, ethics and digital practice in mental healthcare.' },
-  { title: 'Research and Professional Growth', body: 'Research methods, clinical documentation and career development.' },
+  {
+    title: 'Clinical Psychiatry',
+    body: 'Assessment, diagnosis, and evidence-based management for common and complex presentations — framed for Indian practice settings.',
+    touch: 'Clinical Excellence · Psychiatry Training',
+  },
+  {
+    title: 'Psychopharmacology',
+    body: 'Practical prescribing principles, safety conversations, and medication management that respect scope and telemedicine norms.',
+    touch: 'Psychiatry Training · Clinical Excellence',
+  },
+  {
+    title: 'Psychotherapy',
+    body: 'Major therapy approaches with technique, formulation, and supervision pathways — not theory left floating above the session.',
+    touch: 'Counselling Skills · Clinical Excellence',
+  },
+  {
+    title: 'Addiction and Recovery',
+    body: 'Counselling, relapse prevention, and recovery-oriented care for substance use, with clear boundaries and referral judgment.',
+    touch: 'Clinical Practice tracks',
+  },
+  {
+    title: 'Crisis and Risk Management',
+    body: 'Suicide-risk assessment, crisis intervention, safety planning, and knowing when remote care must escalate.',
+    touch: 'Clinical Excellence · Psychiatry Training',
+  },
+  {
+    title: 'Digital Mental Health',
+    body: 'Technology, ethics, documentation, and continuity when care moves to video, audio, or chat.',
+    touch: 'Digital Mental Health · Clinical Excellence',
+  },
+  {
+    title: 'Research and Professional Growth',
+    body: 'Clinical writing, reflective practice, CPD, and the habits that keep a career sharp after the certificate ends.',
+    touch: 'Research · CPD · Mentorship',
+  },
 ];
 
 const WHY_LEARN = [
-  'Courses designed and taught by experienced clinicians',
-  'Practical learning with real-life cases and examples',
-  'Small cohorts and personalised attention',
-  'Ethical, evidence-informed and application-focused teaching',
-  'Supportive learning community and mentorship',
+  {
+    title: 'Taught from practice',
+    body: 'Curriculum oversight sits beside an active clinical service — cases, constraints, and judgment from real work.',
+  },
+  {
+    title: 'Case before syllabus padding',
+    body: 'Modules favour clinical usefulness: formulation, documentation, risk, and conversations you can use the same week.',
+  },
+  {
+    title: 'Small cohorts, clear feedback',
+    body: 'Live rounds and supervised exercises where programs include them — not anonymous slide decks alone.',
+  },
+  {
+    title: 'India-context care',
+    body: 'Telemedicine norms, DPDP-aware privacy, and practice realities that match how care actually runs here.',
+  },
+  {
+    title: 'Scope stated plainly',
+    body: 'Certificates mark completion of study. They do not invent registration, degrees, or legal authority to practise.',
+  },
 ];
 
 const LEARNING_EXPERIENCE = [
-  { stage: '01 · Learn', title: 'Concepts that matter', body: 'Core ideas selected for clinical usefulness, not syllabus padding.' },
-  { stage: '02 · Observe', title: 'Cases and demonstrations', body: 'Real-world case material and supervised demonstration.' },
-  { stage: '03 · Practise', title: 'Skill exercises', body: 'Role-plays and structured practice before application.' },
-  { stage: '04 · Feedback', title: 'Guided supervision', body: 'Reflection with faculty who still see patients.' },
-  { stage: '05 · Apply', title: 'Return to practice', body: 'Take the skill into real clinical work with clearer judgment.' },
+  {
+    stage: '01 · Learn',
+    title: 'Concepts that matter',
+    body: 'Core ideas selected for clinical usefulness — assessment frames, formulations, and decision points.',
+  },
+  {
+    stage: '02 · Observe',
+    title: 'Cases and demonstrations',
+    body: 'Real-world case material and supervised demonstration before you are asked to perform.',
+  },
+  {
+    stage: '03 · Practise',
+    title: 'Skill exercises',
+    body: 'Role-plays, documentation drills, and structured practice with room to get it wrong safely.',
+  },
+  {
+    stage: '04 · Feedback',
+    title: 'Guided supervision',
+    body: 'Reflection with faculty who still see patients — judgment sharpened, not just content delivered.',
+  },
+  {
+    stage: '05 · Apply',
+    title: 'Return to practice',
+    body: 'Take the skill into clinical work with clearer boundaries, notes, and next steps.',
+  },
 ];
 
-const FEATURED_SHOTS = {
-  'clinical-excellence': 'Open notebook with a hand-drawn case formulation diagram, pen resting on the page, warm desk light.',
-  'psychiatry-training': 'A quiet consulting room — two armchairs, a side lamp, no people.',
-  'counselling-skills': 'Spiral notebook and a fountain pen beside a cup, mid-session notes visible but not legible.',
-  'student-training': 'A small stack of clinical texts next to a potted plant on a wooden desk.',
-};
+const TEACHING_STANDARDS = [
+  'Curriculum reviewed against current clinical usefulness, not trend cycles',
+  'Faculty drawn from practising clinicians and verified educators',
+  'Case material anonymised; patient dignity is non-negotiable',
+  'Scope of practice stated on every program page',
+  'No invented credentials, fake testimonials, or padded faculty grids',
+];
 
 const FEATURED_ON_HOME = (FEATURED_PROGRAMS.length >= 4
   ? FEATURED_PROGRAMS
   : [...FEATURED_PROGRAMS, ...ACADEMY_PROGRAMS.filter((p) => !p.featured)]
-).slice(0, 4).map((p) => ({
-  ...p,
-  shot: FEATURED_SHOTS[p.slug] || 'Warm, natural still life from a clinical learning setting — books, notes, or a quiet consulting space. No people.',
-}));
+).slice(0, 4);
 
 const INSTRUCTOR_MAILTO =
   'mailto:support@serenest.in?subject=Serenest%20Academy%20%E2%80%94%20Become%20an%20Instructor';
@@ -61,8 +127,8 @@ const ACADEMY_DESTINATIONS = [
   { title: 'All programs', body: 'The full numbered catalogue across career stages.', href: '/academy/programs' },
   { title: 'Learning paths', body: 'Sequences that group programs by where you are in practice.', href: '/academy/learning-paths' },
   { title: 'Workshops', body: 'Shorter intensives — dates published when scheduled.', href: '/academy/workshops' },
-  { title: 'Faculty', body: 'Who teaches, and how to apply to teach.', href: '/academy/faculty' },
-  { title: 'FAQs', body: 'Scope, enrolment, and what Academy does not replace.', href: '/academy/faqs' },
+  { title: 'Faculty', body: 'Who teaches, teaching standards, and how to apply.', href: '/academy/faculty' },
+  { title: 'FAQs', body: 'Scope, enrolment, certificates, and professional access.', href: '/academy/faqs' },
 ];
 
 export default function AcademyPage() {
@@ -78,37 +144,44 @@ export default function AcademyPage() {
   const regularItems = liveContent.filter((c) => !c.pinned);
 
   return (
-    <div className="eda-page">
+    <div className="eda-page academy-world">
 
-      {/* Hero — brand-first academy opener */}
-      <section className="ed-pace-open" aria-labelledby="academy-hero-title">
+      {/* Hero — institutional, brand-first */}
+      <section className="aw-hero" aria-labelledby="academy-hero-title">
         <div className="ed-shell ed-facing">
-          <div>
-            <p className="hp-brand-mark" style={{ marginBottom: '1.25rem' }}>
-              <span className="hp-brand-mark__name" style={{ color: 'var(--teal-600)' }}>Serenest Academy</span>
-              <span className="ed-mono" style={{ display: 'block', marginTop: '0.5rem', color: 'var(--brown)' }}>
-                Clinical education · Professional practice
-              </span>
+          <div className="aw-hero__copy">
+            <p className="aw-hero__brand">Serenest Academy</p>
+            <p className="ed-mono aw-hero__meta">
+              Clinical education beside a working practice
             </p>
-            <h1 id="academy-hero-title" style={{ maxWidth: '14ch' }}>
-              Learning that strengthens practice.
+            <h1 id="academy-hero-title" className="aw-hero__title">
+              Learning that strengthens clinical judgment.
             </h1>
-            <p className="ed-lede" style={{ marginTop: '1.25rem' }}>
-              Practical, clinically grounded education for mental health professionals.
-              Learn. Apply. Grow.
+            <p className="aw-hero__lede">
+              Case-based programs for psychiatrists, psychologists, therapists, counsellors,
+              and trainees — designed where care actually happens, not in abstraction.
             </p>
             {isProfessional ? (
-              <p className="ed-aside__note" role="status" style={{ marginTop: '1.25rem', maxWidth: '36rem' }}>
+              <p className="aw-hero__note" role="status">
                 <strong>Free for Serenest professionals.</strong>{' '}
                 Your approved practice account includes Academy at no charge.
               </p>
-            ) : null}
-            <div className="hp-hero__actions" style={{ marginTop: '1.75rem' }}>
-              <a className="btn btn-primary btn-lg" href="#programs">Explore programs</a>
-              <Link className="btn btn-ghost btn-lg" to="/academy/programs">View all courses</Link>
+            ) : (
+              <p className="aw-hero__note">
+                Approved Serenest clinicians receive Academy access free.
+                External learners enrol per program.
+              </p>
+            )}
+            <div className="hp-hero__actions aw-hero__actions">
+              <Link className="btn btn-primary btn-lg" to="/academy/programs/clinical-excellence">
+                Start Clinical Excellence
+              </Link>
+              <Link className="btn btn-ghost btn-lg" to="/academy/programs">
+                View all programs
+              </Link>
             </div>
           </div>
-          <figure className="ed-figure" style={{ margin: 0 }}>
+          <figure className="ed-figure aw-hero__figure">
             <div className="ed-figure__media">
               <ImagePlaceholder
                 asset="academy-hero-desk-books.jpg"
@@ -117,30 +190,29 @@ export default function AcademyPage() {
                 loading="eager"
               />
             </div>
-            <figcaption className="ed-mono">Desk still life · study materials, no people</figcaption>
+            <figcaption className="ed-mono">Study desk · materials for clinical learning</figcaption>
           </figure>
         </div>
       </section>
 
-      {/* Quiet text index instead of sticky pill nav */}
-      <nav className="ed-pace-tight" aria-label="On this page" style={{ borderBottom: '1px solid var(--border)' }}>
-        <div className="ed-shell" style={{ display: 'flex', flexWrap: 'wrap', gap: '1.25rem 2rem' }}>
+      <nav className="aw-toc" aria-label="On this page">
+        <div className="ed-shell aw-toc__inner">
           {[
+            ['#flagship', 'Flagship'],
             ['#teach', 'What we teach'],
-            ['#why', 'Why Academy'],
-            ['#programs', 'Featured programs'],
-            ['#experience', 'Learning experience'],
+            ['#why', 'Approach'],
+            ['#programs', 'Programs'],
+            ['#experience', 'Experience'],
             ['#faculty', 'Faculty'],
             ['#faq', 'FAQ'],
           ].map(([href, label]) => (
-            <a key={href} href={href} className="ed-mono" style={{ color: 'var(--muted)', textDecoration: 'none' }}>
+            <a key={href} href={href} className="ed-mono aw-toc__link">
               {label}
             </a>
           ))}
         </div>
       </nav>
 
-      {/* Live updates — ruled index, no pastel chips */}
       {liveContent.length > 0 && (
         <section className="ed-pace-tight" aria-label="Latest updates">
           <div className="ed-shell">
@@ -172,7 +244,9 @@ export default function AcademyPage() {
                       <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
                       <span>
                         <h3 className="ed-index__title">{item.title}</h3>
-                        {item.type && <span className="ed-index__meta">{String(item.type).replace('_', ' ')}</span>}
+                        {item.type && (
+                          <span className="ed-index__meta">{String(item.type).replace('_', ' ')}</span>
+                        )}
                       </span>
                       <p className="ed-index__body">{item.body}</p>
                       {item.link ? (
@@ -189,13 +263,84 @@ export default function AcademyPage() {
         </section>
       )}
 
-      {/* What we teach — numbered index, no icons */}
+      {/* Flagship prospectus — the strength of the school */}
+      {FLAGSHIP && (
+        <section id="flagship" className="ed-pace aw-flagship" aria-labelledby="flagship-title">
+          <div className="ed-shell">
+            <header className="ed-head ed-head--wide">
+              <span className="ed-head__label">Flagship program</span>
+              <h2 id="flagship-title">{FLAGSHIP.title}</h2>
+              <p>{FLAGSHIP.subtitle}</p>
+            </header>
+
+            <div className="aw-flagship__grid">
+              <div className="aw-flagship__main">
+                <p className="aw-flagship__overview">{FLAGSHIP.overview}</p>
+                <h3 className="aw-flagship__subhead">What you work through</h3>
+                <ol className="aw-flagship__learn">
+                  {FLAGSHIP.learn.slice(0, 6).map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ol>
+                <div className="aw-flagship__actions">
+                  <Link
+                    className="btn btn-primary btn-lg"
+                    to={`/academy/programs/${FLAGSHIP.slug}`}
+                  >
+                    {FLAGSHIP.ctaLabel || 'Open Clinical Excellence'}
+                  </Link>
+                  <Link className="btn btn-ghost btn-lg" to="/academy/learning-paths">
+                    Find a learning path
+                  </Link>
+                </div>
+              </div>
+
+              <aside className="aw-flagship__aside" aria-label="Program at a glance">
+                <p className="ed-mono">At a glance</p>
+                <dl className="aw-glance">
+                  {FLAGSHIP.metrics.map((m) => (
+                    <div key={m.sub} className="aw-glance__row">
+                      <dt>{m.sub}</dt>
+                      <dd>{m.top}</dd>
+                    </div>
+                  ))}
+                  <div className="aw-glance__row">
+                    <dt>Format</dt>
+                    <dd>{FLAGSHIP.format}</dd>
+                  </div>
+                </dl>
+                <p className="ed-mono" style={{ marginTop: '1.75rem' }}>For</p>
+                <ul className="aw-flagship__who">
+                  {FLAGSHIP.forWho.map((who) => (
+                    <li key={who}>{who}</li>
+                  ))}
+                </ul>
+                {FLAGSHIP.highlights?.length ? (
+                  <>
+                    <p className="ed-mono" style={{ marginTop: '1.75rem' }}>Includes</p>
+                    <ul className="aw-flagship__who">
+                      {FLAGSHIP.highlights.map((h) => (
+                        <li key={h}>{h}</li>
+                      ))}
+                    </ul>
+                  </>
+                ) : null}
+              </aside>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* Curriculum domains — deeper */}
       <section id="teach" className="ed-pace ed-band-soft" aria-labelledby="teach-title">
         <div className="ed-shell">
           <header className="ed-head">
             <span className="ed-head__label">Curriculum domains</span>
             <h2 id="teach-title">What we teach</h2>
-            <p>Seven domains that recur across programs — from assessment to professional growth.</p>
+            <p>
+              Seven domains that recur across programs — assessment through professional growth.
+              Each maps into one or more tracks in the catalogue.
+            </p>
           </header>
           <div className="ed-index">
             {WHAT_WE_TEACH.map((item, i) => (
@@ -203,6 +348,7 @@ export default function AcademyPage() {
                 <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
                 <span>
                   <h3 className="ed-index__title">{item.title}</h3>
+                  <span className="ed-index__meta">{item.touch}</span>
                 </span>
                 <p className="ed-index__body">{item.body}</p>
               </div>
@@ -211,19 +357,21 @@ export default function AcademyPage() {
         </div>
       </section>
 
-      {/* Why + pull quote */}
+      {/* Approach */}
       <section id="why" className="ed-pace" aria-labelledby="why-title">
         <div className="ed-shell ed-facing">
           <div>
             <header className="ed-head">
               <span className="ed-head__label">Approach</span>
-              <h2 id="why-title">Why learn with Serenest Academy</h2>
+              <h2 id="why-title">Why Serenest Academy</h2>
+              <p>Education built beside a clinical service — responsible, applied, and honest about scope.</p>
             </header>
             <ol className="ed-timeline">
               {WHY_LEARN.map((item, i) => (
-                <li key={item}>
+                <li key={item.title}>
                   <span className="ed-timeline__stage">0{i + 1}</span>
-                  <p>{item}</p>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
                 </li>
               ))}
             </ol>
@@ -240,8 +388,9 @@ export default function AcademyPage() {
                   alt="An intimate teaching room with notebooks and a whiteboard"
                 />
               </div>
+              <figcaption className="ed-mono">Teaching room · quiet materials, no people</figcaption>
             </figure>
-            <blockquote className="ed-pull" style={{ marginTop: '1.5rem' }}>
+            <blockquote className="ed-pull aw-pull" style={{ marginTop: '1.5rem' }}>
               <p>“Education is not just information. It is transformation in practice.”</p>
               <cite>Serenest Academy</cite>
             </blockquote>
@@ -249,14 +398,14 @@ export default function AcademyPage() {
         </div>
       </section>
 
-      {/* Featured programs — index, not photo cards */}
+      {/* Featured programs */}
       <section id="programs" className="ed-pace ed-band-soft" aria-labelledby="programs-title">
         <div className="ed-shell">
           <header className="ed-head ed-head--wide">
-            <span className="ed-head__label">Featured programs</span>
-            <h2 id="programs-title">A short list to begin with</h2>
+            <span className="ed-head__label">Programs</span>
+            <h2 id="programs-title">Start with a clear entry point</h2>
             <p>
-              Four entry points from the fuller catalogue.{' '}
+              Four openings from the fuller catalogue.{' '}
               <Link className="ed-link" to="/academy/programs">View all programs</Link>
             </p>
           </header>
@@ -266,26 +415,17 @@ export default function AcademyPage() {
                 <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
                 <span>
                   <h3 className="ed-index__title">{p.title}</h3>
-                  <span className="ed-index__meta">
-                    {p.subtitle || 'Program'}
-                  </span>
+                  <span className="ed-index__meta">{p.category || p.subtitle || 'Program'}</span>
                 </span>
                 <p className="ed-index__body">{p.body}</p>
                 <span className="ed-index__go">View →</span>
               </Link>
             ))}
           </div>
-          <p className="ed-aside__note" style={{ marginTop: '1.5rem', maxWidth: '48rem' }}>
-            Photography for these programs is pending approval. Asset names follow the pattern{' '}
-            <span className="ed-mono" style={{ textTransform: 'none', letterSpacing: 0 }}>
-              academy-program-&lt;slug&gt;.jpg
-            </span>
-            . Shot direction remains place, materials, and light — never invented portraits.
-          </p>
         </div>
       </section>
 
-      {/* Learning experience — timeline */}
+      {/* Learning experience */}
       <section id="experience" className="ed-pace" aria-labelledby="experience-title">
         <div className="ed-shell ed-facing">
           <header className="ed-head">
@@ -305,46 +445,48 @@ export default function AcademyPage() {
         </div>
       </section>
 
-      {/* Faculty — one real person + honest roster note */}
+      {/* Faculty + standards */}
       <section id="faculty" className="ed-pace ed-band-soft" aria-labelledby="faculty-title">
-        <div className="ed-shell ed-aside">
-          <div>
-            <p className="ed-aside__label">Faculty</p>
-            <p className="ed-aside__note" style={{ marginTop: '1rem' }}>
-              The roster lists only people who teach with us. It grows as programs expand —
-              we do not invent names to fill a page.
+        <div className="ed-shell">
+          <header className="ed-head">
+            <span className="ed-head__label">Faculty</span>
+            <h2 id="faculty-title">Practising clinicians. Honest roster.</h2>
+            <p>
+              We list only people who teach with us. The page grows as programs expand —
+              we do not invent names to fill a grid.
             </p>
-          </div>
-          <div>
-            <h2 id="faculty-title" style={{ marginBottom: '1.25rem' }}>Learn from practising clinicians</h2>
-            <div className="ed-facing">
-              <div>
-                <p className="ed-mono">Director</p>
-                <h3 style={{ marginTop: '0.35rem' }}>Dr. Chirag Aambalia</h3>
-                <p style={{ color: 'var(--muted)', marginTop: '0.35rem' }}>Psychiatrist &amp; Founder</p>
-                <p style={{ marginTop: '1rem', maxWidth: '36ch', color: 'var(--muted)' }}>
-                  Clinical oversight of Academy curriculum sits beside an active psychiatry practice —
-                  teaching informed by current care, not abstracted theory alone.
-                </p>
-              </div>
-              <div>
-                <p className="ed-mono">Growing roster</p>
-                <h3 style={{ marginTop: '0.35rem' }}>Apply to teach</h3>
-                <p style={{ color: 'var(--muted)', marginTop: '0.5rem', maxWidth: '34ch' }}>
-                  Clinician faculty are added as programs need them. If you teach from practice, write to us.
-                </p>
-                <p style={{ marginTop: '1.25rem' }}>
-                  <a href={INSTRUCTOR_MAILTO} className="btn btn-primary">Apply to teach</a>
-                  {' '}
-                  <Link to="/academy/faculty" className="btn btn-ghost" style={{ marginLeft: '0.5rem' }}>Faculty page</Link>
-                </p>
+          </header>
+
+          <div className="aw-faculty">
+            <div className="aw-faculty__profile">
+              <p className="ed-mono">Director</p>
+              <h3>Dr. Chirag Aambalia</h3>
+              <p className="aw-faculty__role">Psychiatrist &amp; Founder</p>
+              <p className="aw-faculty__bio">
+                Clinical oversight of Academy curriculum sits beside an active psychiatry practice —
+                teaching informed by current care, not abstracted theory alone.
+              </p>
+              <div className="aw-faculty__actions">
+                <a href={INSTRUCTOR_MAILTO} className="btn btn-primary">Apply to teach</a>
+                <Link to="/academy/faculty" className="btn btn-ghost">Faculty page</Link>
               </div>
             </div>
+            <aside className="aw-faculty__standards" aria-label="Teaching standards">
+              <p className="ed-mono">Teaching standards</p>
+              <ol className="ed-timeline">
+                {TEACHING_STANDARDS.map((item, i) => (
+                  <li key={item}>
+                    <span className="ed-timeline__stage">0{i + 1}</span>
+                    <p>{item}</p>
+                  </li>
+                ))}
+              </ol>
+            </aside>
           </div>
         </div>
       </section>
 
-      {/* Destinations index */}
+      {/* Destinations */}
       <section className="ed-pace" aria-labelledby="destinations-title">
         <div className="ed-shell">
           <header className="ed-head">
@@ -371,7 +513,7 @@ export default function AcademyPage() {
         <div className="ed-shell ed-shell--narrow">
           <header className="ed-head">
             <span className="ed-head__label">FAQ</span>
-            <h2 id="faq-title">Frequently asked questions</h2>
+            <h2 id="faq-title">Questions before you enrol</h2>
           </header>
           <FaqAccordion items={ACADEMY_FAQS} />
           <p style={{ marginTop: '1.5rem', color: 'var(--muted)' }}>
@@ -389,31 +531,52 @@ export default function AcademyPage() {
 
       <AcademyGuide />
 
-      {/* One full-width band */}
-      <section className="ed-band" aria-labelledby="academy-cta-title">
+      {/* Closing band */}
+      <section className="ed-band aw-close" aria-labelledby="academy-cta-title">
         <div className="ed-shell ed-facing">
           <div>
             <p className="ed-mono" style={{ color: 'rgba(255,255,255,0.65)' }}>Serenest Academy</p>
-            <h2 id="academy-cta-title" style={{ marginTop: '0.75rem', maxWidth: '16ch' }}>
-              Ready to strengthen your practice?
+            <h2 id="academy-cta-title" style={{ marginTop: '0.75rem', maxWidth: '18ch' }}>
+              Begin with the flagship — or find your path.
             </h2>
-            <p style={{ marginTop: '0.75rem', maxWidth: '36ch' }}>
-              Explore programs and find the learning path that matches where you are.
+            <p style={{ marginTop: '0.75rem', maxWidth: '38ch' }}>
+              Clinical Excellence for practising clinicians, or a learning path matched to where you are.
             </p>
           </div>
-          <div style={{ alignSelf: 'end' }}>
-            <a href="#programs" className="btn btn-ghost-dark btn-lg">Explore programs</a>
+          <div className="aw-close__actions">
+            <Link
+              to="/academy/programs/clinical-excellence"
+              className="btn btn-solid-light btn-lg"
+              style={{
+                background: '#fffdf8',
+                color: '#3c4a2c',
+                borderColor: '#fffdf8',
+              }}
+            >
+              Clinical Excellence
+            </Link>
+            <Link to="/academy/programs" className="btn btn-ghost-dark btn-lg">
+              All programs
+            </Link>
           </div>
         </div>
         <div className="ed-shell" style={{ marginTop: '2rem' }}>
-          <p className="ed-mono" style={{ color: 'rgba(255,255,255,0.55)', textTransform: 'none', letterSpacing: 0, fontWeight: 400, lineHeight: 1.55 }}>
+          <p
+            className="ed-mono"
+            style={{
+              color: 'rgba(255,255,255,0.55)',
+              textTransform: 'none',
+              letterSpacing: 0,
+              fontWeight: 400,
+              lineHeight: 1.55,
+            }}
+          >
             Serenest Academy programs support professional learning and skill development.
             They do not replace a recognised degree, professional registration, supervised
             clinical requirements, or legal scope of practice.
           </p>
         </div>
       </section>
-
     </div>
   );
 }
