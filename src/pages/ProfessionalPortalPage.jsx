@@ -39,7 +39,6 @@ const EDITABLE = [
   { key: 'fee_inr',      label: 'Fee (₹)',          type: 'text',     ph: 'e.g. 800' },
   { key: 'duration_min', label: 'Session length (min)', type: 'number', ph: 'e.g. 30' },
   { key: 'availability', label: 'Availability',     type: 'textarea', ph: 'e.g. Mon–Fri evenings, weekends 10am–2pm' },
-  { key: 'social_handle',label: 'Social handle',    type: 'text',     ph: '@yourhandle' },
 ];
 
 const MODE_OPTIONS = [

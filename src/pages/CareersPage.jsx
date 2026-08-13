@@ -27,7 +27,7 @@ export default function CareersPage() {
 
   const [form, setForm] = useState({
     full_name: '', email: '', phone: '', city: '',
-    role: '', experience: '', linkedin_url: '', cover_note: '',
+    role: '', experience: '', cover_note: '',
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -176,10 +176,6 @@ export default function CareersPage() {
                   <option>5–10</option>
                   <option>10+</option>
                 </select>
-              </Field>
-
-              <Field label="LinkedIn profile URL">
-                <input type="url" value={form.linkedin_url} onChange={set('linkedin_url')} placeholder="https://linkedin.com/in/your-profile" style={inputStyle} />
               </Field>
 
               <Field label="Tell us about yourself & why Serenest *">

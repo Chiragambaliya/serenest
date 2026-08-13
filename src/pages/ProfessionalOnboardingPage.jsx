@@ -23,7 +23,6 @@ export default function ProfessionalOnboardingPage() {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [socialHandle, setSocialHandle] = useState('');
   const [registration, setRegistration] = useState('');
   const [degree, setDegree] = useState('');
 
@@ -104,7 +103,6 @@ export default function ProfessionalOnboardingPage() {
     full_name: fullName.trim(),
     phone: phoneClean,
     email: email.trim() || null,
-    social_handle: socialHandle.trim() || null,
     registration: registration.trim() || null,
     degree: degree.trim() || null,
     city: city.trim() || null,
@@ -296,21 +294,6 @@ export default function ProfessionalOnboardingPage() {
                       placeholder="you@example.com"
                       autoComplete="email"
                     />
-                  </label>
-
-                  <label className="field">
-                    <span className="field-label">Instagram / LinkedIn handle (optional)</span>
-                    <div className="input-row">
-                      <span className="input-prefix">@</span>
-                      <input
-                        className="input"
-                        value={socialHandle}
-                        onChange={(e) => setSocialHandle(e.target.value.replace(/^@/, ''))}
-                        placeholder="yourhandle"
-                        autoComplete="off"
-                      />
-                    </div>
-                    <span className="field-hint">Helps us feature and collaborate with you on our channels.</span>
                   </label>
 
                   <label className="field field-wide">

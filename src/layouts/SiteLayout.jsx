@@ -379,22 +379,6 @@ export default function SiteLayout() {
                 <span aria-hidden="true" className="ed-footer__dot" />
                 <a href="tel:+917777936367">+91 77779 36367</a>
               </div>
-              <div className="ed-footer__social" aria-label="Social links">
-                <a
-                  href="https://www.instagram.com/serenest.fit"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Instagram
-                </a>
-                <a
-                  href="https://www.linkedin.com/company/serenest-mind-pvt-ltd/"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  LinkedIn
-                </a>
-              </div>
             </div>
 
             <div className="ed-footer__cols">
