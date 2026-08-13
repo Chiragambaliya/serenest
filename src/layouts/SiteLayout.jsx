@@ -4,6 +4,7 @@ import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 import EmailCapture from '../components/EmailCapture';
 import { useAuth } from '../lib/useAuth';
 import { useMainReveal } from '../hooks/useReveal';
+import { openPrivacyChoices } from '../lib/privacyConsent';
 
 /* Editorial seal — filled oval with a drawn S, not a generic leaf. */
 function BrandMark({ size = 42 }) {
@@ -441,6 +442,9 @@ export default function SiteLayout() {
               {FOOTER_LEGAL.map((link) => (
                 <Link key={link.to} to={link.to}>{link.label}</Link>
               ))}
+              <button className="privacy-control-button" type="button" onClick={openPrivacyChoices}>
+                Privacy choices
+              </button>
             </nav>
             <p className="ed-footer__made">Made with care in India</p>
           </div>
