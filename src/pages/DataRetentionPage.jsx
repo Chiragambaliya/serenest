@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 
-const UPDATED = 'June 2026';
+const UPDATED = '7 August 2026';
 
 const RETENTION = [
   { category: 'Account & profile data', period: 'Duration of account + 3 years', reason: 'Legal and contractual obligation' },
@@ -68,10 +68,11 @@ export default function DataRetentionPage() {
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>Account Deletion</h2>
               <p className="muted">You may request deletion of your Serenest account at any time by emailing <a href="mailto:support@serenest.in" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>support@serenest.in</a>. Upon deletion:</p>
               <ul className="list" style={{ marginTop: 8 }}>
-                <li>Your profile, preferences, and marketing data are deleted immediately.</li>
+                <li>Your profile, preferences, and marketing data are deleted or de-identified after verification and completion of the request.</li>
                 <li>Session records and billing data are retained for the legally required periods above.</li>
                 <li>Retained data is held in a restricted archive — it is not used for any commercial purpose.</li>
-                <li>You will receive confirmation of deletion within 30 days as required under the DPDP Act 2023.</li>
+                <li>We aim to complete standard deletion requests within 30 days and will explain any legal restriction or necessary extension.</li>
+                <li>Copies in encrypted backups are removed through the normal backup lifecycle and are not restored except for disaster recovery.</li>
               </ul>
             </div>
 

@@ -307,6 +307,7 @@ export default function AdminPage() {
   const [waInviteBusy, setWaInviteBusy] = useState(false);
   const [waInviteResult, setWaInviteResult] = useState(null);
   const [apps, setApps]               = useState([]);
+  const [fallbackAppCount, setFallbackAppCount] = useState(0);
   const [jobs, setJobs]               = useState([]);
   const [messages, setMessages]       = useState([]);
   const [screenings, setScreenings]   = useState([]);
@@ -437,6 +438,7 @@ export default function AdminPage() {
       (which === 'all' || which === 'applications') && safe(async () => {
         const r = await adminFetch('/api/professionals/applications', secret);
         setApps(r.applications ?? []);
+        setFallbackAppCount(r.fallback_count ?? (r.applications || []).filter((a) => a._fallback).length);
       }),
       (which === 'all' || which === 'professionals' || which === 'applications') && safe(async () => {
         const r = await adminFetch('/api/professionals/list', secret);
@@ -514,18 +516,23 @@ export default function AdminPage() {
   }, [authed]);
 
   const healthIssues = useMemo(() => {
-    if (!health) return [];
     const issues = [];
-    if (health.db !== 'connected') {
-      issues.push('Database is NOT configured (SUPABASE_URL + SUPABASE_SERVICE_KEY) — bookings and screenings are only being saved to the on-server fallback file, which is lost on redeploy.');
+    if (health) {
+      if (health.db !== 'connected') {
+        issues.push('Database is NOT configured (SUPABASE_URL + SUPABASE_SERVICE_KEY) — bookings and screenings are only being saved to the on-server fallback file, which is lost on redeploy.');
+      }
+      if (health.notifications !== 'enabled' && health.team_whatsapp !== 'enabled') {
+        issues.push('No lead alerts are configured — new bookings will not email (RESEND_API_KEY + NOTIFY_EMAIL) or WhatsApp (CALLMEBOT_*) anyone. You will only see leads by checking this dashboard.');
+      } else if (health.notifications !== 'enabled') {
+        issues.push('Team email alerts are off (set RESEND_API_KEY + NOTIFY_EMAIL) — lead alerts currently arrive on WhatsApp only.');
+      }
     }
-    if (health.notifications !== 'enabled' && health.team_whatsapp !== 'enabled') {
-      issues.push('No lead alerts are configured — new bookings will not email (RESEND_API_KEY + NOTIFY_EMAIL) or WhatsApp (CALLMEBOT_*) anyone. You will only see leads by checking this dashboard.');
-    } else if (health.notifications !== 'enabled') {
-      issues.push('Team email alerts are off (set RESEND_API_KEY + NOTIFY_EMAIL) — lead alerts currently arrive on WhatsApp only.');
+    const fallbackN = fallbackAppCount || stats?.fallback_applications || 0;
+    if (fallbackN > 0) {
+      issues.push(`${fallbackN} professional application(s) are only in the server fallback file — open Applications and click “Save to database”.`);
     }
     return issues;
-  }, [health]);
+  }, [health, stats, fallbackAppCount]);
 
   const filteredSiteHub = useMemo(() => {
     const q = siteHubFilter.trim().toLowerCase();
@@ -581,6 +588,7 @@ export default function AdminPage() {
     setBookings([]);
     setPrescriptions([]);
     setApps([]);
+    setFallbackAppCount(0);
     setProfessionals([]);
     setJobs([]);
     setMessages([]);
@@ -1125,6 +1133,22 @@ export default function AdminPage() {
       } else {
         load('stats');
       }
+    } catch (e) {
+      setError(e.message);
+    }
+  }
+
+  async function promoteFallbackApp(id) {
+    try {
+      const r = await adminFetch(`/api/professionals/applications/${id}/promote`, secret, {
+        method: 'POST',
+        body: JSON.stringify({}),
+      });
+      setApps((prev) => prev.map((a) => (a.id === id ? r.application : a)));
+      setFallbackAppCount((n) => Math.max(0, n - 1));
+      load('applications');
+      load('stats');
+      window.alert('Saved to the database. You can approve this application now.');
     } catch (e) {
       setError(e.message);
     }
@@ -2458,13 +2482,34 @@ export default function AdminPage() {
         {/* ── APPLICATIONS ── */}
         {tab === 'applications' && (
           <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', gap: 12, flexWrap: 'wrap' }}>
               <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>Professional Applications <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({apps.length})</span></h2>
               <Link to="/professionals/apply" className="btn btn-primary btn-sm">+ Add application</Link>
             </div>
 
+            {(fallbackAppCount > 0 || stats?.fallback_applications > 0) && (
+              <div style={{
+                marginBottom: '1rem',
+                padding: '0.9rem 1rem',
+                borderRadius: 10,
+                background: '#fff3cd',
+                border: '1px solid #ffe69c',
+                color: '#664d03',
+                fontSize: '0.88rem',
+                lineHeight: 1.5,
+              }}>
+                <strong>{fallbackAppCount || stats?.fallback_applications} application(s)</strong> could not be written to <code>professional_applications</code> and were kept in the durable inbox / server fallback.
+                They appear below with a <em>Needs DB save</em> badge. Click <strong>Save to database</strong> before approving.
+                Run the latest SQL in <code>supabase/migrations/</code> (especially the status-history fix and <code>application_inbox</code>) so new applies land in the main table.
+              </div>
+            )}
+
+            <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+              This list is for <strong>/professionals/apply</strong>. Careers form submissions from <Link to="/careers">/careers</Link> appear under <button type="button" onClick={() => setTab('hr')} style={{ background: 'none', border: 'none', padding: 0, color: 'var(--brand-700)', fontWeight: 700, cursor: 'pointer', textDecoration: 'underline' }}>HR / Hiring</button>.
+            </p>
+
             {apps.length === 0 ? (
-              <EmptyState icon="👩‍⚕️" text="No applications yet" />
+              <EmptyState icon="👩‍⚕️" text="No professional applications yet — check HR / Hiring if the person applied via Careers" />
             ) : (
               <div style={{ overflowX: 'auto' }}>
                 <table style={tableStyle}>
@@ -2477,11 +2522,33 @@ export default function AdminPage() {
                   </thead>
                   <tbody>
                     {apps.map((a) => (
-                      <tr key={a.id} style={{ borderBottom: '1px solid var(--border)' }}>
+                      <tr key={a.id} style={{ borderBottom: '1px solid var(--border)', background: a._fallback ? '#fffbeb' : undefined }}>
                         <td style={tdStyle}>
-                          <strong>{a.full_name}</strong><br />
+                          <strong>{a.full_name}</strong>
+                          {a._fallback && (
+                            <span style={{
+                              marginLeft: 8,
+                              display: 'inline-block',
+                              padding: '2px 8px',
+                              borderRadius: 99,
+                              fontSize: '0.68rem',
+                              fontWeight: 800,
+                              background: '#fef3c7',
+                              color: '#92400e',
+                              verticalAlign: 'middle',
+                            }}>
+                              Needs DB save
+                            </span>
+                          )}
+                          <br />
                           <small style={{ color: 'var(--text-muted)' }}>{a.phone}{a.email ? ` · ${a.email}` : ''}</small><br />
                           <small style={{ color: 'var(--text-muted)' }}>{fmt(a.created_at)}</small>
+                          {a._fallback && a._db_error && (
+                            <>
+                              <br />
+                              <small style={{ color: '#92400e' }}>DB error: {a._db_error}</small>
+                            </>
+                          )}
                         </td>
                         <td style={tdStyle}>{a.role_label ?? a.role}</td>
                         <td style={tdStyle}>{a.city || '—'}</td>
@@ -2490,10 +2557,16 @@ export default function AdminPage() {
                         <td style={tdStyle}><Badge status={a.status} /></td>
                         <td style={tdStyle}>
                           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                            {a.status !== 'approved' && <ActionBtn label="Approve" onClick={() => updateAppStatus(a.id, 'approved')} color="#198754" />}
-                            {a.status !== 'rejected' && <ActionBtn label="Reject"  onClick={() => updateAppStatus(a.id, 'rejected')} color="#dc3545" />}
-                            {a.status !== 'pending'  && <ActionBtn label="Reset"   onClick={() => updateAppStatus(a.id, 'pending')}  color="#6c757d" />}
-                            {a.status === 'approved' && a.phone && (() => {
+                            {a._fallback ? (
+                              <ActionBtn label="Save to database" onClick={() => promoteFallbackApp(a.id)} color="#b45309" />
+                            ) : (
+                              <>
+                                {a.status !== 'approved' && <ActionBtn label="Approve" onClick={() => updateAppStatus(a.id, 'approved')} color="#198754" />}
+                                {a.status !== 'rejected' && <ActionBtn label="Reject"  onClick={() => updateAppStatus(a.id, 'rejected')} color="#dc3545" />}
+                                {a.status !== 'pending'  && <ActionBtn label="Reset"   onClick={() => updateAppStatus(a.id, 'pending')}  color="#6c757d" />}
+                              </>
+                            )}
+                            {a.status === 'approved' && !a._fallback && a.phone && (() => {
                               const url = waMeUrlForProfessional(a, waGroupInvite || WA_GROUP_FALLBACK);
                               if (!url) return null;
                               return (

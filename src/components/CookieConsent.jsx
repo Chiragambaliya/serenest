@@ -1,20 +1,39 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-
-const KEY = 'serenest_privacy_consent';
+import {
+  getPrivacyChoice,
+  loadAnalytics,
+  OPEN_PRIVACY_EVENT,
+  setPrivacyChoice,
+} from '../lib/privacyConsent';
 
 export default function CookieConsent() {
   const [visible, setVisible] = useState(false);
+  const dialogRef = useRef(null);
 
   useEffect(() => {
-    if (!localStorage.getItem(KEY)) {
-      const t = setTimeout(() => setVisible(true), 4500);
-      return () => clearTimeout(t);
+    const choice = getPrivacyChoice();
+    if (choice === 'analytics') loadAnalytics();
+
+    let timer;
+    if (!choice) {
+      timer = window.setTimeout(() => setVisible(true), 700);
     }
+
+    const open = () => setVisible(true);
+    window.addEventListener(OPEN_PRIVACY_EVENT, open);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener(OPEN_PRIVACY_EVENT, open);
+    };
   }, []);
 
-  function accept() {
-    localStorage.setItem(KEY, '1');
+  useEffect(() => {
+    if (visible) dialogRef.current?.focus();
+  }, [visible]);
+
+  function choose(choice) {
+    setPrivacyChoice(choice);
     setVisible(false);
   }
 
@@ -22,54 +41,41 @@ export default function CookieConsent() {
 
   return (
     <div
+      ref={dialogRef}
+      className="privacy-banner"
       role="dialog"
-      aria-label="Privacy notice"
+      aria-labelledby="privacy-banner-title"
+      aria-describedby="privacy-banner-description"
       aria-live="polite"
-      style={{
-        position: 'fixed',
-        bottom: '1rem',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: 'calc(100% - 2rem)',
-        maxWidth: 680,
-        background: 'var(--surface, #fff)',
-        border: '1px solid var(--border, #e2e8f0)',
-        borderRadius: 14,
-        boxShadow: '0 8px 32px rgba(0,0,0,0.14)',
-        padding: '1rem 1.25rem',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '1rem',
-        flexWrap: 'wrap',
-        zIndex: 9999,
-        animation: 'slideUp 0.3s ease',
-      }}
+      tabIndex="-1"
     >
-      <style>{`@keyframes slideUp { from { opacity:0; transform:translateX(-50%) translateY(16px); } to { opacity:1; transform:translateX(-50%) translateY(0); } }`}</style>
-      <p style={{ flex: 1, minWidth: 200, margin: 0, fontSize: '0.84rem', color: 'var(--text-muted, #64748b)', lineHeight: 1.5 }}>
-        We use essential cookies to keep your session secure and remember your preferences.
-        No advertising trackers.{' '}
-        <Link to="/privacy" style={{ color: 'var(--brand-600, #4a5e35)', fontWeight: 600 }}>
-          Privacy policy →
-        </Link>
-      </p>
-      <button
-        onClick={accept}
-        style={{
-          flexShrink: 0,
-          padding: '0.5rem 1.25rem',
-          borderRadius: 99,
-          border: 'none',
-          background: 'var(--brand-600, #4a5e35)',
-          color: '#fff',
-          fontWeight: 700,
-          fontSize: '0.84rem',
-          cursor: 'pointer',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        Got it
-      </button>
+      <div className="privacy-banner__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M12 3 5.5 5.7v5.2c0 4.5 2.7 8.1 6.5 10.1 3.8-2 6.5-5.6 6.5-10.1V5.7L12 3Z" />
+          <path d="m9.3 12 1.8 1.8 3.9-4.1" />
+        </svg>
+      </div>
+      <div className="privacy-banner__copy">
+        <p className="privacy-banner__eyebrow">Your privacy, your choice</p>
+        <h2 id="privacy-banner-title">Optional analytics stay off unless you allow them.</h2>
+        <p id="privacy-banner-description">
+          Essential storage keeps sign-in and preferences working. With your permission, privacy-conscious
+          analytics help us understand which pages are useful. We never use advertising trackers or sell
+          health information.
+        </p>
+        <div className="privacy-banner__links">
+          <Link to="/privacy">Privacy policy</Link>
+          <Link to="/cookie-policy">Cookie details</Link>
+        </div>
+      </div>
+      <div className="privacy-banner__actions">
+        <button className="privacy-choice privacy-choice--essential" type="button" onClick={() => choose('essential')}>
+          Essential only
+        </button>
+        <button className="privacy-choice privacy-choice--allow" type="button" onClick={() => choose('analytics')}>
+          Allow analytics
+        </button>
+      </div>
     </div>
   );
 }

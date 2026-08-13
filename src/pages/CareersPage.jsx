@@ -58,8 +58,10 @@ export default function CareersPage() {
           cover_note: `Experience: ${form.experience} years\n\n${form.cover_note}`,
         }),
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || 'Submission failed');
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok || json.ok === false) {
+        throw new Error(json.error || 'Submission failed. Please try again.');
+      }
       setSubmitted(true);
     } catch (err) {
       setError(err.message);
