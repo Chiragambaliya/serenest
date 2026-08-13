@@ -165,6 +165,123 @@ function removeFallbackLeads(ids) {
   }
 }
 
+// contact_messages already exists in production. When application_inbox /
+// job_applications are missing, store the lead there so Admin still sees it
+// after Render restarts — no SQL required.
+const INTERNAL_LEAD_SUBJECT = {
+  professional_application: 'serenest:professional_application',
+  job_application: 'serenest:job_application',
+};
+
+function isInternalLeadSubject(subject) {
+  return String(subject || '').startsWith('serenest:');
+}
+
+function parseLeadMessage(message) {
+  try {
+    return JSON.parse(message || '{}');
+  } catch {
+    return {};
+  }
+}
+
+async function saveContactLead(kind, row, dbError) {
+  if (!supabase) return null;
+  const subject = INTERNAL_LEAD_SUBJECT[kind];
+  if (!subject) return null;
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .insert({
+      name: row.full_name || row.name || 'Applicant',
+      email: row.email || null,
+      phone: row.phone || null,
+      subject,
+      message: JSON.stringify({
+        kind,
+        status: row.status || (kind === 'job_application' ? 'new' : 'pending'),
+        db_error: dbError || null,
+        payload: row,
+      }),
+    })
+    .select()
+    .single();
+  if (error) {
+    console.error('[contact lead] insert failed:', error.message);
+    return null;
+  }
+  return data;
+}
+
+async function listContactLeads(kind) {
+  if (!supabase) return [];
+  const subject = INTERNAL_LEAD_SUBJECT[kind];
+  const { data, error } = await supabase
+    .from('contact_messages')
+    .select('*')
+    .eq('subject', subject)
+    .order('created_at', { ascending: false });
+  if (error) {
+    console.warn('[contact lead] list failed:', error.message);
+    return [];
+  }
+  return (data || []).map((msg) => {
+    const parsed = parseLeadMessage(msg.message);
+    const payload = parsed.payload || {};
+    if (kind === 'professional_application') {
+      return normalizeFallbackApplication({
+        ...payload,
+        id: msg.id,
+        created_at: msg.created_at,
+        status: parsed.status || payload.status || 'pending',
+        full_name: payload.full_name || msg.name,
+        phone: payload.phone || msg.phone,
+        email: payload.email || msg.email,
+        _fallback: true,
+        _inbox: true,
+        _contact: true,
+        _db_error: parsed.db_error || payload._db_error || null,
+      });
+    }
+    return {
+      id: msg.id,
+      created_at: msg.created_at,
+      updated_at: msg.created_at,
+      status: parsed.status || payload.status || 'new',
+      ...payload,
+      full_name: payload.full_name || msg.name,
+      email: payload.email || msg.email,
+      phone: payload.phone || msg.phone,
+      _fallback: true,
+      _contact: true,
+    };
+  });
+}
+
+async function findContactLead(id) {
+  if (!supabase) return null;
+  const { data } = await supabase
+    .from('contact_messages')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+  return data || null;
+}
+
+async function markContactLeadPromoted(id, promotedId) {
+  const msg = await findContactLead(id);
+  if (!msg) return;
+  const parsed = parseLeadMessage(msg.message);
+  parsed.status = 'promoted';
+  parsed.promoted_application_id = promotedId;
+  await supabase
+    .from('contact_messages')
+    .update({
+      subject: `${msg.subject}:promoted`,
+      message: JSON.stringify(parsed),
+    })
+    .eq('id', id);
+}
+
 function normalizeFallbackApplication(row) {
   return {
     id: row.id || `fallback-${row.received_at || Date.now()}`,
@@ -222,32 +339,38 @@ async function saveApplicationInbox(row, dbError) {
     .single();
   if (error) {
     console.error('[application_inbox] insert failed:', error.message);
-    return null;
+    // Table may not exist yet — reuse contact_messages (already in production).
+    return saveContactLead('professional_application', { ...row, status: 'pending' }, dbError);
   }
   return data;
 }
 
 async function listInboxApplications(status) {
   if (!supabase) return [];
-  let query = supabase
+  const { data, error } = await supabase
     .from('application_inbox')
     .select('*')
     .eq('status', 'pending')
     .order('created_at', { ascending: false });
-  const { data, error } = await query;
   if (error) {
     // Table may not exist until migration is applied — don't break admin.
     console.warn('[application_inbox] list failed:', error.message);
-    return [];
   }
-  return (data || [])
-    .map((row) => normalizeFallbackApplication({
-      ...row,
-      _fallback: true,
-      _inbox: true,
-      _db_error: row.db_error,
-    }))
+  const inboxRows = error
+    ? []
+    : (data || [])
+      .map((row) => normalizeFallbackApplication({
+        ...row,
+        _fallback: true,
+        _inbox: true,
+        _db_error: row.db_error,
+      }))
+      .filter((a) => !status || a.status === status);
+
+  const contactRows = (await listContactLeads('professional_application'))
     .filter((a) => !status || a.status === status);
+
+  return [...inboxRows, ...contactRows];
 }
 
 // ── Razorpay (payments) ──────────────────────────────────────
@@ -961,6 +1084,21 @@ app.post('/api/professionals/applications/:id/promote', async (req, res) => {
     }
   }
 
+  if (!fallback && supabase) {
+    const contactRow = await findContactLead(id);
+    if (contactRow && isInternalLeadSubject(contactRow.subject)) {
+      source = 'contact';
+      const parsed = parseLeadMessage(contactRow.message);
+      fallback = {
+        ...(parsed.payload || {}),
+        id: contactRow.id,
+        full_name: parsed.payload?.full_name || contactRow.name,
+        phone: parsed.payload?.phone || contactRow.phone,
+        email: parsed.payload?.email || contactRow.email,
+      };
+    }
+  }
+
   if (!fallback) return err(res, 'Fallback application not found', 404);
 
   const row = {
@@ -996,6 +1134,8 @@ app.post('/api/professionals/applications/:id/promote', async (req, res) => {
       .from('application_inbox')
       .update({ status: 'promoted', promoted_application_id: data.id })
       .eq('id', id);
+  } else if (source === 'contact') {
+    await markContactLeadPromoted(id, data.id);
   } else {
     removeFallbackLeads([id]);
   }
@@ -1507,6 +1647,36 @@ app.post('/api/jobs/apply', async (req, res) => {
 
   if (error) {
     console.error('[POST /api/jobs/apply]', error);
+    const fallbackRow = {
+      full_name: full_name.trim(),
+      email: email.trim(),
+      phone: phone?.trim() || null,
+      city: city?.trim() || null,
+      linkedin_url: linkedin_url?.trim() || null,
+      portfolio_url: portfolio_url?.trim() || null,
+      cover_note: cover_note?.trim() || null,
+      department: department.trim(),
+      role: role.trim(),
+      resume_url: resume_url?.trim() || null,
+      status: 'new',
+    };
+    const contact = await saveContactLead('job_application', fallbackRow, error.message);
+    if (contact) {
+      const application = {
+        id: contact.id,
+        created_at: contact.created_at,
+        ...fallbackRow,
+        _fallback: true,
+        _contact: true,
+      };
+      notify.jobApplication({
+        candidate_name:  application.full_name,
+        candidate_phone: application.phone,
+        candidate_email: application.email,
+        position:        `${application.role} (${application.department})`,
+      });
+      return ok(res, { application, fallback: true }, 201);
+    }
     return err(res, 'Failed to submit application. Please try again.', 500);
   }
 
@@ -1533,8 +1703,22 @@ app.get('/api/jobs/applications', async (req, res) => {
   if (status)     query = query.eq('status', status);
 
   const { data, error } = await query;
-  if (error) return err(res, 'Failed to fetch job applications', 500);
-  return ok(res, { applications: data });
+  const dbApps = error ? [] : (data || []);
+  if (error) console.warn('[GET /api/jobs/applications]', error.message);
+
+  const extras = await listContactLeads('job_application');
+  const seen = new Set(dbApps.map((a) => String(a.id)));
+  const merged = [
+    ...extras.filter((a) => {
+      if (department && a.department !== department) return false;
+      if (status && a.status !== status) return false;
+      if (seen.has(String(a.id))) return false;
+      seen.add(String(a.id));
+      return true;
+    }),
+    ...dbApps,
+  ];
+  return ok(res, { applications: merged });
 });
 
 /** PATCH /api/jobs/applications/:id — update status + HR notes (admin only) */
@@ -1942,11 +2126,13 @@ app.get('/api/admin/stats', async (req, res) => {
   const fileFallbackApps = readFallbackLeads('professional_application');
   let inboxPending = 0;
   if (supabase) {
-    const { count } = await supabase
+    const { count, error: inboxCountError } = await supabase
       .from('application_inbox')
       .select('*', { count: 'exact', head: true })
       .eq('status', 'pending');
-    inboxPending = count ?? 0;
+    if (!inboxCountError) inboxPending = count ?? 0;
+    const contactApps = await listContactLeads('professional_application');
+    inboxPending += contactApps.length;
   }
   const fallbackPending = fileFallbackApps.filter((a) => (a.status || 'pending') === 'pending').length + inboxPending;
 
@@ -1976,7 +2162,9 @@ app.get('/api/contacts', async (req, res) => {
     .order('created_at', { ascending: false });
 
   if (error) return err(res, 'Failed to fetch messages', 500);
-  return ok(res, { messages: data });
+  return ok(res, {
+    messages: (data || []).filter((m) => !isInternalLeadSubject(m.subject)),
+  });
 });
 
 /** DELETE /api/contacts/:id — delete a contact message (admin only) */
