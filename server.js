@@ -282,6 +282,50 @@ async function markContactLeadPromoted(id, promotedId) {
     .eq('id', id);
 }
 
+/** Update a job application in job_applications, or in contact_messages if that's where it lives. */
+async function patchJobApplicationRecord(id, updates) {
+  const { data, error } = await supabase
+    .from('job_applications')
+    .update(updates)
+    .eq('id', id)
+    .select()
+    .single();
+  if (!error && data) return { application: data, error: null };
+
+  const msg = await findContactLead(id);
+  if (!msg || msg.subject !== INTERNAL_LEAD_SUBJECT.job_application) {
+    return { application: null, error: error || { message: 'Application not found' } };
+  }
+  const parsed = parseLeadMessage(msg.message);
+  const payload = { ...(parsed.payload || {}), ...updates };
+  if (updates.status) parsed.status = updates.status;
+  parsed.payload = payload;
+  parsed.status = updates.status || parsed.status || payload.status;
+  const { data: saved, error: saveError } = await supabase
+    .from('contact_messages')
+    .update({ message: JSON.stringify(parsed) })
+    .eq('id', id)
+    .select()
+    .single();
+  if (saveError || !saved) {
+    return { application: null, error: saveError || { message: 'Failed to update application' } };
+  }
+  return {
+    application: {
+      id: saved.id,
+      created_at: saved.created_at,
+      ...payload,
+      status: parsed.status,
+      full_name: payload.full_name || saved.name,
+      email: payload.email || saved.email,
+      phone: payload.phone || saved.phone,
+      _fallback: true,
+      _contact: true,
+    },
+    error: null,
+  };
+}
+
 function normalizeFallbackApplication(row) {
   return {
     id: row.id || `fallback-${row.received_at || Date.now()}`,
@@ -1576,21 +1620,16 @@ app.post('/api/hiring/offer/:applicationId', async (req, res) => {
   const { offer_salary, offer_date, offer_deadline, joining_date } = req.body;
   if (!offer_salary) return err(res, 'offer_salary is required');
 
-  const { data, error } = await supabase
-    .from('job_applications')
-    .update({
-      offer_salary,
-      offer_date: offer_date || new Date().toISOString().split('T')[0],
-      offer_deadline: offer_deadline || null,
-      joining_date: joining_date || null,
-      status: 'hired',
-    })
-    .eq('id', req.params.applicationId)
-    .select()
-    .single();
+  const { application, error } = await patchJobApplicationRecord(req.params.applicationId, {
+    offer_salary,
+    offer_date: offer_date || new Date().toISOString().split('T')[0],
+    offer_deadline: offer_deadline || null,
+    joining_date: joining_date || null,
+    status: 'hired',
+  });
 
-  if (error) return err(res, 'Failed to extend offer', 500);
-  return ok(res, { application: data });
+  if (error || !application) return err(res, 'Failed to extend offer', 500);
+  return ok(res, { application });
 });
 
 /** PATCH /api/hiring/offer/:applicationId/response — accept or decline (admin) */
@@ -1599,18 +1638,13 @@ app.patch('/api/hiring/offer/:applicationId/response', async (req, res) => {
   const { accepted } = req.body;
   if (accepted === undefined) return err(res, 'accepted (boolean) is required');
 
-  const { data, error } = await supabase
-    .from('job_applications')
-    .update({
-      offer_accepted: accepted,
-      status: accepted ? 'hired' : 'rejected',
-    })
-    .eq('id', req.params.applicationId)
-    .select()
-    .single();
+  const { application, error } = await patchJobApplicationRecord(req.params.applicationId, {
+    offer_accepted: accepted,
+    status: accepted ? 'hired' : 'rejected',
+  });
 
-  if (error) return err(res, 'Failed to record offer response', 500);
-  return ok(res, { application: data });
+  if (error || !application) return err(res, 'Failed to record offer response', 500);
+  return ok(res, { application });
 });
 
 /** POST /api/hiring/reject/:applicationId — reject with reason (admin only) */
@@ -1618,15 +1652,13 @@ app.post('/api/hiring/reject/:applicationId', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;
   const { rejection_reason } = req.body;
 
-  const { data, error } = await supabase
-    .from('job_applications')
-    .update({ status: 'rejected', rejection_reason: rejection_reason?.trim() || null })
-    .eq('id', req.params.applicationId)
-    .select()
-    .single();
+  const { application, error } = await patchJobApplicationRecord(req.params.applicationId, {
+    status: 'rejected',
+    rejection_reason: rejection_reason?.trim() || null,
+  });
 
-  if (error) return err(res, 'Failed to reject application', 500);
-  return ok(res, { application: data });
+  if (error || !application) return err(res, 'Failed to reject application', 500);
+  return ok(res, { application });
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -1757,15 +1789,11 @@ app.patch('/api/jobs/applications/:id', async (req, res) => {
   if (status)   updates.status   = status;
   if (hr_notes !== undefined) updates.hr_notes = hr_notes;
 
-  const { data, error } = await supabase
-    .from('job_applications')
-    .update(updates)
-    .eq('id', req.params.id)
-    .select()
-    .single();
+  if (!Object.keys(updates).length) return err(res, 'No updatable fields');
 
-  if (error) return err(res, 'Failed to update application', 500);
-  return ok(res, { application: data });
+  const { application, error } = await patchJobApplicationRecord(req.params.id, updates);
+  if (error || !application) return err(res, 'Failed to update application', 500);
+  return ok(res, { application });
 });
 
 // ══════════════════════════════════════════════════════════════

@@ -67,7 +67,12 @@ function Badge({ status }) {
     completed: { bg: '#cfe2ff', color: '#084298' },
     cancelled: { bg: '#f8d7da', color: '#842029' },
     approved:  { bg: '#d1e7dd', color: '#0a3622' },
+    hired:     { bg: '#d1e7dd', color: '#0a3622' },
     rejected:  { bg: '#f8d7da', color: '#842029' },
+    new:       { bg: '#cfe2ff', color: '#084298' },
+    reviewing: { bg: '#e7e0f8', color: '#5b2a86' },
+    shortlisted: { bg: '#fff3cd', color: '#856404' },
+    interviewing: { bg: '#ffe5d0', color: '#9a3412' },
   };
   const s = map[status] ?? { bg: '#e9ecef', color: '#495057' };
   return (
@@ -80,7 +85,7 @@ function Badge({ status }) {
       textTransform: 'capitalize',
       background: s.bg,
       color: s.color,
-    }}>{status}</span>
+    }}>{status === 'hired' ? 'accepted' : status}</span>
   );
 }
 
@@ -699,6 +704,16 @@ export default function AdminPage() {
         method: 'POST', body: JSON.stringify({ rejection_reason: reason }),
       });
       setJobs((p) => p.map((j) => j.id === applicationId ? { ...j, status: 'rejected', rejection_reason: reason } : j));
+    } catch (e) { setError(e.message); }
+  }
+
+  async function recordOfferResponse(applicationId, accepted) {
+    try {
+      const r = await adminFetch(`/api/hiring/offer/${applicationId}/response`, secret, {
+        method: 'PATCH', body: JSON.stringify({ accepted }),
+      });
+      setJobs((p) => p.map((j) => j.id === applicationId ? (r.application || { ...j, offer_accepted: accepted, status: accepted ? 'hired' : 'rejected' }) : j));
+      load('stats');
     } catch (e) { setError(e.message); }
   }
 
@@ -2714,6 +2729,12 @@ export default function AdminPage() {
                               {j.joining_date   && <span style={{ marginLeft:8, color:'#0a3622' }}>Joining: {fmtDate(j.joining_date)}</span>}
                               {j.offer_accepted === true  && <span style={{ marginLeft:8, fontWeight:700, color:'#198754' }}>✓ Accepted</span>}
                               {j.offer_accepted === false && <span style={{ marginLeft:8, fontWeight:700, color:'#dc3545' }}>✗ Declined</span>}
+                              {j.offer_salary && j.offer_accepted !== true && j.offer_accepted !== false && (
+                                <span style={{ marginLeft:8, display:'inline-flex', gap:6 }}>
+                                  <ActionBtn label="Accepted" onClick={() => recordOfferResponse(j.id, true)} color="#198754" />
+                                  <ActionBtn label="Declined" onClick={() => recordOfferResponse(j.id, false)} color="#dc3545" />
+                                </span>
+                              )}
                             </div>
                           )}
 
@@ -2732,11 +2753,13 @@ export default function AdminPage() {
 
                           {/* Actions */}
                           <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
-                            {j.status !== 'reviewing'   && <ActionBtn label="Reviewing"   onClick={() => updateJobStatus(j.id,'reviewing')}   color="#6f42c1" />}
-                            {j.status !== 'shortlisted' && <ActionBtn label="Shortlist"   onClick={() => updateJobStatus(j.id,'shortlisted')} color="#e67e22" />}
-                            <ActionBtn label="+ Interview" onClick={() => setScheduleFor(j)} color="#fd7e14" />
-                            {j.status !== 'hired' && !j.offer_salary && <ActionBtn label="Extend Offer" onClick={() => setOfferFor(j)} color="#198754" />}
-                            {j.status !== 'rejected' && <ActionBtn label="Reject" onClick={() => { const r = prompt('Rejection reason (optional):'); rejectWithReason(j.id, r ?? ''); }} color="#dc3545" />}
+                            {j.status !== 'hired' && <ActionBtn label="Accept" onClick={() => updateJobStatus(j.id,'hired')} color="#198754" />}
+                            {j.status !== 'reviewing'   && j.status !== 'hired' && <ActionBtn label="Reviewing"   onClick={() => updateJobStatus(j.id,'reviewing')}   color="#6f42c1" />}
+                            {j.status !== 'shortlisted' && j.status !== 'hired' && <ActionBtn label="Shortlist"   onClick={() => updateJobStatus(j.id,'shortlisted')} color="#e67e22" />}
+                            {j.status !== 'hired' && <ActionBtn label="+ Interview" onClick={() => setScheduleFor(j)} color="#fd7e14" />}
+                            {j.status !== 'hired' && !j.offer_salary && <ActionBtn label="Extend Offer" onClick={() => setOfferFor(j)} color="#0f766e" />}
+                            {j.status !== 'rejected' && j.status !== 'hired' && <ActionBtn label="Reject" onClick={() => { const r = prompt('Rejection reason (optional):'); rejectWithReason(j.id, r ?? ''); }} color="#dc3545" />}
+                            {j.status === 'hired' && <span style={{ fontSize:'0.82rem', fontWeight:700, color:'#198754', alignSelf:'center' }}>✓ Accepted</span>}
                           </div>
                         </div>
                       );
