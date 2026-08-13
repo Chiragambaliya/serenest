@@ -604,13 +604,18 @@ app.get('/api/screening', async (req, res) => {
  * POST /api/professionals/apply
  * Submit a professional onboarding application.
  */
+// Recorded verbatim as consent evidence. Keep in sync with the checkbox label
+// in src/pages/ProfessionalOnboardingPage.jsx.
+const CONSENT_STATEMENT =
+  'I confirm the information is accurate and I consent to credential verification.';
+
 app.post('/api/professionals/apply', async (req, res) => {
   if (!requireDb(res)) return;
 
   const {
     role, role_label, full_name, phone, email, social_handle,
     registration, degree, city, languages, specialities,
-    fee_inr, duration_min, modes, availability,
+    fee_inr, duration_min, modes, availability, consent,
   } = req.body;
 
   if (!role?.trim())      return err(res, 'role is required');
@@ -644,12 +649,28 @@ app.post('/api/professionals/apply', async (req, res) => {
     duration_min: duration_min ? Number(duration_min) : null,
     modes: modes || null,
     availability: availability?.trim() || null,
+    // The apply form gates submission on a consent checkbox, but until now it
+    // was never persisted. enforce_listing_consent() refuses to approve any
+    // application without consent_confirmed_at, so an unrecorded tick left
+    // every application permanently stuck at 'pending'.
+    ...(consent === true
+      ? {
+          consent_confirmed_at: new Date().toISOString(),
+          consent_method: 'web_form_checkbox',
+          consent_evidence: CONSENT_STATEMENT,
+          consent_credential_check: true,
+        }
+      : {}),
     status: 'pending',
   };
 
   // Drop unknown/legacy columns one at a time and retry. This keeps apply
   // working across partially-migrated production schemas.
   const optionalDropOrder = [
+    'consent_confirmed_at',
+    'consent_method',
+    'consent_evidence',
+    'consent_credential_check',
     'social_handle',
     'medical_council_number',
     'consultation_fee',

@@ -117,6 +117,9 @@ export default function ProfessionalOnboardingPage() {
       .filter(Boolean)
       .join(', '),
     availability: availability.trim() || null,
+    // Submit is gated on this checkbox; the server records it as consent
+    // evidence, without which an application can never be approved.
+    consent,
     status: 'pending',
   };
 
