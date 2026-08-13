@@ -2498,9 +2498,8 @@ export default function AdminPage() {
                 fontSize: '0.88rem',
                 lineHeight: 1.5,
               }}>
-                <strong>{fallbackAppCount || stats?.fallback_applications} application(s)</strong> could not be written to <code>professional_applications</code> and were kept in the durable inbox / server fallback.
+                <strong>{fallbackAppCount || stats?.fallback_applications} application(s)</strong> could not be written to <code>professional_applications</code> and were kept in the durable inbox.
                 They appear below with a <em>Needs DB save</em> badge. Click <strong>Save to database</strong> before approving.
-                Run the latest SQL in <code>supabase/migrations/</code> (especially the status-history fix and <code>application_inbox</code>) so new applies land in the main table.
               </div>
             )}
 
