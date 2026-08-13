@@ -31,8 +31,38 @@ const PATHS = [
   },
   {
     persona: 'Students and early-career professionals',
-    note: 'Foundations, then supervised application.',
-    programs: byslug('student-training', 'certificate-programs', 'mentorship'),
+    note: 'Full student pathway: flagship training, then focused skills, then placement and mentorship.',
+    programs: byslug(
+      'student-training',
+      'student-assessment-skills',
+      'student-case-formulation',
+      'student-ethics-practice',
+      'student-internship-prep',
+      'counselling-skills',
+      'certificate-programs',
+      'mentorship',
+    ),
+  },
+  {
+    persona: 'Undergraduate psychology students',
+    note: 'Start with foundations, then assessment and ethics before internship.',
+    programs: byslug(
+      'student-training',
+      'student-assessment-skills',
+      'student-ethics-practice',
+      'student-internship-prep',
+    ),
+  },
+  {
+    persona: 'Postgraduate & internship-bound students',
+    note: 'Formulation depth, placement prep, then counselling skills and mentorship.',
+    programs: byslug(
+      'student-training',
+      'student-case-formulation',
+      'student-internship-prep',
+      'counselling-skills',
+      'mentorship',
+    ),
   },
   {
     persona: 'Addiction professionals',
@@ -41,7 +71,16 @@ const PATHS = [
   },
 ];
 
-const STAGE_LABELS = ['Foundation', 'Core practice', 'Applied skills', 'Advanced'];
+const STAGE_LABELS = [
+  'Foundation',
+  'Assessment',
+  'Formulation',
+  'Ethics',
+  'Placement',
+  'Skills',
+  'Credential',
+  'Supervision',
+];
 
 export default function AcademyLearningPathsPage() {
   useSEO({
