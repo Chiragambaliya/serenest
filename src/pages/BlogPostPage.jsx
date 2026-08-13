@@ -3,8 +3,6 @@ import { Link, useParams } from 'react-router-dom';
 
 import { BLOG_POSTS } from '../lib/blogPosts';
 import { useSEO } from '../lib/useSEO';
-import { SITE_ORIGIN } from '../lib/seo';
-import SocialShare from '../components/SocialShare';
 
 export default function BlogPostPage() {
   const { slug } = useParams();
@@ -73,12 +71,6 @@ export default function BlogPostPage() {
               </p>
             ))}
           </article>
-
-          <SocialShare
-            url={`${SITE_ORIGIN}/blog/${post.slug}`}
-            title={post.title}
-            excerpt={post.excerpt}
-          />
 
           <div className="cta about-cta" style={{ marginTop: 16 }}>
             <div>

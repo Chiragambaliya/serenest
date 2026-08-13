@@ -398,10 +398,12 @@ export const notify = {
         row('Email',          esc(p.email)),
         row('Registration #', esc(p.registration)),
         row('Qualification',  esc(p.degree)),
-        row('Social',         p.social_handle ? `@${esc(p.social_handle)}` : ''),
         row('City',           esc(p.city)),
         row('Fee / duration', p.fee_inr ? `₹${esc(p.fee_inr)} / ${esc(p.duration_min || 45)} min` : ''),
         row('Modes',          esc(p.modes)),
+        row('Policies',       p.policies_accepted_at
+          ? `Accepted ${esc(p.policies_accepted_at)} (Terms, Code of Conduct, Guidelines, Privacy, Community)`
+          : 'Accepted at submit'),
       ])}
       ${callouts({ phone: p.phone, email: p.email })}
       <p style="margin:12px 0 0;color:#64748b;font-size:13px">Review this application in <a href="https://serenest.in/admin" style="color:#0f766e;font-weight:600">Admin → Applications</a>.</p>
@@ -416,6 +418,7 @@ export const notify = {
       const confirmHtml = `
         <p style="font-size:16px;margin:0 0 12px">Hi <strong>${esc(p.full_name.split(' ')[0])}</strong>,</p>
         <p style="margin:0 0 12px">We received your application to join Serenest as a <strong>${esc(roleLabel)}</strong>. Our team will verify your credentials and reach out within <strong>1–2 business days</strong>.</p>
+        <p style="margin:0 0 12px">By applying, you agreed to our Professional Terms, Code of Conduct, Guidelines, Privacy Policy, and Community Guidelines. Please keep practising to those standards once you join.</p>
         <p style="margin:0 0 12px">If you have any questions in the meantime, you can reply to this email or WhatsApp us at <strong>+91 77779 36367</strong>.</p>
         <p style="margin:0;color:#64748b;font-size:13px">— The Serenest team</p>
       `;
@@ -496,6 +499,9 @@ export const notify = {
         row('Phone',      fmtPhone(j.candidate_phone)),
         row('Email',      esc(j.candidate_email)),
         row('Experience', j.experience_years ? `${esc(j.experience_years)} years` : ''),
+        row('Policies',   j.policies_accepted_at
+          ? `Accepted ${esc(j.policies_accepted_at)} (Terms, Code of Conduct, Guidelines, Privacy, Community)`
+          : 'Accepted at submit'),
       ])}
       ${callouts({ phone: j.candidate_phone, email: j.candidate_email })}
       <p style="margin:12px 0 0;color:#64748b;font-size:13px">Review this candidate in <a href="https://serenest.in/admin" style="color:#0f766e;font-weight:600">Admin → HR / Hiring</a>.</p>
@@ -504,6 +510,47 @@ export const notify = {
     fire(sendTeamWhatsApp(
       `Serenest — Job application\n${j.candidate_name} · ${j.position}\n+91 ${String(j.candidate_phone || '').replace(/\D/g, '')}`,
     ));
+
+    if (j.candidate_email?.trim()) {
+      const first = esc((j.candidate_name || 'there').trim().split(/\s+/)[0]);
+      fire(sendPatientEmail({
+        subject: 'Your Serenest application has been accepted',
+        html:
+          `<p style="margin:0 0 12px">Hi <strong>${first}</strong>,</p>`
+          + `<p style="margin:0 0 12px">Your application for <strong>${esc(j.position)}</strong> has been <strong>accepted</strong>. Our team has received it and will review your credentials within <strong>48 hours</strong>.</p>`
+          + `<p style="margin:0 0 12px">By applying, you agreed to our Professional Terms, Code of Conduct, Guidelines, Privacy Policy, and Community Guidelines.</p>`
+          + `<p style="margin:0 0 12px">Questions? WhatsApp <strong>+91 77779 36367</strong> or reply to this email.</p>`
+          + `<p style="margin:0;color:#64748b;font-size:13px">— The Serenest team</p>`,
+        to: j.candidate_email.trim(),
+      }));
+    }
+  },
+
+  /**
+   * After admin accepts (hires) an HR candidate.
+   */
+  jobAccepted(j) {
+    const name = j.full_name || j.candidate_name || 'there';
+    const first = esc(String(name).trim().split(/\s+/)[0] || 'there');
+    const role = j.role || j.position || 'this role';
+    const dept = j.department ? ` (${j.department})` : '';
+    const to = (j.email || j.candidate_email || '').trim();
+
+    fire(sendTeamWhatsApp(
+      `Serenest — HR accepted\n${name} · ${role}${dept}\n+91 ${String(j.phone || j.candidate_phone || '').replace(/\D/g, '')}`,
+    ));
+
+    if (!to) return;
+    fire(sendPatientEmail({
+      subject: 'You have been accepted at Serenest',
+      html:
+        `<p style="margin:0 0 12px">Hi <strong>${first}</strong>,</p>`
+        + `<p style="margin:0 0 12px">Good news — you have been <strong>accepted</strong> to join Serenest as a <strong>${esc(role)}</strong>${esc(dept)}.</p>`
+        + `<p style="margin:0 0 12px">Our team will share next steps (onboarding, schedule, and the SERENEST WhatsApp group) shortly. Please keep practising to our Professional Terms, Code of Conduct, and Guidelines.</p>`
+        + `<p style="margin:0 0 12px">Questions? WhatsApp <a href="https://wa.me/917777936367" style="color:#0f766e">+91 77779 36367</a>.</p>`
+        + `<p style="margin:0;color:#64748b;font-size:13px">— The Serenest team</p>`,
+      to,
+    }));
   },
 
   signup(s) {

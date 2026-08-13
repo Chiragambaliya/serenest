@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 
 const ROLES = [
@@ -27,8 +28,9 @@ export default function CareersPage() {
 
   const [form, setForm] = useState({
     full_name: '', email: '', phone: '', city: '',
-    role: '', experience: '', linkedin_url: '', cover_note: '',
+    role: '', experience: '', cover_note: '',
   });
+  const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
@@ -41,11 +43,16 @@ export default function CareersPage() {
     form.full_name.trim().length >= 2 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
     form.role &&
-    form.cover_note.trim().length >= 20;
+    form.cover_note.trim().length >= 20 &&
+    consent;
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (!isValid || submitting) return;
+    if (!consent) {
+      setError('Please confirm you agree to join Serenest and follow all rules and policies.');
+      return;
+    }
     setSubmitting(true);
     setError(null);
     try {
@@ -56,6 +63,8 @@ export default function CareersPage() {
           ...form,
           department: 'Clinical',
           cover_note: `Experience: ${form.experience} years\n\n${form.cover_note}`,
+          policies_accepted: true,
+          policies_accepted_at: new Date().toISOString(),
         }),
       });
       const json = await res.json();
@@ -129,9 +138,10 @@ export default function CareersPage() {
               border: '1px solid #bbf7d0', boxShadow: '0 4px 24px rgba(34,197,94,0.08)',
             }}>
               <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎉</div>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: 8 }}>Application received!</h3>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: 8 }}>Application accepted</h3>
               <p style={{ color: 'var(--text-muted)', lineHeight: 1.6 }}>
-                Thank you, <strong>{form.full_name.split(' ')[0]}</strong>. Our team will review your application and reach out within 48 hours on <strong>{form.email}</strong>.
+                Thank you, <strong>{form.full_name.split(' ')[0]}</strong>. Your application has been accepted.
+                Our team will review it and reach out within 48 hours on <strong>{form.email}</strong>.
               </p>
             </div>
           ) : (
@@ -178,10 +188,6 @@ export default function CareersPage() {
                 </select>
               </Field>
 
-              <Field label="LinkedIn profile URL">
-                <input type="url" value={form.linkedin_url} onChange={set('linkedin_url')} placeholder="https://linkedin.com/in/your-profile" style={inputStyle} />
-              </Field>
-
               <Field label="Tell us about yourself & why Serenest *">
                 <textarea
                   value={form.cover_note}
@@ -193,6 +199,39 @@ export default function CareersPage() {
                 />
                 <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 4 }}>Min 20 characters</span>
               </Field>
+
+              <label className="consent">
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  required
+                />
+                <span>
+                  I confirm the information is accurate, I consent to being contacted about this role, and by
+                  joining Serenest I agree to follow the{' '}
+                  <Link to="/professionals/terms" target="_blank" rel="noreferrer">
+                    Professional Terms
+                  </Link>
+                  ,{' '}
+                  <Link to="/professionals/code-of-conduct" target="_blank" rel="noreferrer">
+                    Code of Conduct
+                  </Link>
+                  ,{' '}
+                  <Link to="/professionals/guidelines" target="_blank" rel="noreferrer">
+                    Guidelines
+                  </Link>
+                  ,{' '}
+                  <Link to="/privacy" target="_blank" rel="noreferrer">
+                    Privacy Policy
+                  </Link>
+                  , and{' '}
+                  <Link to="/community-guidelines" target="_blank" rel="noreferrer">
+                    Community Guidelines
+                  </Link>
+                  .
+                </span>
+              </label>
 
               {error && (
                 <p style={{ color: '#dc2626', fontSize: '0.85rem', margin: 0 }}>⚠ {error}</p>
@@ -206,10 +245,6 @@ export default function CareersPage() {
               >
                 {submitting ? 'Submitting…' : 'Submit application →'}
               </button>
-
-              <p style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0 }}>
-                By submitting you agree to us contacting you about this role. We don't spam.
-              </p>
             </form>
           )}
         </div>

@@ -23,7 +23,6 @@ export default function ProfessionalOnboardingPage() {
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [socialHandle, setSocialHandle] = useState('');
   const [registration, setRegistration] = useState('');
   const [degree, setDegree] = useState('');
 
@@ -88,7 +87,7 @@ export default function ProfessionalOnboardingPage() {
       return;
     }
     if (!consent) {
-      setStep2Error('Please tick the consent checkbox to submit.');
+      setStep2Error('Please confirm you agree to join Serenest and follow all rules and policies.');
       return;
     }
     setStep2Error('');
@@ -104,7 +103,6 @@ export default function ProfessionalOnboardingPage() {
     full_name: fullName.trim(),
     phone: phoneClean,
     email: email.trim() || null,
-    social_handle: socialHandle.trim() || null,
     registration: registration.trim() || null,
     degree: degree.trim() || null,
     city: city.trim() || null,
@@ -118,6 +116,8 @@ export default function ProfessionalOnboardingPage() {
       .join(', '),
     availability: availability.trim() || null,
     status: 'pending',
+    policies_accepted: true,
+    policies_accepted_at: new Date().toISOString(),
   };
 
   async function handleSubmit() {
@@ -298,21 +298,6 @@ export default function ProfessionalOnboardingPage() {
                     />
                   </label>
 
-                  <label className="field">
-                    <span className="field-label">Instagram / LinkedIn handle (optional)</span>
-                    <div className="input-row">
-                      <span className="input-prefix">@</span>
-                      <input
-                        className="input"
-                        value={socialHandle}
-                        onChange={(e) => setSocialHandle(e.target.value.replace(/^@/, ''))}
-                        placeholder="yourhandle"
-                        autoComplete="off"
-                      />
-                    </div>
-                    <span className="field-hint">Helps us feature and collaborate with you on our channels.</span>
-                  </label>
-
                   <label className="field field-wide">
                     <span className="field-label">Registration / License number</span>
                     <input
@@ -441,8 +426,36 @@ export default function ProfessionalOnboardingPage() {
                   </label>
 
                   <label className="consent">
-                    <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                    <span>I confirm the information is accurate and I consent to credential verification.</span>
+                    <input
+                      type="checkbox"
+                      checked={consent}
+                      onChange={(e) => setConsent(e.target.checked)}
+                      required
+                    />
+                    <span>
+                      I confirm the information is accurate, I consent to credential verification, and by joining
+                      Serenest I agree to follow the{' '}
+                      <Link to="/professionals/terms" target="_blank" rel="noreferrer">
+                        Professional Terms
+                      </Link>
+                      ,{' '}
+                      <Link to="/professionals/code-of-conduct" target="_blank" rel="noreferrer">
+                        Code of Conduct
+                      </Link>
+                      ,{' '}
+                      <Link to="/professionals/guidelines" target="_blank" rel="noreferrer">
+                        Guidelines
+                      </Link>
+                      ,{' '}
+                      <Link to="/privacy" target="_blank" rel="noreferrer">
+                        Privacy Policy
+                      </Link>
+                      , and{' '}
+                      <Link to="/community-guidelines" target="_blank" rel="noreferrer">
+                        Community Guidelines
+                      </Link>
+                      .
+                    </span>
                   </label>
                 </div>
 
