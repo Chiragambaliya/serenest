@@ -1285,43 +1285,99 @@ app.post('/api/jobs/apply', async (req, res) => {
 
   const {
     full_name, email, phone, city,
-    linkedin_url, portfolio_url, cover_note,
+    portfolio_url, cover_note,
     department, role, resume_url,
+    policies_accepted, policies_accepted_at,
   } = req.body;
 
   if (!full_name?.trim()) return err(res, 'full_name is required');
   if (!email?.trim())     return err(res, 'email is required');
   if (!department?.trim()) return err(res, 'department is required');
   if (!role?.trim())       return err(res, 'role is required');
+  if (policies_accepted !== true && policies_accepted !== 'true' && policies_accepted !== 1) {
+    return err(res, 'You must agree to join Serenest and follow all rules and policies');
+  }
 
-  const { data, error } = await supabase
-    .from('job_applications')
-    .insert({
-      full_name: full_name.trim(),
-      email: email.trim(),
-      phone: phone?.trim() || null,
-      city: city?.trim() || null,
-      linkedin_url: linkedin_url?.trim() || null,
-      portfolio_url: portfolio_url?.trim() || null,
-      cover_note: cover_note?.trim() || null,
-      department: department.trim(),
-      role: role.trim(),
-      resume_url: resume_url?.trim() || null,
-      status: 'new',
-    })
-    .select()
-    .single();
+  const acceptedAt = (() => {
+    const raw = policies_accepted_at ? new Date(policies_accepted_at) : new Date();
+    return Number.isNaN(raw.getTime()) ? new Date().toISOString() : raw.toISOString();
+  })();
+
+  const row = {
+    full_name: full_name.trim(),
+    email: email.trim(),
+    phone: phone?.trim() || null,
+    city: city?.trim() || null,
+    portfolio_url: portfolio_url?.trim() || null,
+    cover_note: cover_note?.trim() || null,
+    department: department.trim(),
+    role: role.trim(),
+    resume_url: resume_url?.trim() || null,
+    status: 'new',
+    policies_accepted_at: acceptedAt,
+  };
+
+  let attempt = { ...row };
+  let data = null;
+  let error = null;
+
+  ({ data, error } = await supabase.from('job_applications').insert(attempt).select().single());
+  if (error && /policies_accepted_at/i.test(`${error.message || ''} ${error.details || ''}`)) {
+    const { policies_accepted_at: _omit, ...rest } = attempt;
+    attempt = rest;
+    ({ data, error } = await supabase.from('job_applications').insert(attempt).select().single());
+  }
 
   if (error) {
     console.error('[POST /api/jobs/apply]', error);
-    return err(res, 'Failed to submit application. Please try again.', 500);
+    const fallback = {
+      id: `fallback-${Date.now()}`,
+      ...row,
+      created_at: new Date().toISOString(),
+      _fallback: true,
+      _db_error: error.message || 'insert failed',
+    };
+    captureFallbackLead('job_application', fallback);
+    try {
+      await supabase.from('contact_messages').insert({
+        name: row.full_name,
+        email: row.email,
+        phone: row.phone,
+        subject: `HR application — ${row.role} (${row.department})`,
+        message: [
+          'Job application (DB insert blocked; accepted via fallback).',
+          `Role: ${row.role}`,
+          `Department: ${row.department}`,
+          `Name: ${row.full_name}`,
+          `Phone: ${row.phone || '—'}`,
+          `Email: ${row.email}`,
+          `City: ${row.city || '—'}`,
+          `Cover note: ${row.cover_note || '—'}`,
+          `Policies accepted at: ${row.policies_accepted_at}`,
+          `DB error: ${error.message || 'insert failed'}`,
+        ].join('\n'),
+      });
+    } catch (inboxErr) {
+      console.warn('[POST /api/jobs/apply] inbox backup failed', inboxErr.message);
+    }
+    notify.jobApplication({
+      candidate_name:  row.full_name,
+      candidate_phone: row.phone,
+      candidate_email: row.email,
+      position:        `${row.role} (${row.department})`,
+      policies_accepted_at: row.policies_accepted_at,
+    });
+    res.setHeader('X-Serenest-Jobs-Apply', 'fallback');
+    return ok(res, { application: fallback, fallback: true }, 201);
   }
 
+  res.setHeader('X-Serenest-Jobs-Apply', 'db');
   notify.jobApplication({
     candidate_name:  data.full_name,
     candidate_phone: data.phone,
     candidate_email: data.email,
     position:        `${data.role} (${data.department})`,
+    policies_accepted_at: data.policies_accepted_at || acceptedAt,
   });
   return ok(res, { application: data }, 201);
 });

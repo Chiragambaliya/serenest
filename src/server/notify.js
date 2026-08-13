@@ -499,6 +499,9 @@ export const notify = {
         row('Phone',      fmtPhone(j.candidate_phone)),
         row('Email',      esc(j.candidate_email)),
         row('Experience', j.experience_years ? `${esc(j.experience_years)} years` : ''),
+        row('Policies',   j.policies_accepted_at
+          ? `Accepted ${esc(j.policies_accepted_at)} (Terms, Code of Conduct, Guidelines, Privacy, Community)`
+          : 'Accepted at submit'),
       ])}
       ${callouts({ phone: j.candidate_phone, email: j.candidate_email })}
       <p style="margin:12px 0 0;color:#64748b;font-size:13px">Review this candidate in <a href="https://serenest.in/admin" style="color:#0f766e;font-weight:600">Admin → HR / Hiring</a>.</p>

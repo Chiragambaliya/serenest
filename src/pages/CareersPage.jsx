@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 
 const ROLES = [
@@ -29,6 +30,7 @@ export default function CareersPage() {
     full_name: '', email: '', phone: '', city: '',
     role: '', experience: '', cover_note: '',
   });
+  const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState(null);
@@ -41,11 +43,16 @@ export default function CareersPage() {
     form.full_name.trim().length >= 2 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email) &&
     form.role &&
-    form.cover_note.trim().length >= 20;
+    form.cover_note.trim().length >= 20 &&
+    consent;
 
   async function handleSubmit(e) {
     e.preventDefault();
     if (!isValid || submitting) return;
+    if (!consent) {
+      setError('Please confirm you agree to join Serenest and follow all rules and policies.');
+      return;
+    }
     setSubmitting(true);
     setError(null);
     try {
@@ -56,6 +63,8 @@ export default function CareersPage() {
           ...form,
           department: 'Clinical',
           cover_note: `Experience: ${form.experience} years\n\n${form.cover_note}`,
+          policies_accepted: true,
+          policies_accepted_at: new Date().toISOString(),
         }),
       });
       const json = await res.json();
@@ -190,6 +199,39 @@ export default function CareersPage() {
                 <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: 4 }}>Min 20 characters</span>
               </Field>
 
+              <label className="consent">
+                <input
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                  required
+                />
+                <span>
+                  I confirm the information is accurate, I consent to being contacted about this role, and by
+                  joining Serenest I agree to follow the{' '}
+                  <Link to="/professionals/terms" target="_blank" rel="noreferrer">
+                    Professional Terms
+                  </Link>
+                  ,{' '}
+                  <Link to="/professionals/code-of-conduct" target="_blank" rel="noreferrer">
+                    Code of Conduct
+                  </Link>
+                  ,{' '}
+                  <Link to="/professionals/guidelines" target="_blank" rel="noreferrer">
+                    Guidelines
+                  </Link>
+                  ,{' '}
+                  <Link to="/privacy" target="_blank" rel="noreferrer">
+                    Privacy Policy
+                  </Link>
+                  , and{' '}
+                  <Link to="/community-guidelines" target="_blank" rel="noreferrer">
+                    Community Guidelines
+                  </Link>
+                  .
+                </span>
+              </label>
+
               {error && (
                 <p style={{ color: '#dc2626', fontSize: '0.85rem', margin: 0 }}>⚠ {error}</p>
               )}
@@ -202,10 +244,6 @@ export default function CareersPage() {
               >
                 {submitting ? 'Submitting…' : 'Submit application →'}
               </button>
-
-              <p style={{ textAlign: 'center', fontSize: '0.78rem', color: 'var(--text-muted)', margin: 0 }}>
-                By submitting you agree to us contacting you about this role. We don't spam.
-              </p>
             </form>
           )}
         </div>

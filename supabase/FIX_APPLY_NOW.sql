@@ -89,6 +89,9 @@ create trigger trg_professional_application_status_history
 alter table public.professional_applications
   add column if not exists policies_accepted_at timestamptz;
 
+alter table public.job_applications
+  add column if not exists policies_accepted_at timestamptz;
+
 -- Smoke test (safe rollback)
 do $$
 declare

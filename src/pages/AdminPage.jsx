@@ -2564,9 +2564,13 @@ export default function AdminPage() {
                             <span style={{ fontWeight:700, color:'var(--brand-600)' }}>{j.department}</span>
                             <span style={{ color:'var(--text-muted)', margin:'0 6px' }}>›</span>
                             <span>{j.role}</span>
-                            {j.linkedin_url  && <a href={j.linkedin_url}  target="_blank" rel="noreferrer" style={{ marginLeft:12, color:'#0077b5', fontSize:'0.82rem' }}>LinkedIn ↗</a>}
                             {j.portfolio_url && <a href={j.portfolio_url} target="_blank" rel="noreferrer" style={{ marginLeft:8, color:'var(--brand-600)', fontSize:'0.82rem' }}>Portfolio ↗</a>}
                             {j.resume_url    && <a href={j.resume_url}    target="_blank" rel="noreferrer" style={{ marginLeft:8, color:'#6f42c1', fontSize:'0.82rem' }}>Resume ↗</a>}
+                            {j.policies_accepted_at && (
+                              <span style={{ marginLeft:12, fontSize:'0.78rem', color:'#0a3622' }}>
+                                Policies accepted {fmt(j.policies_accepted_at)}
+                              </span>
+                            )}
                           </div>
 
                           {j.cover_note && <p style={{ margin:'0 0 10px', fontSize:'0.85rem', lineHeight:1.6, background:'var(--bg-subtle,#f8f9fa)', borderRadius:6, padding:'8px 10px' }}>{j.cover_note}</p>}
