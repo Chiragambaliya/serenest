@@ -138,9 +138,10 @@ export default function CareersPage() {
               border: '1px solid #bbf7d0', boxShadow: '0 4px 24px rgba(34,197,94,0.08)',
             }}>
               <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🎉</div>
-              <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: 8 }}>Application received!</h3>
+              <h3 style={{ fontSize: '1.4rem', fontWeight: 800, marginBottom: 8 }}>Application accepted</h3>
               <p style={{ color: 'var(--text-muted)', lineHeight: 1.6 }}>
-                Thank you, <strong>{form.full_name.split(' ')[0]}</strong>. Our team will review your application and reach out within 48 hours on <strong>{form.email}</strong>.
+                Thank you, <strong>{form.full_name.split(' ')[0]}</strong>. Your application has been accepted.
+                Our team will review it and reach out within 48 hours on <strong>{form.email}</strong>.
               </p>
             </div>
           ) : (

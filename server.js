@@ -1415,6 +1415,12 @@ app.patch('/api/jobs/applications/:id', async (req, res) => {
   if (status)   updates.status   = status;
   if (hr_notes !== undefined) updates.hr_notes = hr_notes;
 
+  const { data: existing } = await supabase
+    .from('job_applications')
+    .select('*')
+    .eq('id', req.params.id)
+    .maybeSingle();
+
   const { data, error } = await supabase
     .from('job_applications')
     .update(updates)
@@ -1423,6 +1429,11 @@ app.patch('/api/jobs/applications/:id', async (req, res) => {
     .single();
 
   if (error) return err(res, 'Failed to update application', 500);
+
+  if (status === 'hired' && existing?.status !== 'hired') {
+    notify.jobAccepted(data);
+  }
+
   return ok(res, { application: data });
 });
 

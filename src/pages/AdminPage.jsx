@@ -67,9 +67,12 @@ function Badge({ status }) {
     completed: { bg: '#cfe2ff', color: '#084298' },
     cancelled: { bg: '#f8d7da', color: '#842029' },
     approved:  { bg: '#d1e7dd', color: '#0a3622' },
+    hired:     { bg: '#d1e7dd', color: '#0a3622' },
+    accepted:  { bg: '#d1e7dd', color: '#0a3622' },
     rejected:  { bg: '#f8d7da', color: '#842029' },
   };
   const s = map[status] ?? { bg: '#e9ecef', color: '#495057' };
+  const label = status === 'hired' ? 'Accepted' : status;
   return (
     <span style={{
       display: 'inline-block',
@@ -80,7 +83,7 @@ function Badge({ status }) {
       textTransform: 'capitalize',
       background: s.bg,
       color: s.color,
-    }}>{status}</span>
+    }}>{label}</span>
   );
 }
 
@@ -2517,15 +2520,15 @@ export default function AdminPage() {
                 {jobs.length > 0 && (
                   <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: '1.25rem' }}>
                     {[
-                      { s:'new', c:'#0d6efd' }, { s:'reviewing', c:'#6f42c1' },
-                      { s:'shortlisted', c:'#e67e22' }, { s:'interviewing', c:'#fd7e14' },
-                      { s:'hired', c:'#198754' }, { s:'rejected', c:'#dc3545' },
-                    ].map(({ s, c }) => {
+                      { s:'new', c:'#0d6efd', label:'new' }, { s:'reviewing', c:'#6f42c1', label:'reviewing' },
+                      { s:'shortlisted', c:'#e67e22', label:'shortlisted' }, { s:'interviewing', c:'#fd7e14', label:'interviewing' },
+                      { s:'hired', c:'#198754', label:'accepted' }, { s:'rejected', c:'#dc3545', label:'rejected' },
+                    ].map(({ s, c, label }) => {
                       const count = jobs.filter((j) => j.status === s).length;
                       if (!count) return null;
                       return (
                         <span key={s} style={{ padding: '4px 14px', borderRadius: 99, fontSize: '0.78rem', fontWeight: 700, background: c + '18', color: c }}>
-                          {s}: {count}
+                          {label}: {count}
                         </span>
                       );
                     })}
@@ -2627,8 +2630,21 @@ export default function AdminPage() {
                             {j.status !== 'reviewing'   && <ActionBtn label="Reviewing"   onClick={() => updateJobStatus(j.id,'reviewing')}   color="#6f42c1" />}
                             {j.status !== 'shortlisted' && <ActionBtn label="Shortlist"   onClick={() => updateJobStatus(j.id,'shortlisted')} color="#e67e22" />}
                             <ActionBtn label="+ Interview" onClick={() => setScheduleFor(j)} color="#fd7e14" />
-                            {j.status !== 'hired' && !j.offer_salary && <ActionBtn label="Extend Offer" onClick={() => setOfferFor(j)} color="#198754" />}
-                            {j.status !== 'rejected' && <ActionBtn label="Reject" onClick={() => { const r = prompt('Rejection reason (optional):'); rejectWithReason(j.id, r ?? ''); }} color="#dc3545" />}
+                            {j.status !== 'hired' && (
+                              <ActionBtn
+                                label="Accept"
+                                onClick={() => {
+                                  if (!window.confirm(`Accept ${j.full_name} to join Serenest as ${j.role}? They will be emailed.`)) return;
+                                  updateJobStatus(j.id, 'hired');
+                                }}
+                                color="#198754"
+                              />
+                            )}
+                            {j.status === 'hired' && (
+                              <span style={{ fontSize:'0.82rem', fontWeight:700, color:'#198754', alignSelf:'center' }}>✓ Accepted</span>
+                            )}
+                            {j.status !== 'hired' && !j.offer_salary && <ActionBtn label="Extend Offer" onClick={() => setOfferFor(j)} color="#0d6efd" />}
+                            {j.status !== 'rejected' && j.status !== 'hired' && <ActionBtn label="Reject" onClick={() => { const r = prompt('Rejection reason (optional):'); rejectWithReason(j.id, r ?? ''); }} color="#dc3545" />}
                           </div>
                         </div>
                       );

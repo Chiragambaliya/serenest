@@ -510,6 +510,47 @@ export const notify = {
     fire(sendTeamWhatsApp(
       `Serenest — Job application\n${j.candidate_name} · ${j.position}\n+91 ${String(j.candidate_phone || '').replace(/\D/g, '')}`,
     ));
+
+    if (j.candidate_email?.trim()) {
+      const first = esc((j.candidate_name || 'there').trim().split(/\s+/)[0]);
+      fire(sendPatientEmail({
+        subject: 'Your Serenest application has been accepted',
+        html:
+          `<p style="margin:0 0 12px">Hi <strong>${first}</strong>,</p>`
+          + `<p style="margin:0 0 12px">Your application for <strong>${esc(j.position)}</strong> has been <strong>accepted</strong>. Our team has received it and will review your credentials within <strong>48 hours</strong>.</p>`
+          + `<p style="margin:0 0 12px">By applying, you agreed to our Professional Terms, Code of Conduct, Guidelines, Privacy Policy, and Community Guidelines.</p>`
+          + `<p style="margin:0 0 12px">Questions? WhatsApp <strong>+91 77779 36367</strong> or reply to this email.</p>`
+          + `<p style="margin:0;color:#64748b;font-size:13px">— The Serenest team</p>`,
+        to: j.candidate_email.trim(),
+      }));
+    }
+  },
+
+  /**
+   * After admin accepts (hires) an HR candidate.
+   */
+  jobAccepted(j) {
+    const name = j.full_name || j.candidate_name || 'there';
+    const first = esc(String(name).trim().split(/\s+/)[0] || 'there');
+    const role = j.role || j.position || 'this role';
+    const dept = j.department ? ` (${j.department})` : '';
+    const to = (j.email || j.candidate_email || '').trim();
+
+    fire(sendTeamWhatsApp(
+      `Serenest — HR accepted\n${name} · ${role}${dept}\n+91 ${String(j.phone || j.candidate_phone || '').replace(/\D/g, '')}`,
+    ));
+
+    if (!to) return;
+    fire(sendPatientEmail({
+      subject: 'You have been accepted at Serenest',
+      html:
+        `<p style="margin:0 0 12px">Hi <strong>${first}</strong>,</p>`
+        + `<p style="margin:0 0 12px">Good news — you have been <strong>accepted</strong> to join Serenest as a <strong>${esc(role)}</strong>${esc(dept)}.</p>`
+        + `<p style="margin:0 0 12px">Our team will share next steps (onboarding, schedule, and the SERENEST WhatsApp group) shortly. Please keep practising to our Professional Terms, Code of Conduct, and Guidelines.</p>`
+        + `<p style="margin:0 0 12px">Questions? WhatsApp <a href="https://wa.me/917777936367" style="color:#0f766e">+91 77779 36367</a>.</p>`
+        + `<p style="margin:0;color:#64748b;font-size:13px">— The Serenest team</p>`,
+      to,
+    }));
   },
 
   signup(s) {
