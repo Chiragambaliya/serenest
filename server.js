@@ -12,8 +12,6 @@ import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
 import { renderSeoHead, shouldNoindex, ROUTE_SEO, ROUTE_ALIASES, SITE_ORIGIN } from './src/lib/seo.js';
 import { handleAssistantChat } from './src/server/aiAssistant.js';
-import { publishPost, credentialStatus } from './src/server/socialPoster.js';
-import { generateWeekOfPosts } from './src/server/socialContentGen.js';
 import { generateAcademyContent } from './src/server/academyContentGen.js';
 import cron from 'node-cron';
 
@@ -440,7 +438,7 @@ app.patch('/api/professional/me', async (req, res) => {
 
   const SELF_EDITABLE = [
     'full_name', 'degree', 'city', 'clinic', 'languages',
-    'specialities', 'availability', 'social_handle',
+    'specialities', 'availability',
     'fee_inr', 'duration_min', 'modes',
   ];
   const updates = {};
@@ -608,7 +606,7 @@ app.post('/api/professionals/apply', async (req, res) => {
   if (!requireDb(res)) return;
 
   const {
-    role, role_label, full_name, phone, email, social_handle,
+    role, role_label, full_name, phone, email,
     registration, degree, city, languages, specialities,
     fee_inr, duration_min, modes, availability,
   } = req.body;
@@ -623,6 +621,7 @@ app.post('/api/professionals/apply', async (req, res) => {
 
   // Prefer the current schema; include legacy aliases (designation) so older
   // production tables that still require them can accept the row.
+  // social_handle intentionally omitted — public social fields were removed.
   const row = {
     role: role.trim(),
     role_label: roleLabel,
@@ -630,7 +629,6 @@ app.post('/api/professionals/apply', async (req, res) => {
     full_name: full_name.trim(),
     phone: phone.trim(),
     email: email?.trim() || null,
-    social_handle: social_handle?.trim() || null,
     registration: registration?.trim() || null,
     medical_council_number: registration?.trim() || null, // legacy alias
     degree: degree?.trim() || null,
@@ -647,10 +645,34 @@ app.post('/api/professionals/apply', async (req, res) => {
     status: 'pending',
   };
 
+  // 1) Prefer RPC that inserts with triggers disabled (after FIX_APPLY_NOW.sql).
+  try {
+    const rpcPayload = {
+      ...row,
+      fee_inr: feeRaw || (Number.isFinite(feeNum) ? String(feeNum) : null),
+      consultation_fee: Number.isFinite(feeNum) ? String(feeNum) : null,
+      duration_min: row.duration_min != null ? String(row.duration_min) : null,
+    };
+    const { data: rpcData, error: rpcError } = await supabase.rpc(
+      'serenest_insert_professional_application',
+      { payload: rpcPayload },
+    );
+    if (!rpcError && rpcData) {
+      const application = typeof rpcData === 'object' ? rpcData : row;
+      res.setHeader('X-Serenest-Apply', 'rpc');
+      notify.professionalApplication(application);
+      return ok(res, { application }, 201);
+    }
+    if (rpcError && !/could not find the function|PGRST202/i.test(rpcError.message || '')) {
+      console.warn('[POST /api/professionals/apply] rpc insert failed', rpcError.message);
+    }
+  } catch (e) {
+    console.warn('[POST /api/professionals/apply] rpc threw', e.message);
+  }
+
   // Drop unknown/legacy columns one at a time and retry. This keeps apply
   // working across partially-migrated production schemas.
   const optionalDropOrder = [
-    'social_handle',
     'medical_council_number',
     'consultation_fee',
     'designation',
@@ -717,6 +739,36 @@ app.post('/api/professionals/apply', async (req, res) => {
       _db_error: error.message || 'insert failed',
     };
     captureFallbackLead('professional_application', fallback);
+
+    // Durable inbox copy so Admin → Messages still has the application
+    // while the application_status_history trigger remains broken.
+    try {
+      await supabase.from('contact_messages').insert({
+        name: row.full_name,
+        email: row.email,
+        phone: row.phone,
+        subject: `Professional application — ${roleLabel}`,
+        message: [
+          'Professional onboarding application (DB insert blocked; accepted via fallback).',
+          `Role: ${roleLabel}`,
+          `Name: ${row.full_name}`,
+          `Phone: ${row.phone}`,
+          `Email: ${row.email || '—'}`,
+          `Registration: ${row.registration || '—'}`,
+          `Degree: ${row.degree || '—'}`,
+          `City: ${row.city || '—'}`,
+          `Languages: ${row.languages || '—'}`,
+          `Specialities: ${row.specialities || '—'}`,
+          `Fee: ${row.fee_inr ?? '—'} / ${row.duration_min || 45} min`,
+          `Modes: ${row.modes || '—'}`,
+          `Availability: ${row.availability || '—'}`,
+          `DB error: ${error.message || 'insert failed'}`,
+        ].join('\n'),
+      });
+    } catch (inboxErr) {
+      console.warn('[POST /api/professionals/apply] inbox backup failed', inboxErr.message);
+    }
+
     notify.professionalApplication(fallback);
     res.setHeader('X-Serenest-Apply', 'fallback');
     return ok(res, { application: fallback, fallback: true }, 201);
@@ -2027,164 +2079,6 @@ app.post('/api/academy/content/generate', async (req, res) => {
   } catch (e) {
     console.error('[POST /api/academy/content/generate]', e.message);
     return err(res, e.message, 500);
-  }
-});
-
-// ─────────────────────────────────────────────────────────────────
-// SOCIAL MEDIA SCHEDULING
-// ─────────────────────────────────────────────────────────────────
-
-/** GET /api/social/status — admin — check credential config */
-app.get('/api/social/status', (req, res) => {
-  if (!requireAdmin(req, res)) return;
-  return ok(res, credentialStatus());
-});
-
-/** GET /api/social/posts — admin — list all posts */
-app.get('/api/social/posts', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
-  const { data, error } = await supabase
-    .from('social_posts')
-    .select('*')
-    .order('scheduled_at', { ascending: false })
-    .limit(100);
-  if (error) return err(res, 'Could not load posts', 500);
-  return ok(res, { posts: data });
-});
-
-/** POST /api/social/posts — admin — create / schedule a post */
-app.post('/api/social/posts', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
-  const { platform, caption, hashtags, image_url, scheduled_at, status } = req.body;
-  if (!platform || !caption?.trim()) return err(res, 'platform and caption are required');
-  if (!scheduled_at) return err(res, 'scheduled_at is required');
-  const { data, error } = await supabase.from('social_posts').insert({
-    platform,
-    caption: caption.trim(),
-    hashtags: hashtags?.trim() || null,
-    image_url: image_url?.trim() || null,
-    scheduled_at,
-    status: status ?? 'scheduled',
-  }).select().single();
-  if (error) return err(res, 'Could not create post', 500);
-  return ok(res, { post: data });
-});
-
-/** PATCH /api/social/posts/:id — admin — edit a post */
-app.patch('/api/social/posts/:id', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
-  const { id } = req.params;
-  const allowed = ['platform','caption','hashtags','image_url','scheduled_at','status'];
-  const updates = {};
-  for (const k of allowed) if (req.body[k] !== undefined) updates[k] = req.body[k];
-  const { data, error } = await supabase.from('social_posts').update(updates).eq('id', id).select().single();
-  if (error) return err(res, 'Could not update post', 500);
-  return ok(res, { post: data });
-});
-
-/** DELETE /api/social/posts/:id — admin — delete a post */
-app.delete('/api/social/posts/:id', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
-  const { id } = req.params;
-  const { error } = await supabase.from('social_posts').delete().eq('id', id);
-  if (error) return err(res, 'Could not delete post', 500);
-  return ok(res, { deleted: id });
-});
-
-/** POST /api/social/posts/:id/publish — admin — publish immediately */
-app.post('/api/social/posts/:id/publish', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
-  const { id } = req.params;
-  const { data: post, error: fetchErr } = await supabase
-    .from('social_posts').select('*').eq('id', id).single();
-  if (fetchErr || !post) return err(res, 'Post not found', 404);
-  if (post.status === 'posted') return err(res, 'Already posted');
-
-  const result = await publishPost(post);
-  const newStatus = result.errors.length === 0 ? 'posted'
-    : (result.linkedin_post_id || result.instagram_post_id) ? 'partial' : 'failed';
-
-  await supabase.from('social_posts').update({
-    status: newStatus,
-    posted_at: newStatus !== 'failed' ? new Date().toISOString() : null,
-    linkedin_post_id: result.linkedin_post_id,
-    instagram_post_id: result.instagram_post_id,
-    error_message: result.errors.length ? result.errors.join(' | ') : null,
-  }).eq('id', id);
-
-  return ok(res, { status: newStatus, errors: result.errors });
-});
-
-/** POST /api/social/generate — admin — AI generates a week of posts */
-app.post('/api/social/generate', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
-  if (!process.env.ANTHROPIC_API_KEY) return err(res, 'ANTHROPIC_API_KEY not configured', 503);
-
-  const { weekNumber, startDate, recentTopics, focus } = req.body;
-  if (!startDate) return err(res, 'startDate is required');
-
-  try {
-    const result = await generateWeekOfPosts({
-      weekNumber: weekNumber ?? 1,
-      startDate,
-      recentTopics: recentTopics ?? [],
-      focus: focus ?? null,
-    });
-    return ok(res, result);
-  } catch (e) {
-    console.error('[POST /api/social/generate]', e.message);
-    return err(res, `Generation failed: ${e.message}`, 500);
-  }
-});
-
-/** POST /api/social/generate/save — admin — save AI-generated posts to DB */
-app.post('/api/social/generate/save', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
-  const { posts } = req.body;
-  if (!Array.isArray(posts) || posts.length === 0) return err(res, 'posts array required');
-
-  const rows = posts.map(({ platform, caption, hashtags, image_brief, scheduled_at }) => ({
-    platform, caption, hashtags: hashtags ?? null,
-    image_url: null,
-    scheduled_at, status: 'scheduled',
-  }));
-
-  const { data, error } = await supabase.from('social_posts').insert(rows).select();
-  if (error) return err(res, 'Could not save posts', 500);
-  return ok(res, { saved: data.length, posts: data });
-});
-
-// ─── Cron: publish due posts every minute ───────────────────────
-cron.schedule('* * * * *', async () => {
-  if (!supabase) return;
-  const { data: duePosts } = await supabase
-    .from('social_posts')
-    .select('*')
-    .eq('status', 'scheduled')
-    .lte('scheduled_at', new Date().toISOString())
-    .limit(10);
-
-  if (!duePosts?.length) return;
-
-  for (const post of duePosts) {
-    try {
-      const result = await publishPost(post);
-      const newStatus = result.errors.length === 0 ? 'posted'
-        : (result.linkedin_post_id || result.instagram_post_id) ? 'partial' : 'failed';
-      await supabase.from('social_posts').update({
-        status: newStatus,
-        posted_at: newStatus !== 'failed' ? new Date().toISOString() : null,
-        linkedin_post_id: result.linkedin_post_id,
-        instagram_post_id: result.instagram_post_id,
-        error_message: result.errors.length ? result.errors.join(' | ') : null,
-      }).eq('id', post.id);
-      console.log(`[social-cron] ${post.platform} post ${post.id} → ${newStatus}`);
-    } catch (e) {
-      console.error(`[social-cron] post ${post.id} failed:`, e.message);
-      await supabase.from('social_posts').update({
-        status: 'failed', error_message: e.message,
-      }).eq('id', post.id);
-    }
   }
 });
 
