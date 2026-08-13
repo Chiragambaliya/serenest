@@ -186,8 +186,68 @@ function normalizeFallbackApplication(row) {
     modes: row.modes || null,
     availability: row.availability || null,
     _fallback: true,
-    _db_error: row._db_error || null,
+    _inbox: Boolean(row._inbox),
+    _db_error: row._db_error || row.db_error || null,
   };
+}
+
+/** Durable Supabase inbox — survives Render redeploys (unlike JSONL fallback). */
+async function saveApplicationInbox(row, dbError) {
+  if (!supabase) return null;
+  const payload = {
+    source: 'professionals_apply',
+    status: 'pending',
+    full_name: row.full_name,
+    phone: row.phone,
+    email: row.email || null,
+    role: row.role || null,
+    role_label: row.role_label || row.role || null,
+    social_handle: row.social_handle || null,
+    registration: row.registration || null,
+    degree: row.degree || null,
+    city: row.city || null,
+    languages: row.languages || null,
+    specialities: row.specialities || null,
+    fee_inr: row.fee_inr != null ? String(row.fee_inr) : null,
+    duration_min: row.duration_min ?? null,
+    modes: row.modes || null,
+    availability: row.availability || null,
+    payload: row,
+    db_error: dbError || null,
+  };
+  const { data, error } = await supabase
+    .from('application_inbox')
+    .insert(payload)
+    .select()
+    .single();
+  if (error) {
+    console.error('[application_inbox] insert failed:', error.message);
+    return null;
+  }
+  return data;
+}
+
+async function listInboxApplications(status) {
+  if (!supabase) return [];
+  let query = supabase
+    .from('application_inbox')
+    .select('*')
+    .eq('status', 'pending')
+    .order('created_at', { ascending: false });
+  const { data, error } = await query;
+  if (error) {
+    // Table may not exist until migration is applied — don't break admin.
+    console.warn('[application_inbox] list failed:', error.message);
+    return [];
+  }
+  return (data || [])
+    .map((row) => normalizeFallbackApplication({
+      ...row,
+      _fallback: true,
+      _inbox: true,
+      _db_error: row.db_error,
+    }))
+    .filter((a) => !status || a.status === status);
 }
 
 // ── Razorpay (payments) ──────────────────────────────────────
@@ -796,26 +856,31 @@ app.post('/api/professionals/apply', async (req, res) => {
   }
 
   // Same safety net as bookings/screening: never lose a clinician lead when
-  // the schema is partially migrated. Notify the team and accept the apply.
+  // the schema is partially migrated. Prefer durable Supabase inbox, then
+  // local JSONL, and always notify the team.
+  const dbErrorMsg = insertError?.message
+    || (supabase ? 'Database insert failed — stored in application inbox until recovered' : 'database not configured');
+
+  const inbox = await saveApplicationInbox(row, dbErrorMsg);
   const fallback = {
-    id: `fallback-${Date.now()}`,
+    id: inbox?.id || `fallback-${Date.now()}`,
     ...row,
-    created_at: new Date().toISOString(),
+    created_at: inbox?.created_at || new Date().toISOString(),
     _fallback: true,
-    _db_error: insertError?.message
-      || (supabase ? 'Database insert failed — stored in server fallback until recovered' : 'database not configured'),
+    _inbox: Boolean(inbox),
+    _db_error: dbErrorMsg,
   };
 
-  captureFallbackLead('professional_application', fallback);
+  if (!inbox) captureFallbackLead('professional_application', fallback);
   notify.professionalApplication(fallback);
-  res.setHeader('X-Serenest-Apply', 'fallback');
-  return ok(res, { application: fallback, fallback: true }, 201);
+  res.setHeader('X-Serenest-Apply', inbox ? 'inbox' : 'fallback');
+  return ok(res, { application: fallback, fallback: true, inbox: Boolean(inbox) }, 201);
 });
 
 /**
  * GET /api/professionals/applications
- * List all professional applications (admin only), including fallback leads
- * that were accepted when the database insert failed.
+ * List all professional applications (admin only), including durable inbox
+ * rows and local fallback leads accepted when the main insert failed.
  */
 app.get('/api/professionals/applications', async (req, res) => {
   if (!requireAdmin(req, res)) return;
@@ -842,36 +907,61 @@ app.get('/api/professionals/applications', async (req, res) => {
     ]),
   );
 
-  let fallbackApps = readFallbackLeads('professional_application')
-    .map(normalizeFallbackApplication)
-    .filter((a) => {
-      const key = `${String(a.phone || '').replace(/\D/g, '')}|${String(a.email || '').toLowerCase()}`;
-      return !dbKeys.has(String(a.id)) && !dbKeys.has(key);
-    });
+  const seen = new Set(dbKeys);
+  const pendingExtras = [];
 
-  if (status) fallbackApps = fallbackApps.filter((a) => a.status === status);
+  for (const a of await listInboxApplications(status)) {
+    const key = `${String(a.phone || '').replace(/\D/g, '')}|${String(a.email || '').toLowerCase()}`;
+    if (seen.has(String(a.id)) || seen.has(key)) continue;
+    seen.add(String(a.id));
+    seen.add(key);
+    pendingExtras.push(a);
+  }
 
-  const applications = [...fallbackApps, ...dbApps].sort(
+  for (const a of readFallbackLeads('professional_application').map(normalizeFallbackApplication)) {
+    if (status && a.status !== status) continue;
+    const key = `${String(a.phone || '').replace(/\D/g, '')}|${String(a.email || '').toLowerCase()}`;
+    if (seen.has(String(a.id)) || seen.has(key)) continue;
+    seen.add(String(a.id));
+    seen.add(key);
+    pendingExtras.push(a);
+  }
+
+  const applications = [...pendingExtras, ...dbApps].sort(
     (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
   );
 
   return ok(res, {
     applications,
-    fallback_count: fallbackApps.length,
+    fallback_count: pendingExtras.length,
   });
 });
 
 /**
  * POST /api/professionals/applications/:id/promote
- * Move a fallback application into the database so it can be approved normally.
+ * Move an inbox/fallback application into professional_applications.
  */
 app.post('/api/professionals/applications/:id/promote', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;
 
-  const fallback = readFallbackLeads('professional_application')
-    .find((row) => String(row.id) === String(req.params.id));
+  const id = String(req.params.id);
+  let source = 'file';
+  let fallback = readFallbackLeads('professional_application')
+    .find((row) => String(row.id) === id) || null;
 
-  if (!fallback) return err(res, 'Fallback application not found on this server', 404);
+  if (!fallback && supabase) {
+    const { data: inboxRow } = await supabase
+      .from('application_inbox')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+    if (inboxRow) {
+      source = 'inbox';
+      fallback = { ...inboxRow, ...(inboxRow.payload || {}) };
+    }
+  }
+
+  if (!fallback) return err(res, 'Fallback application not found', 404);
 
   const row = {
     role: fallback.role,
@@ -898,11 +988,19 @@ app.post('/api/professionals/applications/:id/promote', async (req, res) => {
   const { data, error } = await insertProfessionalApplication(row);
   if (error || !data) {
     console.error('[POST /api/professionals/applications/:id/promote]', error);
-    return err(res, error?.message || 'Failed to save application to the database', 500);
+    return err(res, error?.message || 'Failed to save application to the database. Run the latest Supabase migrations first.', 500);
   }
 
-  removeFallbackLeads([fallback.id]);
-  return ok(res, { application: data, promoted: true });
+  if (source === 'inbox') {
+    await supabase
+      .from('application_inbox')
+      .update({ status: 'promoted', promoted_application_id: data.id })
+      .eq('id', id);
+  } else {
+    removeFallbackLeads([id]);
+  }
+
+  return ok(res, { application: data, promoted: true, source });
 });
 
 /**
@@ -1841,19 +1939,27 @@ app.get('/api/admin/stats', async (req, res) => {
     supabase.from('professional_applications').select('*', { count: 'exact', head: true }).eq('status', 'approved'),
   ]);
 
-  const fallbackApps = readFallbackLeads('professional_application');
-  const fallbackPending = fallbackApps.filter((a) => (a.status || 'pending') === 'pending').length;
+  const fileFallbackApps = readFallbackLeads('professional_application');
+  let inboxPending = 0;
+  if (supabase) {
+    const { count } = await supabase
+      .from('application_inbox')
+      .select('*', { count: 'exact', head: true })
+      .eq('status', 'pending');
+    inboxPending = count ?? 0;
+  }
+  const fallbackPending = fileFallbackApps.filter((a) => (a.status || 'pending') === 'pending').length + inboxPending;
 
   return ok(res, {
     stats: {
       bookings,
-      applications: applications + fallbackApps.length,
+      applications: applications + fallbackPending,
       messages,
       signups,
       jobs,
       pending_bookings: pendingBookings.count ?? 0,
       pending_applications: (pendingApps.count ?? 0) + fallbackPending,
-      fallback_applications: fallbackApps.length,
+      fallback_applications: fallbackPending,
       new_jobs: newJobs.count ?? 0,
       active_professionals: approvedProfessionals.count ?? 0,
     },

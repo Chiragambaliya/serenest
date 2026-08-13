@@ -2498,9 +2498,9 @@ export default function AdminPage() {
                 fontSize: '0.88rem',
                 lineHeight: 1.5,
               }}>
-                <strong>{fallbackAppCount || stats?.fallback_applications} application(s)</strong> were saved to the server fallback file because the database insert failed.
+                <strong>{fallbackAppCount || stats?.fallback_applications} application(s)</strong> could not be written to <code>professional_applications</code> and were kept in the durable inbox / server fallback.
                 They appear below with a <em>Needs DB save</em> badge. Click <strong>Save to database</strong> before approving.
-                Also run the latest Supabase migrations under <code>supabase/migrations/</code> if this keeps happening.
+                Run the latest SQL in <code>supabase/migrations/</code> (especially the status-history fix and <code>application_inbox</code>) so new applies land in the main table.
               </div>
             )}
 
