@@ -707,9 +707,22 @@ app.post('/api/professionals/apply', async (req, res) => {
 
   if (error) {
     console.error('[POST /api/professionals/apply]', error);
-    return err(res, 'Failed to submit application. Please try again.', 500);
+    // Same safety net as bookings/screening: never lose a clinician lead when
+    // the schema is partially migrated. Notify the team and accept the apply.
+    const fallback = {
+      id: `fallback-${Date.now()}`,
+      ...row,
+      created_at: new Date().toISOString(),
+      _fallback: true,
+      _db_error: error.message || 'insert failed',
+    };
+    captureFallbackLead('professional_application', fallback);
+    notify.professionalApplication(fallback);
+    res.setHeader('X-Serenest-Apply', 'fallback');
+    return ok(res, { application: fallback, fallback: true }, 201);
   }
 
+  res.setHeader('X-Serenest-Apply', 'db');
   notify.professionalApplication(data);
   return ok(res, { application: data }, 201);
 });
