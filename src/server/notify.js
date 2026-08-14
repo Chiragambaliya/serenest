@@ -431,6 +431,55 @@ export const notify = {
    * After admin approves a professional — welcome email with SERENEST WhatsApp group invite.
    * WhatsApp cannot add members via API; the clinician must tap the invite link.
    */
+  /**
+   * Acknowledge a careers submission. Deliberately says "received", not
+   * "accepted" — at this point nobody has looked at the application, and
+   * telling a candidate they were accepted for merely submitting is both
+   * misleading and a needless legal exposure.
+   */
+  async jobApplicationReceived(j) {
+    const to = j.email?.trim();
+    if (!to) return { emailed: false, reason: 'no_email' };
+    if (!RESEND_KEY) return { emailed: false, reason: 'resend_off' };
+
+    const first = esc((j.full_name || 'there').trim().split(/\s+/)[0]);
+    const position = esc(j.role || j.position || 'the role you applied for');
+
+    const emailed = await sendPatientEmail({
+      subject: 'Application received — Serenest',
+      html:
+        `<p style="margin:0 0 12px">Hi ${first},</p>`
+        + `<p style="margin:0 0 12px">We've received your application for <strong>${position}</strong>. Thank you for your interest in Serenest.</p>`
+        + `<p style="margin:0 0 12px">Our team reviews every application. If your profile matches what we need, we'll be in touch about next steps. We'll let you know either way.</p>`
+        + `<p style="margin:0;font-size:13px;color:#64748b">Questions? WhatsApp <a href="https://wa.me/917777936367" style="color:#0f766e">+91 77779 36367</a>.</p>`,
+      to,
+    });
+    return { emailed, reason: emailed ? null : 'send_failed' };
+  },
+
+  /**
+   * Final selection. "Accepted" is reserved for this moment only.
+   */
+  async jobApplicationAccepted(j) {
+    const to = j.email?.trim();
+    if (!to) return { emailed: false, reason: 'no_email' };
+    if (!RESEND_KEY) return { emailed: false, reason: 'resend_off' };
+
+    const first = esc((j.full_name || 'there').trim().split(/\s+/)[0]);
+    const position = esc(j.role || j.position || 'the role');
+
+    const emailed = await sendPatientEmail({
+      subject: 'You have been accepted at Serenest',
+      html:
+        `<p style="margin:0 0 12px">Hi ${first},</p>`
+        + `<p style="margin:0 0 12px">We're delighted to tell you that you've been <strong>accepted</strong> for <strong>${position}</strong> at Serenest.</p>`
+        + `<p style="margin:0 0 12px">Our team will contact you shortly with joining details and next steps.</p>`
+        + `<p style="margin:0;font-size:13px;color:#64748b">Questions? WhatsApp <a href="https://wa.me/917777936367" style="color:#0f766e">+91 77779 36367</a>.</p>`,
+      to,
+    });
+    return { emailed, reason: emailed ? null : 'send_failed' };
+  },
+
   async professionalApproved(p) {
     const roleLabel = p.role_label || p.role || 'professional';
     const invite = getSerenestWaGroupInvite();
