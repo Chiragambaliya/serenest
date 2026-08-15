@@ -1,11 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 
 const UPDATED = '7 August 2026';
 
 const STEPS = [
-  { n: '1', title: 'Submit your grievance', desc: 'Email support@serenest.in with your name, booking reference (if applicable), and a clear description of the issue. You will receive an acknowledgement within 24 hours on business days.' },
+  { n: '1', title: 'Submit your grievance', desc: 'Use the data rights form for privacy requests, or email support@serenest.in with your name, booking reference (if applicable), and a clear description of the issue. You will receive an acknowledgement within 24 hours on business days.' },
   { n: '2', title: 'Review', desc: 'Our team reviews your complaint and may reach out for additional information. We aim to resolve most grievances within 7 working days.' },
   { n: '3', title: 'Resolution', desc: 'You receive a written response with our finding and, where applicable, the action taken. This may include a refund, an apology, removal of a professional, or another appropriate remedy.' },
   { n: '4', title: 'Escalation', desc: 'If you are unsatisfied with the resolution, you may escalate to our Grievance Officer (details below) within 15 days of receiving our response.' },
@@ -87,6 +88,8 @@ export default function GrievancePolicyPage() {
                 <div style={{ marginTop: 8, fontSize: '0.88rem' }}>
                   <span className="muted">Email: </span>
                   <a href="mailto:support@serenest.in" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>support@serenest.in</a>
+                  {' · '}
+                  <Link to="/privacy/request" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>Data rights form</Link>
                 </div>
                 <div style={{ marginTop: 4, fontSize: '0.88rem' }}>
                   <span className="muted">Subject line: </span>

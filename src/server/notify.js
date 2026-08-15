@@ -531,9 +531,9 @@ export const notify = {
    * WhatsApp: ping on every new visitor when CallMeBot is configured.
    * Email: first visitor of the UTC day only, unless NOTIFY_EACH_UNIQUE_VISITOR_EMAIL is truthy.
    */
-  siteVisitor({ count, path, referrer, userAgent }) {
+  siteVisitor({ count, path, referrer }) {
     const pathEsc = path || '/';
-    const refShort = String(referrer || '').slice(0, 140);
+    const refShort = String(referrer || '').slice(0, 80);
     const wa =
       `Serenest — Visitor on site (#${count} unique today)\n` +
       `Page: ${pathEsc}` +
@@ -557,14 +557,28 @@ export const notify = {
       ${table([
         row('Page', pathEsc ? `<code style="font-family:monospace">${esc(pathEsc)}</code>` : ''),
         row('Referrer', esc(referrer)),
-        row(
-          'Browser',
-          userAgent ? `<span style="color:#64748b;font-size:12px">${esc(userAgent.slice(0, 160))}</span>` : '',
-        ),
       ])}
       <p style="margin:12px 0 0;color:#64748b;font-size:13px">Traffic overview: <a href="https://serenest.in/admin" style="color:#0f766e;font-weight:600">Admin</a>. WhatsApp pings fire for each new visitor when CallMeBot is set.</p>
     `;
     fire(sendEmail({ subject, html }));
+  },
+
+  privacyRequest(r) {
+    const html = `
+      <p style="margin:0 0 8px;font-size:16px">DPDP data-principal request: <strong>${esc(r.request_type)}</strong>.</p>
+      ${table([
+        row('Name', esc(r.full_name)),
+        row('Email', esc(r.email)),
+        row('Phone', fmtPhone(r.phone)),
+        row('Type', esc(r.request_type)),
+      ])}
+      <div style="background:#f8fafc;border-left:3px solid #0f766e;border-radius:6px;padding:12px 14px;margin:10px 0;white-space:pre-wrap">${esc(r.details)}</div>
+      <p style="margin:12px 0 0;color:#64748b;font-size:13px">Acknowledge within 30 days. Review in <a href="https://serenest.in/admin" style="color:#0f766e;font-weight:600">Admin → Privacy</a>.</p>
+    `;
+    fire(sendEmail({ subject: `Privacy request — ${r.request_type} — ${r.full_name || r.email}`, html }));
+    fire(sendTeamWhatsApp(
+      `Serenest — Privacy request\n${r.request_type}\n${r.full_name || '—'}\n${r.email || ''}`,
+    ));
   },
 
   /** Someone opened the Serenest Guide AI panel (once per visitor per UTC day). */

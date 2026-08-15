@@ -23,6 +23,7 @@ const ProfessionalsPage = lazy(() => import('./pages/ProfessionalsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 const BookingPage = lazy(() => import('./pages/BookingPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
+const PrivacyRequestPage = lazy(() => import('./pages/PrivacyRequestPage'));
 const PricingPage = lazy(() => import('./pages/PricingPage'));
 const FAQPage = lazy(() => import('./pages/FAQPage'));
 const BlogIndexPage = lazy(() => import('./pages/BlogIndexPage'));
@@ -197,6 +198,7 @@ export default function App() {
           <Route path="resources/:slug" element={<ResourceRedirect />} />
           <Route path="disclaimer" element={<Navigate to="/emergency-disclaimer" replace />} />
           <Route path="privacy" element={<S><PrivacyPolicyPage /></S>} />
+          <Route path="privacy/request" element={<S><PrivacyRequestPage /></S>} />
           <Route path="terms" element={<S><TermsPage /></S>} />
           <Route path="patient/terms" element={<S><PatientTermsPage /></S>} />
           <Route path="consent" element={<S><ConsentPage /></S>} />

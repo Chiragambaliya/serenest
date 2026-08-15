@@ -161,6 +161,14 @@ export const ROUTE_SEO = {
     ogDescription:
       'How Serenest collects, protects, and processes consultation and personal data.',
   },
+  '/privacy/request': {
+    title: 'Data Rights Request | Serenest',
+    description:
+      'Exercise your DPDP Act 2023 rights with Serenest — access, correction, erasure, withdraw consent, nominate, or file a privacy grievance.',
+    ogTitle: 'Data Rights Request | Serenest',
+    ogDescription:
+      'Submit a privacy request to access, correct, erase, or withdraw consent for your Serenest data.',
+  },
   '/online-psychiatrist-for-depression-india': {
     title: 'Online Psychiatrist for Depression in India | Serenest',
     description:
@@ -907,6 +915,22 @@ export const ROUTE_JSONLD = {
         name: 'Privacy Policy',
         description:
           'Learn what data Serenest collects, how consultation information is protected, and how privacy-first care workflows are designed.',
+        inLanguage: 'en-IN',
+      },
+    ],
+  },
+  '/privacy/request': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        '@type': 'WebPage',
+        '@id': `${SITE_ORIGIN}/privacy/request#webpage`,
+        url: `${SITE_ORIGIN}/privacy/request`,
+        name: 'Data Rights Request',
+        description:
+          'Exercise your DPDP Act 2023 rights with Serenest — access, correction, erasure, withdraw consent, nominate, or file a privacy grievance.',
         inLanguage: 'en-IN',
       },
     ],

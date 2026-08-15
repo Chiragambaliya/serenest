@@ -35,6 +35,7 @@ const DOCS = [
     group: 'Data & IP',
     items: [
       { title: 'Data Retention Policy', path: '/data-retention', desc: 'How long we keep your data and how to request deletion.' },
+      { title: 'Data Rights Request', path: '/privacy/request', desc: 'Access, correct, erase, or withdraw consent for your personal data under the DPDP Act 2023.' },
       { title: 'Copyright & Intellectual Property', path: '/intellectual-property', desc: 'Ownership of platform content and how to report an infringement.' },
     ],
   },

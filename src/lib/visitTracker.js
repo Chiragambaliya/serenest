@@ -3,19 +3,34 @@
  * Each **new** visitor that day can trigger a team WhatsApp ping (if configured);
  * email defaults to the first visitor of the day only (see NOTIFY_EACH_UNIQUE_VISITOR_EMAIL).
  *
- * - vid: random per-browser UUID stored in localStorage (cookieless)
- * - We swallow all errors — analytics must never break the page.
+ * Persistent visitor ids are stored only after analytics consent (DPDP).
+ * Without consent the id lives in sessionStorage for this tab only.
+ * We swallow all errors — analytics must never break the page.
  */
 
+import { hasAnalyticsConsent } from './privacyConsent';
+
 const BASE = import.meta.env.VITE_API_URL ?? '';
-const VID_KEY = 'serenest.vid';
+export const VID_KEY = 'serenest.vid';
+
+export function clearPersistentVisitorId() {
+  try { localStorage.removeItem(VID_KEY); } catch { /* ignore */ }
+}
 
 export function getVisitorId() {
   try {
-    let v = localStorage.getItem(VID_KEY);
+    if (hasAnalyticsConsent()) {
+      let v = localStorage.getItem(VID_KEY);
+      if (!v) {
+        v = (crypto?.randomUUID?.() ?? String(Math.random()).slice(2) + Date.now().toString(36));
+        localStorage.setItem(VID_KEY, v);
+      }
+      return v;
+    }
+    let v = sessionStorage.getItem(VID_KEY);
     if (!v) {
       v = (crypto?.randomUUID?.() ?? String(Math.random()).slice(2) + Date.now().toString(36));
-      localStorage.setItem(VID_KEY, v);
+      sessionStorage.setItem(VID_KEY, v);
     }
     return v;
   } catch {
@@ -35,6 +50,7 @@ export function trackVisit(path = window.location.pathname) {
     vid: getVisitorId(),
     path,
     referrer: document.referrer || '',
+    analytics_consent: hasAnalyticsConsent(),
   });
 
   // Use sendBeacon when supported — fires even on page unload.

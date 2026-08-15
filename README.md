@@ -56,15 +56,35 @@ startup.
 
 ```
 serenest/
-├── server.js          Express API + static serving + SEO injection
+├── server.js          Entry point — boots the app, cron jobs, startup logs
 ├── index.html         Vite entry (SEO head is re-injected per route at runtime)
 ├── src/
 │   ├── App.jsx        Routes
 │   ├── pages/         Page components (BookingPage, ScreeningPage, AdminPage, …)
 │   ├── lib/           API client, SEO map, analytics, Supabase browser client
-│   └── server/        Server-side modules (notify, AI assistant, social)
+│   └── server/        Backend
+│       ├── app.js         Express app assembly (middleware → routes → SPA → errors)
+│       ├── config.js      Paths + validated env-derived settings
+│       ├── db.js          Supabase admin client (service role)
+│       ├── http.js        Response envelope + auth guards (ok/err/requireAdmin/…)
+│       ├── middleware.js  Helmet, compression, rate limits, CORS, JSON parsing
+│       ├── leads.js       Lead-capture safety nets (inbox / contact / JSONL)
+│       ├── payments.js    Razorpay orders + signature verification
+│       ├── cron.js        Social publishing + appointment-reminder jobs
+│       ├── spa.js         Static assets + SEO-injected SPA fallback
+│       ├── routes/        One module per API domain (bookings, screening, …)
+│       └── notify.js, aiAssistant.js, social*.js, academyContentGen.js
 ├── public/            Static files (robots.txt, sitemap.xml, manifest, …)
 ├── supabase/          schema.sql + migrations (run in Supabase SQL editor)
 ├── render.yaml        Render Blueprint (see DEPLOY.md)
 └── .env.example       All environment variables, documented
 ```
+
+## Backend tests
+
+- `npm run lint` — syntax-checks every server module.
+- `npm run test:api` — boots the real server (hermetic — no DB or external
+  keys) and asserts endpoint contracts: validation, admin auth, DB-down lead
+  fallback, tracking dedupe, SPA/SEO status codes, and redirects.
+- `npm run verify:seo` — asserts per-route SEO metadata against a running
+  server (requires `npm run build` first).

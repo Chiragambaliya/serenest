@@ -57,6 +57,8 @@ export const SITE_GUIDE_ROUTES = [
 
   { path: '/privacy', label: 'Privacy policy' },
 
+  { path: '/privacy/request', label: 'Data rights request (DPDP)' },
+
   { path: '/online-psychiatrist-for-depression-india', label: 'Online psychiatrist for depression' },
 
   { path: '/anxiety-counselling-online-india', label: 'Anxiety counselling online' },
