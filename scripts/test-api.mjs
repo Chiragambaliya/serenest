@@ -91,10 +91,22 @@ await check('booking without fields → 400', 'POST', '/api/bookings', { headers
 });
 await check('booking with bad phone → 400', 'POST', '/api/bookings', {
   headers: JSON_H,
-  body: { patient_name: 'A', patient_phone: '12345', practitioner_type: 'x', preferred_date: 'd', preferred_time: 't' },
+  body: { patient_name: 'A', patient_phone: '12345', practitioner_type: 'x', preferred_date: 'd', preferred_time: 't', consent: true, age_attestation: true },
 }, (res, body) => {
   expect(res.status === 400, `status ${res.status}`);
   expect(/10-digit/.test(body.error), body.error);
+});
+await check('booking without consent → 400', 'POST', '/api/bookings', {
+  headers: JSON_H,
+  body: { patient_name: 'A', patient_phone: '9876543210', practitioner_type: 'psychiatrist', preferred_date: 'd', preferred_time: 't', age_attestation: true },
+}, (res, body) => {
+  expect(res.status === 400 && /consent is required/.test(body.error), `${res.status} ${body.error}`);
+});
+await check('booking without age attestation → 400', 'POST', '/api/bookings', {
+  headers: JSON_H,
+  body: { patient_name: 'A', patient_phone: '9876543210', practitioner_type: 'psychiatrist', preferred_date: 'd', preferred_time: 't', consent: true },
+}, (res, body) => {
+  expect(res.status === 400 && /age_attestation is required/.test(body.error), `${res.status} ${body.error}`);
 });
 await check('apply without role → 400', 'POST', '/api/professionals/apply', { headers: JSON_H, body: {} }, (res, body) => {
   expect(res.status === 400 && body.error === 'role is required', `${res.status} ${body.error}`);
@@ -110,16 +122,28 @@ await check('rooms without appointment_id → 400', 'POST', '/api/rooms', { head
 // ── Lead fallback (DB down must never lose a lead) ───────────
 await check('booking falls back when DB is unconfigured', 'POST', '/api/bookings', {
   headers: JSON_H,
-  body: { patient_name: 'Test P', patient_phone: '9876543210', practitioner_type: 'psychiatrist', preferred_date: '2030-01-01', preferred_time: '10:00' },
+  body: { patient_name: 'Test P', patient_phone: '9876543210', practitioner_type: 'psychiatrist', preferred_date: '2030-01-01', preferred_time: '10:00', consent: true, age_attestation: true },
 }, (res, body) => {
   expect(res.status === 201, `status ${res.status}`);
   expect(body.booking?.patient_phone === '9876543210', 'booking echoed');
   expect(body.booking?.status === 'pending', 'status pending');
+  expect(body.booking?.consent_purpose === 'appointment_contact_and_care', 'consent recorded');
 });
-await check('screening falls back when DB is unconfigured', 'POST', '/api/screening', {
+await check('anonymous screening without contact is accepted', 'POST', '/api/screening', {
+  headers: JSON_H, body: { phq9_score: 2 },
+}, (res, body) => {
+  expect(res.status === 201 && body.screening?.phq9_score === 2, `status ${res.status}`);
+});
+await check('screening with contact but no consent → 400', 'POST', '/api/screening', {
   headers: JSON_H, body: { name: 'S', phone: '9876543210', phq9_score: 4 },
 }, (res, body) => {
+  expect(res.status === 400 && /consent is required/.test(body.error), `${res.status} ${body.error}`);
+});
+await check('screening falls back when DB is unconfigured', 'POST', '/api/screening', {
+  headers: JSON_H, body: { name: 'S', phone: '9876543210', phq9_score: 4, consent: true },
+}, (res, body) => {
   expect(res.status === 201 && body.screening?.phq9_score === 4, `status ${res.status}`);
+  expect(body.screening?.consent_purpose === 'screening_follow_up', 'consent recorded');
 });
 await check('professional apply falls back + sets header', 'POST', '/api/professionals/apply', {
   headers: JSON_H, body: { role: 'psychiatrist', full_name: 'Dr T', phone: '9876500000', consent: true },
@@ -170,12 +194,21 @@ await check('payment order → 503 when payments disabled', 'POST', '/api/paymen
   expect(res.status === 503 && /not enabled/.test(body.error), `${res.status}`);
 });
 
-// ── Tracking dedupe ───────────────────────────────────────────
-await check('first visit is unique', 'POST', '/api/track/visit', { headers: JSON_H, body: { vid: 'tv1' } }, (res, body) => {
-  expect(res.status === 200 && body.unique === true, JSON.stringify(body));
+// ── Tracking consent + dedupe ─────────────────────────────────
+await check('visit without analytics consent is not recorded', 'POST', '/api/track/visit', {
+  headers: JSON_H, body: { vid: 'tv0' },
+}, (res, body) => {
+  expect(res.status === 200 && body.unique === false && body.recorded === false, JSON.stringify(body));
 });
-await check('repeat visit deduped', 'POST', '/api/track/visit', { headers: JSON_H, body: { vid: 'tv1' } }, (res, body) => {
-  expect(res.status === 200 && body.unique === false, JSON.stringify(body));
+await check('first consented visit is unique', 'POST', '/api/track/visit', {
+  headers: JSON_H, body: { vid: 'tv1', analytics_consent: true },
+}, (res, body) => {
+  expect(res.status === 200 && body.unique === true && body.recorded === true, JSON.stringify(body));
+});
+await check('repeat consented visit deduped', 'POST', '/api/track/visit', {
+  headers: JSON_H, body: { vid: 'tv1', analytics_consent: true },
+}, (res, body) => {
+  expect(res.status === 200 && body.unique === false && body.recorded === true, JSON.stringify(body));
 });
 await check('track/today requires admin', 'GET', '/api/track/today', null, (res) => {
   expect(res.status === 401, `${res.status}`);
@@ -187,6 +220,34 @@ await check('track/today counts uniques', 'GET', '/api/track/today', { headers: 
 // ── Contact (DB-optional) ─────────────────────────────────────
 await check('contact accepted without DB', 'POST', '/api/contact', { headers: JSON_H, body: { name: 'N', message: 'hello' } }, (res, body) => {
   expect(res.status === 201 && body.ok === true, `${res.status}`);
+});
+
+// ── Privacy / DPDP rights ─────────────────────────────────────
+await check('privacy request without name → 400', 'POST', '/api/privacy/request', {
+  headers: JSON_H, body: { email: 'a@b.com', request_type: 'access', details: 'please send my data' },
+}, (res, body) => {
+  expect(res.status === 400 && /full_name/.test(body.error), `${res.status} ${body.error}`);
+});
+await check('privacy request with bad type → 400', 'POST', '/api/privacy/request', {
+  headers: JSON_H, body: { full_name: 'A', email: 'a@b.com', request_type: 'export', details: 'please send my data' },
+}, (res, body) => {
+  expect(res.status === 400 && /request_type/.test(body.error), `${res.status} ${body.error}`);
+});
+await check('privacy request accepted without DB', 'POST', '/api/privacy/request', {
+  headers: JSON_H,
+  body: { full_name: 'A Patient', email: 'a@b.com', request_type: 'access', details: 'please send my data' },
+}, (res, body) => {
+  expect(res.status === 201 && body.ok === true, `${res.status}`);
+  expect(body.fallback === true, 'fallback flag');
+  expect(body.request?.request_type === 'access', 'type echoed');
+});
+await check('privacy request list requires admin', 'GET', '/api/privacy/requests', null, (res) => {
+  expect(res.status === 401, `${res.status}`);
+});
+await check('consultation bootstrap without DB is non-PII', 'GET', '/api/consultations/appt-test-1', null, (res, body) => {
+  expect(res.status === 200 && body.found === false, `${res.status}`);
+  expect(body.thread_key === 'appt-test-1', 'thread key');
+  expect(body.patient_name === undefined && body.patient_phone === undefined, 'no PII fields');
 });
 
 // ── Assistant disabled ────────────────────────────────────────
@@ -214,6 +275,9 @@ if (hasDist) {
   });
   await check('admin page swaps PWA manifest', 'GET', '/admin', null, (res, body) => {
     expect(res.status === 200 && body.includes('/admin-manifest.json'), 'admin manifest');
+  });
+  await check('privacy request page → 200', 'GET', '/privacy/request', null, (res) => {
+    expect(res.status === 200, `status ${res.status}`);
   });
   await check('unknown page → 404 HTML', 'GET', '/totally-unknown-page', null, (res) => {
     expect(res.status === 404, `status ${res.status}`);

@@ -51,8 +51,23 @@ export const bookings = {
    */
   create: (data) => post('/api/bookings', data),
 
-  /** Get a single booking by ID. */
+  /** Get a single booking by ID (admin or the matching signed-in patient). */
   get: (id) => get(`/api/bookings/${id}`),
+};
+
+// ── Consultations (capability URL — no PII) ─────────────────
+export const consultations = {
+  /** Session bootstrap: mode, thread key, room URL. Never returns patient contact. */
+  get: (id) => get(`/api/consultations/${id}`),
+};
+
+// ── Privacy / DPDP rights ───────────────────────────────────
+export const privacy = {
+  /**
+   * File a data-principal request.
+   * @param {{ full_name, email?, phone?, request_type, details }} data
+   */
+  request: (data) => post('/api/privacy/request', data),
 };
 
 // ── Screening ───────────────────────────────────────────────
@@ -143,4 +158,7 @@ export const assistant = {
   notifyGuideOpened: (payload) => post('/api/assistant/notify-open', payload),
 };
 
-export default { health, bookings, screening, professionals, rooms, contact, assistant, prescriptions, subscribers, payments };
+export default {
+  health, bookings, consultations, privacy, screening, professionals,
+  rooms, contact, assistant, prescriptions, subscribers, payments,
+};

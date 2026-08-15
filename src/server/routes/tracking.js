@@ -1,12 +1,18 @@
 /**
  * Visitor tracking — WhatsApp ping per new visitor/day, persisted traffic
  * analytics, and the Serenest Guide open beacon.
+ *
+ * Analytics persistence and unique-visitor pings require an explicit
+ * `analytics_consent: true` flag (DPDP — consent before optional tracking).
+ * Paths and referrers are sanitised so query strings and clinical URLs
+ * never land in storage or team alerts.
  */
 import { ok, err, requireDb, requireAdmin } from '../http.js';
 import { supabase } from '../db.js';
 import { notify } from '../notify.js';
+import { hashFingerprint, isTruthyConsent, sanitizePath, sanitizeReferrer } from '../privacy.js';
 
-// Daily-rotating sets — reset at midnight UTC.
+// Daily-rotating sets — reset at midnight UTC. Values are hashed fingerprints.
 let visitorDay   = new Date().toISOString().slice(0, 10);
 let seenVisitors = new Set();
 let seenAssistantOpens = new Set();
@@ -28,25 +34,33 @@ function deviceFromUA(ua = '') {
   return 'desktop';
 }
 
+function clientIp(req) {
+  return (req.headers['x-forwarded-for']?.split(',')[0] || req.ip || '').trim();
+}
+
 export function registerTrackingRoutes(app) {
-  /** POST /api/track/visit — quietly records a visit. */
+  /** POST /api/track/visit — records a visit only after analytics consent. */
   app.post('/api/track/visit', (req, res) => {
     rolloverIfNeeded();
 
+    if (!isTruthyConsent(req.body?.analytics_consent)) {
+      return ok(res, { unique: false, recorded: false });
+    }
+
     const { vid, path = '/', referrer = '' } = req.body || {};
-    const ip = (req.headers['x-forwarded-for']?.split(',')[0] || req.ip || '').trim();
+    const ip = clientIp(req);
     const ua = req.headers['user-agent'] || '';
     const device = deviceFromUA(ua);
-    // Approximate country if the hosting platform/CDN supplies a header
-    // (Cloudflare / Vercel). Render does not by default — stays null then.
     const country = (req.headers['cf-ipcountry'] || req.headers['x-vercel-ip-country'] || null);
+    const safePath = sanitizePath(path);
+    const safeRef = sanitizeReferrer(referrer);
+    const visitorHash = hashFingerprint(vid || 'anon');
 
-    // Persist every visit (best-effort — never block or fail the beacon).
     if (supabase) {
       supabase.from('site_visits').insert({
-        visitor_id: vid || null,
-        path: String(path).slice(0, 300),
-        referrer: String(referrer).slice(0, 300) || null,
+        visitor_id: visitorHash,
+        path: safePath,
+        referrer: safeRef,
         device,
         country: country && country !== 'XX' ? country : null,
       }).then(({ error }) => {
@@ -54,18 +68,17 @@ export function registerTrackingRoutes(app) {
       });
     }
 
-    // Fingerprint = browser-supplied vid (cookie-less) + IP + UA hash
-    const fp = `${vid || 'anon'}|${ip}`;
-    if (seenVisitors.has(fp)) return ok(res, { unique: false });
+    const fp = hashFingerprint(`${vid || 'anon'}|${ip}`);
+    if (seenVisitors.has(fp)) return ok(res, { unique: false, recorded: true });
 
     seenVisitors.add(fp);
     notify.siteVisitor({
       count: seenVisitors.size,
-      path, referrer,
-      userAgent: ua,
+      path: safePath,
+      referrer: safeRef || '',
     });
 
-    return ok(res, { unique: true, total_today: seenVisitors.size });
+    return ok(res, { unique: true, recorded: true, total_today: seenVisitors.size });
   });
 
   /** POST /api/assistant/notify-open — Serenest Guide opened (team WhatsApp, deduped / day / visitor). */
@@ -73,12 +86,12 @@ export function registerTrackingRoutes(app) {
     rolloverIfNeeded();
 
     const { vid, path: pg = '/' } = req.body || {};
-    const ip = (req.headers['x-forwarded-for']?.split(',')[0] || req.ip || '').trim();
-    const fp = `guide|${vid || 'anon'}|${ip}`;
+    const ip = clientIp(req);
+    const fp = hashFingerprint(`guide|${vid || 'anon'}|${ip}`);
     if (seenAssistantOpens.has(fp)) return ok(res, { notified: false });
 
     seenAssistantOpens.add(fp);
-    notify.serenestGuideOpened({ path: typeof pg === 'string' ? pg : '/' });
+    notify.serenestGuideOpened({ path: sanitizePath(typeof pg === 'string' ? pg : '/') });
 
     return ok(res, { notified: true });
   });
@@ -98,7 +111,6 @@ export function registerTrackingRoutes(app) {
     const since = (days) => new Date(now.getTime() - days * 86400000).toISOString();
     const startOfToday = new Date(now); startOfToday.setHours(0, 0, 0, 0);
 
-    // Pull the last 30 days of visits once, then aggregate in memory.
     const { data: rows, error } = await supabase
       .from('site_visits')
       .select('created_at, visitor_id, path, referrer, device, country')

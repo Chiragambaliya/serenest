@@ -49,6 +49,7 @@ export function applyGlobalMiddleware(app) {
   app.use('/api/professionals/apply', strictLimiter);
   app.use('/api/contact', strictLimiter);
   app.use('/api/subscribe', strictLimiter);
+  app.use('/api/privacy/request', strictLimiter);
 
   // ── CORS ───────────────────────────────────────────────────
   app.use(cors({

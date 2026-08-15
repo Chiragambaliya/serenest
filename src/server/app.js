@@ -26,6 +26,8 @@ import { registerSocialRoutes } from './routes/social.js';
 import { registerInquiryRoutes } from './routes/inquiries.js';
 import { registerContactRoutes } from './routes/contact.js';
 import { registerAssistantRoutes } from './routes/assistant.js';
+import { registerConsultationRoutes } from './routes/consultations.js';
+import { registerPrivacyRoutes } from './routes/privacy.js';
 import { registerSpaHandlers } from './spa.js';
 
 export function createApp() {
@@ -51,6 +53,8 @@ export function createApp() {
   registerInquiryRoutes(app);
   registerContactRoutes(app);
   registerAssistantRoutes(app);
+  registerConsultationRoutes(app);
+  registerPrivacyRoutes(app);
 
   // ── Static + SPA fallback (with route-specific SEO injection) ─
   registerSpaHandlers(app);

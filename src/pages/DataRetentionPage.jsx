@@ -66,7 +66,7 @@ export default function DataRetentionPage() {
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>Account Deletion</h2>
-              <p className="muted">You may request deletion of your Serenest account at any time by emailing <a href="mailto:support@serenest.in" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>support@serenest.in</a>. Upon deletion:</p>
+              <p className="muted">You may request deletion of your Serenest account at any time via the <Link to="/privacy/request" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>data rights form</Link> or by emailing <a href="mailto:support@serenest.in" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>support@serenest.in</a>. Upon deletion:</p>
               <ul className="list" style={{ marginTop: 8 }}>
                 <li>Your profile, preferences, and marketing data are deleted or de-identified after verification and completion of the request.</li>
                 <li>Session records and billing data are retained for the legally required periods above.</li>
@@ -88,7 +88,7 @@ export default function DataRetentionPage() {
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>Your Rights</h2>
-              <p className="muted">Under the Digital Personal Data Protection Act 2023, you have the right to request access to your data, correction of inaccuracies, and deletion (subject to legal retention obligations). To exercise these rights, see our <Link to="/privacy" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>Privacy Policy</Link> or email <a href="mailto:support@serenest.in" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>support@serenest.in</a>.</p>
+              <p className="muted">Under the Digital Personal Data Protection Act 2023, you have the right to request access to your data, correction of inaccuracies, and deletion (subject to legal retention obligations). To exercise these rights, use the <Link to="/privacy/request" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>data rights form</Link>, see our <Link to="/privacy" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>Privacy Policy</Link>, or email <a href="mailto:support@serenest.in" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>support@serenest.in</a>.</p>
             </div>
 
           </div>

@@ -35,6 +35,7 @@ const ROUTES = [
   '/guides',
   '/blog',
   '/privacy',
+  '/privacy/request',
   '/terms',
   '/consent',
   '/refund-policy',

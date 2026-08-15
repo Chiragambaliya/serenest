@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react'
 import { useParams, useNavigate, useSearchParams, Link } from 'react-router-dom';
 import DailyIframe from '@daily-co/daily-js';
 import { supabase } from '../lib/supabase';
-import { rooms as roomsApi } from '../lib/api';
+import { rooms as roomsApi, consultations } from '../lib/api';
 import { CONSULTATION_MODES, normalizeSessionMode } from '../lib/consultationModes';
 
 /** Create or fetch a Daily room via the secure server endpoint (key stays server-side). */
@@ -13,24 +13,6 @@ async function makeRoom(appointmentId) {
   } catch {
     return null;
   }
-}
-
-async function fetchAppointmentByRouteId(client, routeId) {
-  if (!client || !routeId) return { data: null };
-  let { data, error } = await client
-    .from('appointments')
-    .select('*')
-    .eq('appointment_id', routeId)
-    .maybeSingle();
-  if (error) console.error('[consultation]', error);
-  if (data) return { data };
-  ({ data, error } = await client
-    .from('appointments')
-    .select('*')
-    .eq('id', routeId)
-    .maybeSingle());
-  if (error) console.error('[consultation]', error);
-  return { data };
 }
 
 export default function ConsultationPage() {
@@ -69,31 +51,12 @@ export default function ConsultationPage() {
       setLoading(true);
       setError(null);
       try {
-        if (!supabase) {
-          const qp = normalizeSessionMode(searchParams.get('mode'));
-          const m = qp || 'video';
-          setSessionMode(m);
-          setThreadKey(routeAppointmentId ?? '');
-          if (m === 'chat') {
-            setRoomUrl('');
-            setLoading(false);
-            return;
-          }
-          const room = await makeRoom(routeAppointmentId);
-          if (room?.url) setRoomUrl(room.url);
-          else setError('Video sessions are not available yet — the team is setting them up. Please use chat or contact us on WhatsApp.');
-          setLoading(false);
-          return;
-        }
-
-        const { data: appt } = await fetchAppointmentByRouteId(supabase, routeAppointmentId);
+        const session = await consultations.get(routeAppointmentId);
         const modeFromQuery = normalizeSessionMode(searchParams.get('mode'));
-        const modeFromRow = normalizeSessionMode(appt?.mode);
-        const effectiveMode = appt ? modeFromRow : modeFromQuery;
+        const modeFromRow = normalizeSessionMode(session?.mode);
+        const effectiveMode = session?.found ? modeFromRow : (modeFromQuery || modeFromRow);
         setSessionMode(effectiveMode);
-
-        const key = appt?.appointment_id || appt?.id || routeAppointmentId;
-        setThreadKey(key || routeAppointmentId || '');
+        setThreadKey(session?.thread_key || routeAppointmentId || '');
 
         if (effectiveMode === 'chat') {
           setRoomUrl('');
@@ -101,25 +64,12 @@ export default function ConsultationPage() {
           return;
         }
 
-        if (appt?.daily_room_url) {
-          setRoomUrl(appt.daily_room_url);
+        if (session?.room_url) {
+          setRoomUrl(session.room_url);
         } else {
-          const roomKey = appt?.appointment_id || routeAppointmentId;
-          const room = await makeRoom(roomKey);
-          if (room?.url) {
-            setRoomUrl(room.url);
-            if (appt?.id) {
-              await supabase.from('appointments').upsert({
-                id: appt.id,
-                appointment_id: appt.appointment_id,
-                patient_name: appt.patient_name || 'Patient',
-                daily_room_name: room.name,
-                daily_room_url: room.url,
-              }, { onConflict: 'id' });
-            }
-          } else {
-            setError('Video sessions are not available yet — the team is setting them up. Please use chat or contact us on WhatsApp.');
-          }
+          const room = await makeRoom(session?.thread_key || routeAppointmentId);
+          if (room?.url) setRoomUrl(room.url);
+          else setError('Video sessions are not available yet — the team is setting them up. Please use chat or contact us on WhatsApp.');
         }
       } catch (e) {
         setError('Failed to load consultation room.');

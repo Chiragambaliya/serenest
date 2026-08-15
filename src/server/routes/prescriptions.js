@@ -61,11 +61,15 @@ export function registerPrescriptionRoutes(app) {
    */
   app.get('/api/prescriptions/:appointmentId', async (req, res) => {
     if (!requireDb(res)) return;
+    const appointmentId = String(req.params.appointmentId || '').trim();
+    if (!appointmentId || appointmentId.length < 8) {
+      return err(res, 'Invalid appointment reference', 400);
+    }
 
     const { data, error } = await supabase
       .from('prescriptions')
       .select('*')
-      .eq('appointment_id', req.params.appointmentId)
+      .eq('appointment_id', appointmentId)
       .maybeSingle();
 
     if (error) {

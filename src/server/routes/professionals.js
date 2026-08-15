@@ -2,7 +2,7 @@
  * Professionals management — public directory / verification and admin
  * profile updates.
  */
-import { ok, err, requireDb, requireAdmin } from '../http.js';
+import { ok, err, requireDb, requireAdmin, bearer } from '../http.js';
 import { supabase } from '../db.js';
 
 export function registerProfessionalRoutes(app) {
@@ -29,12 +29,26 @@ export function registerProfessionalRoutes(app) {
   /**
    * GET /api/professionals/verify?email= — is this email a joined (approved) professional?
    * Used to gate Academy clinician content. Returns only a boolean, no profile data.
+   * Requires a matching signed-in session (or admin) so the endpoint cannot be
+   * used to enumerate clinicians by email.
    */
   app.get('/api/professionals/verify', async (req, res) => {
     if (!requireDb(res)) return;
 
     const email = String(req.query.email ?? '').trim().toLowerCase();
     if (!email) return err(res, 'email is required');
+
+    const isAdmin = process.env.ADMIN_SECRET
+      && req.headers['x-admin-secret'] === process.env.ADMIN_SECRET;
+    if (!isAdmin) {
+      const token = bearer(req);
+      if (!token) return err(res, 'Unauthorized', 401);
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      if (authError || !user?.email) return err(res, 'Unauthorized', 401);
+      if (String(user.email).trim().toLowerCase() !== email) {
+        return err(res, 'Forbidden', 403);
+      }
+    }
 
     const { count, error } = await supabase
       .from('professional_applications')

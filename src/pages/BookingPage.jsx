@@ -132,6 +132,7 @@ export default function BookingPage() {
   const [language, setLanguage] = useState(preLang || 'English');
   const [note, setNote] = useState(handoffNote);
   const [consent, setConsent] = useState(false);
+  const [ageAttestation, setAgeAttestation] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
@@ -177,6 +178,8 @@ export default function BookingPage() {
       preferred_time: time,
       language,
       notes: note.trim(),
+      consent: true,
+      age_attestation: true,
     };
 
     try {
@@ -253,7 +256,7 @@ export default function BookingPage() {
   const phoneClean = phone.replace(/[^\d]/g, '');
   const isPhoneValid = phoneClean.length === 10 && /^[6-9]/.test(phoneClean);
   const isNameValid = name.trim().length >= 2;
-  const canContinueStep3 = isNameValid && isPhoneValid && consent;
+  const canContinueStep3 = isNameValid && isPhoneValid && consent && ageAttestation;
 
   return (
     <div className="page">
@@ -563,7 +566,14 @@ export default function BookingPage() {
                   <label className="consent">
                     <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
                     <span>
-                      I consent to being contacted about this appointment and acknowledge this is not for emergencies.
+                      I consent to being contacted about this appointment and acknowledge this is not for emergencies.{' '}
+                      <Link to="/privacy">Privacy policy</Link>.
+                    </span>
+                  </label>
+                  <label className="consent">
+                    <input type="checkbox" checked={ageAttestation} onChange={(e) => setAgeAttestation(e.target.checked)} />
+                    <span>
+                      I confirm I am 18 or older, or I am booking as a parent or legal guardian.
                     </span>
                   </label>
                 </div>

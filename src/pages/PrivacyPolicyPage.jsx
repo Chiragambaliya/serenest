@@ -170,9 +170,9 @@ export default function PrivacyPolicyPage() {
             <button className="btn btn-primary" type="button" onClick={openPrivacyChoices}>
               Manage privacy choices
             </button>
-            <a className="btn btn-ghost" href="mailto:support@serenest.in?subject=Privacy%20request">
+            <Link className="btn btn-ghost" to="/privacy/request">
               Make a privacy request
-            </a>
+            </Link>
             <Link className="btn btn-ghost" to="/grievance-policy">Grievance process</Link>
           </div>
           <div className="callout" style={{ marginTop: 40 }}>
@@ -378,7 +378,8 @@ export default function PrivacyPolicyPage() {
                   <li>nominate another individual to exercise your rights in the event of death or incapacity.</li>
                 </ul>
                 <p>
-                  Email <a href="mailto:support@serenest.in?subject=Data%20rights%20request">support@serenest.in</a>{' '}
+                  Use the <Link to="/privacy/request">data rights request form</Link> or email{' '}
+                  <a href="mailto:support@serenest.in?subject=Data%20rights%20request">support@serenest.in</a>{' '}
                   with the subject &quot;Data rights request&quot;, the email or phone linked to your account,
                   and the right you wish to exercise. Do not email identity documents unless requested.
                   We may ask for proportionate information to verify identity or authority. We acknowledge

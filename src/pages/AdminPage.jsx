@@ -69,6 +69,8 @@ function Badge({ status }) {
     approved:  { bg: '#d1e7dd', color: '#0a3622' },
     hired:     { bg: '#d1e7dd', color: '#0a3622' },
     rejected:  { bg: '#f8d7da', color: '#842029' },
+    received:  { bg: '#fff3cd', color: '#856404' },
+    in_progress: { bg: '#e7e0f8', color: '#5b2a86' },
     new:       { bg: '#cfe2ff', color: '#084298' },
     reviewing: { bg: '#e7e0f8', color: '#5b2a86' },
     shortlisted: { bg: '#fff3cd', color: '#856404' },
@@ -137,6 +139,7 @@ const TAB_GROUPS = [
     label: 'Communications',
     items: [
       { id: 'messages',    label: 'Messages',    icon: '◻' },
+      { id: 'privacy',     label: 'Privacy',     icon: '◻' },
       { id: 'subscribers', label: 'Subscribers', icon: '◻' },
     ],
   },
@@ -173,6 +176,7 @@ const TAB_ICONS = {
   applications: '◇',
   hr: '◈',
   messages: '◉',
+  privacy: '◑',
   screenings: '◌',
   subscribers: '◦',
   learners: '◈',
@@ -188,6 +192,7 @@ const TAB_HELP = {
   applications: 'Review professional onboarding applications.',
   hr: 'Manage job applications, postings, interviews, and offers.',
   messages: 'Read incoming contact/enquiry messages.',
+  privacy: 'DPDP data-principal requests — access, correction, erasure, consent, nominate, grievance.',
   screenings: 'Review self-screening submissions and callback leads.',
   subscribers: 'People who opted in to email updates — export and reach out.',
   learners: 'Registered Serenest Academy accounts — your learner audience.',
@@ -264,6 +269,7 @@ const SITE_PAGE_GROUPS = [
       { label: 'Blog index', path: '/blog', hint: 'All posts' },
       { label: 'Sample blog post', path: `/blog/${SAMPLE_BLOG_SLUG}`, hint: 'Example slug; see blogPosts.js for all' },
       { label: 'Privacy policy', path: '/privacy', hint: 'Legal / controller' },
+      { label: 'Data rights request', path: '/privacy/request', hint: 'DPDP form' },
       { label: '404 test', path: '/this-route-should-not-exist', hint: 'Sanity-check error page (expect Not found)' },
     ],
   },
@@ -315,6 +321,8 @@ export default function AdminPage() {
   const [fallbackAppCount, setFallbackAppCount] = useState(0);
   const [jobs, setJobs]               = useState([]);
   const [messages, setMessages]       = useState([]);
+  const [privacyRequests, setPrivacyRequests] = useState([]);
+  const [privacyBusyId, setPrivacyBusyId] = useState(null);
   const [screenings, setScreenings]   = useState([]);
   const [signups, setSignups]         = useState([]);
   const [traffic, setTraffic]         = useState(null);
@@ -467,6 +475,10 @@ export default function AdminPage() {
       (which === 'all' || which === 'messages') && safe(async () => {
         const r = await adminFetch('/api/contacts', secret);
         setMessages(r.messages ?? []);
+      }),
+      (which === 'all' || which === 'privacy') && safe(async () => {
+        const r = await adminFetch('/api/privacy/requests', secret);
+        setPrivacyRequests(r.requests ?? []);
       }),
       (which === 'all' || which === 'signups') && safe(async () => {
         const r = await adminFetch('/api/signups', secret);
@@ -1114,6 +1126,21 @@ export default function AdminPage() {
     }
   }
 
+  async function updatePrivacyRequest(id, status) {
+    setPrivacyBusyId(id);
+    try {
+      const r = await adminFetch(`/api/privacy/requests/${id}`, secret, {
+        method: 'PATCH',
+        body: JSON.stringify({ status }),
+      });
+      setPrivacyRequests((prev) => prev.map((row) => (row.id === id ? r.request : row)));
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setPrivacyBusyId(null);
+    }
+  }
+
   // ── application status update ──────────────────────────────
   async function updateAppStatus(id, status) {
     try {
@@ -1392,6 +1419,7 @@ export default function AdminPage() {
                 { id: 'applications',  icon: '👩‍⚕️', label: 'Applications',          desc: 'Approve or reject professional sign-ups' },
                 { id: 'hr',            icon: '🧑‍💼', label: 'HR / Hiring',           desc: 'Review and manage job applications' },
                 { id: 'messages',      icon: '💬', label: 'Contact Messages',       desc: 'Read enquiries from patients & orgs' },
+                { id: 'privacy',       icon: '🔏', label: 'Privacy requests',       desc: 'DPDP access, erasure, and grievances' },
                 { id: 'screenings',    icon: '🧠', label: 'Screenings',             desc: 'PHQ-9 / GAD-7 exports & safety flags' },
                 { id: 'signups',       icon: '📋', label: 'Waitlist',               desc: 'People who signed up before launch' },
                 { id: 'website',       icon: '🌐', label: 'Website & pages',        desc: 'Every route — open, copy links, health check' },
@@ -3052,6 +3080,68 @@ export default function AdminPage() {
                     </div>
                   );
                 })}
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── PRIVACY REQUESTS ── */}
+        {tab === 'privacy' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 8 }}>
+              <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>
+                Privacy requests <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({privacyRequests.length})</span>
+              </h2>
+              <button
+                onClick={() => downloadCsv(
+                  [
+                    ['Name', 'Email', 'Phone', 'Type', 'Status', 'Details', 'Received'],
+                    ...privacyRequests.map((r) => [r.full_name, r.email, r.phone, r.request_type, r.status, r.details, fmt(r.created_at)]),
+                  ],
+                  'serenest-privacy-requests.csv',
+                )}
+                className="btn btn-ghost btn-sm"
+              >
+                Export CSV
+              </button>
+            </div>
+            {privacyRequests.length === 0 ? (
+              <EmptyState icon="🔏" text="No privacy requests yet" />
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {privacyRequests.map((r) => (
+                  <div key={r.id} style={{
+                    background: 'var(--surface)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 10,
+                    padding: '1rem 1.25rem',
+                  }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8, marginBottom: 6 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                        <strong>{r.full_name}</strong>
+                        <Badge status={r.status} />
+                        <span style={{ fontSize: '0.78rem', padding: '2px 8px', borderRadius: 99, background: 'var(--bg-subtle)' }}>{r.request_type}</span>
+                        {r.email && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{r.email}</span>}
+                        {r.phone && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{r.phone}</span>}
+                      </div>
+                      <small style={{ color: 'var(--text-muted)' }}>{fmt(r.created_at)}</small>
+                    </div>
+                    <p style={{ margin: '0 0 10px', color: 'var(--text)', fontSize: '0.9rem', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>{r.details}</p>
+                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                      {['received', 'in_progress', 'completed', 'rejected'].map((status) => (
+                        <button
+                          key={status}
+                          type="button"
+                          className="btn btn-ghost btn-sm"
+                          disabled={privacyBusyId === r.id || r.status === status}
+                          onClick={() => updatePrivacyRequest(r.id, status)}
+                        >
+                          {status.replace('_', ' ')}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
           </div>
