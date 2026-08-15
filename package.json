@@ -11,8 +11,9 @@
     "start": "node server.js",
     "verify:seo": "node scripts/verify-seo.mjs",
     "test:screening": "node scripts/test-screening-tools.mjs",
-    "test": "npm run test:screening",
-    "lint": "node --check server.js && node --check src/server/aiAssistant.js && node --check src/server/siteGuideRoutes.js && node --check src/lib/checkEvidence.js && node --check src/lib/checkSession.js && node --check scripts/test-screening-tools.mjs"
+    "test:api": "node scripts/test-api.mjs",
+    "test": "npm run test:screening && npm run test:api",
+    "lint": "node scripts/check-syntax.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.106.0",
