@@ -3,10 +3,11 @@
  * patient self-service listing, and admin management.
  */
 import crypto from 'crypto';
-import { ok, err, requireDb, requireAdmin } from '../http.js';
-import { supabase } from '../db.js';
+import { ok, err, requireDb, requireAdmin, bearer } from '../http.js';
+import { supabase, insertDroppingUnknownColumns } from '../db.js';
 import { notify } from '../notify.js';
 import { captureFallbackLead } from '../leads.js';
+import { consentRecord, CONSENT_OPTIONAL_COLUMNS, isTruthyConsent } from '../privacy.js';
 import {
   RZP_KEY_ID, paymentsEnabled, resolveFeeInr,
   createRazorpayOrder, verifyRazorpaySignature,
@@ -59,6 +60,12 @@ export function registerBookingRoutes(app) {
     if (!practitioner_type)     return err(res, 'practitioner_type is required');
     if (!preferred_date)        return err(res, 'preferred_date is required');
     if (!preferred_time)        return err(res, 'preferred_time is required');
+    if (!isTruthyConsent(req.body?.consent)) {
+      return err(res, 'consent is required — please confirm you agree to be contacted about this appointment');
+    }
+    if (!isTruthyConsent(req.body?.age_attestation)) {
+      return err(res, 'age_attestation is required — you must confirm you are 18 or booking as a parent/guardian');
+    }
 
     const phone = patient_phone.replace(/[^\d]/g, '');
     if (phone.length !== 10 || !/^[6-9]/.test(phone)) {
@@ -98,14 +105,16 @@ export function registerBookingRoutes(app) {
       payment_id: payment.id,
       payment_order_id: payment.order_id,
       amount_paid: payment.amount,
+      ...consentRecord({ purpose: 'appointment_contact_and_care' }),
+      age_attestation: true,
     };
 
     if (supabase) {
-      const { data, error } = await supabase
-        .from('appointments')
-        .insert(record)
-        .select()
-        .single();
+      const { data, error } = await insertDroppingUnknownColumns(
+        'appointments',
+        record,
+        [...CONSENT_OPTIONAL_COLUMNS, 'payment_status', 'payment_id', 'payment_order_id', 'amount_paid'],
+      );
 
       if (!error) {
         notify.booking(data);
@@ -124,7 +133,8 @@ export function registerBookingRoutes(app) {
 
   /**
    * GET /api/bookings/:id
-   * Get a single booking by ID.
+   * Admin, or the authenticated patient whose email/phone matches the row.
+   * Not a public capability URL — booking records contain health-adjacent PII.
    */
   app.get('/api/bookings/:id', async (req, res) => {
     if (!requireDb(res)) return;
@@ -136,6 +146,27 @@ export function registerBookingRoutes(app) {
       .single();
 
     if (error || !data) return err(res, 'Booking not found', 404);
+
+    if (process.env.ADMIN_SECRET && req.headers['x-admin-secret'] === process.env.ADMIN_SECRET) {
+      return ok(res, { booking: data });
+    }
+
+    const token = bearer(req);
+    if (!token) return err(res, 'Unauthorized', 401);
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) return err(res, 'Unauthorized', 401);
+
+    const email = String(user.email || '').trim().toLowerCase();
+    const { data: patient } = await supabase
+      .from('patients')
+      .select('phone')
+      .eq('auth_user_id', user.id)
+      .maybeSingle();
+    const phone = patient?.phone ? String(patient.phone).replace(/[^\d]/g, '') : '';
+    const owns = (email && String(data.patient_email || '').toLowerCase() === email)
+      || (phone && String(data.patient_phone || '').replace(/[^\d]/g, '') === phone);
+    if (!owns) return err(res, 'Forbidden', 403);
+
     return ok(res, { booking: data });
   });
 

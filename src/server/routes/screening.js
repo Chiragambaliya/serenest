@@ -3,9 +3,10 @@
  */
 import crypto from 'crypto';
 import { ok, err, requireDb, requireAdmin } from '../http.js';
-import { supabase } from '../db.js';
+import { supabase, insertDroppingUnknownColumns } from '../db.js';
 import { notify } from '../notify.js';
 import { captureFallbackLead } from '../leads.js';
+import { consentRecord, CONSENT_OPTIONAL_COLUMNS, isTruthyConsent } from '../privacy.js';
 
 export function registerScreeningRoutes(app) {
   /**
@@ -22,6 +23,10 @@ export function registerScreeningRoutes(app) {
     } = req.body;
 
     const cleanPhone = (phone || '').replace(/[^\d]/g, '');
+    const hasContact = Boolean(name?.trim() || cleanPhone || email?.trim());
+    if (hasContact && !isTruthyConsent(req.body?.consent)) {
+      return err(res, 'consent is required to store your contact details with this screening');
+    }
 
     const record = {
       name: name?.trim() || null,
@@ -37,16 +42,17 @@ export function registerScreeningRoutes(app) {
       gad7_answers: gad7_answers || null,
       gad7_score: gad7_score ?? null,
       gad7_severity: gad7_severity || null,
-      wants_callback,
-      status: 'new',
-    };
+    wants_callback,
+    status: 'new',
+    ...(hasContact ? consentRecord({ purpose: 'screening_follow_up' }) : {}),
+  };
 
     if (supabase) {
-      const { data, error } = await supabase
-        .from('screening_responses')
-        .insert(record)
-        .select()
-        .single();
+      const { data, error } = await insertDroppingUnknownColumns(
+        'screening_responses',
+        record,
+        CONSENT_OPTIONAL_COLUMNS,
+      );
 
       if (!error) {
         notify.screening(data);

@@ -6,6 +6,7 @@ import cron from 'node-cron';
 import { supabase } from './db.js';
 import { notify } from './notify.js';
 import { publishPost } from './socialPoster.js';
+import { runRetentionSweep } from './privacy.js';
 
 function istDateString(offsetDays = 0) {
   return new Date(Date.now() + offsetDays * 86400000)
@@ -102,4 +103,13 @@ export function startCronJobs() {
       }
     }
   });
+
+  // Daily 03:17 IST — anonymise / delete data past the published retention window.
+  cron.schedule('17 3 * * *', async () => {
+    try {
+      await runRetentionSweep();
+    } catch (e) {
+      console.error('[privacy-retention] sweep failed:', e.message);
+    }
+  }, { timezone: 'Asia/Kolkata' });
 }

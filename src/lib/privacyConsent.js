@@ -32,6 +32,7 @@ export function setPrivacyChoice(choice) {
     loadAnalytics();
   } else {
     disableAnalytics();
+    try { localStorage.removeItem('serenest.vid'); } catch { /* ignore */ }
   }
 }
 

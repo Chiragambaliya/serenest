@@ -34,6 +34,7 @@ const VALID_ROUTES = new Set([
   '/guides',
   '/blog',
   '/privacy',
+  '/privacy/request',
   '/terms',
   '/patient/terms',
   '/consent',

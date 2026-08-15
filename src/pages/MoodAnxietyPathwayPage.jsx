@@ -33,6 +33,7 @@ export default function MoodAnxietyPathwayPage() {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [callback, setCallback] = useState(false);
+  const [consent, setConsent] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [saved, setSaved] = useState(false);
@@ -102,6 +103,7 @@ export default function MoodAnxietyPathwayPage() {
         gad7_severity: gadResult.band.label,
         wants_callback: callback,
         reason: 'mood-anxiety-pathway',
+        consent: true,
       });
       setSaved(true);
     } catch (err) {
@@ -275,11 +277,18 @@ export default function MoodAnxietyPathwayPage() {
                           <input type="checkbox" checked={callback} onChange={(e) => setCallback(e.target.checked)} />
                           <span style={{ fontSize: '0.88rem' }}>Please have someone from Serenest reach out about my results</span>
                         </label>
+                        <label style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
+                          <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+                          <span style={{ fontSize: '0.88rem' }}>
+                            I consent to Serenest storing this contact and screening summary for follow-up.{' '}
+                            <Link to="/privacy">Privacy policy</Link>.
+                          </span>
+                        </label>
                         {submitError ? <p style={{ color: '#a02622', fontSize: '0.88rem' }}>{submitError}</p> : null}
                         <button
                           type="button"
                           className="btn btn-primary"
-                          disabled={!name.trim() || !phoneOk || submitting}
+                          disabled={!name.trim() || !phoneOk || !consent || submitting}
                           onClick={saveOptional}
                         >
                           {submitting ? 'Saving…' : 'Save summary'}

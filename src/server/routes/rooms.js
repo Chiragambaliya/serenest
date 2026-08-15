@@ -3,6 +3,8 @@
  * exposed to the browser.
  */
 import { ok, err } from '../http.js';
+import { supabase } from '../db.js';
+import { findAppointmentSession } from '../privacy.js';
 
 const DAILY_URL = 'https://api.daily.co/v1';
 
@@ -14,6 +16,11 @@ export function registerRoomRoutes(app) {
   app.post('/api/rooms', async (req, res) => {
     const { appointment_id } = req.body;
     if (!appointment_id) return err(res, 'appointment_id is required');
+
+    if (supabase) {
+      const appt = await findAppointmentSession(appointment_id);
+      if (!appt) return err(res, 'Appointment not found', 404);
+    }
 
     const key = process.env.DAILY_API_KEY;
     if (!key) return err(res, 'Video rooms not configured on this server', 503);

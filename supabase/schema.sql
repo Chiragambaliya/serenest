@@ -38,7 +38,14 @@ create table if not exists public.appointments (
   professional_id  uuid references public.professional_applications(id) on delete set null,
 
   -- Video room (Daily.co room name, set when session is confirmed)
-  room_name        text
+  room_name        text,
+
+  -- DPDP consent evidence (see 2026_08_15_privacy_dpdp.sql)
+  consent_confirmed_at timestamptz,
+  consent_method       text,
+  consent_purpose      text,
+  age_attestation      boolean,
+  privacy_notice_accepted_at timestamptz
 );
 
 -- ── Patients ─────────────────────────────────────────────────
@@ -154,7 +161,11 @@ create table if not exists public.screening_responses (
   conditions text[],
   format     text,
   frequency  text,
-  created_at timestamptz not null default now()
+  created_at timestamptz not null default now(),
+  consent_confirmed_at timestamptz,
+  consent_method       text,
+  consent_purpose      text,
+  privacy_notice_accepted_at timestamptz
 );
 
 -- ── Contact messages ─────────────────────────────────────────
@@ -167,6 +178,30 @@ create table if not exists public.contact_messages (
   subject    text,
   message    text not null
 );
+
+-- DPDP data-principal rights requests (access / correction / erasure / …)
+create table if not exists public.privacy_requests (
+  id            uuid primary key default gen_random_uuid(),
+  created_at    timestamptz not null default now(),
+  updated_at    timestamptz not null default now(),
+  status        text not null default 'received'
+                  check (status in ('received','in_progress','completed','rejected')),
+  request_type  text not null
+                  check (request_type in (
+                    'access','correction','erasure','withdraw_consent','nominate','grievance'
+                  )),
+  full_name     text not null,
+  email         text,
+  phone         text,
+  details       text not null,
+  staff_notes   text,
+  resolved_at   timestamptz
+);
+
+create index if not exists privacy_requests_created_at_idx
+  on public.privacy_requests (created_at desc);
+create index if not exists privacy_requests_status_idx
+  on public.privacy_requests (status);
 
 -- ── Consultation chat (per appointment thread; used by ConsultationPage) ──
 create table if not exists public.chat_messages (
@@ -237,6 +272,11 @@ create trigger appointments_set_updated_at
   before update on public.appointments
   for each row execute procedure public.set_updated_at();
 
+drop trigger if exists privacy_requests_set_updated_at on public.privacy_requests;
+create trigger privacy_requests_set_updated_at
+  before update on public.privacy_requests
+  for each row execute procedure public.set_updated_at();
+
 -- ============================================================
 -- ROW LEVEL SECURITY
 -- ============================================================
@@ -247,6 +287,7 @@ alter table public.signups                enable row level security;
 alter table public.professionals          enable row level security;
 alter table public.screening_responses    enable row level security;
 alter table public.contact_messages       enable row level security;
+alter table public.privacy_requests       enable row level security;
 alter table public.chat_messages          enable row level security;
 alter table public.session_notes          enable row level security;
 alter table public.assessments            enable row level security;
@@ -261,16 +302,27 @@ begin
 end $$;
 
 -- ── Appointments ─────────────────────────────────────────────
--- Anon can insert (booking form); read/update only via service role (server.js)
+-- Anon can insert (booking form); reads go through the service role or
+-- the signed-in patient / assigned professional (DPDP least-access).
 create policy "anon_insert_appointments"
   on public.appointments for insert
   with check (true);
 
--- Authenticated patients see only their own appointments (matched by phone)
 create policy "auth_select_own_appointments"
   on public.appointments for select
   to authenticated
-  using (true); -- Refine per patient_id once auth is wired
+  using (
+    (
+      patient_email is not null
+      and lower(patient_email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+    )
+    or professional_id in (
+      select id from public.professional_applications
+      where status = 'approved'
+        and email is not null
+        and lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+    )
+  );
 
 -- ── Patients ─────────────────────────────────────────────────
 create policy "patient_select_own"
@@ -293,25 +345,19 @@ create policy "anon_insert_prof_apps"
   on public.professional_applications for insert
   with check (true);
 
-create policy "auth_select_prof_apps"
+create policy "auth_select_own_prof_apps"
   on public.professional_applications for select
   to authenticated
-  using (true);
-
-create policy "auth_update_prof_apps"
-  on public.professional_applications for update
-  to authenticated
-  using (true) with check (true);
+  using (
+    email is not null
+    and lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+  );
 
 -- ── Sign-ups ──────────────────────────────────────────────────
+-- Insert from the public form; reads only via the service role.
 create policy "anon_insert_signups"
   on public.signups for insert
   with check (true);
-
-create policy "auth_select_signups"
-  on public.signups for select
-  to authenticated
-  using (true);
 
 -- ── Professionals ─────────────────────────────────────────────
 create policy "anon_insert_professionals"
@@ -324,52 +370,67 @@ create policy "auth_select_professionals"
   using (true);
 
 -- ── Screening responses ───────────────────────────────────────
+-- Insert from the public form; reads only via the service role.
 create policy "anon_insert_screening"
   on public.screening_responses for insert
   with check (true);
-
-create policy "auth_select_screening"
-  on public.screening_responses for select
-  to authenticated
-  using (true);
 
 -- ── Contact messages ──────────────────────────────────────────
 create policy "anon_insert_contact"
   on public.contact_messages for insert
   with check (true);
 
-create policy "auth_select_contact"
-  on public.contact_messages for select
-  to authenticated
-  using (true);
-
--- ── Session notes ─────────────────────────────────────────────
-create policy "auth_select_notes"
-  on public.session_notes for select
-  to authenticated
-  using (true);
-
-create policy "auth_insert_notes"
-  on public.session_notes for insert
-  to authenticated
+-- ── Privacy requests ──────────────────────────────────────────
+create policy "anon_insert_privacy_requests"
+  on public.privacy_requests for insert
+  to anon, authenticated
   with check (true);
 
--- Locked notes cannot be updated (enforced by application logic + this policy)
-create policy "auth_update_unlocked_notes"
+-- ── Session notes ─────────────────────────────────────────────
+-- Professionals read/write notes only for appointments assigned to them.
+create policy "auth_select_own_notes"
+  on public.session_notes for select
+  to authenticated
+  using (
+    professional_id in (
+      select id from public.professional_applications
+      where status = 'approved'
+        and email is not null
+        and lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+    )
+  );
+
+create policy "auth_insert_own_notes"
+  on public.session_notes for insert
+  to authenticated
+  with check (
+    professional_id in (
+      select id from public.professional_applications
+      where status = 'approved'
+        and email is not null
+        and lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+    )
+  );
+
+create policy "auth_update_own_unlocked_notes"
   on public.session_notes for update
   to authenticated
-  using (is_locked = false)
+  using (
+    is_locked = false
+    and professional_id in (
+      select id from public.professional_applications
+      where status = 'approved'
+        and email is not null
+        and lower(email) = lower(coalesce(auth.jwt() ->> 'email', ''))
+    )
+  )
   with check (true);
 
 -- ── Assessments ───────────────────────────────────────────────
+-- Insert from the public form; reads only via the service role.
 create policy "anon_insert_assessments"
   on public.assessments for insert
   with check (true);
-
-create policy "auth_select_assessments"
-  on public.assessments for select
-  to authenticated
-  using (true);
 
 -- ── Professional learning progress ────────────────────────────
 create policy "pro_learning_select_own"
