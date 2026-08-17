@@ -22,6 +22,17 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const app  = express();
 const dist = join(__dirname, 'dist');
 
+// Render terminates TLS at its load balancer and forwards the real client IP
+// in X-Forwarded-For. Without this, req.ip is the load balancer's address for
+// every visitor, so express-rate-limit keys every request to the same bucket:
+// strictLimiter's 30/hour becomes 30/hour for the whole site combined, and one
+// busy afternoon locks out bookings, screening and apply for everyone.
+//
+// The value is the number of proxy hops to trust — exactly one in front of us.
+// `true` would trust the whole chain and let a client spoof X-Forwarded-For to
+// mint a fresh rate-limit identity per request.
+app.set('trust proxy', 1);
+
 // ── Supabase admin client (service role — server only) ───────
 const supabase = (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY)
   ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
