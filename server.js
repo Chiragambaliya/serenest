@@ -22,6 +22,17 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const app  = express();
 const dist = join(__dirname, 'dist');
 
+// Render terminates TLS at its load balancer and forwards the real client IP
+// in X-Forwarded-For. Without this, req.ip is the load balancer's address for
+// every visitor, so express-rate-limit keys every request to the same bucket:
+// strictLimiter's 30/hour becomes 30/hour for the whole site combined, and one
+// busy afternoon locks out bookings, screening and apply for everyone.
+//
+// The value is the number of proxy hops to trust — exactly one in front of us.
+// `true` would trust the whole chain and let a client spoof X-Forwarded-For to
+// mint a fresh rate-limit identity per request.
+app.set('trust proxy', 1);
+
 // ── Supabase admin client (service role — server only) ───────
 const supabase = (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY)
   ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
@@ -283,6 +294,68 @@ async function markContactLeadPromoted(id, promotedId) {
 }
 
 /** Update a job application in job_applications, or in contact_messages if that's where it lives. */
+const JOB_STATUSES = ['new', 'reviewing', 'shortlisted', 'interviewing', 'hired', 'rejected'];
+
+/**
+ * The single path that may change a job application's status.
+ *
+ * Every hiring action funnels through here so that status and the candidate
+ * email can never disagree. Three properties matter:
+ *
+ *  - Idempotent. Re-running a transition that already happened is a no-op and
+ *    does not re-send the email. Accepting twice (double-click, retry, a second
+ *    admin) must not mail the candidate twice.
+ *  - Exactly-once email. The send is gated on decision_email_sent_at, persisted
+ *    on the row, so it survives restarts and concurrent callers.
+ *  - Direct transitions allowed. Accept moves an application straight to hired
+ *    from any state; the interview and offer stages are optional, not a gate.
+ *
+ * Returns { application, error, changed, emailed }.
+ */
+async function transitionJobApplication(id, nextStatus, extra = {}) {
+  if (nextStatus && !JOB_STATUSES.includes(nextStatus)) {
+    return { application: null, error: { message: `Invalid status: ${nextStatus}` } };
+  }
+
+  const { data: current } = await supabase
+    .from('job_applications')
+    .select('*')
+    .eq('id', id)
+    .maybeSingle();
+
+  const alreadyThere = current && nextStatus && current.status === nextStatus;
+  const noFieldChanges = Object.keys(extra).length === 0;
+  if (alreadyThere && noFieldChanges) {
+    return { application: current, error: null, changed: false, emailed: false };
+  }
+
+  const updates = { ...extra };
+  if (nextStatus) updates.status = nextStatus;
+
+  // Claim the email before sending. Writing the marker in the same update that
+  // sets the status means a concurrent caller sees it already stamped and will
+  // not send a second copy.
+  const shouldEmail = nextStatus === 'hired' && !current?.decision_email_sent_at;
+  if (shouldEmail) updates.decision_email_sent_at = new Date().toISOString();
+
+  const { application, error } = await patchJobApplicationRecord(id, updates);
+  if (error || !application) return { application: null, error, changed: false, emailed: false };
+
+  let emailed = false;
+  if (shouldEmail) {
+    const result = await notify.jobApplicationAccepted(application);
+    emailed = Boolean(result?.emailed);
+    if (!emailed) {
+      // Release the claim so a later retry can still reach the candidate,
+      // rather than silently marking them emailed when nothing was sent.
+      await patchJobApplicationRecord(id, { decision_email_sent_at: null }).catch(() => {});
+      console.warn('[transitionJobApplication] accept email not sent:', result?.reason);
+    }
+  }
+
+  return { application, error: null, changed: true, emailed };
+}
+
 async function patchJobApplicationRecord(id, updates) {
   const { data, error } = await supabase
     .from('job_applications')
@@ -910,6 +983,10 @@ app.get('/api/screening', async (req, res) => {
  */
 // Recorded verbatim as consent evidence. Keep in sync with the checkbox label
 // in src/pages/ProfessionalOnboardingPage.jsx.
+// Bump when the wording of the consent statement or the linked policies change,
+// so each stored consent says which version the applicant actually agreed to.
+const POLICY_VERSION = '2026-08-13';
+
 const CONSENT_STATEMENT =
   'I confirm the information is accurate and I consent to credential verification.';
 
@@ -917,10 +994,13 @@ async function insertProfessionalApplication(row) {
   // Drop unknown/legacy columns one at a time and retry. This keeps apply
   // working across partially-migrated production schemas.
   const optionalDropOrder = [
-    'consent_confirmed_at',
-    'consent_method',
-    'consent_evidence',
-    'consent_credential_check',
+    // NOTE: consent_* / policies_accepted_at / policy_version are deliberately
+    // NOT in this list. Dropping a column here is a silent data loss, which is
+    // acceptable for a legacy alias like `designation` but never for a consent
+    // record — an application that reaches the table without its consent
+    // evidence is an application we cannot lawfully act on. If those columns
+    // are missing the insert fails, and the row lands in application_inbox with
+    // the full consent payload preserved in its `payload` jsonb.
     'social_handle',
     'medical_council_number',
     'consultation_fee',
@@ -992,6 +1072,7 @@ app.post('/api/professionals/apply', async (req, res) => {
   const roleLabel = role_label?.trim() || role;
   const feeRaw = fee_inr != null ? String(fee_inr).trim() : '';
   const feeNum = feeRaw === '' ? null : Number(feeRaw);
+  const consentAt = new Date().toISOString(); // server clock, not the client's
 
   // Prefer the current schema; include legacy aliases (designation) so older
   // production tables that still require them can accept the row.
@@ -1020,12 +1101,16 @@ app.post('/api/professionals/apply', async (req, res) => {
     // was never persisted. enforce_listing_consent() refuses to approve any
     // application without consent_confirmed_at, so an unrecorded tick left
     // every application permanently stuck at 'pending'.
+    // Timestamps are taken from the server clock, never from the client, so a
+    // consent record cannot be back- or post-dated by whoever posts the form.
     ...(consent === true
       ? {
-          consent_confirmed_at: new Date().toISOString(),
+          consent_confirmed_at: consentAt,
           consent_method: 'web_form_checkbox',
           consent_evidence: CONSENT_STATEMENT,
           consent_credential_check: true,
+          policies_accepted_at: consentAt,
+          policy_version: POLICY_VERSION,
         }
       : {}),
     status: 'pending',
@@ -1059,10 +1144,26 @@ app.post('/api/professionals/apply', async (req, res) => {
     _db_error: dbErrorMsg,
   };
 
-  if (!inbox) captureFallbackLead('professional_application', fallback);
   notify.professionalApplication(fallback);
-  res.setHeader('X-Serenest-Apply', inbox ? 'inbox' : 'fallback');
-  return ok(res, { application: fallback, fallback: true, inbox: Boolean(inbox) }, 201);
+
+  // Success is only honest once the application exists somewhere that survives
+  // a restart. The JSONL file is on Render's ephemeral disk and is wiped on
+  // every deploy, so it is a diagnostic aid — never grounds for a 201. If both
+  // the table and the inbox rejected the row, tell the applicant plainly
+  // instead of showing a confirmation for data we did not keep.
+  if (!inbox) {
+    captureFallbackLead('professional_application', fallback);
+    res.setHeader('X-Serenest-Apply', 'none');
+    return err(
+      res,
+      'We could not save your application right now. Please call us on 7777936367 '
+      + 'or try again shortly — our team has been alerted.',
+      503,
+    );
+  }
+
+  res.setHeader('X-Serenest-Apply', 'inbox');
+  return ok(res, { application: fallback, fallback: true, inbox: true }, 201);
 });
 
 /**
@@ -1591,12 +1692,18 @@ app.post('/api/hiring/interviews', async (req, res) => {
 
   if (error) return err(res, 'Failed to schedule interview', 500);
 
-  // auto-advance application status to interviewing
-  await supabase
+  // Auto-advance to interviewing, but only from shortlisted — scheduling an
+  // interview must never drag an already-hired or rejected candidate backwards.
+  // Routed through the transition path so status changes stay in one place.
+  const { data: appRow } = await supabase
     .from('job_applications')
-    .update({ status: 'interviewing' })
+    .select('status')
     .eq('id', application_id)
-    .eq('status', 'shortlisted');
+    .maybeSingle();
+
+  if (appRow?.status === 'shortlisted') {
+    await transitionJobApplication(application_id, 'interviewing');
+  }
 
   return ok(res, { interview: data }, 201);
 });
@@ -1620,12 +1727,13 @@ app.post('/api/hiring/offer/:applicationId', async (req, res) => {
   const { offer_salary, offer_date, offer_deadline, joining_date } = req.body;
   if (!offer_salary) return err(res, 'offer_salary is required');
 
-  const { application, error } = await patchJobApplicationRecord(req.params.applicationId, {
+  // Extending an offer records the offer terms; it does not by itself mean the
+  // candidate is hired. The status move to hired belongs to the accept action.
+  const { application, error } = await transitionJobApplication(req.params.applicationId, null, {
     offer_salary,
     offer_date: offer_date || new Date().toISOString().split('T')[0],
     offer_deadline: offer_deadline || null,
     joining_date: joining_date || null,
-    status: 'hired',
   });
 
   if (error || !application) return err(res, 'Failed to extend offer', 500);
@@ -1638,13 +1746,14 @@ app.patch('/api/hiring/offer/:applicationId/response', async (req, res) => {
   const { accepted } = req.body;
   if (accepted === undefined) return err(res, 'accepted (boolean) is required');
 
-  const { application, error } = await patchJobApplicationRecord(req.params.applicationId, {
-    offer_accepted: accepted,
-    status: accepted ? 'hired' : 'rejected',
-  });
+  const { application, error, emailed } = await transitionJobApplication(
+    req.params.applicationId,
+    accepted ? 'hired' : 'rejected',
+    { offer_accepted: accepted },
+  );
 
   if (error || !application) return err(res, 'Failed to record offer response', 500);
-  return ok(res, { application });
+  return ok(res, { application, emailed: Boolean(emailed) });
 });
 
 /** POST /api/hiring/reject/:applicationId — reject with reason (admin only) */
@@ -1652,10 +1761,11 @@ app.post('/api/hiring/reject/:applicationId', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;
   const { rejection_reason } = req.body;
 
-  const { application, error } = await patchJobApplicationRecord(req.params.applicationId, {
-    status: 'rejected',
-    rejection_reason: rejection_reason?.trim() || null,
-  });
+  const { application, error } = await transitionJobApplication(
+    req.params.applicationId,
+    'rejected',
+    { rejection_reason: rejection_reason?.trim() || null },
+  );
 
   if (error || !application) return err(res, 'Failed to reject application', 500);
   return ok(res, { application });
@@ -1739,6 +1849,9 @@ app.post('/api/jobs/apply', async (req, res) => {
     candidate_email: data.email,
     position:        `${data.role} (${data.department})`,
   });
+  // Acknowledge receipt only. "Accepted" is reserved for final selection and is
+  // sent from transitionJobApplication() when the status moves to hired.
+  notify.jobApplicationReceived(data);
   return ok(res, { application: data }, 201);
 });
 
@@ -1778,22 +1891,26 @@ app.get('/api/jobs/applications', async (req, res) => {
 app.patch('/api/jobs/applications/:id', async (req, res) => {
   if (!requireDb(res) || !requireAdmin(req, res)) return;
 
-  const VALID = ['new', 'reviewing', 'shortlisted', 'interviewing', 'hired', 'rejected'];
   const { status, hr_notes } = req.body;
 
-  if (status && !VALID.includes(status)) {
-    return err(res, `status must be one of: ${VALID.join(', ')}`);
+  if (status && !JOB_STATUSES.includes(status)) {
+    return err(res, `status must be one of: ${JOB_STATUSES.join(', ')}`);
   }
 
-  const updates = {};
-  if (status)   updates.status   = status;
-  if (hr_notes !== undefined) updates.hr_notes = hr_notes;
+  const extra = {};
+  if (hr_notes !== undefined) extra.hr_notes = hr_notes;
 
-  if (!Object.keys(updates).length) return err(res, 'No updatable fields');
+  if (!status && !Object.keys(extra).length) return err(res, 'No updatable fields');
 
-  const { application, error } = await patchJobApplicationRecord(req.params.id, updates);
+  // Routed through the same transition path as the hiring endpoints, so the
+  // Accept button in Admin cannot set 'hired' without the candidate email.
+  const { application, error, emailed } = await transitionJobApplication(
+    req.params.id,
+    status || null,
+    extra,
+  );
   if (error || !application) return err(res, 'Failed to update application', 500);
-  return ok(res, { application });
+  return ok(res, { application, emailed: Boolean(emailed) });
 });
 
 // ══════════════════════════════════════════════════════════════
