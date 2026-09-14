@@ -20,7 +20,25 @@ export default function AcademyProgramPage() {
 
   if (!program) return <Navigate to="/academy" replace />;
 
-  const related = ACADEMY_PROGRAMS.filter((p) => p.slug !== program.slug).slice(0, 3);
+  const related = (() => {
+    const studentSlugs = new Set([
+      'student-training',
+      'student-assessment-skills',
+      'student-case-formulation',
+      'student-internship-prep',
+      'student-ethics-practice',
+      'counselling-skills',
+      'certificate-programs',
+      'mentorship',
+    ]);
+    const isStudentTrack = studentSlugs.has(program.slug);
+    const pool = ACADEMY_PROGRAMS.filter((p) => p.slug !== program.slug);
+    const preferred = isStudentTrack
+      ? pool.filter((p) => studentSlugs.has(p.slug))
+      : pool.filter((p) => p.category === program.category);
+    const rest = pool.filter((p) => !preferred.includes(p));
+    return [...preferred, ...rest].slice(0, 6);
+  })();
   const enquirySubject = isProfessional
     ? `Serenest Academy FREE seat — ${program.title}`
     : `Serenest Academy — ${program.title}`;
@@ -85,9 +103,9 @@ export default function AcademyProgramPage() {
       <section className="svd-section ed-pace">
         <div className="container ed-aside">
           <div>
-            <p className="ed-aside__label">Curriculum</p>
+            <p className="ed-aside__label">Synopsis</p>
             <p className="ed-aside__note">
-              What the program covers, in the order it is taught.
+              Full curriculum synopsis — what the program covers, in teaching order.
             </p>
           </div>
           <div>
@@ -108,6 +126,35 @@ export default function AcademyProgramPage() {
           </div>
         </div>
       </section>
+
+      {Array.isArray(program.modules) && program.modules.length > 0 && (
+        <section className="svd-section svd-section--soft ed-pace">
+          <div className="container ed-aside">
+            <div>
+              <p className="ed-aside__label">Modules</p>
+              <p className="ed-aside__note">
+                Week-by-week structure inside this program.
+              </p>
+            </div>
+            <div>
+              <h2 style={{ fontSize: 'clamp(1.4rem, 2.8vw, 1.9rem)', fontWeight: 600, marginBottom: '1.5rem', maxWidth: '20ch' }}>
+                Module outline
+              </h2>
+              <ol className="ed-timeline">
+                {program.modules.map((m, i) => (
+                  <li key={m.title}>
+                    <span className="ed-timeline__stage">
+                      {String(i + 1).padStart(2, '0')}
+                    </span>
+                    <h3>{m.title}</h3>
+                    <p>{m.body}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Who it's for — a marginal note beside a plain list. */}
       <section className="svd-section svd-section--soft ed-pace">
