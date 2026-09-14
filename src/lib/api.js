@@ -104,6 +104,11 @@ export const prescriptions = {
   get: (appointmentId) => get(`/api/prescriptions/${appointmentId}`),
 };
 
+/** Public — fetch an issued certificate / joining / experience letter. */
+export const documents = {
+  get: (id) => get(`/api/documents/${id}`),
+};
+
 // ── Payments (Razorpay) ─────────────────────────────────────
 export const payments = {
   /** Create a Razorpay order; amount is computed server-side. */
@@ -143,4 +148,4 @@ export const assistant = {
   notifyGuideOpened: (payload) => post('/api/assistant/notify-open', payload),
 };
 
-export default { health, bookings, screening, professionals, rooms, contact, assistant, prescriptions, subscribers, payments };
+export default { health, bookings, screening, professionals, rooms, contact, assistant, prescriptions, documents, subscribers, payments };

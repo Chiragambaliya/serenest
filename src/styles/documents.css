@@ -1,0 +1,267 @@
+/* Formal Serenest documents — certificate, joining letter, experience letter */
+
+.doc-page-wrap {
+  background: #ebe4d8;
+  padding: 1.5rem 0 3rem;
+  min-height: 60vh;
+}
+
+.doc-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  align-items: center;
+}
+
+.doc-sheet {
+  --doc-forest: #3c4a2c;
+  --doc-ink: #1c1a17;
+  --doc-muted: #5c5346;
+  --doc-line: rgba(28, 26, 23, 0.14);
+  --doc-cream: #fffdf8;
+
+  background: var(--doc-cream);
+  color: var(--doc-ink);
+  width: 100%;
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 2.25rem 2.5rem 2rem;
+  border: 1px solid var(--doc-line);
+  box-shadow: 0 1px 0 rgba(28, 26, 23, 0.04);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.55;
+  box-sizing: border-box;
+}
+
+.doc-sheet--certificate {
+  text-align: center;
+  padding: 2.75rem 2.5rem 2.25rem;
+}
+
+.doc-letterhead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1.25rem;
+  padding-bottom: 1.15rem;
+  border-bottom: 1.5px solid var(--doc-forest);
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.doc-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.doc-brand-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 1.5px solid var(--doc-forest);
+  display: grid;
+  place-items: center;
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  color: var(--doc-forest);
+  flex-shrink: 0;
+}
+
+.doc-brand-name {
+  font-family: var(--font-heading);
+  font-size: 1.55rem;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--doc-ink);
+}
+
+.doc-brand-tag {
+  margin-top: 0.25rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--doc-forest);
+}
+
+.doc-letterhead-meta {
+  text-align: right;
+  font-size: 0.78rem;
+  color: var(--doc-muted);
+  line-height: 1.45;
+}
+
+.doc-kicker {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--doc-forest);
+}
+
+.doc-title {
+  margin: 0 0 1.25rem;
+  font-family: var(--font-heading);
+  font-size: clamp(1.55rem, 3vw, 2rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--doc-ink);
+}
+
+.doc-sheet--certificate .doc-title {
+  font-size: clamp(1.85rem, 3.5vw, 2.4rem);
+  margin-bottom: 0.35rem;
+}
+
+.doc-subtitle {
+  margin: 0 0 1.5rem;
+  color: var(--doc-muted);
+  font-size: 1rem;
+}
+
+.doc-body p {
+  margin: 0 0 1rem;
+  max-width: 58ch;
+}
+
+.doc-sheet--certificate .doc-body p {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.doc-recipient {
+  font-family: var(--font-heading);
+  font-size: clamp(1.45rem, 2.8vw, 1.85rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  color: var(--doc-forest);
+  margin: 0.35rem 0 1rem;
+}
+
+.doc-meta-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0 1.5rem;
+  font-size: 0.92rem;
+  text-align: left;
+}
+
+.doc-meta-table th,
+.doc-meta-table td {
+  padding: 0.55rem 0.65rem;
+  border-bottom: 1px solid var(--doc-line);
+  vertical-align: top;
+}
+
+.doc-meta-table th {
+  width: 11rem;
+  font-weight: 500;
+  color: var(--doc-muted);
+}
+
+.doc-sign {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--doc-line);
+  text-align: left;
+}
+
+.doc-sign__block p {
+  margin: 0;
+}
+
+.doc-sign__name {
+  margin-top: 2.25rem !important;
+  font-weight: 600;
+  color: var(--doc-ink);
+}
+
+.doc-sign__title {
+  font-size: 0.85rem;
+  color: var(--doc-muted);
+}
+
+.doc-footer-note {
+  margin-top: 1.75rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--doc-line);
+  font-size: 0.72rem;
+  line-height: 1.5;
+  color: var(--doc-muted);
+  text-align: left;
+}
+
+.doc-sheet--certificate .doc-footer-note {
+  text-align: center;
+}
+
+.doc-ornament {
+  width: 72px;
+  height: 1px;
+  background: var(--doc-forest);
+  margin: 0.85rem auto 1.25rem;
+  opacity: 0.55;
+}
+
+.doc-badge {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  padding: 0.25rem 0.65rem;
+  border: 1px solid rgba(60, 74, 44, 0.35);
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--doc-forest);
+}
+
+@media print {
+  .doc-toolbar,
+  .masthead,
+  .ed-footer,
+  .menu-btn,
+  [aria-label="Chat with us on WhatsApp"],
+  .cookie-consent {
+    display: none !important;
+  }
+
+  .doc-page-wrap {
+    background: #fff;
+    padding: 0;
+  }
+
+  .doc-sheet {
+    max-width: none;
+    border: none;
+    box-shadow: none;
+    padding: 12mm 14mm;
+  }
+
+  @page {
+    size: A4;
+    margin: 12mm;
+  }
+}
+
+@media (max-width: 640px) {
+  .doc-sheet {
+    padding: 1.5rem 1.15rem;
+  }
+
+  .doc-letterhead {
+    flex-direction: column;
+  }
+
+  .doc-letterhead-meta {
+    text-align: left;
+  }
+
+  .doc-sign {
+    grid-template-columns: 1fr;
+  }
+}
