@@ -351,25 +351,6 @@
   background: rgba(28, 26, 23, 0.28);
 }
 
-.ed-footer__social {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.ed-footer__social a {
-  font-size: 0.88rem;
-  color: rgba(28, 26, 23, 0.62);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: color 160ms ease, border-color 160ms ease;
-}
-
-.ed-footer__social a:hover {
-  color: var(--ds-sage-deep);
-  border-bottom-color: rgba(60, 74, 44, 0.35);
-}
-
 /* Link columns / accordion host */
 .ed-footer__cols {
   display: grid;
