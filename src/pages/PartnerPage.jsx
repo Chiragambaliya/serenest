@@ -40,9 +40,9 @@ const CREATOR_PERKS = [
   { icon: '💸', title: '15% per booking', desc: 'Every patient who books using your code earns you 15% of the session fee — automatically tracked.' },
   { icon: '🎁', title: 'Free sessions', desc: '2 complimentary sessions per month to experience Serenest yourself and speak authentically.' },
   { icon: '📊', title: 'Real-time dashboard', desc: 'See your clicks, signups, bookings, and earnings in one place — no guessing.' },
-  { icon: '🤝', title: 'Co-created content', desc: 'We collaborate on Reels, carousels, and Live sessions with our doctors — adds credibility to your page.' },
+  { icon: '🤝', title: 'Co-created content', desc: 'We collaborate on articles and Live sessions with our doctors — adds credibility to your page.' },
   { icon: '🏷', title: 'Custom discount code', desc: 'Your audience gets 10% off their first session. You get 15% commission. Everyone wins.' },
-  { icon: '📣', title: 'Featured on Serenest', desc: 'Your profile featured on our site and social as a trusted mental health advocate.' },
+  { icon: '📣', title: 'Featured on Serenest', desc: 'Your profile featured on our site as a trusted mental health advocate.' },
 ];
 
 export default function PartnerPage() {
@@ -176,7 +176,7 @@ export default function PartnerPage() {
 
               {(type === 'influencer') && (
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                  <F label="Instagram / YouTube handle"><input style={inp} value={form.handle} onChange={setF('handle')} placeholder="@yourhandle" /></F>
+                  <F label="Website or portfolio link"><input style={inp} value={form.handle} onChange={setF('handle')} placeholder="https://…" /></F>
                   <F label="Audience size">
                     <select aria-label="Audience size" style={inp} value={form.audience_size} onChange={setF('audience_size')}>
                       <option value="">Select…</option>
