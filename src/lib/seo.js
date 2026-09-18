@@ -116,10 +116,10 @@ export const ROUTE_SEO = {
   '/professionals': {
     title: 'For Mental Health Professionals | Join Serenest | India',
     description:
-      'Join Serenest as a verified clinician. Practice tools, learning resources, and free Serenest Academy access for approved professionals.',
+      'Join Serenest as a verified clinician. Practice tools, clinical resources, and support for approved professionals.',
     ogTitle: 'For Mental Health Professionals | Serenest India',
     ogDescription:
-      'Join Serenest as a verified clinician. Clinical learning, resources, and free Academy access for approved professionals.',
+      'Join Serenest as a verified clinician. Clinical resources and practice support for approved professionals.',
   },
   '/professionals/learning': {
     title: 'Clinical Learning Hub | Psychiatry & Psychology CPD | Serenest',
