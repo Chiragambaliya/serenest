@@ -293,7 +293,6 @@
   text-align: left;
 }
 .hp-section__head h2,
-.hp-academy-card h2,
 .hp-cta h2,
 .hp-newsletter h2 {
   margin: 0 0 0.4rem;
@@ -550,7 +549,6 @@
 .hp-path__cta { font-size: 0.88rem; font-weight: 700; }
 .hp-path__cta::after { content: ' →'; }
 
-/* Services + Academy */
 .hp-split {
   display: grid;
   gap: 2.25rem;
@@ -603,54 +601,6 @@
   background: rgba(90, 107, 74, 0.1);
   color: var(--hp-sage-deep);
   flex-shrink: 0;
-}
-
-.hp-academy-card {
-  display: grid;
-  gap: 0;
-  border: 1.5px solid rgba(90, 107, 74, 0.28);
-  border-radius: 1.25rem;
-  background: #fffdf9;
-  overflow: hidden;
-  box-shadow: 0 8px 28px rgba(28, 26, 23, 0.05);
-}
-.hp-academy-card__art {
-  display: block;
-  aspect-ratio: 16 / 10;
-  overflow: hidden;
-  background: var(--hp-cream-2);
-}
-.hp-academy-card__art img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center;
-}
-.hp-academy-card__body { padding: 1.45rem 1.4rem 1.55rem; }
-.hp-academy-card__body p {
-  margin: 0 0 0.9rem;
-  color: rgba(28, 26, 23, 0.66);
-  line-height: 1.6;
-}
-.hp-academy-list {
-  margin: 0 0 1.25rem;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  gap: 0.5rem;
-}
-.hp-academy-list li {
-  position: relative;
-  padding-left: 1.35rem;
-  font-size: 0.9rem;
-  color: var(--hp-ink);
-}
-.hp-academy-list li::before {
-  content: '✓';
-  position: absolute;
-  left: 0;
-  color: #3d6b5e;
-  font-weight: 700;
 }
 
 /* Steps */

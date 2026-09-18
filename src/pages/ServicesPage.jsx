@@ -71,41 +71,6 @@ const CORE_SERVICES = [
   },
 ];
 
-const ACADEMY_SERVICES = [
-  {
-    tag: 'Guides',
-    title: 'Patient guides',
-    body: 'Explainers on depression, anxiety, ADHD, OCD, and help-seeking in India.',
-    features: ['Topic guides and screening explainers', 'Stigma-aware language', 'Paths to book when ready'],
-    href: '/guides',
-    cta: 'View all guides',
-  },
-  {
-    tag: 'Pharmacology',
-    title: 'Clinician pharmacology',
-    body: 'Telemedicine norms, prescribing, and Rx workflow for prescribers and trainees.',
-    features: ['Telemedicine guidelines context', 'SOAP and documentation', 'Continuity of care'],
-    href: '/professionals/learning#learning-pharmacology',
-    cta: 'Pharmacology track',
-  },
-  {
-    tag: 'Psychology',
-    title: 'Clinician psychology',
-    body: 'Assessment tools, psychoeducation, and carer skills on the learning hub.',
-    features: ['PHQ-9 / GAD-7 in practice', 'Psychoeducation modules', 'Stigma-aware communication'],
-    href: '/professionals/learning#learning-psychology',
-    cta: 'Psychology track',
-  },
-  {
-    tag: 'Partnerships',
-    title: 'Schools & workplaces',
-    body: 'Literacy talks, workshops, and outreach through Serenest Academy.',
-    features: ['Programme design for your audience', 'School, college, workplace', 'Pairs with clinical org plans'],
-    href: '/academy#contact',
-    cta: 'Collaborate',
-  },
-];
-
 const ORG_PROGRAMMES = [
   {
     tag: 'Corporate',
@@ -274,56 +239,6 @@ export default function ServicesPage() {
                   </div>
                   <span className="ed-index__go" aria-hidden="true">{svc.price || ''}</span>
                 </article>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="svc-section svc-section--cream" id="academy">
-        <div className="ed-shell ed-aside">
-          <div>
-            <p className="ed-aside__label">Serenest Academy</p>
-            <p className="ed-aside__note">
-              Educational material sits beside care, but does not replace clinical assessment.
-            </p>
-          </div>
-          <div>
-            <header className="ed-head ed-head--wide">
-              <h2>Literacy and learning — not a substitute for clinical care</h2>
-              <p>
-                Serenest Education Pvt Ltd publishes guides, clinician tracks, and partnership programmes
-                on the same site as telepsychiatry.
-              </p>
-            </header>
-
-            <div className="svc-academy__banner">
-              <div className="svc-academy__copy">
-                <p className="svc-academy__brand">Serenest Academy</p>
-                <p>
-                  Understand symptoms, reduce stigma, and find the right next step. For appointments,
-                  use Book or Screening — Academy content is educational.
-                </p>
-                <div className="svc-academy__actions">
-                  <Link className="btn btn-primary" to="/academy">Explore Academy</Link>
-                  <Link className="btn btn-ghost" to="/academy#guide">Ask Academy Guide</Link>
-                </div>
-              </div>
-            </div>
-
-            <div className="ed-index">
-              {ACADEMY_SERVICES.map((item, i) => (
-                <Link key={item.tag} className="ed-index__row" to={item.href}>
-                  <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
-                  <span>
-                    <h3 className="ed-index__title">{item.title}</h3>
-                    <span className="ed-index__meta">{item.tag}</span>
-                  </span>
-                  <p className="ed-index__body">
-                    {item.body} {item.features.join(' · ')}
-                  </p>
-                  <span className="ed-index__go" aria-hidden="true">{item.cta} →</span>
-                </Link>
               ))}
             </div>
           </div>

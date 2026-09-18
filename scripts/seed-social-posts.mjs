@@ -18,7 +18,7 @@ const supabase = createClient(
 //   W1: First Step     — lower the barrier to seeking help
 //   W2: Know Yourself  — conditions, screening tools, pricing transparency
 //   W3: Not Alone      — destigmatize, community, supporting others
-//   W4: Grow           — academy, career, professional recruitment
+//   W4: Grow           — career, community, professional recruitment
 // ─────────────────────────────────────────────────────────────────────────────
 
 const IST_OFFSET = '+05:30';
@@ -26,7 +26,6 @@ const IG_TAGS = {
   core: '#MentalHealth #MentalHealthIndia #SerenestMind',
   care: '#OnlineTherapy #TelepsychiatryIndia #AnxietyAwareness #DepressionSupport',
   pro:  '#PsychologyIndia #MentalHealthProfessionals #ClinicalPsychology',
-  acad: '#PsychologyStudents #MentalHealthEducation #CounsellingIndia',
   corp: '#WorkplaceWellness #EmployeeMentalHealth #HRIndia',
 };
 
@@ -88,29 +87,6 @@ If you've been waiting for a sign to reach out: this is it.
 Serenest. Doctor-led mental healthcare, entirely online. 💚
 serenest.in`,
     hashtags: `${igt('core','care')} #BreakTheStigma #MentalHealthMatters #YouMatter`,
-  },
-  {
-    platform: 'linkedin',
-    scheduled_at: '2026-07-02T08:00:00+05:30',
-    caption: `Serenest Academy now has 4 certificate programs open for enrollment.
-
-📚 Certificate in Counselling Skills — 6 weeks, 12 modules
-🧠 Certificate in Clinical Psychology — 8 weeks, 16 modules
-💻 Certificate in Digital Mental Health — 4 weeks, 8 modules
-🏅 Fellowship in Telepsychiatry — 12 weeks, 24 modules
-
-Every program is:
-→ Designed and delivered by practicing mental health professionals
-→ Case-based — real clinical scenarios, not just theory
-→ Flexible — self-paced with live sessions
-→ Credential-bearing — recognised across India's mental health sector
-
-Whether you're a psychology student, a fresh graduate, or a licensed professional seeking CPD, there's a track for you.
-
-Who is this for? Counsellors seeking structure. Psychiatry residents building digital skills. Clinical psychologists wanting a fellowship. HR professionals who want to understand the clinical reality.
-
-Enrollment is open. DM or visit serenest.in/academy.`,
-    hashtags: null,
   },
   {
     platform: 'instagram',
@@ -356,26 +332,6 @@ If you want to support someone you love and don't know where to start, we're her
     hashtags: `${igt('core')} #SupportingLovedOnes #MentalHealthSupport #YouAreNotAlone`,
   },
   {
-    platform: 'linkedin',
-    scheduled_at: '2026-07-16T08:00:00+05:30',
-    caption: `Telepsychiatry grew 400% in India between 2019 and 2023.
-
-In that same period, the number of clinicians trained in digital delivery of mental healthcare stayed almost flat.
-
-The gap is real. Video sessions are not just "regular sessions over a screen." The clinical considerations are different:
-• Risk assessment protocols change in a remote setting
-• Therapeutic alliance building requires different techniques
-• Documentation and continuity have new standards under India's telemedicine guidelines
-• Crisis protocols need to account for geographic distance
-
-Serenest Academy's Certificate in Digital Mental Health — 4 weeks, 8 modules, clinician-led — addresses exactly this gap.
-
-If you're practicing or training in mental health and have not yet built formal skills in digital delivery, this program is for you.
-
-Enrollment open → serenest.in/academy`,
-    hashtags: null,
-  },
-  {
     platform: 'instagram',
     scheduled_at: '2026-07-17T09:00:00+05:30',
     caption: `Before you book anything — start here. It's free. 🧠
@@ -413,52 +369,6 @@ If you believe access is infrastructure — build with us.`,
   // ══════════════════════════════════════════════════════════
   // WEEK 4 — GROW
   // ══════════════════════════════════════════════════════════
-  {
-    platform: 'instagram',
-    scheduled_at: '2026-07-20T09:00:00+05:30',
-    caption: `Study mental health from anywhere in India. 🎓
-
-Serenest Academy offers clinician-led certificate programs in:
-
-🎓 Counselling Skills (6 weeks)
-🧠 Clinical Psychology (8 weeks)
-💻 Digital Mental Health (4 weeks)
-🏅 Telepsychiatry Fellowship (12 weeks)
-
-Every program is:
-→ Fully online — study from Mumbai, Mysore, or Manipur
-→ Case-based — real clinical scenarios, not just theory
-→ Flexible — learn at your own pace
-→ Credential-bearing — recognised across India's mental health sector
-
-Plus: 1:1 mentorship, CV review, placement guidance, and access to a growing professional network.
-
-Whether you're a student, a fresh graduate, or a clinician seeking CPD — there's a track for you.
-
-serenest.in/academy 💚`,
-    hashtags: `${igt('core','acad','pro')} #MentalHealthCareers #PsychologyCourse #CounsellingCertificate`,
-  },
-  {
-    platform: 'linkedin',
-    scheduled_at: '2026-07-21T08:00:00+05:30',
-    caption: `A certificate tells an employer you completed a course.
-A mentor tells them you can think clinically.
-
-At Serenest Academy, every program includes both.
-
-1:1 clinical mentorship is not an add-on. It's a core part of our learning model. Here's what it actually provides:
-
-→ Weekly or bi-weekly sessions with an experienced clinician in your specialty
-→ Case discussion — bring real cases (anonymised) and work through them
-→ Career guidance — specialty choices, practice models, geographic considerations
-→ Interview preparation — case-based discussion skills and how to present clinically
-→ A long-term professional relationship, not a transactional course completion
-
-The difference between a graduate who can recite DSM criteria and a clinician who can assess a patient is supervision. We make that accessible.
-
-If you're building your career in mental health, DM us or visit serenest.in/academy.`,
-    hashtags: null,
-  },
   {
     platform: 'instagram',
     scheduled_at: '2026-07-22T09:00:00+05:30',

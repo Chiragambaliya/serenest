@@ -286,7 +286,6 @@
 }
 
 .home--lean .hp-care .ed-head__label,
-.home--lean .hp-academy .ed-head__label,
 .home--lean .hp-arrive .ed-head__label {
   display: block;
   text-align: center;
@@ -306,67 +305,6 @@
   margin-inline: auto;
   text-align: center;
   color: var(--muted);
-}
-
-.home--lean .hp-academy .ed-head {
-  text-align: left;
-}
-
-.home--lean .hp-academy .ed-head__label {
-  text-align: left;
-}
-
-.home--lean .hp-academy .ed-head h2 {
-  margin-inline: 0;
-  text-wrap: balance;
-}
-
-.home--lean .hp-academy .ed-head p {
-  margin-inline: 0;
-  text-align: left;
-}
-
-.home--lean .hp-academy__actions {
-  justify-content: flex-start;
-}
-
-.home--lean .hp-academy__grid {
-  display: grid;
-  gap: 2.5rem;
-  align-items: center;
-}
-
-@media (min-width: 960px) {
-  .home--lean .hp-academy__grid {
-    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: 3.5rem;
-  }
-}
-
-.home--lean .hp-academy__aside {
-  display: grid;
-  gap: 1.5rem;
-}
-
-.home--lean .hp-academy__visual {
-  margin: 0;
-  overflow: hidden;
-  border: 1px solid rgba(28, 26, 23, 0.12);
-}
-
-.home--lean .hp-academy__visual .editorial-image {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 4 / 3;
-  object-fit: cover;
-  border: 0;
-  transform: scale(1.02);
-  transition: transform 900ms var(--hp-ease);
-}
-
-.home--lean .hp-academy__visual:hover .editorial-image {
-  transform: scale(1.06);
 }
 
 .home--lean .hp-close__actions {
@@ -541,14 +479,6 @@
   align-items: center;
 }
 
-.hp-academy__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 1.25rem;
-  margin-top: 1.75rem;
-}
-
 /* ── Care index hover ──────────────────────────────────────────── */
 .home--lean .hp-index .ed-index__row {
   transition:
@@ -608,7 +538,6 @@
   transform: translateY(-1px);
 }
 
-/* ── Academy pull quote ────────────────────────────────────────── */
 .home--lean .hp-pull {
   position: relative;
   transition: transform 400ms var(--hp-ease);
@@ -627,12 +556,10 @@
   transition: transform 500ms var(--hp-ease);
 }
 
-.home--lean .hp-academy:hover .hp-pull,
 .home--lean .hp-pull:hover {
   transform: translateY(-3px);
 }
 
-.home--lean .hp-academy:hover .hp-pull::before,
 .home--lean .hp-pull:hover::before {
   transform: scaleY(1);
 }
@@ -684,7 +611,6 @@
   }
 
   .hp-hero__actions,
-  .hp-academy__actions,
   .hp-close__actions {
     flex-direction: column;
     align-items: stretch;
@@ -699,7 +625,6 @@
   .home--lean > section.srn-reveal,
   .home--lean .hp-hero__content > *,
   .home--lean .hp-hero__media .editorial-image,
-  .home--lean .hp-academy__visual .editorial-image,
   .hp-btn,
   .hp-btn__arrow,
   .home--lean .hp-index .ed-index__row,

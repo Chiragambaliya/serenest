@@ -56,8 +56,7 @@
 
 /* ── Buttons — site-wide polish ────────────────────────────── */
 .btn,
-.theme-editorial .ds-btn,
-.eda-btn {
+.theme-editorial .ds-btn{
   --wm-btn-ease: var(--wm-ease);
   border-radius: 2px;
   font-weight: 500;
@@ -72,20 +71,17 @@
 }
 
 .btn:hover,
-.theme-editorial .ds-btn:hover,
-.eda-btn:hover {
+.theme-editorial .ds-btn:hover{
   transform: translateY(-2px);
 }
 
 .btn:active,
-.theme-editorial .ds-btn:active,
-.eda-btn:active {
+.theme-editorial .ds-btn:active{
   transform: translateY(0);
 }
 
 .btn:focus-visible,
 .theme-editorial .ds-btn:focus-visible,
-.eda-btn:focus-visible,
 a:focus-visible,
 button:focus-visible {
   outline: 2px solid var(--wm-forest);
@@ -94,8 +90,7 @@ button:focus-visible {
 
 /* Primary: quiet invert wipe toward cream */
 .btn-primary,
-.theme-editorial .ds-btn--primary,
-.eda-btn-primary {
+.theme-editorial .ds-btn--primary{
   border-color: var(--wm-forest) !important;
   color: #fff !important;
   background-color: var(--wm-forest) !important;
@@ -111,8 +106,7 @@ button:focus-visible {
 }
 
 .btn-primary:hover,
-.theme-editorial .ds-btn--primary:hover,
-.eda-btn-primary:hover {
+.theme-editorial .ds-btn--primary:hover{
   color: var(--wm-forest) !important;
   border-color: var(--wm-forest) !important;
   background-position: 0 0 !important;
@@ -121,9 +115,7 @@ button:focus-visible {
 
 /* Ghost */
 .btn-ghost,
-.theme-editorial .ds-btn--ghost,
-.eda-btn-outline,
-.eda-btn-ghost {
+.theme-editorial .ds-btn--ghost{
   background-color: transparent !important;
   background-image: linear-gradient(
     90deg,
@@ -137,9 +129,7 @@ button:focus-visible {
 }
 
 .btn-ghost:hover,
-.theme-editorial .ds-btn--ghost:hover,
-.eda-btn-outline:hover,
-.eda-btn-ghost:hover {
+.theme-editorial .ds-btn--ghost:hover{
   color: #fff !important;
   border-color: var(--wm-forest) !important;
   background-position: 0 0 !important;
@@ -292,15 +282,6 @@ details summary {
   border-color: rgba(60, 74, 44, 0.35);
 }
 
-/* ── Academy — de-SaaS the card language ───────────────────── */
-.eda-pcard--purple {
-  --acc: #3c4a2c !important;
-  --acc-bg: rgba(60, 74, 44, 0.08) !important;
-}
-
-.eda-pcard,
-.eda-hero-card,
-.eda-path-card,
 .pro-hub-card,
 .pricing-card,
 .svc-card,
@@ -314,8 +295,6 @@ details summary {
     opacity 220ms ease !important;
 }
 
-.eda-pcard:hover,
-.eda-path-card:hover,
 .pro-hub-card:hover,
 .pricing-card:hover,
 .svc-card:hover,
@@ -324,29 +303,6 @@ details summary {
   opacity: 1 !important;
   border-color: rgba(60, 74, 44, 0.35) !important;
   box-shadow: none !important;
-}
-
-.eda-hero-card {
-  box-shadow: none !important;
-  border: 1px solid rgba(28, 26, 23, 0.12);
-}
-
-.eda-hcard-item:hover {
-  background: rgba(60, 74, 44, 0.05) !important;
-  transform: translateX(4px) !important;
-}
-
-.eda-btn-primary:hover {
-  box-shadow: none !important;
-}
-
-.eda-inner-nav-link {
-  transition: color 200ms ease, letter-spacing 280ms var(--wm-ease) !important;
-}
-
-.eda-inner-nav-link:hover {
-  color: var(--wm-forest) !important;
-  letter-spacing: 0.02em;
 }
 
 /* ── Page surfaces: about / team / pricing / services / pros ─ */
@@ -437,12 +393,10 @@ select:focus {
   #main > *:first-child,
   .btn,
   .theme-editorial .ds-btn,
-  .eda-btn,
   .ed-index__row,
   .hp-arrive__path,
   .editorial-image,
   figure img,
-  .eda-pcard,
   .pricing-card,
   .svc-card,
   .guide-card,
@@ -457,7 +411,6 @@ select:focus {
 
   .btn-primary:hover,
   .theme-editorial .ds-btn--primary:hover,
-  .eda-btn-primary:hover,
   .btn-ghost:hover,
   .theme-editorial .ds-btn--ghost:hover {
     background-position: 0 0 !important;

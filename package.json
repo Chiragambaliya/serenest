@@ -15,7 +15,6 @@
     "lint": "node --check server.js && node --check src/server/aiAssistant.js && node --check src/server/siteGuideRoutes.js && node --check src/lib/checkEvidence.js && node --check src/lib/checkSession.js && node --check scripts/test-screening-tools.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^0.106.0",
     "@daily-co/daily-js": "^0.66.0",
     "@supabase/supabase-js": "^2.99.3",
     "compression": "^1.8.1",

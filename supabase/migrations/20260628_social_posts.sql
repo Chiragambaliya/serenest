@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS social_posts (
 -- Indexes
 CREATE INDEX IF NOT EXISTS social_posts_status_scheduled ON social_posts (status, scheduled_at);
 
--- updated_at trigger (reuse pattern from academy_content)
+-- updated_at trigger
 CREATE OR REPLACE FUNCTION set_social_posts_updated_at()
 RETURNS TRIGGER LANGUAGE plpgsql AS $$
 BEGIN

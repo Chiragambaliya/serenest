@@ -1,6 +1,6 @@
 import React from 'react';
 
-/** Minimal stroke icons (currentColor) for Academy. 24x24 viewBox. */
+/** Minimal stroke icons (currentColor). 24x24 viewBox. */
 const PATHS = {
   cap: (
     <>

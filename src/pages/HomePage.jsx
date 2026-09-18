@@ -43,9 +43,9 @@ const ARRIVE_PATHS = [
   {
     num: '02',
     title: 'I am a clinician',
-    body: 'Learn beside a working practice. Academy programmes for psychiatrists, therapists, and trainees.',
-    href: '/academy',
-    cta: 'Visit the Academy',
+    body: 'Join a working practice. Referrals, clinical resources, and learning for psychiatrists, therapists, and trainees.',
+    href: '/professionals',
+    cta: 'For professionals',
   },
   {
     num: '03',
@@ -155,41 +155,6 @@ export default function HomePage() {
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="ed-pace ed-band-soft hp-academy" aria-labelledby="home-academy-title">
-        <div className="ed-shell hp-academy__grid">
-          <header className="ed-head" style={{ marginBottom: 0 }}>
-            <span className="ed-head__label">For professionals</span>
-            <h2 id="home-academy-title">Learning beside a working clinical service.</h2>
-            <p>
-              Practical education for psychiatrists, therapists, counsellors, and trainees —
-              designed where care actually happens.
-            </p>
-            <div className="hp-academy__actions">
-              <HpBtn to="/academy" variant="solid">Visit the Academy</HpBtn>
-              <Link className="hp-text-link" to="/professionals">
-                Clinician overview
-                <span aria-hidden="true"> →</span>
-              </Link>
-            </div>
-          </header>
-          <aside className="hp-academy__aside">
-            <figure className="hp-academy__visual">
-              <ImagePlaceholder
-                asset="academy-teaching-room.jpg"
-                direction="Quiet teaching room with books and notes — warm daylight, no people."
-                src="/images/editorial/academy-teaching-room-v1.png"
-                alt="A quiet teaching room with books and notes in warm daylight"
-                loading="lazy"
-              />
-            </figure>
-            <blockquote className="ed-pull hp-pull">
-              <p>“Education is not just information. It is transformation in practice.”</p>
-              <cite>Serenest Academy</cite>
-            </blockquote>
-          </aside>
         </div>
       </section>
 

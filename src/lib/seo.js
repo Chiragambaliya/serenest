@@ -105,21 +105,13 @@ export const ROUTE_SEO = {
     ogDescription:
       'Clear, clinical guides on common mental health topics and online care in India.',
   },
-  '/academy': {
-    title: 'Serenest Academy | Mental Health Literacy & Learning India',
-    description:
-      'Flagship Clinical Excellence course for practicing professionals, plus certificates and fellowships. Free for approved Serenest professionals.',
-    ogTitle: 'Serenest Academy | Clinical Excellence Flagship Course',
-    ogDescription:
-      'Best course for mental health professionals — assessment, telepsychiatry, documentation, and measurement-based care. Free for Serenest pros.',
-  },
   '/professionals': {
     title: 'For Mental Health Professionals | Join Serenest | India',
     description:
-      'Join Serenest as a verified clinician. Practice tools, learning resources, and free Serenest Academy access for approved professionals.',
+      'Join Serenest as a verified clinician. Practice tools, clinical learning resources, and referral support for approved professionals.',
     ogTitle: 'For Mental Health Professionals | Serenest India',
     ogDescription:
-      'Join Serenest as a verified clinician. Clinical learning, resources, and free Academy access for approved professionals.',
+      'Join Serenest as a verified clinician. Clinical learning, resources, and referral support for approved professionals.',
   },
   '/professionals/learning': {
     title: 'Clinical Learning Hub | Psychiatry & Psychology CPD | Serenest',
@@ -909,36 +901,6 @@ export const ROUTE_JSONLD = {
           'Learn what data Serenest collects, how consultation information is protected, and how privacy-first care workflows are designed.',
         inLanguage: 'en-IN',
       },
-    ],
-  },
-  '/academy': {
-    '@context': 'https://schema.org',
-    '@graph': [
-      ORG_SCHEMA,
-      WEBSITE_SCHEMA,
-      {
-        '@type': 'EducationalOrganization',
-        '@id': `${SITE_ORIGIN}/academy#educationalorg`,
-        name: 'Serenest Academy',
-        url: `${SITE_ORIGIN}/academy`,
-        description:
-          'Serenest Academy provides clinician-led mental health education programs in India, including certificate programs, fellowships, CPD, and mentorship.',
-        parentOrganization: { '@id': `${SITE_ORIGIN}/#organization` },
-        areaServed: { '@type': 'Country', name: 'India' },
-        knowsAbout: ['Psychiatry', 'Clinical Psychology', 'Counselling', 'Mental Health Education'],
-      },
-      {
-        '@type': 'WebPage',
-        '@id': `${SITE_ORIGIN}/academy#webpage`,
-        url: `${SITE_ORIGIN}/academy`,
-        name: 'Serenest Academy | Mental Health Education India',
-        description:
-          'Clinician-led mental health education: certificate programs, fellowships, CPD, and mentorship for India\'s mental health workforce.',
-        inLanguage: 'en-IN',
-        isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
-        about: ['Mental health literacy', 'Health education', 'Psychiatry education'],
-      },
-      breadcrumbs('/academy', 'Serenest Academy'),
     ],
   },
   '/professionals': {

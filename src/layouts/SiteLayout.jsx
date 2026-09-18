@@ -50,7 +50,6 @@ function BrandMark({ size = 42 }) {
 const NAV_LINKS = [
   { to: '/services', label: 'Services' },
   { to: '/professionals', label: 'Professionals' },
-  { to: '/academy', label: 'Academy' },
   { to: '/about', label: 'About' },
   { to: '/resources', label: 'Reading' },
   { to: '/contact', label: 'Contact' },
@@ -69,7 +68,6 @@ const FOOTER_GROUPS = [
   {
     title: 'Learn',
     links: [
-      { to: '/academy', label: 'Academy' },
       { to: '/blog', label: 'Blog' },
       { to: '/guides', label: 'Guides' },
       { to: '/faq', label: 'FAQ' },

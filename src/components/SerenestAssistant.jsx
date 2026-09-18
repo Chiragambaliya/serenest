@@ -126,7 +126,7 @@ export default function SerenestAssistant() {
             <div className="srn-ai-thread" role="log" aria-live="polite">
               <div className="srn-ai-msg srn-ai-msg-assistant">
                 <p className="srn-ai-bubble">
-                  Hi — tell me what you&apos;re trying to do or where you&apos;re stuck. I&apos;ll point you to the right page and clear steps (booking, screening, services, pricing, professionals, Academy). If something looks broken on your device, I&apos;ll suggest quick checks and how to reach our team.
+                  Hi — tell me what you&apos;re trying to do or where you&apos;re stuck. I&apos;ll point you to the right page and clear steps (booking, screening, services, pricing, professionals). If something looks broken on your device, I&apos;ll suggest quick checks and how to reach our team.
                   For emergencies, use local emergency services (e.g. 112 in India).
                 </p>
               </div>
