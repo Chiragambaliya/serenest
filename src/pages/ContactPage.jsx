@@ -25,19 +25,6 @@ const REASONS = [
     extra: { to: '/partner', label: 'Or see partner options' },
   },
   {
-    key: 'academy',
-    label: 'Academy questions',
-    body: 'Programs, enrolment, or general questions about Serenest Academy.',
-    subject: 'Academy%20Question',
-    extra: { to: '/academy', label: 'Or visit the Academy' },
-  },
-  {
-    key: 'faculty',
-    label: 'Faculty applications',
-    body: 'Interested in teaching or contributing to Serenest Academy.',
-    subject: 'Faculty%20Application',
-  },
-  {
     key: 'general',
     label: 'General enquiries',
     body: 'Anything else — we\'ll route it to the right person.',
@@ -49,7 +36,7 @@ export default function ContactPage() {
   useSEO({
     path: '/contact',
     title: 'Contact Serenest',
-    description: 'Get in touch with Serenest for patient support, appointment help, professional collaboration, or Academy questions.',
+    description: 'Get in touch with Serenest for patient support, appointment help, or professional collaboration.',
   });
 
   const [selected, setSelected] = useState(REASONS[0].key);

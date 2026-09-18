@@ -124,11 +124,6 @@ export default function ScreeningPage() {
               <p className="mhc-card-blurb">Plain-language guides on mood, anxiety, sleep, and seeking help.</p>
               <span className="mhc-card-cta">Browse guides →</span>
             </Link>
-            <Link to="/academy" className="mhc-card">
-              <h3 className="mhc-card-title">Academy</h3>
-              <p className="mhc-card-blurb">Literacy and learning programmes from Serenest Education.</p>
-              <span className="mhc-card-cta">Explore Academy →</span>
-            </Link>
             <Link to="/book" className="mhc-card">
               <h3 className="mhc-card-title">Professional care</h3>
               <p className="mhc-card-blurb">Verified psychiatrists and psychologists when you want guided help.</p>

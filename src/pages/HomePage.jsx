@@ -42,10 +42,10 @@ const ARRIVE_PATHS = [
   },
   {
     num: '02',
-    title: 'I am a clinician',
-    body: 'Learn beside a working practice. Academy programmes for psychiatrists, therapists, and trainees.',
-    href: '/academy',
-    cta: 'Visit the Academy',
+    title: 'I am ready to book',
+    body: 'Choose a consultation with a psychiatrist or therapist and take the next step.',
+    href: '/book',
+    cta: 'Book an appointment',
   },
   {
     num: '03',
@@ -88,7 +88,7 @@ export default function HomePage() {
             Care for the mind, grounded in clinical practice.
           </h1>
           <p className="hp-hero__body">
-            Psychiatry, therapy, addiction support, and professional learning —
+            Psychiatry, therapy, and addiction support —
             brought together with clinical responsibility.
           </p>
           <div className="hp-hero__actions">
@@ -107,7 +107,7 @@ export default function HomePage() {
           <header className="ed-head hp-arrive__head">
             <span className="ed-head__label">Begin</span>
             <h2 id="home-arrive-title">Tell us how you arrive.</h2>
-            <p>Three doors into Serenest. Choose the one that fits today.</p>
+            <p>Choose the care option that fits your needs today.</p>
           </header>
           <div className="hp-arrive__paths" role="list">
             {ARRIVE_PATHS.map((path) => (
@@ -155,41 +155,6 @@ export default function HomePage() {
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      <section className="ed-pace ed-band-soft hp-academy" aria-labelledby="home-academy-title">
-        <div className="ed-shell hp-academy__grid">
-          <header className="ed-head" style={{ marginBottom: 0 }}>
-            <span className="ed-head__label">For professionals</span>
-            <h2 id="home-academy-title">Learning beside a working clinical service.</h2>
-            <p>
-              Practical education for psychiatrists, therapists, counsellors, and trainees —
-              designed where care actually happens.
-            </p>
-            <div className="hp-academy__actions">
-              <HpBtn to="/academy" variant="solid">Visit the Academy</HpBtn>
-              <Link className="hp-text-link" to="/professionals">
-                Clinician overview
-                <span aria-hidden="true"> →</span>
-              </Link>
-            </div>
-          </header>
-          <aside className="hp-academy__aside">
-            <figure className="hp-academy__visual">
-              <ImagePlaceholder
-                asset="academy-teaching-room.jpg"
-                direction="Quiet teaching room with books and notes — warm daylight, no people."
-                src="/images/editorial/academy-teaching-room-v1.png"
-                alt="A quiet teaching room with books and notes in warm daylight"
-                loading="lazy"
-              />
-            </figure>
-            <blockquote className="ed-pull hp-pull">
-              <p>“Education is not just information. It is transformation in practice.”</p>
-              <cite>Serenest Academy</cite>
-            </blockquote>
-          </aside>
         </div>
       </section>
 
