@@ -172,18 +172,6 @@
     <priority>0.7</priority>
   </url>
 
-  <!-- Academy -->
-  <url>
-    <loc>https://www.serenest.in/academy</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.85</priority>
-  </url>
-  <url>
-    <loc>https://www.serenest.in/academy/program/clinical-excellence</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
-  </url>
-
   <!-- Blog index + posts -->
   <url>
     <loc>https://www.serenest.in/blog</loc>

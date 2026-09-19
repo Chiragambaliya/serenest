@@ -9,8 +9,7 @@
    This file does two things for all of them at once:
      1. repoints those local tokens at the live design tokens, and
      2. replaces the card treatment with thin rules and left-aligned
-        section heads, matching the corrected Home / Academy /
-        Services pages.
+        section heads, matching the corrected Home / Services pages.
 
    Loaded last in main.jsx so it wins without needing !important.
    ══════════════════════════════════════════════════════════════════ */
@@ -335,19 +334,6 @@ h1, h2, h3, h4,
 /* Restrain leftover pill chrome on marketing surfaces */
 .hp-topic,
 .hp-nav__links a,
-.eda-inner-nav-link,
 .footer-pill {
   border-radius: var(--r-btn);
-}
-
-/* Soften academy leftover card chrome when old classes remain */
-.eda-teach-card,
-.eda-feature,
-.eda-faculty-card,
-.eda-update-card {
-  border: none;
-  border-top: 1px solid var(--border);
-  border-radius: 0;
-  background: transparent;
-  box-shadow: none;
 }

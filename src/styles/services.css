@@ -380,70 +380,7 @@
   padding-top: 1rem;
 }
 
-/* ── Academy band ───────────────────────────────────────────── */
-.services-page .svc-academy__banner {
-  display: grid;
-  gap: 1.25rem;
-  margin-bottom: 2rem;
-  padding: clamp(1.5rem, 3vw, 2rem);
-  border: 1px solid var(--s-line);
-  border-left: 4px solid var(--s-sage-mid);
-  border-radius: var(--s-radius);
-  background: var(--s-white);
-  box-shadow: 0 1px 2px rgba(28, 36, 24, 0.04), 0 8px 24px rgba(28, 36, 24, 0.05);
-}
-
-@media (min-width: 800px) {
-  .services-page .svc-academy__banner {
-    grid-template-columns: 1.2fr 0.8fr;
-    align-items: start;
-  }
-}
-
-.services-page .svc-academy__brand {
-  margin: 0 0 0.5rem;
-  font-family: var(--font-heading);
-  font-size: 1.125rem;
-  font-weight: 600;
-  color: var(--s-sage);
-}
-
-.services-page .svc-academy__copy p:last-of-type {
-  margin: 0;
-  font-size: 0.9375rem;
-  line-height: 1.65;
-  color: var(--s-muted);
-}
-
-.services-page .svc-academy__actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.625rem;
-  margin-top: 1.125rem;
-}
-
-.services-page .svc-academy__links {
-  margin: 0;
-  padding: 1rem 1.125rem;
-  list-style: none;
-  border-radius: 0.75rem;
-  background: var(--s-cream);
-  border: 1px solid var(--s-line);
-}
-
-.services-page .svc-academy__links li + li {
-  margin-top: 0.5rem;
-}
-
-.services-page .svc-academy__links a {
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--s-sage-mid);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-/* ── Programme cards (Academy + Org) ────────────────────────── */
+/* ── Programme cards (Org) ──────────────────────────────────── */
 .services-page .svc-programme-grid {
   display: grid;
   gap: 1.25rem;
@@ -772,13 +709,11 @@
 
 @media (max-width: 479px) {
   .services-page .svc-hero__actions,
-  .services-page .svc-academy__actions,
   .services-page .svc-cta__actions {
     width: 100%;
   }
 
   .services-page .svc-hero__actions .btn,
-  .services-page .svc-academy__actions .btn,
   .services-page .svc-cta__actions .btn,
   .services-page .svc-band-cta .btn {
     flex: 1 1 100%;
@@ -824,7 +759,7 @@
   letter-spacing: 0.08em;
 }
 
-/* Programme cards (Academy + Organisations) → thin-rule entries */
+/* Programme cards (Organisations) → thin-rule entries */
 .services-page .svc-programme {
   padding: 1.5rem 0;
   border: none;
@@ -868,17 +803,6 @@
   border-radius: 0;
   background: none;
   box-shadow: none;
-}
-
-/* Academy banner → drop the panel treatment */
-.services-page .svc-academy__banner {
-  border: none;
-  border-top: 1px solid var(--s-line);
-  border-bottom: 1px solid var(--s-line);
-  border-radius: 0;
-  background: none;
-  box-shadow: none;
-  padding: 2rem 0;
 }
 
 /* Conditions table → open rows rather than a bordered panel */

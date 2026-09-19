@@ -78,6 +78,3 @@ services:
       # - key: CORS_ORIGIN
       #   value: https://serenest.in
 
-  # NOTE: Serenest Academy used to be a second static service (rootDir:
-  # education-site). It's now merged into the main app at /academy and served
-  # from this single Node web service — one deploy, one domain (serenest.in).

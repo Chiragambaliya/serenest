@@ -56,8 +56,8 @@ const PLATFORM = [
     body: 'Validated scales tracked over time so every clinician sees your history.',
   },
   {
-    tag: 'Academy',
-    title: 'Serenest Academy',
+    tag: 'Learning',
+    title: 'Guides & clinician learning',
     body: 'Patient guides and clinician learning on the same site — literacy alongside care.',
   },
 ];
@@ -265,7 +265,7 @@ export default function AboutPage() {
           <div className="ed-head ed-measure-wide">
             <span className="ed-head__label">What we&apos;ve built</span>
             <h2>A complete clinical ecosystem</h2>
-            <p>Scheduling, sessions, documentation, prescriptions, and Academy learning — together.</p>
+            <p>Scheduling, sessions, documentation, prescriptions, and learning — together.</p>
           </div>
           <div className="ed-index">
             {PLATFORM.map((item, i) => (

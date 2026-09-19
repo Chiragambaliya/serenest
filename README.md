@@ -1,8 +1,8 @@
 # Serenest
 
 Clinical telepsychiatry for India — online psychiatry, therapy, counselling,
-self-screening (PHQ-9 / GAD-7), and de-addiction support, plus Serenest
-Academy for clinician education. Live at **https://www.serenest.in**.
+self-screening (PHQ-9 / GAD-7), and de-addiction support. Live at
+**https://www.serenest.in**.
 
 ## Stack
 
@@ -11,8 +11,7 @@ Academy for clinician education. Live at **https://www.serenest.in**.
   `/api/*` routes, with per-route SEO injection.
 - **Database & auth:** Supabase (Postgres). Schema in `supabase/`.
 - **Video:** Daily.co · **Payments:** Razorpay · **Email:** Resend ·
-  **WhatsApp pings:** CallMeBot · **AI:** OpenAI (site guide), Anthropic
-  (content generation).
+  **WhatsApp pings:** CallMeBot · **AI:** OpenAI (site guide).
 - **Hosting:** Render (`render.yaml`) — see `DEPLOY.md`.
 
 ## Run locally

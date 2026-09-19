@@ -215,9 +215,9 @@ export default function PrivacyPolicyPage() {
                 <h3>Scope and data controller</h3>
                 <p>
                   This Privacy Policy applies to serenest.in, Serenest accounts, appointment and
-                  teleconsultation services, mental-health checks, professional and Academy services,
+                  teleconsultation services, mental-health checks, professional services,
                   support channels, and related communications. It applies to website visitors, patients,
-                  guardians, professionals, learners, and people who contact us.
+                  guardians, professionals, and people who contact us.
                 </p>
                 <p>
                   Serenest Education Pvt Ltd (&quot;Serenest&quot;, &quot;we&quot;, &quot;us&quot;) is the

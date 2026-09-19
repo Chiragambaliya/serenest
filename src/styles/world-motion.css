@@ -292,15 +292,7 @@ details summary {
   border-color: rgba(60, 74, 44, 0.35);
 }
 
-/* ── Academy — de-SaaS the card language ───────────────────── */
-.eda-pcard--purple {
-  --acc: #3c4a2c !important;
-  --acc-bg: rgba(60, 74, 44, 0.08) !important;
-}
-
-.eda-pcard,
-.eda-hero-card,
-.eda-path-card,
+/* ── De-SaaS the card language ──────────────────────────────── */
 .pro-hub-card,
 .pricing-card,
 .svc-card,
@@ -314,8 +306,6 @@ details summary {
     opacity 220ms ease !important;
 }
 
-.eda-pcard:hover,
-.eda-path-card:hover,
 .pro-hub-card:hover,
 .pricing-card:hover,
 .svc-card:hover,

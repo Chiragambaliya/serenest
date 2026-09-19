@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from './supabase';
 
 /**
- * Tracks the current Supabase Auth session (Academy accounts).
+ * Tracks the current Supabase Auth session.
  * Returns { user, loading } and stays in sync via onAuthStateChange.
  */
 export function useAuth() {

@@ -489,7 +489,6 @@ const EXPERIENCE_BY_ID = {
       { to: '/online-psychiatrist-for-depression-india', label: 'Depression care online' },
       { to: '/phq-9-depression-screening', label: 'What the PHQ-9 is' },
       { to: '/blog/sleep-mood-stress-loop', label: 'Sleep, mood, and stress' },
-      { to: '/academy', label: 'Serenest Academy' },
     ],
     careGuidance: {
       mild: 'Self-care and learning may be enough for now. Consider a counsellor if this lasts more than a few weeks.',
@@ -525,7 +524,6 @@ const EXPERIENCE_BY_ID = {
       { to: '/anxiety-counselling-online-india', label: 'Anxiety counselling online' },
       { to: '/gad-7-anxiety-screening', label: 'What the GAD-7 is' },
       { to: '/blog/screens-stimulation-and-anxiety', label: 'Screens, stimulation, and anxiety' },
-      { to: '/academy', label: 'Serenest Academy' },
     ],
     careGuidance: {
       mild: 'Self-care and psychoeducation often help. Book counselling if worry keeps returning.',

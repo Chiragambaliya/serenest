@@ -141,12 +141,6 @@ const TAB_GROUPS = [
     ],
   },
   {
-    label: 'Academy',
-    items: [
-      { id: 'learners', label: 'Academy', icon: '◻' },
-    ],
-  },
-  {
     label: 'Analytics',
     items: [
       { id: 'traffic', label: 'Traffic', icon: '◻' },
@@ -169,7 +163,6 @@ const TAB_ICONS = {
   messages: '◉',
   screenings: '◌',
   subscribers: '◦',
-  learners: '◈',
   signups: '◌',
 };
 
@@ -184,7 +177,6 @@ const TAB_HELP = {
   messages: 'Read incoming contact/enquiry messages.',
   screenings: 'Review self-screening submissions and callback leads.',
   subscribers: 'People who opted in to email updates — export and reach out.',
-  learners: 'Registered Serenest Academy accounts — your learner audience.',
   signups: 'View and export waitlist signups.',
 };
 
@@ -234,22 +226,12 @@ const SITE_PAGE_GROUPS = [
     title: 'Professionals hub',
     pages: [
       { label: 'For professionals', path: '/professionals', hint: 'Clinician landing' },
-      { label: 'Academy learning hub', path: '/academy/learn', hint: 'Pharmacology & psychology tracks' },
-      { label: 'Learning — pharmacology', path: '/academy/learn#learning-pharmacology', hint: 'Deep link' },
-      { label: 'Learning — psychology', path: '/academy/learn#learning-psychology', hint: 'Deep link' },
+      { label: 'Learning hub', path: '/professionals/learning', hint: 'Pharmacology & psychology tracks' },
+      { label: 'Learning — pharmacology', path: '/professionals/learning#learning-pharmacology', hint: 'Deep link' },
+      { label: 'Learning — psychology', path: '/professionals/learning#learning-psychology', hint: 'Deep link' },
       { label: 'Pro resources', path: '/professionals/resources', hint: 'Downloads & links' },
       { label: 'Clinical guidelines', path: '/professionals/guidelines', hint: 'Practice expectations' },
       { label: 'Apply as professional', path: '/professionals/apply', hint: 'Onboarding wizard' },
-    ],
-  },
-  {
-    title: 'Serenest Academy',
-    pages: [
-      { label: 'Academy home', path: '/academy', hint: 'Literacy & learning landing (merged into main site)' },
-      { label: 'Academy → tracks', path: '/academy#tracks', hint: 'Anchor: programmes overview' },
-      { label: 'Academy → audiences', path: '/academy#audiences', hint: 'Public / clinicians / orgs' },
-      { label: 'Academy → contact', path: '/academy#contact', hint: 'Partnerships & collaboration' },
-      { label: 'Academy → learning hub', path: '/academy/learn', hint: 'Clinician pharmacology & psychology tracks' },
     ],
   },
   {
@@ -313,7 +295,6 @@ export default function AdminPage() {
   const [signups, setSignups]         = useState([]);
   const [traffic, setTraffic]         = useState(null);
   const [subscribers, setSubscribers] = useState([]);
-  const [learners, setLearners]       = useState([]);
   const [noteEdit, setNoteEdit]       = useState({});
   const [proFilter, setProFilter]     = useState('all');
   const [bookingFilter, setBookingFilter] = useState('all');
@@ -331,25 +312,6 @@ export default function AdminPage() {
   const [rxPreview, setRxPreview] = useState(false);
   const [rxMeta, setRxMeta] = useState(null); // { id, is_locked, locked_at }
   const [rxLoadingExisting, setRxLoadingExisting] = useState(false);
-
-  // Academy content sub-state
-  const [academyTab, setAcademyTab]       = useState('learners');
-  const [acContent, setAcContent]         = useState([]);
-  const [acForm, setAcForm]               = useState({ type: 'announcement', title: '', body: '', link: '', link_label: 'Learn more', pinned: false, is_active: true });
-  const [acEditing, setAcEditing]         = useState(null); // id of item being edited
-  const [acEditData, setAcEditData]       = useState({});
-  const [acBusy, setAcBusy]               = useState(false);
-  const [acError, setAcError]             = useState('');
-  const [acShowForm, setAcShowForm]       = useState(false);
-
-  // Academy AI content generation state
-  const [acGenOpen, setAcGenOpen]       = useState(false);
-  const [acGenLoading, setAcGenLoading] = useState(false);
-  const [acGenError, setAcGenError]     = useState('');
-  const [acGenResult, setAcGenResult]   = useState(null); // { items[] }
-  const [acGenSaved, setAcGenSaved]     = useState(false);
-  const [acGenFocus, setAcGenFocus]     = useState('');
-  const [acGenCount, setAcGenCount]     = useState(4);
 
   // HR sub-state
   const [hrTab, setHrTab]               = useState('applications');
@@ -450,14 +412,6 @@ export default function AdminPage() {
       (which === 'all' || which === 'subscribers') && safe(async () => {
         const r = await adminFetch('/api/subscribers', secret);
         setSubscribers(r.subscribers ?? []);
-      }),
-      (which === 'all' || which === 'learners') && safe(async () => {
-        const r = await adminFetch('/api/academy/learners', secret);
-        setLearners(r.learners ?? []);
-      }),
-      (which === 'all' || which === 'learners') && safe(async () => {
-        const r = await adminFetch('/api/academy/content/all', secret);
-        setAcContent(r.content ?? []);
       }),
     ].filter(Boolean));
 
@@ -560,7 +514,6 @@ export default function AdminPage() {
     setSignups([]);
     setTraffic(null);
     setSubscribers([]);
-    setLearners([]);
     setSiteHubFilter('');
     setSiteCopied('');
     setHealthProbe(null);
@@ -1469,11 +1422,6 @@ export default function AdminPage() {
                 <code style={{ fontSize: '0.78rem' }}>{BASE || '(same origin)'}</code>
               </span>
             </div>
-
-            <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: 14 }}>
-              Serenest Academy lives at <code style={{ fontSize: '0.78rem' }}>/academy</code> — same
-              deploy as Serenest clinical (no separate site / env var any more).
-            </p>
 
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginBottom: '1.25rem', alignItems: 'center' }}>
               <input
@@ -3155,343 +3103,6 @@ export default function AdminPage() {
                 })}
               </div>
             )}
-          </div>
-        )}
-
-        {/* ── SUBSCRIBERS ── */}
-        {tab === 'learners' && (
-          <div>
-            <h2 style={{ fontWeight: 800, fontSize: '1.4rem', marginBottom: '1rem' }}>Academy</h2>
-
-            {/* Academy sub-tabs */}
-            <div style={{ display: 'flex', gap: 4, marginBottom: '1.5rem', borderBottom: '2px solid var(--border)', paddingBottom: 0 }}>
-              {[
-                { id: 'learners', label: `Learners (${learners.length})` },
-                { id: 'content',  label: `Content (${acContent.length})` },
-              ].map((st) => (
-                <button key={st.id} onClick={() => setAcademyTab(st.id)} style={{
-                  padding: '0.5rem 1rem', background: 'none', border: 'none', cursor: 'pointer',
-                  fontSize: '0.88rem', fontWeight: academyTab === st.id ? 700 : 500,
-                  color: academyTab === st.id ? 'var(--brand-600)' : 'var(--text-muted)',
-                  borderBottom: academyTab === st.id ? '2px solid var(--brand-500)' : '2px solid transparent',
-                  marginBottom: -2, transition: 'all 0.15s',
-                }}>{st.label}</button>
-              ))}
-            </div>
-
-            {/* ── SUB: LEARNERS ── */}
-            {academyTab === 'learners' && (
-              <div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '0.75rem' }}>
-                  <button
-                    onClick={() => {
-                      const csv = ['Name,Email,Role,Confirmed,Joined', ...learners.map((l) => `"${l.full_name ?? ''}","${l.email ?? ''}","${l.role ?? ''}","${l.confirmed ? 'yes' : 'no'}","${fmtDate(l.created_at)}"`)].join('\n');
-                      const a = document.createElement('a');
-                      a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
-                      a.download = 'serenest-academy-learners.csv';
-                      a.click();
-                    }}
-                    className="btn btn-ghost btn-sm"
-                  >Export CSV</button>
-                </div>
-                {learners.length === 0 ? (
-                  <EmptyState icon="🎓" text="No Academy accounts yet — the /academy/login page feeds this list" />
-                ) : (
-                  <div style={{ overflowX: 'auto' }}>
-                    <table style={tableStyle}>
-                      <thead>
-                        <tr>{['Name', 'Email', 'Role', 'Status', 'Joined'].map((h) => <th key={h} style={thStyle}>{h}</th>)}</tr>
-                      </thead>
-                      <tbody>
-                        {learners.map((l) => (
-                          <tr key={l.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                            <td style={tdStyle}>{l.full_name || '—'}</td>
-                            <td style={tdStyle}><a href={`mailto:${l.email}`} style={{ color: 'var(--brand-600)' }}>{l.email}</a></td>
-                            <td style={tdStyle}>{l.role || '—'}</td>
-                            <td style={tdStyle}>{l.confirmed ? <Badge status="confirmed" /> : <Badge status="pending" />}</td>
-                            <td style={tdStyle}>{fmt(l.created_at)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* ── SUB: CONTENT ── */}
-            {academyTab === 'content' && (() => {
-              const TYPE_COLORS = { announcement: '#0d6efd', program_update: '#198754', event: '#e67e22' };
-              const TYPE_LABELS = { announcement: 'Announcement', program_update: 'Program Update', event: 'Event' };
-
-              async function saveNew() {
-                if (!acForm.title.trim()) { setAcError('Title is required.'); return; }
-                setAcBusy(true); setAcError('');
-                try {
-                  const r = await adminFetch('/api/academy/content', secret, { method: 'POST', body: JSON.stringify(acForm) });
-                  setAcContent((prev) => [r.item, ...prev]);
-                  setAcForm({ type: 'announcement', title: '', body: '', link: '', link_label: 'Learn more', pinned: false, is_active: true });
-                  setAcShowForm(false);
-                } catch (e) { setAcError(e.message); }
-                setAcBusy(false);
-              }
-
-              async function generateAcademyItems() {
-                setAcGenLoading(true); setAcGenError(''); setAcGenResult(null); setAcGenSaved(false);
-                try {
-                  const r = await adminFetch('/api/academy/content/generate', secret, {
-                    method: 'POST',
-                    body: JSON.stringify({ focus: acGenFocus || null, count: acGenCount }),
-                  });
-                  setAcGenResult(r);
-                } catch (e) { setAcGenError(e.message); }
-                finally { setAcGenLoading(false); }
-              }
-
-              async function saveGeneratedItems() {
-                if (!acGenResult?.items?.length) return;
-                setAcGenLoading(true); setAcGenError('');
-                try {
-                  const saved = [];
-                  for (const item of acGenResult.items) {
-                    const r = await adminFetch('/api/academy/content', secret, { method: 'POST', body: JSON.stringify({ ...item, is_active: true }) });
-                    saved.push(r.item);
-                  }
-                  setAcContent((prev) => [...saved.reverse(), ...prev]);
-                  setAcGenSaved(true);
-                  setAcGenResult(null);
-                  setAcGenOpen(false);
-                } catch (e) { setAcGenError(e.message); }
-                finally { setAcGenLoading(false); }
-              }
-
-              async function saveEdit(id) {
-                setAcBusy(true); setAcError('');
-                try {
-                  const r = await adminFetch(`/api/academy/content/${id}`, secret, { method: 'PATCH', body: JSON.stringify(acEditData) });
-                  setAcContent((prev) => prev.map((x) => x.id === id ? r.item : x));
-                  setAcEditing(null);
-                } catch (e) { setAcError(e.message); }
-                setAcBusy(false);
-              }
-
-              async function toggleField(id, field, val) {
-                try {
-                  const r = await adminFetch(`/api/academy/content/${id}`, secret, { method: 'PATCH', body: JSON.stringify({ [field]: val }) });
-                  setAcContent((prev) => prev.map((x) => x.id === id ? r.item : x));
-                } catch (e) { setAcError(e.message); }
-              }
-
-              async function deleteItem(id) {
-                if (!window.confirm('Delete this content item?')) return;
-                setAcBusy(true); setAcError('');
-                try {
-                  await adminFetch(`/api/academy/content/${id}`, secret, { method: 'DELETE' });
-                  setAcContent((prev) => prev.filter((x) => x.id !== id));
-                } catch (e) { setAcError(e.message); }
-                setAcBusy(false);
-              }
-
-              const fieldStyle = { width: '100%', padding: '0.55rem 0.75rem', borderRadius: 8, border: '1px solid var(--border)', fontSize: '0.88rem', background: 'var(--surface)', color: 'var(--text)', boxSizing: 'border-box' };
-              const labelStyle = { fontSize: '0.78rem', fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4, display: 'block' };
-
-              const TYPE_BADGE = {
-                announcement:   { bg: '#eff6ff', color: '#1d4ed8' },
-                program_update: { bg: '#f0fdf4', color: '#15803d' },
-                event:          { bg: '#fff7ed', color: '#c2410c' },
-              };
-
-              return (
-                <div>
-                  {acError && <p style={{ color: '#dc3545', fontSize: '0.85rem', marginBottom: '0.75rem' }}>{acError}</p>}
-
-                  {/* Header */}
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 8 }}>
-                    <h2 style={{ fontWeight: 800, fontSize: '1.2rem', margin: 0 }}>Academy Content</h2>
-                    <div style={{ display: 'flex', gap: 8 }}>
-                      <button
-                        className="btn btn-primary btn-sm"
-                        style={{ background: 'linear-gradient(135deg,#5a8f40,#3a6028)', display: 'flex', alignItems: 'center', gap: 6 }}
-                        onClick={() => { setAcGenOpen((v) => !v); setAcShowForm(false); setAcGenError(''); }}
-                      >
-                        ✨ {acGenOpen ? 'Close AI generator' : 'Generate with AI'}
-                      </button>
-                      <button className="btn btn-ghost btn-sm" onClick={() => { setAcShowForm((v) => !v); setAcGenOpen(false); setAcError(''); }}>
-                        {acShowForm ? 'Cancel' : '+ Manual entry'}
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* ── AI GENERATOR PANEL ── */}
-                  {acGenOpen && (
-                    <div style={{ background: 'linear-gradient(135deg,#f0fdf4,#f8fafc)', border: '1.5px solid #bbf7d0', borderRadius: 14, padding: '1.25rem', marginBottom: '1.5rem' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: '1rem' }}>
-                        <span style={{ fontSize: '1.3rem' }}>✨</span>
-                        <div>
-                          <div style={{ fontWeight: 700, fontSize: '1rem' }}>AI Academy Content Generator</div>
-                          <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>Claude writes announcements, program updates, and events. You review, then publish.</div>
-                        </div>
-                      </div>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 10, marginBottom: 12 }}>
-                        <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                          <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>Theme / context <span style={{ fontWeight: 400, color: 'var(--text-muted)' }}>(optional)</span></span>
-                          <input className="admin-input" placeholder="e.g. New cohort opening, fellowship enrollment, guest lecture…"
-                            value={acGenFocus} onChange={(e) => setAcGenFocus(e.target.value)} />
-                        </label>
-                        <label style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                          <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#374151' }}>Count</span>
-                          <select className="admin-input" value={acGenCount} onChange={(e) => setAcGenCount(Number(e.target.value))}>
-                            <option value={3}>3 items</option>
-                            <option value={4}>4 items</option>
-                            <option value={5}>5 items</option>
-                            <option value={6}>6 items</option>
-                          </select>
-                        </label>
-                      </div>
-                      {acGenError && <div style={{ color: '#b91c1c', fontSize: '0.82rem', marginBottom: 10 }}>{acGenError}</div>}
-                      {!acGenResult ? (
-                        <button className="btn btn-primary" disabled={acGenLoading} onClick={generateAcademyItems}
-                          style={{ width: '100%', justifyContent: 'center' }}>
-                          {acGenLoading ? '✨ Claude is writing content…' : `✨ Generate ${acGenCount} content items`}
-                        </button>
-                      ) : (
-                        <div>
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 12 }}>
-                            {acGenResult.items.map((item, i) => {
-                              const badge = TYPE_BADGE[item.type] ?? { bg: '#f1f5f9', color: '#475569' };
-                              return (
-                                <div key={i} style={{ background: '#fff', border: '1px solid var(--border)', borderRadius: 10, padding: '0.85rem' }}>
-                                  <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6, flexWrap: 'wrap' }}>
-                                    <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: badge.bg, color: badge.color }}>
-                                      {item.type === 'announcement' ? '📢' : item.type === 'program_update' ? '📚' : '🗓'} {item.type.replace('_', ' ')}
-                                    </span>
-                                    {item.pinned && <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: 10, background: '#fef9c3', color: '#854d0e' }}>📌 Will be pinned</span>}
-                                  </div>
-                                  <p style={{ margin: '0 0 4px', fontWeight: 700, fontSize: '0.9rem' }}>{item.title}</p>
-                                  {item.body && <p style={{ margin: '0 0 4px', fontSize: '0.83rem', color: 'var(--text-muted)', lineHeight: 1.5 }}>{item.body}</p>}
-                                  {item.link && <p style={{ margin: 0, fontSize: '0.78rem', color: '#3b82f6' }}>{item.link_label || 'Link'} → {item.link}</p>}
-                                </div>
-                              );
-                            })}
-                          </div>
-                          <div style={{ display: 'flex', gap: 8 }}>
-                            <button className="btn btn-ghost btn-sm" onClick={() => { setAcGenResult(null); setAcGenSaved(false); }}>Regenerate</button>
-                            <button className="btn btn-primary" disabled={acGenLoading || acGenSaved} onClick={saveGeneratedItems}
-                              style={{ flex: 1, justifyContent: 'center' }}>
-                              {acGenLoading ? 'Publishing…' : acGenSaved ? '✓ Published!' : `✅ Publish all ${acGenResult.items.length} items`}
-                            </button>
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  {/* New-item form */}
-                  {acShowForm && (
-                    <div style={{ background: 'var(--surface-raised, #f8fafc)', border: '1px solid var(--border)', borderRadius: 12, padding: '1.25rem', marginBottom: '1.5rem' }}>
-                      <h3 style={{ fontWeight: 700, fontSize: '1rem', marginBottom: '1rem' }}>New Content Item</h3>
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem 1rem', marginBottom: '0.75rem' }}>
-                        <div style={{ gridColumn: '1 / -1' }}>
-                          <label style={labelStyle}>Type</label>
-                          <select style={fieldStyle} value={acForm.type} onChange={(e) => setAcForm((f) => ({ ...f, type: e.target.value }))}>
-                            <option value="announcement">Announcement</option>
-                            <option value="program_update">Program Update</option>
-                            <option value="event">Event</option>
-                          </select>
-                        </div>
-                        <div style={{ gridColumn: '1 / -1' }}>
-                          <label style={labelStyle}>Title *</label>
-                          <input style={fieldStyle} value={acForm.title} onChange={(e) => setAcForm((f) => ({ ...f, title: e.target.value }))} placeholder="e.g. New module added to CBT track" />
-                        </div>
-                        <div style={{ gridColumn: '1 / -1' }}>
-                          <label style={labelStyle}>Body (optional)</label>
-                          <textarea style={{ ...fieldStyle, minHeight: 72, resize: 'vertical' }} value={acForm.body} onChange={(e) => setAcForm((f) => ({ ...f, body: e.target.value }))} placeholder="Brief description shown on the academy page…" />
-                        </div>
-                        <div>
-                          <label style={labelStyle}>Link URL (optional)</label>
-                          <input style={fieldStyle} value={acForm.link} onChange={(e) => setAcForm((f) => ({ ...f, link: e.target.value }))} placeholder="https://… or /academy/program/…" />
-                        </div>
-                        <div>
-                          <label style={labelStyle}>Link Label</label>
-                          <input style={fieldStyle} value={acForm.link_label} onChange={(e) => setAcForm((f) => ({ ...f, link_label: e.target.value }))} />
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <input type="checkbox" id="ac-pinned" checked={acForm.pinned} onChange={(e) => setAcForm((f) => ({ ...f, pinned: e.target.checked }))} />
-                          <label htmlFor="ac-pinned" style={{ fontSize: '0.88rem', cursor: 'pointer' }}>Pin to top of academy page</label>
-                        </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                          <input type="checkbox" id="ac-active" checked={acForm.is_active} onChange={(e) => setAcForm((f) => ({ ...f, is_active: e.target.checked }))} />
-                          <label htmlFor="ac-active" style={{ fontSize: '0.88rem', cursor: 'pointer' }}>Active (visible to learners)</label>
-                        </div>
-                      </div>
-                      <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                        <button onClick={() => setAcShowForm(false)} className="btn btn-ghost btn-sm">Cancel</button>
-                        <button onClick={saveNew} disabled={acBusy} className="btn btn-primary btn-sm">{acBusy ? 'Saving…' : 'Publish'}</button>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Content list */}
-                  {acContent.length === 0 ? (
-                    <EmptyState icon="📢" text="No content yet — click 'New Update' to publish an announcement or program update" />
-                  ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-                      {acContent.map((item) => (
-                        <div key={item.id} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 10, padding: '1rem 1.1rem', opacity: item.is_active ? 1 : 0.55 }}>
-                          {acEditing === item.id ? (
-                            /* Inline edit form */
-                            <div>
-                              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.6rem 1rem', marginBottom: '0.75rem' }}>
-                                <div style={{ gridColumn: '1 / -1' }}>
-                                  <label style={labelStyle}>Title</label>
-                                  <input style={fieldStyle} value={acEditData.title ?? item.title} onChange={(e) => setAcEditData((d) => ({ ...d, title: e.target.value }))} />
-                                </div>
-                                <div style={{ gridColumn: '1 / -1' }}>
-                                  <label style={labelStyle}>Body</label>
-                                  <textarea style={{ ...fieldStyle, minHeight: 64, resize: 'vertical' }} value={acEditData.body ?? item.body ?? ''} onChange={(e) => setAcEditData((d) => ({ ...d, body: e.target.value }))} />
-                                </div>
-                                <div>
-                                  <label style={labelStyle}>Link URL</label>
-                                  <input style={fieldStyle} value={acEditData.link ?? item.link ?? ''} onChange={(e) => setAcEditData((d) => ({ ...d, link: e.target.value }))} />
-                                </div>
-                                <div>
-                                  <label style={labelStyle}>Link Label</label>
-                                  <input style={fieldStyle} value={acEditData.link_label ?? item.link_label ?? 'Learn more'} onChange={(e) => setAcEditData((d) => ({ ...d, link_label: e.target.value }))} />
-                                </div>
-                              </div>
-                              <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-                                <button onClick={() => setAcEditing(null)} className="btn btn-ghost btn-sm">Cancel</button>
-                                <button onClick={() => saveEdit(item.id)} disabled={acBusy} className="btn btn-primary btn-sm">{acBusy ? 'Saving…' : 'Save'}</button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'flex-start' }}>
-                              <div style={{ flex: 1, minWidth: 0 }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
-                                  <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: 99, background: (TYPE_COLORS[item.type] ?? '#aaa') + '18', color: TYPE_COLORS[item.type] ?? '#aaa' }}>{TYPE_LABELS[item.type] ?? item.type}</span>
-                                  {item.pinned && <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: 99, background: '#fef9c3', color: '#854d0e' }}>📌 Pinned</span>}
-                                  {!item.is_active && <span style={{ fontSize: '0.72rem', fontWeight: 700, padding: '2px 8px', borderRadius: 99, background: '#f1f5f9', color: '#64748b' }}>Hidden</span>}
-                                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: 'auto' }}>{fmtDate(item.created_at)}</span>
-                                </div>
-                                <p style={{ fontWeight: 700, fontSize: '0.92rem', margin: '0 0 2px' }}>{item.title}</p>
-                                {item.body && <p style={{ fontSize: '0.84rem', color: 'var(--text-muted)', margin: 0, whiteSpace: 'pre-wrap' }}>{item.body}</p>}
-                                {item.link && <a href={item.link} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.82rem', color: 'var(--brand-600)' }}>{item.link_label || item.link} →</a>}
-                              </div>
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: 4, flexShrink: 0 }}>
-                                <button onClick={() => toggleField(item.id, 'pinned', !item.pinned)} style={{ padding: '3px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: '0.78rem', color: item.pinned ? '#854d0e' : 'var(--text-muted)' }}>{item.pinned ? 'Unpin' : 'Pin'}</button>
-                                <button onClick={() => toggleField(item.id, 'is_active', !item.is_active)} style={{ padding: '3px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: '0.78rem', color: item.is_active ? '#198754' : 'var(--text-muted)' }}>{item.is_active ? 'Hide' : 'Show'}</button>
-                                <button onClick={() => { setAcEditing(item.id); setAcEditData({}); }} style={{ padding: '3px 10px', borderRadius: 6, border: '1px solid var(--border)', background: 'none', cursor: 'pointer', fontSize: '0.78rem' }}>Edit</button>
-                                <button onClick={() => deleteItem(item.id)} style={{ padding: '3px 10px', borderRadius: 6, border: '1px solid #fecaca', background: 'none', cursor: 'pointer', fontSize: '0.78rem', color: '#dc2626' }}>Delete</button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
           </div>
         )}
 

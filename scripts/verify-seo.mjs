@@ -32,7 +32,6 @@ const ROUTES_200 = [
   '/about',
   '/faq',
   '/guides',
-  '/academy',
   '/privacy',
   '/online-psychiatrist-for-depression-india',
   '/anxiety-counselling-online-india',

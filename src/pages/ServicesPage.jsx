@@ -71,7 +71,7 @@ const CORE_SERVICES = [
   },
 ];
 
-const ACADEMY_SERVICES = [
+const LEARNING_SERVICES = [
   {
     tag: 'Guides',
     title: 'Patient guides',
@@ -99,9 +99,9 @@ const ACADEMY_SERVICES = [
   {
     tag: 'Partnerships',
     title: 'Schools & workplaces',
-    body: 'Literacy talks, workshops, and outreach through Serenest Academy.',
+    body: 'Literacy talks, workshops, and outreach for schools, colleges, and workplaces.',
     features: ['Programme design for your audience', 'School, college, workplace', 'Pairs with clinical org plans'],
-    href: '/academy#contact',
+    href: '/contact',
     cta: 'Collaborate',
   },
 ];
@@ -280,10 +280,10 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="svc-section svc-section--cream" id="academy">
+      <section className="svc-section svc-section--cream" id="learning">
         <div className="ed-shell ed-aside">
           <div>
-            <p className="ed-aside__label">Serenest Academy</p>
+            <p className="ed-aside__label">Learning</p>
             <p className="ed-aside__note">
               Educational material sits beside care, but does not replace clinical assessment.
             </p>
@@ -292,27 +292,13 @@ export default function ServicesPage() {
             <header className="ed-head ed-head--wide">
               <h2>Literacy and learning — not a substitute for clinical care</h2>
               <p>
-                Serenest Education Pvt Ltd publishes guides, clinician tracks, and partnership programmes
+                Serenest publishes patient guides and clinician learning tracks
                 on the same site as telepsychiatry.
               </p>
             </header>
 
-            <div className="svc-academy__banner">
-              <div className="svc-academy__copy">
-                <p className="svc-academy__brand">Serenest Academy</p>
-                <p>
-                  Understand symptoms, reduce stigma, and find the right next step. For appointments,
-                  use Book or Screening — Academy content is educational.
-                </p>
-                <div className="svc-academy__actions">
-                  <Link className="btn btn-primary" to="/academy">Explore Academy</Link>
-                  <Link className="btn btn-ghost" to="/academy#guide">Ask Academy Guide</Link>
-                </div>
-              </div>
-            </div>
-
             <div className="ed-index">
-              {ACADEMY_SERVICES.map((item, i) => (
+              {LEARNING_SERVICES.map((item, i) => (
                 <Link key={item.tag} className="ed-index__row" to={item.href}>
                   <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
                   <span>
