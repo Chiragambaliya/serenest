@@ -2850,6 +2850,11 @@ app.post('/api/assistant/chat', (req, res, next) => {
   handleAssistantChat(req, res).catch(next);
 });
 
+// Old crawlers still request /og-image.png from the previous share URL.
+app.get('/og-image.png', (_req, res) => {
+  res.redirect(301, '/og-image.jpg');
+});
+
 // ══════════════════════════════════════════════════════════════
 //  STATIC + SPA FALLBACK (with route-specific SEO injection)
 // ══════════════════════════════════════════════════════════════
