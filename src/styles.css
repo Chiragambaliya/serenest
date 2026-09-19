@@ -5019,6 +5019,14 @@ a.pro-hub-tile:hover .learning-card-aux {
   .cta { flex-direction: column; align-items: flex-start; }
   .footer-cols { grid-template-columns: 1fr 1fr; }
   .consult-layout { grid-template-columns: 1fr; height: auto; }
+
+  /* Tablet: desktop nav is hidden in masthead.css — show hamburger here too. */
+  .header-links { display: none; }
+  .menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 768px) {
@@ -5050,9 +5058,7 @@ a.pro-hub-tile:hover .learning-card-aux {
     padding-inline-start: 0;
   }
 
-  .header-links  { display: none; }
-  .menu-btn      {
-    display: flex;
+  .menu-btn {
     grid-column: 3;
     justify-self: end;
   }

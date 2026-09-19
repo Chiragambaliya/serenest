@@ -502,6 +502,12 @@
   .masthead__nav {
     display: none;
   }
+
+  .masthead .menu-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 768px) {
@@ -538,7 +544,6 @@
   }
 
   .masthead .menu-btn {
-    display: flex;
     grid-column: unset;
     justify-self: unset;
     margin-left: auto;
