@@ -156,7 +156,8 @@ async function checkIndexable(path) {
   }
 
   const desc = extract(html, /<meta\s+name="description"\s+content="([^"]*)"/i);
-  if (desc !== expected.description) fail(path, `description mismatch — got ${JSON.stringify(desc)}`);
+  const decodedDesc = desc?.replace(/&amp;/g, '&');
+  if (decodedDesc !== expected.description) fail(path, `description mismatch — got ${JSON.stringify(desc)}`);
 
   const canon = extract(html, /<link\s+rel="canonical"\s+href="([^"]*)"/i);
   if (canon !== canonical) fail(path, `canonical mismatch — expected ${canonical}, got ${canon}`);
@@ -172,7 +173,7 @@ async function checkIndexable(path) {
 
   const ogDesc = extract(html, /<meta\s+property="og:description"\s+content="([^"]*)"/i);
   const expectedOgDesc = expected.ogDescription || expected.description;
-  if (ogDesc !== expectedOgDesc) fail(path, `og:description mismatch — got ${JSON.stringify(ogDesc)}`);
+  if (ogDesc?.replace(/&amp;/g, '&') !== expectedOgDesc) fail(path, `og:description mismatch — got ${JSON.stringify(ogDesc)}`);
 
   // JSON-LD present and parses
   const jsonLdMatches = [...html.matchAll(/<script\s+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)];
