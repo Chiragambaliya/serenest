@@ -11,6 +11,7 @@ import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
 import { renderSeoHead, shouldNoindex, ROUTE_SEO, ROUTE_ALIASES, SITE_ORIGIN } from './src/lib/seo.js';
+import { isValidSpaRoute, normalizePath } from './src/lib/routes.js';
 import { handleAssistantChat } from './src/server/aiAssistant.js';
 import { generateAcademyContent } from './src/server/academyContentGen.js';
 import cron from 'node-cron';
@@ -2865,72 +2866,6 @@ app.use('/assets', express.static(join(dist, 'assets'), {
 // want every HTML response (including "/") to go through the SEO injector.
 app.use(express.static(dist, { index: false }));
 
-// Routes the SPA actually handles. Anything outside this set should
-// return a real 404/410 status code instead of a soft-200 SPA shell.
-// Keep this in sync with src/App.jsx.
-const VALID_ROUTES = new Set([
-  '/',
-  '/preview',
-  '/about',
-  '/team',
-  '/services',
-  '/professionals',
-  '/professionals/learning',
-  '/professionals/resources',
-  '/professionals/guidelines',
-  '/professionals/apply',
-  '/professionals/terms',
-  '/professionals/code-of-conduct',
-  '/professionals/login',
-  '/professionals/portal',
-  '/book',
-  '/pricing',
-  '/faq',
-  '/guides',
-  '/blog',
-  '/privacy',
-  '/terms',
-  '/patient/terms',
-  '/consent',
-  '/refund-policy',
-  '/emergency-disclaimer',
-  '/cookie-policy',
-  '/grievance-policy',
-  '/payment-policy',
-  '/data-retention',
-  '/intellectual-property',
-  '/community-guidelines',
-  '/legal',
-  '/admin',
-  '/patient/find-professional',
-  '/patient/login',
-  '/patient/dashboard',
-  '/careers',
-  '/corporate',
-  '/partner',
-  '/screening',
-  '/screening/pathway/mood-anxiety',
-  '/burnout-check',
-  '/evidence',
-  '/academy',
-  '/academy/login',
-  '/academy/learn',
-  '/academy/learn/pharmacology',
-  '/academy/learn/psychology',
-  '/online-psychiatrist-consultation-india',
-  '/online-psychiatrist-for-depression-india',
-  '/anxiety-counselling-online-india',
-  '/adhd-assessment-online-india',
-  '/ocd-treatment-online-india',
-  '/online-psychiatrist-gujarat',
-  '/phq-9-depression-screening',
-  '/gad-7-anxiety-screening',
-  '/online-psychiatrist-prescription-india',
-]);
-
-// Dynamic-route prefixes that the SPA legitimately serves.
-const VALID_PREFIXES = ['/blog/', '/consultation/', '/academy/program/', '/screening/tool/', '/evidence/'];
-
 // Known stale URLs surfaced in search from prior site contents. These have no
 // healthcare replacement, so return 410 Gone to ask Google to drop them.
 // Patterns are anchored and accept optional trailing slashes.
@@ -2942,17 +2877,6 @@ const GONE_PATTERNS = [
   /^\/tag(\/|$)/i,
   /^\/wp-/i,
 ];
-
-function normalize(pathname) {
-  if (pathname === '/') return '/';
-  return pathname.replace(/\/+$/, '');
-}
-
-function isValidSpaRoute(pathname) {
-  const norm = normalize(pathname);
-  if (VALID_ROUTES.has(norm)) return true;
-  return VALID_PREFIXES.some((p) => pathname.startsWith(p) && pathname.length > p.length);
-}
 
 // ── SEO injection ─────────────────────────────────────────────
 // Read the built dist/index.html once and substitute the sentinel block per
@@ -2979,7 +2903,7 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 function seoRouteKey(pathname) {
-  const norm = normalize(pathname);
+  const norm = normalizePath(pathname);
   // Map non-indexable SPA routes to a generic noindex SEO entry; only routes
   // present in ROUTE_SEO get their own bespoke title/description.
   return ROUTE_SEO[norm] ? norm : null;
@@ -3001,10 +2925,15 @@ function buildHtmlForRequest(pathname, { status }) {
   if (!tpl) return '';
 
   const routeKey = seoRouteKey(pathname);
-  const noindex = status === 404 || status === 410 || shouldNoindex(pathname) || !routeKey;
+  const isErrorPage = status === 404 || status === 410;
+  // A missing ROUTE_SEO entry still falls back to noindex, but that is a
+  // backstop for an unfinished page rather than the normal path — every route
+  // the SPA serves is expected to carry its own entry, which verify-seo asserts.
+  const noindex = isErrorPage || shouldNoindex(pathname) || !routeKey;
   // For unknown/410 paths, use the homepage SEO entry as a baseline but mark
-  // noindex,nofollow so search engines don't index the 404 UI.
-  const renderPath = routeKey || '/';
+  // noindex,nofollow so search engines don't index the 404 UI. Real pages
+  // always canonicalise to themselves, never to the homepage.
+  const renderPath = isErrorPage ? '/' : normalizePath(pathname);
   const replacement = `<!--SEO_HEAD_START-->\n    ${renderSeoHead(renderPath, { noindex })}\n    <!--SEO_HEAD_END-->`;
   let html = tpl.replace(SEO_SENTINEL, replacement);
   if (GA_META) html = html.replace('</head>', `${GA_META}</head>`);
@@ -3039,7 +2968,7 @@ app.use((req, res, next) => {
   const pathname = req.path;
 
   // Keyword-variant aliases → 301 to the canonical landing page.
-  const aliasTarget = ROUTE_ALIASES[normalize(pathname)] || ROUTE_ALIASES[pathname];
+  const aliasTarget = ROUTE_ALIASES[normalizePath(pathname)] || ROUTE_ALIASES[pathname];
   if (aliasTarget) {
     res.set('Location', `${SITE_ORIGIN}${aliasTarget}`);
     return res.status(301).end();

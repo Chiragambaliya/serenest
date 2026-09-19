@@ -1,5 +1,7 @@
 import { TEAM_MEMBERS } from './team.js';
-import { SCREENING_TOOLS } from './screeningTools.js';
+import { SCREENING_TOOLS_ENRICHED } from './screeningTools.js';
+import { BLOG_POSTS } from './blogPosts.js';
+import { ACADEMY_PROGRAMS } from './academyPrograms.js';
 
 // Production canonical host. Matches the live www-redirect target.
 export const SITE_ORIGIN = 'https://www.serenest.in';
@@ -322,19 +324,121 @@ export const ROUTE_SEO = {
     ogTitle: 'Professional Code of Conduct | Serenest',
     ogDescription: 'Ethics and conduct standards for clinicians on the Serenest platform.',
   },
+  '/contact': {
+    title: 'Contact Serenest',
+    description:
+      'Get in touch with Serenest for patient support, appointment help, professional collaboration, or Academy questions.',
+  },
+
+  // Service detail pages linked from /services, the home page, and the footer.
+  '/services/psychiatry': {
+    title: 'Online Psychiatry Consultation | Serenest',
+    description:
+      'Psychiatric assessment, diagnosis, and medication management from a licensed psychiatrist, over secure video, audio, or chat.',
+  },
+  '/services/therapy': {
+    title: 'Online Therapy & Counselling | Serenest',
+    description:
+      'Structured talk therapy and counselling for individuals, couples, and families — secure video, audio, or chat sessions.',
+  },
+  '/services/addiction-care': {
+    title: 'Online Addiction & Recovery Support | Serenest',
+    description:
+      'Assessment, counselling, and relapse-prevention support for substance use, with clear guidance on when in-person or emergency care is needed.',
+  },
+  '/services/digital-consultations': {
+    title: 'Digital Mental Health Consultations | Serenest',
+    description:
+      'How teleconsultation works on Serenest — what can be managed online, what needs in-person care, and the technology you need.',
+  },
+
+  '/careers': {
+    title: 'Join Serenest — Careers for Mental Health Professionals',
+    description:
+      'Apply to join Serenest as a psychologist, therapist, or psychiatrist. Flexible online sessions across India.',
+  },
+  '/corporate': {
+    title: 'Employee Mental Health — Corporate EAP | Serenest',
+    description:
+      'Mental health benefits for your team. Confidential therapy, psychiatry and counselling for employees across India. Starting ₹499/employee/year.',
+  },
+  '/partner': {
+    title: 'Partner with Serenest — Creators, Universities & Clinics',
+    description:
+      'Collaborate with Serenest. Earn commissions as a mental health content creator, or partner as a university, clinic, or platform.',
+  },
+  '/screening/pathway/mood-anxiety': {
+    title: 'Check Mood & Anxiety (PHQ-9 + GAD-7) | Serenest',
+    description:
+      'A guided mental health check for mood and anxiety using PHQ-9 and GAD-7. Educational results — not a diagnosis.',
+  },
+
+  // Serenest Academy — public catalogue surface.
+  '/academy/programs': {
+    title: 'Serenest Academy — All Programs',
+    description:
+      'The full Serenest Academy program catalogue for psychology students, counsellors, psychiatrists, and mental health professionals.',
+  },
+  '/academy/workshops': {
+    title: 'Serenest Academy — Workshops',
+    description: 'Live and recorded workshops from Serenest Academy for mental health professionals.',
+  },
+  '/academy/learning-paths': {
+    title: 'Serenest Academy — Learning Paths',
+    description:
+      'Suggested Serenest Academy program sequences for different mental health career stages.',
+  },
+  '/academy/faculty': {
+    title: 'Serenest Academy — Faculty',
+    description: 'Meet the clinicians teaching Serenest Academy programs, and how to apply to teach.',
+  },
+  '/academy/resources': {
+    title: 'Serenest Academy — Resources',
+    description: 'Clinical guides, reading lists, and practice tools from Serenest Academy.',
+  },
+  '/academy/faqs': {
+    title: 'Serenest Academy — FAQs',
+    description:
+      'Frequently asked questions about Serenest Academy programs, certificates, and enrolment.',
+  },
 };
 
-// Interactive self-screening tool pages (/screening/tool/<slug>) — each
-// validated instrument that carries seoTitle/seoDescription gets its own
-// indexable entry. PHQ-9 / GAD-7 tool pages stay unlisted here: their
-// dedicated landing pages (/phq-9-depression-screening etc.) own that intent.
-for (const t of SCREENING_TOOLS) {
-  if (!t.seoTitle) continue;
+// Blog posts (/blog/<slug>) and Academy program pages
+// (/academy/programs/<slug>) are generated from the same registries the page
+// components render from, so a new post or program is indexable with its own
+// title and description the moment it is added — no second list to update.
+for (const post of BLOG_POSTS) {
+  ROUTE_SEO[`/blog/${post.slug}`] = {
+    title: `${post.title} | Serenest Blog`,
+    description: post.excerpt,
+    ogTitle: post.title,
+    ogDescription: post.excerpt,
+  };
+}
+
+for (const program of ACADEMY_PROGRAMS) {
+  ROUTE_SEO[`/academy/programs/${program.slug}`] = {
+    title: `${program.title} | Serenest Academy`,
+    description: program.tagline,
+  };
+}
+
+// Interactive self-screening tool pages (/screening/tool/<slug>). Instruments
+// that carry seoTitle/seoDescription use them; the rest fall back to the same
+// generic wording ScreeningToolPage renders, so the served HTML matches the
+// page instead of inheriting the homepage's. The PHQ-9 and GAD-7 tool pages
+// stay out of sitemap.xml — their dedicated landing pages
+// (/phq-9-depression-screening etc.) own that search intent.
+for (const t of SCREENING_TOOLS_ENRICHED) {
+  const title = t.seoTitle || `${t.humanTitle} (${t.name}) | Serenest`;
+  const description =
+    t.seoDescription
+    || `${t.whatItChecks} About ${t.minutes} minutes. A screening aid — not a diagnosis.`;
   ROUTE_SEO[`/screening/tool/${t.slug}`] = {
-    title: t.seoTitle,
-    description: t.seoDescription,
-    ogTitle: t.seoTitle,
-    ogDescription: t.seoDescription,
+    title,
+    description,
+    ogTitle: title,
+    ogDescription: description,
   };
 }
 
@@ -389,12 +493,39 @@ export const ROUTE_ALIASES = {
   '/online-psychiatry-prescription-india': '/online-psychiatrist-prescription-india',
   '/is-online-psychiatric-prescription-valid-in-india': '/online-psychiatrist-prescription-india',
   '/online-psychiatric-prescription-india': '/online-psychiatrist-prescription-india',
+
+  // Renamed/retired paths the router still redirects client-side. Serving the
+  // 301 here too means a direct visit or a crawl is told where the content
+  // moved instead of receiving a 200 that only redirects once JS runs.
+  '/preview': '/',
+  '/resources': '/blog',
+  '/disclaimer': '/emergency-disclaimer',
+  '/academy/learn': '/professionals/learning',
+  '/academy/learn/pharmacology': '/professionals/learning#learning-pharmacology',
+  '/academy/learn/psychology': '/professionals/learning#learning-psychology',
 };
+
+// /resources/<slug> and the singular /academy/program/<slug> are older shapes
+// of URLs that still exist in the wild; consolidate each onto its current path.
+for (const post of BLOG_POSTS) {
+  ROUTE_ALIASES[`/resources/${post.slug}`] = `/blog/${post.slug}`;
+}
+for (const program of ACADEMY_PROGRAMS) {
+  ROUTE_ALIASES[`/academy/program/${program.slug}`] = `/academy/programs/${program.slug}`;
+}
+// getTool() also resolves a tool by its internal id, so /screening/tool/phq9
+// renders the same page as /screening/tool/phq-9. Redirect the id form onto the
+// slug so the two spellings cannot be indexed as duplicates.
+for (const t of SCREENING_TOOLS_ENRICHED) {
+  if (t.id === t.slug) continue;
+  ROUTE_ALIASES[`/screening/tool/${t.id}`] = `/screening/tool/${t.slug}`;
+}
 
 // Routes that the SPA renders but should NOT be indexed (utility/internal pages).
 export const NOINDEX_ROUTES = new Set([
   '/admin',
   '/preview',
+  '/academy/login',
   '/professionals/apply',
   '/patient/find-professional',
   '/patient/login',
