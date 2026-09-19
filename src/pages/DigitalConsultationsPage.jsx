@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 import FaqAccordion from '../components/FaqAccordion';
 import EmergencyNotice from '../components/EmergencyNotice';
 import '../styles/service-detail.css';
@@ -27,11 +28,7 @@ const FAQS = [
 ];
 
 export default function DigitalConsultationsPage() {
-  useSEO({
-    path: '/services/digital-consultations',
-    title: 'Digital Mental Health Consultations | Serenest',
-    description: 'How teleconsultation works on Serenest — what can be managed online, what needs in-person care, and the technology you need.',
-  });
+  useSEO({ path: '/services/digital-consultations', ...ROUTE_SEO['/services/digital-consultations'] });
 
   return (
     <div className="svd-page">

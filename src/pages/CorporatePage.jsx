@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 const STATS = [
   { value: '1 in 5', label: 'employees face mental health issues annually' },
@@ -72,11 +73,7 @@ const TRUSTS = [
 ];
 
 export default function CorporatePage() {
-  useSEO({
-    path: '/corporate',
-    title: 'Employee Mental Health — Corporate EAP | Serenest',
-    description: 'Mental health benefits for your team. Confidential therapy, psychiatry and counselling for employees across India. Starting ₹499/employee/year.',
-  });
+  useSEO({ path: '/corporate', ...ROUTE_SEO['/corporate'] });
 
   const [form, setForm] = useState({ name: '', email: '', company: '', phone: '', size: '', message: '' });
   const [busy, setBusy] = useState(false);

@@ -2,8 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import { BLOG_POSTS } from '../lib/blogPosts';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 export default function BlogIndexPage() {
+  useSEO({ path: '/blog', ...ROUTE_SEO['/blog'] });
+
   return (
     <div className="page">
       <section className="section about-hero">

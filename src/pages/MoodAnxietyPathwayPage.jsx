@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 import { getTool, scoreTool } from '../lib/screeningTools';
 import { saveSnapshotDimension, CRISIS_RESOURCES } from '../lib/mentalHealthCenter';
 import { screening } from '../lib/api';
@@ -12,12 +13,7 @@ import '../styles/screening.css';
  * Guided mood + anxiety pathway — human language, shared tool definitions (no duplicate banks).
  */
 export default function MoodAnxietyPathwayPage() {
-  useSEO({
-    path: '/screening/pathway/mood-anxiety',
-    title: 'Check Mood & Anxiety (PHQ-9 + GAD-7) | Serenest',
-    description:
-      'A guided mental health check for mood and anxiety using PHQ-9 and GAD-7. Educational results — not a diagnosis.',
-  });
+  useSEO({ path: '/screening/pathway/mood-anxiety', ...ROUTE_SEO['/screening/pathway/mood-anxiety'] });
 
   const phq = getTool('phq9');
   const gad = getTool('gad7');

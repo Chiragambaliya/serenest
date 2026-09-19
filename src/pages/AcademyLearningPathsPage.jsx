@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 import { ACADEMY_PROGRAMS } from '../lib/academyPrograms';
 import '../styles/service-detail.css';
 import '../styles/editorial-structures.css';
@@ -44,11 +45,7 @@ const PATHS = [
 const STAGE_LABELS = ['Foundation', 'Core practice', 'Applied skills', 'Advanced'];
 
 export default function AcademyLearningPathsPage() {
-  useSEO({
-    path: '/academy/learning-paths',
-    title: 'Serenest Academy — Learning Paths',
-    description: 'Suggested Serenest Academy program sequences for different mental health career stages.',
-  });
+  useSEO({ path: '/academy/learning-paths', ...ROUTE_SEO['/academy/learning-paths'] });
 
   return (
     <div className="svd-page">

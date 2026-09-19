@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 import FaqAccordion from '../components/FaqAccordion';
 import EmergencyNotice from '../components/EmergencyNotice';
 import ImagePlaceholder from '../components/ImagePlaceholder';
@@ -23,11 +24,7 @@ const FAQS = [
 ];
 
 export default function PsychiatryPage() {
-  useSEO({
-    path: '/services/psychiatry',
-    title: 'Online Psychiatry Consultation | Serenest',
-    description: 'Psychiatric assessment, diagnosis, and medication management from a licensed psychiatrist, over secure video, audio, or chat.',
-  });
+  useSEO({ path: '/services/psychiatry', ...ROUTE_SEO['/services/psychiatry'] });
 
   return (
     <div className="svd-page">

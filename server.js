@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
-import { renderSeoHead, shouldNoindex, ROUTE_SEO, ROUTE_ALIASES, SITE_ORIGIN } from './src/lib/seo.js';
+import { renderSeoHead, renderSitemapXml, shouldNoindex, ROUTE_SEO, SITE_ORIGIN, resolveSeoRedirect, isKnownDynamicSpaPath } from './src/lib/seo.js';
 import { handleAssistantChat } from './src/server/aiAssistant.js';
 import { generateAcademyContent } from './src/server/academyContentGen.js';
 import cron from 'node-cron';
@@ -2855,6 +2855,13 @@ app.get('/og-image.png', (_req, res) => {
   res.redirect(301, '/og-image.jpg');
 });
 
+app.get('/sitemap.xml', (_req, res) => {
+  res.status(200);
+  res.set('Content-Type', 'application/xml; charset=utf-8');
+  res.set('Cache-Control', 'public, max-age=3600');
+  return res.send(renderSitemapXml());
+});
+
 // ══════════════════════════════════════════════════════════════
 //  STATIC + SPA FALLBACK (with route-specific SEO injection)
 // ══════════════════════════════════════════════════════════════
@@ -2879,6 +2886,11 @@ const VALID_ROUTES = new Set([
   '/about',
   '/team',
   '/services',
+  '/services/psychiatry',
+  '/services/therapy',
+  '/services/addiction-care',
+  '/services/digital-consultations',
+  '/contact',
   '/professionals',
   '/professionals/learning',
   '/professionals/resources',
@@ -2919,9 +2931,12 @@ const VALID_ROUTES = new Set([
   '/evidence',
   '/academy',
   '/academy/login',
-  '/academy/learn',
-  '/academy/learn/pharmacology',
-  '/academy/learn/psychology',
+  '/academy/programs',
+  '/academy/workshops',
+  '/academy/faculty',
+  '/academy/faqs',
+  '/academy/learning-paths',
+  '/academy/resources',
   '/online-psychiatrist-consultation-india',
   '/online-psychiatrist-for-depression-india',
   '/anxiety-counselling-online-india',
@@ -2933,8 +2948,8 @@ const VALID_ROUTES = new Set([
   '/online-psychiatrist-prescription-india',
 ]);
 
-// Dynamic-route prefixes that the SPA legitimately serves.
-const VALID_PREFIXES = ['/blog/', '/consultation/', '/academy/program/', '/screening/tool/', '/evidence/'];
+// Dynamic prefixes are validated against known slugs in isKnownDynamicSpaPath
+// so unknown blog/academy/tool URLs return a real 404 instead of a soft-200.
 
 // Known stale URLs surfaced in search from prior site contents. These have no
 // healthcare replacement, so return 410 Gone to ask Google to drop them.
@@ -2956,7 +2971,7 @@ function normalize(pathname) {
 function isValidSpaRoute(pathname) {
   const norm = normalize(pathname);
   if (VALID_ROUTES.has(norm)) return true;
-  return VALID_PREFIXES.some((p) => pathname.startsWith(p) && pathname.length > p.length);
+  return isKnownDynamicSpaPath(pathname);
 }
 
 // ── SEO injection ─────────────────────────────────────────────
@@ -3043,8 +3058,8 @@ app.use((req, res, next) => {
   if (req.method !== 'GET' && req.method !== 'HEAD') return next();
   const pathname = req.path;
 
-  // Keyword-variant aliases → 301 to the canonical landing page.
-  const aliasTarget = ROUTE_ALIASES[normalize(pathname)] || ROUTE_ALIASES[pathname];
+  // Keyword-variant aliases and retired URL shapes → 301 to the canonical page.
+  const aliasTarget = resolveSeoRedirect(pathname);
   if (aliasTarget) {
     res.set('Location', `${SITE_ORIGIN}${aliasTarget}`);
     return res.status(301).end();

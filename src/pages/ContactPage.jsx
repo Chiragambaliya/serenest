@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 import '../styles/service-detail.css';
 
 const REASONS = [
@@ -33,11 +34,7 @@ const REASONS = [
 ];
 
 export default function ContactPage() {
-  useSEO({
-    path: '/contact',
-    title: 'Contact Serenest',
-    description: 'Get in touch with Serenest for patient support, appointment help, or professional collaboration.',
-  });
+  useSEO({ path: '/contact', ...ROUTE_SEO['/contact'] });
 
   const [selected, setSelected] = useState(REASONS[0].key);
   const reason = REASONS.find((r) => r.key === selected);

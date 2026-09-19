@@ -1,9 +1,14 @@
 import { TEAM_MEMBERS } from './team.js';
 import { SCREENING_TOOLS } from './screeningTools.js';
+import { BLOG_POSTS } from './blogPosts.js';
+import { ACADEMY_PROGRAMS } from './academyPrograms.js';
 
 // Production canonical host. Matches the live www-redirect target.
 export const SITE_ORIGIN = 'https://www.serenest.in';
 export const OG_IMAGE = `${SITE_ORIGIN}/og-image.jpg`;
+export const OG_IMAGE_ALT = 'Serenest — online psychiatry and therapy in India';
+export const OG_IMAGE_WIDTH = '1200';
+export const OG_IMAGE_HEIGHT = '630';
 
 export function canonicalUrl(path = '/') {
   const clean = path === '/' ? '/' : `/${path.replace(/^\/+|\/+$/g, '')}`;
@@ -13,9 +18,9 @@ export function canonicalUrl(path = '/') {
 // Per-route SEO metadata for indexable pages.
 export const ROUTE_SEO = {
   '/': {
-    title: 'Online Psychiatry, Therapy & Wellness in India | Serenest',
+    title: 'Online Psychiatrist & Therapy in India | Serenest',
     description:
-      "Serenest is India's clinical telepsychiatry service: online psychiatry, therapy, counselling, screening, and de-addiction support with verified professionals.",
+      "Book a verified online psychiatrist or therapist in India. Confidential video, audio, or chat care, plus free PHQ-9 and GAD-7 screening.",
     ogTitle: 'Serenest | Online Psychiatry & Therapy in India',
     ogDescription:
       'Online psychiatry, therapy, screening, and de-addiction support — verified, private care across India.',
@@ -171,7 +176,7 @@ export const ROUTE_SEO = {
       'Verified Indian psychiatrists for depression care online — screening, assessment, therapy, and medication review where clinically appropriate.',
   },
   '/anxiety-counselling-online-india': {
-    title: 'Anxiety Counselling Online in India | Online Psychiatrist for Anxiety | Serenest',
+    title: 'Anxiety Counselling Online in India | Serenest',
     description:
       'Anxiety counselling online in India with verified psychiatrists and psychologists. GAD-7 screening, structured assessment, and stepped care. Screening is not a diagnosis; not an emergency service.',
     ogTitle: 'Anxiety Counselling Online in India | Serenest',
@@ -219,7 +224,7 @@ export const ROUTE_SEO = {
       'Free, confidential GAD-7 anxiety self-screening for India. GAD-7 is a screening tool and is not a diagnosis.',
   },
   '/online-psychiatrist-prescription-india': {
-    title: 'Online Psychiatrist Prescription in India | Valid Under Telemedicine Guidelines | Serenest',
+    title: 'Online Psychiatrist Prescription in India | Serenest',
     description:
       'How online psychiatrist prescriptions work in India under the Telemedicine Practice Guidelines, 2020. Categories of medicines, Schedule X limits, validity at pharmacies, and clinician judgment explained.',
     ogTitle: 'Online Psychiatrist Prescription in India | Serenest',
@@ -323,6 +328,111 @@ export const ROUTE_SEO = {
     ogTitle: 'Professional Code of Conduct | Serenest',
     ogDescription: 'Ethics and conduct standards for clinicians on the Serenest platform.',
   },
+  '/contact': {
+    title: 'Contact Serenest | Patient Support & Appointments',
+    description:
+      'Contact Serenest for patient support, appointment help, or professional collaboration. Email support@serenest.in or WhatsApp +91 77779 36367.',
+    ogTitle: 'Contact Serenest',
+    ogDescription: 'Patient support, booking help, and professional enquiries for Serenest Care.',
+  },
+  '/services/psychiatry': {
+    title: 'Online Psychiatry Consultation in India | Serenest',
+    description:
+      'Psychiatric assessment, diagnosis, and medication management from a licensed psychiatrist over secure video, audio, or chat anywhere in India.',
+    ogTitle: 'Online Psychiatry Consultation | Serenest',
+    ogDescription: 'Licensed psychiatrists for assessment, diagnosis, and medication review online.',
+  },
+  '/services/therapy': {
+    title: 'Online Therapy & Counselling in India | Serenest',
+    description:
+      'Structured talk therapy and counselling for individuals, couples, and families — confidential video, audio, or chat sessions across India.',
+    ogTitle: 'Online Therapy & Counselling | Serenest',
+    ogDescription: 'Talk therapy with verified psychologists and counsellors, online across India.',
+  },
+  '/services/addiction-care': {
+    title: 'Online Addiction & Recovery Support | Serenest',
+    description:
+      'Assessment, counselling, and relapse-prevention support for substance use, with clear guidance on when in-person or emergency care is needed.',
+    ogTitle: 'Addiction & Recovery Support | Serenest',
+    ogDescription: 'Online addiction assessment and recovery support from a clinical team in India.',
+  },
+  '/services/digital-consultations': {
+    title: 'Online Video, Audio & Chat Consultations | Serenest',
+    description:
+      'How Serenest teleconsultation works — what can be managed online, what needs in-person care, and the technology you need for a private session.',
+    ogTitle: 'Digital Mental Health Consultations | Serenest',
+    ogDescription: 'Secure video, audio, and chat consultations under India telemedicine guidelines.',
+  },
+  '/corporate': {
+    title: 'Corporate EAP & Workplace Mental Health | Serenest',
+    description:
+      'Confidential psychiatry and counselling for employees across India. Corporate EAP with verified clinicians and structured follow-up.',
+    ogTitle: 'Corporate EAP | Serenest',
+    ogDescription: 'Workplace mental-health support and employee counselling across India.',
+  },
+  '/careers': {
+    title: 'Careers at Serenest | Mental Health Professionals',
+    description:
+      'Apply to join Serenest as a psychiatrist, psychologist, therapist, or counsellor. Flexible online sessions with patients across India.',
+    ogTitle: 'Careers at Serenest',
+    ogDescription: 'Join Serenest’s clinical team — online practice with verified workflows.',
+  },
+  '/partner': {
+    title: 'Partner with Serenest | Clinics, Campuses & Creators',
+    description:
+      'Collaborate with Serenest as a clinic, university, workplace, or mental-health advocate. Partnership and referral options across India.',
+    ogTitle: 'Partner with Serenest',
+    ogDescription: 'Clinic, campus, and creator partnerships for clinical mental healthcare.',
+  },
+  '/screening/pathway/mood-anxiety': {
+    title: 'Mood & Anxiety Check (PHQ-9 + GAD-7) | Serenest',
+    description:
+      'A guided, free mental health check for mood and anxiety using PHQ-9 and GAD-7. Educational results — not a diagnosis.',
+    ogTitle: 'Mood & Anxiety Check | Serenest',
+    ogDescription: 'Guided PHQ-9 and GAD-7 screening with clear next steps. Not a diagnosis.',
+  },
+  '/academy/programs': {
+    title: 'All Academy Programs | Serenest Academy',
+    description:
+      'Browse the full Serenest Academy catalogue for psychiatrists, psychologists, counsellors, and mental health students in India.',
+    ogTitle: 'Serenest Academy Programs',
+    ogDescription: 'Certificate programs, fellowships, and clinical training from Serenest Academy.',
+  },
+  '/academy/workshops': {
+    title: 'Academy Workshops | Serenest Academy',
+    description:
+      'Live and recorded workshops from Serenest Academy for practising mental health professionals.',
+    ogTitle: 'Serenest Academy Workshops',
+    ogDescription: 'Short intensives and workshops for clinicians and trainees.',
+  },
+  '/academy/learning-paths': {
+    title: 'Academy Learning Paths | Serenest Academy',
+    description:
+      'Suggested Serenest Academy program sequences for students, early-career clinicians, and practising professionals.',
+    ogTitle: 'Serenest Academy Learning Paths',
+    ogDescription: 'Program sequences matched to where you are in clinical practice.',
+  },
+  '/academy/faculty': {
+    title: 'Academy Faculty | Serenest Academy',
+    description:
+      'Meet the practising clinicians who teach Serenest Academy programs, and how to apply to teach.',
+    ogTitle: 'Serenest Academy Faculty',
+    ogDescription: 'Faculty who teach beside an active clinical practice.',
+  },
+  '/academy/faqs': {
+    title: 'Academy FAQs | Serenest Academy',
+    description:
+      'Answers about Serenest Academy enrolment, certificates, format, and free access for approved professionals.',
+    ogTitle: 'Serenest Academy FAQs',
+    ogDescription: 'Enrolment, certificates, and what Academy does not replace.',
+  },
+  '/academy/resources': {
+    title: 'Academy Resources | Serenest Academy',
+    description:
+      'Clinical reading lists and practice tools for Serenest Academy learners.',
+    ogTitle: 'Serenest Academy Resources',
+    ogDescription: 'Guides and tools for Academy learners and practising clinicians.',
+  },
 };
 
 // Interactive self-screening tool pages (/screening/tool/<slug>) — each
@@ -336,6 +446,25 @@ for (const t of SCREENING_TOOLS) {
     description: t.seoDescription,
     ogTitle: t.seoTitle,
     ogDescription: t.seoDescription,
+  };
+}
+
+for (const post of BLOG_POSTS) {
+  ROUTE_SEO[`/blog/${post.slug}`] = {
+    title: `${post.title} | Serenest`,
+    description: post.excerpt,
+    ogTitle: post.title,
+    ogDescription: post.excerpt,
+    ogType: 'article',
+  };
+}
+
+for (const program of ACADEMY_PROGRAMS) {
+  ROUTE_SEO[`/academy/programs/${program.slug}`] = {
+    title: `${program.title} | Serenest Academy`,
+    description: program.body || program.tagline || program.overview,
+    ogTitle: `${program.title} | Serenest Academy`,
+    ogDescription: program.tagline || program.body,
   };
 }
 
@@ -372,11 +501,24 @@ export const ROUTE_ALIASES = {
   '/obsessive-compulsive-disorder-online-india': '/ocd-treatment-online-india',
   '/online-psychiatrist-for-ocd-india': '/ocd-treatment-online-india',
 
-  // Gujarat keyword variants → pan-India landing
-  '/online-psychiatrist-gujarat': '/services',
-  '/psychiatrist-online-gujarat': '/services',
-  '/online-psychiatrist-ahmedabad': '/services',
-  '/gujarati-speaking-psychiatrist-online': '/services',
+  // Gujarat keyword variants → Gujarat landing
+  '/psychiatrist-online-gujarat': '/online-psychiatrist-gujarat',
+  '/online-psychiatrist-ahmedabad': '/online-psychiatrist-gujarat',
+  '/online-psychiatrist-surat': '/online-psychiatrist-gujarat',
+  '/online-psychiatrist-vadodara': '/online-psychiatrist-gujarat',
+  '/online-psychiatrist-rajkot': '/online-psychiatrist-gujarat',
+  '/online-psychiatrist-gandhinagar': '/online-psychiatrist-gujarat',
+  '/gujarati-speaking-psychiatrist-online': '/online-psychiatrist-gujarat',
+
+  // Legacy reading URL
+  '/resources': '/blog',
+
+  // Retired / renamed public URLs
+  '/preview': '/',
+  '/disclaimer': '/emergency-disclaimer',
+  '/academy/learn': '/professionals/learning',
+  '/academy/learn/pharmacology': '/professionals/learning',
+  '/academy/learn/psychology': '/professionals/learning',
 
   // PHQ-9 keyword variants
   '/phq-9-test-online-india': '/phq-9-depression-screening',
@@ -402,6 +544,7 @@ export const NOINDEX_ROUTES = new Set([
   '/patient/dashboard',
   '/professionals/login',
   '/professionals/portal',
+  '/academy/login',
 ]);
 
 export function shouldNoindex(pathname) {
@@ -422,6 +565,23 @@ const ORG_SCHEMA = {
   legalName: 'Serenest Education Pvt Ltd',
   url: `${SITE_ORIGIN}/`,
   email: 'support@serenest.in',
+  telephone: '+91-77779-36367',
+  logo: OG_IMAGE,
+  image: OG_IMAGE,
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Rajkot',
+    addressRegion: 'Gujarat',
+    addressCountry: 'IN',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+91-77779-36367',
+    email: 'support@serenest.in',
+    contactType: 'customer support',
+    areaServed: 'IN',
+    availableLanguage: ['English', 'Hindi', 'Gujarati'],
+  },
   areaServed: { '@type': 'Country', name: 'India' },
   description:
     'Serenest is a clinical telepsychiatry platform for India offering secure video, audio, and chat consultations with structured intake, assessments, and continuity of care.',
@@ -442,7 +602,16 @@ const MEDICAL_BUSINESS_SCHEMA = {
   name: 'Serenest',
   url: `${SITE_ORIGIN}/`,
   email: 'support@serenest.in',
+  telephone: '+91-77779-36367',
+  image: OG_IMAGE,
+  priceRange: '₹800+',
   medicalSpecialty: ['Psychiatry', 'Psychology', 'MentalHealth'],
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Rajkot',
+    addressRegion: 'Gujarat',
+    addressCountry: 'IN',
+  },
   areaServed: { '@type': 'Country', name: 'India' },
   availableService: [
     {
@@ -1180,6 +1349,190 @@ function escapeJsonLd(s) {
   return String(s).replace(/<\/(script)/gi, '<\\/$1').replace(/<!--/g, '<\\!--');
 }
 
+const MONTHS = {
+  Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06',
+  Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12',
+};
+
+function blogDateIso(label) {
+  const m = String(label || '').match(/^([A-Za-z]{3})\s+(\d{4})$/);
+  if (!m || !MONTHS[m[1]]) return undefined;
+  return `${m[2]}-${MONTHS[m[1]]}-01`;
+}
+
+function crumbTrail(pathname) {
+  if (pathname.startsWith('/services/')) {
+    return [{ name: 'Services', item: `${SITE_ORIGIN}/services` }];
+  }
+  if (pathname.startsWith('/blog/')) {
+    return [{ name: 'Blog', item: `${SITE_ORIGIN}/blog` }];
+  }
+  if (pathname.startsWith('/academy/programs/')) {
+    return [
+      { name: 'Academy', item: `${SITE_ORIGIN}/academy` },
+      { name: 'Programs', item: `${SITE_ORIGIN}/academy/programs` },
+    ];
+  }
+  if (pathname.startsWith('/academy/') && pathname !== '/academy') {
+    return [{ name: 'Academy', item: `${SITE_ORIGIN}/academy` }];
+  }
+  if (pathname.startsWith('/screening/')) {
+    return [{ name: 'Screening', item: `${SITE_ORIGIN}/screening` }];
+  }
+  if (pathname.startsWith('/professionals/')) {
+    return [{ name: 'Professionals', item: `${SITE_ORIGIN}/professionals` }];
+  }
+  return [];
+}
+
+function defaultJsonLd(pathname) {
+  const seo = ROUTE_SEO[pathname] || ROUTE_SEO['/'];
+  const url = canonicalUrl(pathname);
+  const crumbName = seo.ogTitle || seo.title;
+  const graph = [ORG_SCHEMA, WEBSITE_SCHEMA];
+
+  if (pathname.startsWith('/blog/')) {
+    const slug = pathname.slice('/blog/'.length);
+    const post = BLOG_POSTS.find((p) => p.slug === slug);
+    graph.push({
+      '@type': 'BlogPosting',
+      '@id': `${url}#article`,
+      headline: post?.title || seo.ogTitle || seo.title,
+      description: seo.description,
+      datePublished: blogDateIso(post?.date),
+      dateModified: blogDateIso(post?.date),
+      inLanguage: 'en-IN',
+      image: OG_IMAGE,
+      author: { '@id': `${SITE_ORIGIN}/#organization` },
+      publisher: { '@id': `${SITE_ORIGIN}/#organization` },
+      mainEntityOfPage: url,
+    });
+  } else {
+    const type = pathname === '/contact'
+      ? 'ContactPage'
+      : pathname === '/faq' || pathname === '/academy/faqs'
+        ? 'FAQPage'
+        : pathname.startsWith('/academy')
+          ? 'CollectionPage'
+          : 'WebPage';
+    graph.push({
+      '@type': type,
+      '@id': `${url}#webpage`,
+      url,
+      name: seo.title,
+      description: seo.description,
+      inLanguage: 'en-IN',
+      isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+      publisher: { '@id': `${SITE_ORIGIN}/#organization` },
+      primaryImageOfPage: OG_IMAGE,
+    });
+  }
+
+  graph.push(breadcrumbs(pathname === '/' ? '/' : pathname, crumbName, crumbTrail(pathname)));
+  return { '@context': 'https://schema.org', '@graph': graph };
+}
+
+function jsonLdFor(pathname) {
+  return ROUTE_JSONLD[pathname] || defaultJsonLd(pathname);
+}
+
+function ogTypeFor(pathname, seo = {}) {
+  if (seo.ogType) return seo.ogType;
+  if (pathname.startsWith('/blog/')) return 'article';
+  return 'website';
+}
+
+const SITEMAP_HINTS = {
+  '/': { changefreq: 'weekly', priority: '1.0' },
+  '/services': { changefreq: 'monthly', priority: '0.95' },
+  '/services/psychiatry': { changefreq: 'monthly', priority: '0.9' },
+  '/services/therapy': { changefreq: 'monthly', priority: '0.9' },
+  '/book': { changefreq: 'weekly', priority: '0.95' },
+  '/screening': { changefreq: 'weekly', priority: '0.9' },
+  '/pricing': { changefreq: 'monthly', priority: '0.85' },
+  '/contact': { changefreq: 'monthly', priority: '0.8' },
+  '/online-psychiatrist-for-depression-india': { changefreq: 'monthly', priority: '0.95' },
+  '/anxiety-counselling-online-india': { changefreq: 'monthly', priority: '0.95' },
+  '/online-psychiatrist-gujarat': { changefreq: 'monthly', priority: '0.9' },
+  '/adhd-assessment-online-india': { changefreq: 'monthly', priority: '0.9' },
+  '/ocd-treatment-online-india': { changefreq: 'monthly', priority: '0.9' },
+  '/phq-9-depression-screening': { changefreq: 'monthly', priority: '0.85' },
+  '/gad-7-anxiety-screening': { changefreq: 'monthly', priority: '0.85' },
+  '/guides': { changefreq: 'weekly', priority: '0.85' },
+  '/blog': { changefreq: 'weekly', priority: '0.8' },
+  '/academy': { changefreq: 'weekly', priority: '0.5' },
+};
+
+export function isIndexableSeoPath(pathname) {
+  if (!ROUTE_SEO[pathname]) return false;
+  if (shouldNoindex(pathname)) return false;
+  if (ROUTE_ALIASES[pathname]) return false;
+  return true;
+}
+
+function normalizeSeoPath(pathname) {
+  if (!pathname || pathname === '/') return '/';
+  return `/${String(pathname).replace(/^\/+|\/+$/g, '')}`;
+}
+
+/** 301 target for aliases and retired URL shapes, or null if the path stays. */
+export function resolveSeoRedirect(pathname) {
+  const norm = normalizeSeoPath(pathname);
+  if (ROUTE_ALIASES[norm]) return ROUTE_ALIASES[norm];
+
+  const academyLegacy = /^\/academy\/program\/([^/]+)$/.exec(norm);
+  if (academyLegacy) {
+    const slug = academyLegacy[1];
+    if (ACADEMY_PROGRAMS.some((p) => p.slug === slug)) return `/academy/programs/${slug}`;
+  }
+
+  const resource = /^\/resources\/([^/]+)$/.exec(norm);
+  if (resource) {
+    const slug = resource[1];
+    if (BLOG_POSTS.some((p) => p.slug === slug)) return `/blog/${slug}`;
+  }
+
+  return null;
+}
+
+/** Dynamic SPA paths that are real pages (known slugs) even if they are noindex. */
+export function isKnownDynamicSpaPath(pathname) {
+  const norm = normalizeSeoPath(pathname);
+  if (ROUTE_SEO[norm]) return true;
+  if (norm.startsWith('/consultation/') && norm.length > '/consultation/'.length) return true;
+  if (norm.startsWith('/screening/tool/')) {
+    const slug = norm.slice('/screening/tool/'.length);
+    return SCREENING_TOOLS.some((t) => t.slug === slug);
+  }
+  return false;
+}
+
+export function renderSitemapXml(lastmod = '2026-09-19') {
+  const paths = Object.keys(ROUTE_SEO)
+    .filter(isIndexableSeoPath)
+    .sort((a, b) => {
+      const pa = Number((SITEMAP_HINTS[a] || {}).priority || (a.startsWith('/blog/') ? '0.65' : '0.55'));
+      const pb = Number((SITEMAP_HINTS[b] || {}).priority || (b.startsWith('/blog/') ? '0.65' : '0.55'));
+      return pb - pa || a.localeCompare(b);
+    });
+
+  const urls = paths.map((path) => {
+    const hint = SITEMAP_HINTS[path] || {};
+    const changefreq = hint.changefreq || (path.startsWith('/blog/') ? 'monthly' : path.startsWith('/academy') ? 'monthly' : 'monthly');
+    const priority = hint.priority || (path.startsWith('/blog/') ? '0.65' : path.startsWith('/academy') ? '0.5' : '0.55');
+    return [
+      '  <url>',
+      `    <loc>${canonicalUrl(path)}</loc>`,
+      `    <lastmod>${lastmod}</lastmod>`,
+      `    <changefreq>${changefreq}</changefreq>`,
+      `    <priority>${priority}</priority>`,
+      '  </url>',
+    ].join('\n');
+  });
+
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>\n`;
+}
+
 /**
  * Build the SEO head HTML for a given route path. Returns the inner HTML that
  * sits between <!--SEO_HEAD_START--> and <!--SEO_HEAD_END--> sentinels.
@@ -1187,23 +1540,31 @@ function escapeJsonLd(s) {
 export function renderSeoHead(pathname, { noindex = false } = {}) {
   const seo = ROUTE_SEO[pathname] || ROUTE_SEO['/'];
   const canonical = canonicalUrl(pathname);
-  const ogType = pathname === '/' ? 'website' : 'article';
-  const jsonLd = ROUTE_JSONLD[pathname] || ROUTE_JSONLD['/'];
+  const ogType = ogTypeFor(pathname, seo);
+  const jsonLd = jsonLdFor(pathname);
 
   const parts = [
     `<title>${escapeHtmlAttr(seo.title)}</title>`,
     `<meta name="description" content="${escapeHtmlAttr(seo.description)}" />`,
     `<link rel="canonical" href="${escapeHtmlAttr(canonical)}" />`,
+    `<link rel="alternate" hreflang="en-IN" href="${escapeHtmlAttr(canonical)}" />`,
+    `<link rel="alternate" hreflang="x-default" href="${escapeHtmlAttr(canonical)}" />`,
     `<meta property="og:title" content="${escapeHtmlAttr(seo.ogTitle || seo.title)}" />`,
     `<meta property="og:description" content="${escapeHtmlAttr(seo.ogDescription || seo.description)}" />`,
     `<meta property="og:url" content="${escapeHtmlAttr(canonical)}" />`,
     `<meta property="og:type" content="${ogType}" />`,
+    `<meta property="og:locale" content="en_IN" />`,
     `<meta property="og:site_name" content="Serenest" />`,
     `<meta property="og:image" content="${escapeHtmlAttr(OG_IMAGE)}" />`,
+    `<meta property="og:image:alt" content="${escapeHtmlAttr(OG_IMAGE_ALT)}" />`,
+    `<meta property="og:image:type" content="image/jpeg" />`,
+    `<meta property="og:image:width" content="${OG_IMAGE_WIDTH}" />`,
+    `<meta property="og:image:height" content="${OG_IMAGE_HEIGHT}" />`,
     `<meta name="twitter:card" content="summary_large_image" />`,
     `<meta name="twitter:title" content="${escapeHtmlAttr(seo.ogTitle || seo.title)}" />`,
     `<meta name="twitter:description" content="${escapeHtmlAttr(seo.ogDescription || seo.description)}" />`,
     `<meta name="twitter:image" content="${escapeHtmlAttr(OG_IMAGE)}" />`,
+    `<meta name="twitter:image:alt" content="${escapeHtmlAttr(OG_IMAGE_ALT)}" />`,
   ];
 
   if (noindex) {

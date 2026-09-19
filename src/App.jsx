@@ -50,6 +50,7 @@ const OcdPage = lazy(() => import('./pages/OcdPage'));
 const Phq9Page = lazy(() => import('./pages/Phq9Page'));
 const Gad7Page = lazy(() => import('./pages/Gad7Page'));
 const OnlinePrescriptionPage = lazy(() => import('./pages/OnlinePrescriptionPage'));
+const GujaratPsychiatristPage = lazy(() => import('./pages/GujaratPsychiatristPage'));
 const GuidesPage = lazy(() => import('./pages/GuidesPage'));
 const AcademyPage = lazy(() => import('./pages/AcademyPage'));
 const AcademyProgramsPage = lazy(() => import('./pages/AcademyProgramsPage'));
@@ -232,7 +233,7 @@ export default function App() {
           <Route path="anxiety-counselling-online-india" element={<S><AnxietyPage /></S>} />
           <Route path="adhd-assessment-online-india" element={<S><AdhdPage /></S>} />
           <Route path="ocd-treatment-online-india" element={<S><OcdPage /></S>} />
-          <Route path="online-psychiatrist-gujarat" element={<Navigate to="/services" replace />} />
+          <Route path="online-psychiatrist-gujarat" element={<S><GujaratPsychiatristPage /></S>} />
           <Route path="phq-9-depression-screening" element={<S><Phq9Page /></S>} />
           <Route path="gad-7-anxiety-screening" element={<S><Gad7Page /></S>} />
           <Route path="online-psychiatrist-prescription-india" element={<S><OnlinePrescriptionPage /></S>} />

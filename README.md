@@ -63,7 +63,7 @@ serenest/
 │   ├── pages/         Page components (BookingPage, ScreeningPage, AdminPage, …)
 │   ├── lib/           API client, SEO map, analytics, Supabase browser client
 │   └── server/        Server-side modules (notify, AI assistant, social)
-├── public/            Static files (robots.txt, sitemap.xml, manifest, …)
+├── public/            Static files (robots.txt, manifest, …); sitemap.xml is generated at runtime
 ├── supabase/          schema.sql + migrations (run in Supabase SQL editor)
 ├── render.yaml        Render Blueprint (see DEPLOY.md)
 └── .env.example       All environment variables, documented

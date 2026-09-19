@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 
 import { BLOG_POSTS } from '../lib/blogPosts';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 export default function BlogPostPage() {
   const { slug } = useParams();
@@ -10,13 +11,9 @@ export default function BlogPostPage() {
   const post = useMemo(() => BLOG_POSTS.find((p) => p.slug === slug) ?? null, [slug]);
 
   const postPath = `/blog/${slug}`;
-  useSEO(post ? {
-    path: postPath,
-    title: `${post.title} | Serenest Blog`,
-    description: post.excerpt,
-    ogTitle: post.title,
-    ogDescription: post.excerpt,
-  } : { path: postPath });
+  useSEO(post
+    ? { path: postPath, ...ROUTE_SEO[postPath] }
+    : { path: postPath, title: 'Serenest Blog', noindex: true });
 
   if (!post) {
     return (

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 const ROLES = [
   { id: 'Clinical Psychologist', label: 'Clinical Psychologist' },
@@ -19,11 +20,7 @@ const PERKS = [
 ];
 
 export default function CareersPage() {
-  useSEO({
-    path: '/careers',
-    title: 'Join Serenest — Careers for Mental Health Professionals',
-    description: 'Apply to join Serenest as a psychologist, therapist, or psychiatrist. Flexible online sessions across India.',
-  });
+  useSEO({ path: '/careers', ...ROUTE_SEO['/careers'] });
 
   const [form, setForm] = useState({
     full_name: '', email: '', phone: '', city: '',

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 import FaqAccordion from '../components/FaqAccordion';
 import EmergencyNotice from '../components/EmergencyNotice';
 import ImagePlaceholder from '../components/ImagePlaceholder';
@@ -23,11 +24,7 @@ const FAQS = [
 ];
 
 export default function AddictionCarePage() {
-  useSEO({
-    path: '/services/addiction-care',
-    title: 'Online Addiction & Recovery Support | Serenest',
-    description: 'Assessment, counselling, and relapse-prevention support for substance use, with clear guidance on when in-person or emergency care is needed.',
-  });
+  useSEO({ path: '/services/addiction-care', ...ROUTE_SEO['/services/addiction-care'] });
 
   return (
     <div className="svd-page">

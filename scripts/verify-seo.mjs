@@ -18,7 +18,7 @@
  *   - JSON-LD block present and parses as JSON
  */
 
-import { ROUTE_SEO, canonicalUrl } from '../src/lib/seo.js';
+import { ROUTE_SEO, canonicalUrl, SITE_ORIGIN } from '../src/lib/seo.js';
 
 const BASE = process.argv[2] || process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
 
@@ -34,6 +34,19 @@ const ROUTES_200 = [
   '/guides',
   '/academy',
   '/privacy',
+  '/contact',
+  '/services/psychiatry',
+  '/services/therapy',
+  '/services/addiction-care',
+  '/corporate',
+  '/careers',
+  '/blog',
+  '/online-psychiatrist-gujarat',
+  '/academy/programs',
+  '/academy/programs/clinical-excellence',
+  '/screening/tool/pss-10',
+  '/blog/telemedicine-guidelines-india',
+  '/screening/pathway/mood-anxiety',
   '/online-psychiatrist-for-depression-india',
   '/anxiety-counselling-online-india',
   '/adhd-assessment-online-india',
@@ -56,8 +69,15 @@ const ROUTES_301 = [
   ['/adult-adhd-psychiatrist-online-india', 'https://www.serenest.in/adhd-assessment-online-india'],
   ['/online-ocd-treatment-india', 'https://www.serenest.in/ocd-treatment-online-india'],
   ['/ocd-counselling-online-india', 'https://www.serenest.in/ocd-treatment-online-india'],
-  ['/gujarati-speaking-psychiatrist-online', 'https://www.serenest.in/services'],
-  ['/online-psychiatrist-gujarat', 'https://www.serenest.in/services'],
+  ['/gujarati-speaking-psychiatrist-online', 'https://www.serenest.in/online-psychiatrist-gujarat'],
+  ['/online-psychiatrist-ahmedabad', 'https://www.serenest.in/online-psychiatrist-gujarat'],
+  ['/online-psychiatrist-surat', 'https://www.serenest.in/online-psychiatrist-gujarat'],
+  ['/online-psychiatrist-rajkot', 'https://www.serenest.in/online-psychiatrist-gujarat'],
+  ['/resources', 'https://www.serenest.in/blog'],
+  ['/resources/telemedicine-guidelines-india', 'https://www.serenest.in/blog/telemedicine-guidelines-india'],
+  ['/academy/program/clinical-excellence', 'https://www.serenest.in/academy/programs/clinical-excellence'],
+  ['/academy/learn', 'https://www.serenest.in/professionals/learning'],
+  ['/disclaimer', 'https://www.serenest.in/emergency-disclaimer'],
   ['/phq-9-test-online-india', 'https://www.serenest.in/phq-9-depression-screening'],
   ['/gad-7-test-online-india', 'https://www.serenest.in/gad-7-anxiety-screening'],
   ['/online-psychiatry-prescription-india', 'https://www.serenest.in/online-psychiatrist-prescription-india'],
@@ -71,7 +91,12 @@ const ROUTES_410 = [
   '/2025/11/05/kak-zritelnye-effekty-ukrepljajut-vpechatlenija/',
   '/2025/11/05/kak-zritelnye-effekty-ukrepljajut-vpechatlenija',
 ];
-const ROUTES_404 = ['/this-route-does-not-exist', '/random/garbage'];
+const ROUTES_404 = [
+  '/this-route-does-not-exist',
+  '/random/garbage',
+  '/academy/programs/not-a-real-program',
+  '/blog/not-a-real-post',
+];
 
 let failures = 0;
 function fail(route, msg) {
@@ -89,6 +114,15 @@ function countMatches(html, re) {
 function extract(html, re) {
   const m = html.match(re);
   return m ? m[1] : null;
+}
+
+function decodeHtml(s) {
+  return String(s || '')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>');
 }
 
 async function fetchPage(path) {
@@ -122,32 +156,39 @@ async function checkIndexable(path) {
 
   // Values
   const title = extract(html, /<title>([^<]*)<\/title>/i);
-  if (title !== expected.title.replace(/&/g, '&amp;')) {
-    // Compare unescaped form to be tolerant
-    const decoded = title?.replace(/&amp;/g, '&');
-    if (decoded !== expected.title) {
-      fail(path, `title mismatch — got ${JSON.stringify(title)}`);
-    }
+  if (decodeHtml(title) !== expected.title) {
+    fail(path, `title mismatch — got ${JSON.stringify(title)}`);
   }
 
   const desc = extract(html, /<meta\s+name="description"\s+content="([^"]*)"/i);
-  if (desc !== expected.description) fail(path, `description mismatch — got ${JSON.stringify(desc)}`);
+  if (decodeHtml(desc) !== expected.description) fail(path, `description mismatch — got ${JSON.stringify(desc)}`);
 
   const canon = extract(html, /<link\s+rel="canonical"\s+href="([^"]*)"/i);
   if (canon !== canonical) fail(path, `canonical mismatch — expected ${canonical}, got ${canon}`);
 
+  const hreflang = extract(html, /<link\s+rel="alternate"\s+hreflang="en-IN"\s+href="([^"]*)"/i);
+  if (hreflang !== canonical) fail(path, `hreflang en-IN mismatch — got ${JSON.stringify(hreflang)}`);
+
+  const ogLocale = extract(html, /<meta\s+property="og:locale"\s+content="([^"]*)"/i);
+  if (ogLocale !== 'en_IN') fail(path, `og:locale mismatch — got ${JSON.stringify(ogLocale)}`);
+
   const ogUrl = extract(html, /<meta\s+property="og:url"\s+content="([^"]*)"/i);
   if (ogUrl !== canonical) fail(path, `og:url mismatch — expected ${canonical}, got ${ogUrl}`);
 
+  const ogImage = extract(html, /<meta\s+property="og:image"\s+content="([^"]*)"/i);
+  if (ogImage !== `${SITE_ORIGIN}/og-image.jpg`) {
+    fail(path, `og:image mismatch — got ${JSON.stringify(ogImage)}`);
+  }
+
   const ogTitle = extract(html, /<meta\s+property="og:title"\s+content="([^"]*)"/i);
-  const expectedOgTitle = (expected.ogTitle || expected.title).replace(/&/g, '&amp;');
-  if (ogTitle !== expectedOgTitle && ogTitle?.replace(/&amp;/g, '&') !== (expected.ogTitle || expected.title)) {
+  if (decodeHtml(ogTitle) !== (expected.ogTitle || expected.title)) {
     fail(path, `og:title mismatch — got ${JSON.stringify(ogTitle)}`);
   }
 
   const ogDesc = extract(html, /<meta\s+property="og:description"\s+content="([^"]*)"/i);
-  const expectedOgDesc = expected.ogDescription || expected.description;
-  if (ogDesc !== expectedOgDesc) fail(path, `og:description mismatch — got ${JSON.stringify(ogDesc)}`);
+  if (decodeHtml(ogDesc) !== (expected.ogDescription || expected.description)) {
+    fail(path, `og:description mismatch — got ${JSON.stringify(ogDesc)}`);
+  }
 
   // JSON-LD present and parses
   const jsonLdMatches = [...html.matchAll(/<script\s+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/g)];
@@ -239,6 +280,30 @@ console.log('\nMetadata uniqueness (titles + descriptions per indexable route):'
   }
   if (titles.size === ROUTES_200.length && descs.size === ROUTES_200.length) {
     pass('uniqueness', `${ROUTES_200.length} unique titles and descriptions`);
+  }
+}
+
+console.log('\nSitemap coverage:');
+{
+  const { status, html } = await fetchPage('/sitemap.xml');
+  if (status !== 200) {
+    fail('/sitemap.xml', `expected 200, got ${status}`);
+  } else {
+    const mustInclude = [
+      `${SITE_ORIGIN}/`,
+      `${SITE_ORIGIN}/contact`,
+      `${SITE_ORIGIN}/services/psychiatry`,
+      `${SITE_ORIGIN}/online-psychiatrist-gujarat`,
+      `${SITE_ORIGIN}/blog/telemedicine-guidelines-india`,
+      `${SITE_ORIGIN}/academy/programs/clinical-excellence`,
+    ];
+    for (const loc of mustInclude) {
+      if (!html.includes(`<loc>${loc}</loc>`)) fail('/sitemap.xml', `missing ${loc}`);
+    }
+    if (!html.includes('<lastmod>')) fail('/sitemap.xml', 'missing lastmod');
+    if (mustInclude.every((loc) => html.includes(`<loc>${loc}</loc>`)) && html.includes('<lastmod>')) {
+      pass('/sitemap.xml', 'includes core Care URLs + lastmod');
+    }
   }
 }
 

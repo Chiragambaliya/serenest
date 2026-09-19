@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 const PARTNER_TYPES = [
   {
@@ -46,11 +47,7 @@ const CREATOR_PERKS = [
 ];
 
 export default function PartnerPage() {
-  useSEO({
-    path: '/partner',
-    title: 'Partner with Serenest — Creators, Universities & Clinics',
-    description: 'Collaborate with Serenest. Earn commissions as a mental health content creator, or partner as a university, clinic, or platform.',
-  });
+  useSEO({ path: '/partner', ...ROUTE_SEO['/partner'] });
 
   const [type, setType]     = useState('influencer');
   const [form, setForm]     = useState({ name: '', email: '', phone: '', handle: '', audience_size: '', message: '', partner_type: 'influencer' });

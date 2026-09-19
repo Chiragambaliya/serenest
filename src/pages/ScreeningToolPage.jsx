@@ -26,7 +26,7 @@ export default function ScreeningToolPage() {
       (tool
         ? `${tool.whatItChecks} About ${tool.minutes} minutes. A screening aid — not a diagnosis.`
         : undefined),
-    noindex: !seoEntry && tool?.id !== 'phq9' && tool?.id !== 'gad7',
+    noindex: !seoEntry,
   });
 
   const [answers, setAnswers] = useState(() => {

@@ -1,17 +1,14 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 import { ACADEMY_FAQS } from '../lib/academyFaqs';
 import FaqAccordion from '../components/FaqAccordion';
 import '../styles/service-detail.css';
 import '../styles/editorial-structures.css';
 
 export default function AcademyFaqsPage() {
-  useSEO({
-    path: '/academy/faqs',
-    title: 'Serenest Academy — FAQs',
-    description: 'Frequently asked questions about Serenest Academy programs, certificates, and enrolment.',
-  });
+  useSEO({ path: '/academy/faqs', ...ROUTE_SEO['/academy/faqs'] });
 
   return (
     <div className="svd-page">

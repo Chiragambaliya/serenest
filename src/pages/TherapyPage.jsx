@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 import FaqAccordion from '../components/FaqAccordion';
 import ImagePlaceholder from '../components/ImagePlaceholder';
 import '../styles/service-detail.css';
@@ -29,11 +30,7 @@ const FAQS = [
 ];
 
 export default function TherapyPage() {
-  useSEO({
-    path: '/services/therapy',
-    title: 'Online Therapy & Counselling | Serenest',
-    description: 'Structured talk therapy and counselling for individuals, couples, and families — secure video, audio, or chat sessions.',
-  });
+  useSEO({ path: '/services/therapy', ...ROUTE_SEO['/services/therapy'] });
 
   return (
     <div className="svd-page">
