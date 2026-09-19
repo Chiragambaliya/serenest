@@ -31,8 +31,8 @@ const FAQS = [
 export default function TherapyPage() {
   useSEO({
     path: '/services/therapy',
-    title: 'Online Therapy & Counselling | Serenest',
-    description: 'Structured talk therapy and counselling for individuals, couples, and families — secure video, audio, or chat sessions.',
+    title: 'Online Therapy & Counselling in India | Serenest',
+    description: 'Structured talk therapy and counselling for individuals, couples, and families in India — secure video, audio, or chat sessions.',
   });
 
   return (

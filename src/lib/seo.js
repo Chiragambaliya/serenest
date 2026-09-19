@@ -1,8 +1,23 @@
 import { TEAM_MEMBERS } from './team.js';
 import { SCREENING_TOOLS } from './screeningTools.js';
+import { BLOG_POSTS } from './blogPosts.js';
 
 // Production canonical host. Matches the live www-redirect target.
 export const SITE_ORIGIN = 'https://www.serenest.in';
+
+// Default social-share image (absolute URL, ~1536×1024). Served from /public.
+export const OG_IMAGE = `${SITE_ORIGIN}/og-image.jpg`;
+export const OG_IMAGE_WIDTH = 1536;
+export const OG_IMAGE_HEIGHT = 1024;
+export const OG_IMAGE_ALT = 'Serenest — online psychiatry, therapy, and mental health care across India';
+
+// Routes rendered as long-form articles (og:type=article); everything else is
+// a website-type page. Blog posts are matched by prefix.
+const ARTICLE_ROUTES = new Set(['/online-psychiatrist-prescription-india']);
+export function ogTypeFor(pathname = '/') {
+  if (pathname.startsWith('/blog/')) return 'article';
+  return ARTICLE_ROUTES.has(pathname) ? 'article' : 'website';
+}
 
 export function canonicalUrl(path = '/') {
   const clean = path === '/' ? '/' : `/${path.replace(/^\/+|\/+$/g, '')}`;
@@ -27,6 +42,38 @@ export const ROUTE_SEO = {
     ogDescription:
       'Secure video, audio, or chat consultations with verified clinicians across India.',
   },
+  '/services/psychiatry': {
+    title: 'Online Psychiatry Consultation in India | Serenest',
+    description:
+      'Psychiatric assessment, diagnosis, and medication management from a licensed psychiatrist in India, over secure video, audio, or chat.',
+    ogTitle: 'Online Psychiatry Consultation | Serenest',
+    ogDescription:
+      'Assessment, diagnosis, and medication management from a licensed psychiatrist — over secure video, audio, or chat.',
+  },
+  '/services/therapy': {
+    title: 'Online Therapy & Counselling in India | Serenest',
+    description:
+      'Structured talk therapy and counselling for individuals, couples, and families in India — secure video, audio, or chat sessions.',
+    ogTitle: 'Online Therapy & Counselling | Serenest',
+    ogDescription:
+      'Structured talk therapy and counselling for individuals, couples, and families — over secure video, audio, or chat.',
+  },
+  '/services/addiction-care': {
+    title: 'Online Addiction & Recovery Support in India | Serenest',
+    description:
+      'Assessment, counselling, and relapse-prevention support for substance use in India, with clear guidance on when in-person or emergency care is needed.',
+    ogTitle: 'Online Addiction & Recovery Support | Serenest',
+    ogDescription:
+      'Assessment, counselling, and relapse-prevention support for substance use — with honest guidance on limits of online care.',
+  },
+  '/services/digital-consultations': {
+    title: 'How Online Mental Health Consultations Work | Serenest',
+    description:
+      'How teleconsultation works on Serenest — what can be managed online, what needs in-person care, and the technology you need for a session.',
+    ogTitle: 'Digital Mental Health Consultations | Serenest',
+    ogDescription:
+      'What can be managed online, what needs in-person care, and how a Serenest teleconsultation works.',
+  },
   '/pricing': {
     title: 'Online Psychiatrist Fees & Therapy Pricing in India | Serenest',
     description:
@@ -50,6 +97,14 @@ export const ROUTE_SEO = {
     ogTitle: 'Serenest Mental Health Center | Understand Yourself',
     ogDescription:
       'Human-language mental health checks with education and clear next steps. Screening aids — not diagnoses.',
+  },
+  '/screening/pathway/mood-anxiety': {
+    title: 'Check Mood & Anxiety (PHQ-9 + GAD-7) | Serenest',
+    description:
+      'A guided mental health check for mood and anxiety using PHQ-9 and GAD-7. Educational results — not a diagnosis.',
+    ogTitle: 'Mood & Anxiety Check (PHQ-9 + GAD-7) | Serenest',
+    ogDescription:
+      'A guided self-check for mood and anxiety using two validated instruments. Educational results — not a diagnosis.',
   },
   '/burnout-check': {
     title: 'Burnout Check (BAT-12) Online India | Serenest Mental Health Center',
@@ -144,6 +199,38 @@ export const ROUTE_SEO = {
     ogTitle: 'Serenest Blog | Mental Health Clinical Insights',
     ogDescription:
       'Clinical insights, patient guides, and mental health updates from the Serenest team.',
+  },
+  '/contact': {
+    title: 'Contact Serenest | Support, Appointments & Partnerships',
+    description:
+      'Get in touch with Serenest for patient support, appointment help, billing questions, or professional and institutional collaboration.',
+    ogTitle: 'Contact Serenest',
+    ogDescription:
+      'Patient support, appointment help, and professional collaboration — reach the Serenest team.',
+  },
+  '/corporate': {
+    title: 'Employee Mental Health — Corporate EAP | Serenest',
+    description:
+      'Mental health benefits for your team. Confidential therapy, psychiatry and counselling for employees across India. Starting ₹499/employee/year.',
+    ogTitle: 'Corporate Employee Mental Health | Serenest',
+    ogDescription:
+      'Confidential therapy, psychiatry, and counselling benefits for employees across India.',
+  },
+  '/partner': {
+    title: 'Partner with Serenest — Creators, Universities & Clinics',
+    description:
+      'Collaborate with Serenest. Earn commissions as a mental health content creator, or partner as a university, clinic, or platform.',
+    ogTitle: 'Partner with Serenest',
+    ogDescription:
+      'Creator, university, clinic, and platform partnerships with Serenest.',
+  },
+  '/careers': {
+    title: 'Join Serenest — Careers for Mental Health Professionals',
+    description:
+      'Apply to join Serenest as a psychologist, therapist, or psychiatrist. Flexible online sessions across India.',
+    ogTitle: 'Careers at Serenest',
+    ogDescription:
+      'Join Serenest as a psychologist, therapist, or psychiatrist — flexible online practice across India.',
   },
   '/privacy': {
     title: 'Privacy Policy | Serenest Mental Health Platform India',
@@ -330,6 +417,17 @@ for (const t of SCREENING_TOOLS) {
   };
 }
 
+// Blog article pages (/blog/<slug>) — every published post is indexable with
+// its own title/description, mirroring what BlogPostPage sets client-side.
+for (const post of BLOG_POSTS) {
+  ROUTE_SEO[`/blog/${post.slug}`] = {
+    title: `${post.title} | Serenest Blog`,
+    description: post.excerpt,
+    ogTitle: post.title,
+    ogDescription: post.excerpt,
+  };
+}
+
 // Routes that redirect (301) to a canonical route. Used by server.js.
 // Useful for keyword variants of the same landing page so internal links and
 // inbound links consolidate onto one URL.
@@ -413,7 +511,16 @@ const ORG_SCHEMA = {
   legalName: 'Serenest Education Pvt Ltd',
   url: `${SITE_ORIGIN}/`,
   email: 'support@serenest.in',
+  logo: `${SITE_ORIGIN}/favicon.svg`,
   areaServed: { '@type': 'Country', name: 'India' },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    contactType: 'customer support',
+    email: 'support@serenest.in',
+    url: `${SITE_ORIGIN}/contact`,
+    availableLanguage: ['English', 'Hindi'],
+    areaServed: 'IN',
+  },
   description:
     'Serenest is a clinical telepsychiatry platform for India offering secure video, audio, and chat consultations with structured intake, assessments, and continuity of care.',
 };
@@ -773,6 +880,62 @@ export const ROUTE_JSONLD = {
       { ...MEDICAL_BUSINESS_SCHEMA, '@id': `${SITE_ORIGIN}/services#medicalbusiness`, url: `${SITE_ORIGIN}/services` },
     ],
   },
+  '/services/psychiatry': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      medicalWebPage('/services/psychiatry', {
+        name: 'Online Psychiatry Consultation in India',
+        description:
+          'Psychiatric assessment, diagnosis, and medication management from a licensed psychiatrist in India, over secure video, audio, or chat.',
+        about: ['Depression', 'Anxiety Disorders', 'Bipolar Disorder', 'Adult ADHD', 'OCD'],
+      }),
+      breadcrumbs('/services/psychiatry', 'Psychiatry', [{ name: 'Services', item: `${SITE_ORIGIN}/services` }]),
+    ],
+  },
+  '/services/therapy': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      medicalWebPage('/services/therapy', {
+        name: 'Online Therapy & Counselling in India',
+        description:
+          'Structured talk therapy and counselling for individuals, couples, and families in India — secure video, audio, or chat sessions.',
+        about: ['Depression', 'Anxiety Disorders', 'Relationship counselling', 'Stress'],
+      }),
+      breadcrumbs('/services/therapy', 'Therapy & Counselling', [{ name: 'Services', item: `${SITE_ORIGIN}/services` }]),
+    ],
+  },
+  '/services/addiction-care': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      medicalWebPage('/services/addiction-care', {
+        name: 'Online Addiction & Recovery Support in India',
+        description:
+          'Assessment, counselling, and relapse-prevention support for substance use in India, with clear guidance on when in-person or emergency care is needed.',
+        about: ['Substance Use Disorder', 'Alcohol Use Disorder', 'Addiction'],
+      }),
+      breadcrumbs('/services/addiction-care', 'Addiction Care', [{ name: 'Services', item: `${SITE_ORIGIN}/services` }]),
+    ],
+  },
+  '/services/digital-consultations': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      medicalWebPage('/services/digital-consultations', {
+        name: 'How Online Mental Health Consultations Work',
+        description:
+          'How teleconsultation works on Serenest — what can be managed online, what needs in-person care, and the technology you need for a session.',
+        about: ['Telepsychiatry', 'Telemedicine'],
+      }),
+      breadcrumbs('/services/digital-consultations', 'Digital Consultations', [{ name: 'Services', item: `${SITE_ORIGIN}/services` }]),
+    ],
+  },
   '/pricing': { '@context': 'https://schema.org', '@graph': [ORG_SCHEMA, WEBSITE_SCHEMA] },
   '/book': { '@context': 'https://schema.org', '@graph': [ORG_SCHEMA, WEBSITE_SCHEMA] },
   '/burnout-check': {
@@ -848,6 +1011,22 @@ export const ROUTE_JSONLD = {
       },
     ],
   },
+  '/screening/pathway/mood-anxiety': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      medicalWebPage('/screening/pathway/mood-anxiety', {
+        name: 'Mood & Anxiety Check (PHQ-9 + GAD-7)',
+        description:
+          'A guided mental health check for mood and anxiety using PHQ-9 and GAD-7. Educational results — not a diagnosis.',
+        about: ['Depression', 'Generalized Anxiety Disorder', 'Mental Health Screening'],
+      }),
+      breadcrumbs('/screening/pathway/mood-anxiety', 'Mood & Anxiety Check', [
+        { name: 'Screening', item: `${SITE_ORIGIN}/screening` },
+      ]),
+    ],
+  },
   '/team': {
     '@context': 'https://schema.org',
     '@graph': [
@@ -919,6 +1098,78 @@ export const ROUTE_JSONLD = {
         isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
       },
       breadcrumbs('/professionals', 'For Professionals'),
+    ],
+  },
+  '/contact': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        '@type': 'ContactPage',
+        '@id': `${SITE_ORIGIN}/contact#webpage`,
+        url: `${SITE_ORIGIN}/contact`,
+        name: 'Contact Serenest',
+        description:
+          'Patient support, appointment help, billing questions, and professional collaboration — reach the Serenest team.',
+        inLanguage: 'en-IN',
+        isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+      },
+      breadcrumbs('/contact', 'Contact'),
+    ],
+  },
+  '/corporate': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        '@type': 'WebPage',
+        '@id': `${SITE_ORIGIN}/corporate#webpage`,
+        url: `${SITE_ORIGIN}/corporate`,
+        name: 'Employee Mental Health — Corporate EAP',
+        description:
+          'Confidential therapy, psychiatry, and counselling benefits for employees across India.',
+        inLanguage: 'en-IN',
+        isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+      },
+      breadcrumbs('/corporate', 'Corporate'),
+    ],
+  },
+  '/partner': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        '@type': 'WebPage',
+        '@id': `${SITE_ORIGIN}/partner#webpage`,
+        url: `${SITE_ORIGIN}/partner`,
+        name: 'Partner with Serenest',
+        description:
+          'Creator, university, clinic, and platform partnerships with Serenest.',
+        inLanguage: 'en-IN',
+        isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+      },
+      breadcrumbs('/partner', 'Partner'),
+    ],
+  },
+  '/careers': {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        '@type': 'WebPage',
+        '@id': `${SITE_ORIGIN}/careers#webpage`,
+        url: `${SITE_ORIGIN}/careers`,
+        name: 'Careers at Serenest',
+        description:
+          'Join Serenest as a psychologist, therapist, or psychiatrist — flexible online practice across India.',
+        inLanguage: 'en-IN',
+        isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+      },
+      breadcrumbs('/careers', 'Careers'),
     ],
   },
   '/blog': {
@@ -1126,6 +1377,62 @@ export const ROUTE_JSONLD = {
   },
 };
 
+// Convert "Jun 2026"-style display dates into ISO (first of the month) for
+// schema.org datePublished/dateModified.
+const MONTHS = { Jan: '01', Feb: '02', Mar: '03', Apr: '04', May: '05', Jun: '06', Jul: '07', Aug: '08', Sep: '09', Oct: '10', Nov: '11', Dec: '12' };
+function monthYearToISO(display) {
+  const m = /^([A-Za-z]{3})\w*\s+(\d{4})$/.exec(String(display).trim());
+  return m && MONTHS[m[1]] ? `${m[2]}-${MONTHS[m[1]]}-01` : undefined;
+}
+
+// BlogPosting JSON-LD for every article, matching the ROUTE_SEO entries above.
+for (const post of BLOG_POSTS) {
+  const path = `/blog/${post.slug}`;
+  const iso = monthYearToISO(post.date);
+  ROUTE_JSONLD[path] = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      {
+        '@type': 'BlogPosting',
+        '@id': `${SITE_ORIGIN}${path}#article`,
+        url: `${SITE_ORIGIN}${path}`,
+        mainEntityOfPage: `${SITE_ORIGIN}${path}`,
+        headline: post.title,
+        description: post.excerpt,
+        articleSection: post.tag,
+        inLanguage: 'en-IN',
+        isAccessibleForFree: true,
+        image: `${SITE_ORIGIN}/og-image.jpg`,
+        author: { '@id': `${SITE_ORIGIN}/#organization` },
+        publisher: { '@id': `${SITE_ORIGIN}/#organization` },
+        ...(iso ? { datePublished: iso, dateModified: iso } : {}),
+      },
+      breadcrumbs(path, post.title, [{ name: 'Blog', item: `${SITE_ORIGIN}/blog` }]),
+    ],
+  };
+}
+
+// MedicalWebPage JSON-LD for each indexable screening tool page.
+for (const t of SCREENING_TOOLS) {
+  if (!t.seoTitle) continue;
+  const path = `/screening/tool/${t.slug}`;
+  ROUTE_JSONLD[path] = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      medicalWebPage(path, {
+        name: t.seoTitle,
+        description: t.seoDescription,
+        about: ['Mental Health Screening'],
+      }),
+      breadcrumbs(path, t.name || t.seoTitle, [{ name: 'Screening', item: `${SITE_ORIGIN}/screening` }]),
+    ],
+  };
+}
+
 // ── HTML helpers for server-side injection ───────────────────────────────────
 function escapeHtmlAttr(s) {
   return String(s)
@@ -1148,7 +1455,7 @@ function escapeJsonLd(s) {
 export function renderSeoHead(pathname, { noindex = false } = {}) {
   const seo = ROUTE_SEO[pathname] || ROUTE_SEO['/'];
   const canonical = canonicalUrl(pathname);
-  const ogType = pathname === '/' ? 'website' : 'article';
+  const ogType = ogTypeFor(pathname);
   const jsonLd = ROUTE_JSONLD[pathname] || ROUTE_JSONLD['/'];
 
   const parts = [
@@ -1160,10 +1467,22 @@ export function renderSeoHead(pathname, { noindex = false } = {}) {
     `<meta property="og:url" content="${escapeHtmlAttr(canonical)}" />`,
     `<meta property="og:type" content="${ogType}" />`,
     `<meta property="og:site_name" content="Serenest" />`,
+    `<meta property="og:locale" content="en_IN" />`,
+    `<meta property="og:image" content="${escapeHtmlAttr(OG_IMAGE)}" />`,
+    `<meta property="og:image:width" content="${OG_IMAGE_WIDTH}" />`,
+    `<meta property="og:image:height" content="${OG_IMAGE_HEIGHT}" />`,
+    `<meta property="og:image:alt" content="${escapeHtmlAttr(OG_IMAGE_ALT)}" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${escapeHtmlAttr(seo.ogTitle || seo.title)}" />`,
+    `<meta name="twitter:description" content="${escapeHtmlAttr(seo.ogDescription || seo.description)}" />`,
+    `<meta name="twitter:image" content="${escapeHtmlAttr(OG_IMAGE)}" />`,
   ];
 
   if (noindex) {
     parts.push(`<meta name="robots" content="noindex, nofollow" />`);
+  } else {
+    // Allow large image previews and full snippets in search results.
+    parts.push(`<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />`);
   }
 
   parts.push(

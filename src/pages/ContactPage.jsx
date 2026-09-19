@@ -35,8 +35,8 @@ const REASONS = [
 export default function ContactPage() {
   useSEO({
     path: '/contact',
-    title: 'Contact Serenest',
-    description: 'Get in touch with Serenest for patient support, appointment help, or professional collaboration.',
+    title: 'Contact Serenest | Support, Appointments & Partnerships',
+    description: 'Get in touch with Serenest for patient support, appointment help, billing questions, or professional and institutional collaboration.',
   });
 
   const [selected, setSelected] = useState(REASONS[0].key);

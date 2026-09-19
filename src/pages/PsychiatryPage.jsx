@@ -25,8 +25,8 @@ const FAQS = [
 export default function PsychiatryPage() {
   useSEO({
     path: '/services/psychiatry',
-    title: 'Online Psychiatry Consultation | Serenest',
-    description: 'Psychiatric assessment, diagnosis, and medication management from a licensed psychiatrist, over secure video, audio, or chat.',
+    title: 'Online Psychiatry Consultation in India | Serenest',
+    description: 'Psychiatric assessment, diagnosis, and medication management from a licensed psychiatrist in India, over secure video, audio, or chat.',
   });
 
   return (

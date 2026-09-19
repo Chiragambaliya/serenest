@@ -25,8 +25,8 @@ const FAQS = [
 export default function AddictionCarePage() {
   useSEO({
     path: '/services/addiction-care',
-    title: 'Online Addiction & Recovery Support | Serenest',
-    description: 'Assessment, counselling, and relapse-prevention support for substance use, with clear guidance on when in-person or emergency care is needed.',
+    title: 'Online Addiction & Recovery Support in India | Serenest',
+    description: 'Assessment, counselling, and relapse-prevention support for substance use in India, with clear guidance on when in-person or emergency care is needed.',
   });
 
   return (

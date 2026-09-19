@@ -25,13 +25,25 @@ const BASE = process.argv[2] || process.env.BASE_URL || `http://localhost:${proc
 const ROUTES_200 = [
   '/',
   '/services',
+  '/services/psychiatry',
+  '/services/therapy',
+  '/services/addiction-care',
+  '/services/digital-consultations',
+  '/contact',
   '/pricing',
   '/book',
   '/screening',
+  '/screening/pathway/mood-anxiety',
+  '/screening/tool/burnout-bat-12',
   '/team',
   '/about',
   '/faq',
   '/guides',
+  '/blog',
+  '/blog/prepare-first-online-consultation',
+  '/corporate',
+  '/partner',
+  '/careers',
   '/privacy',
   '/online-psychiatrist-for-depression-india',
   '/anxiety-counselling-online-india',
@@ -70,7 +82,14 @@ const ROUTES_410 = [
   '/2025/11/05/kak-zritelnye-effekty-ukrepljajut-vpechatlenija/',
   '/2025/11/05/kak-zritelnye-effekty-ukrepljajut-vpechatlenija',
 ];
-const ROUTES_404 = ['/this-route-does-not-exist', '/random/garbage'];
+const ROUTES_404 = [
+  '/this-route-does-not-exist',
+  '/random/garbage',
+  // Unknown dynamic slugs must be genuine 404s, not soft-404s (200 + not-found UI)
+  '/blog/this-post-does-not-exist',
+  '/screening/tool/not-a-real-tool',
+  '/evidence/not-a-real-report',
+];
 
 let failures = 0;
 function fail(route, msg) {
@@ -171,6 +190,14 @@ async function checkIndexable(path) {
   if (/<meta\s+name="robots"[^>]*content="noindex/i.test(html)) {
     fail(path, 'unexpected noindex on indexable route');
   }
+
+  // Social share tags: og:image + twitter card must be present exactly once
+  const ogImageCount = countMatches(html, /<meta\s+property="og:image"\s/gi);
+  if (ogImageCount !== 1) fail(path, `expected 1 og:image, got ${ogImageCount}`);
+  const twCardCount = countMatches(html, /<meta\s+name="twitter:card"/gi);
+  if (twCardCount !== 1) fail(path, `expected 1 twitter:card, got ${twCardCount}`);
+  const twImageCount = countMatches(html, /<meta\s+name="twitter:image"/gi);
+  if (twImageCount !== 1) fail(path, `expected 1 twitter:image, got ${twImageCount}`);
 
   pass(path, `200 + title="${title}" canonical=${canon}`);
 }
