@@ -3,6 +3,7 @@ import { Link, useParams, Navigate } from 'react-router-dom';
 import { PROGRAMS_BY_SLUG, ACADEMY_PROGRAMS } from '../lib/academyPrograms';
 import { useProfessionalAccess } from '../lib/useProfessionalAccess';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 import EdIcon from '../components/EdIcon';
 import '../styles/service-detail.css';
 import '../styles/editorial-structures.css';
@@ -12,11 +13,9 @@ export default function AcademyProgramPage() {
   const program = PROGRAMS_BY_SLUG[slug];
   const { user, isProfessional } = useProfessionalAccess();
 
-  useSEO({
-    path: `/academy/programs/${slug}`,
-    title: program ? `${program.title} | Serenest Academy` : 'Serenest Academy',
-    description: program?.tagline,
-  });
+  useSEO(program
+    ? { path: `/academy/programs/${slug}`, ...ROUTE_SEO[`/academy/programs/${slug}`] }
+    : { path: `/academy/programs/${slug}`, title: 'Serenest Academy' });
 
   if (!program) return <Navigate to="/academy" replace />;
 

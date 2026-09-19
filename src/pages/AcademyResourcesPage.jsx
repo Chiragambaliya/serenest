@@ -1,14 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 import '../styles/service-detail.css';
 
 export default function AcademyResourcesPage() {
-  useSEO({
-    path: '/academy/resources',
-    title: 'Serenest Academy — Resources',
-    description: 'Clinical guides, reading lists, and practice tools from Serenest Academy.',
-  });
+  useSEO({ path: '/academy/resources', ...ROUTE_SEO['/academy/resources'] });
 
   return (
     <div className="svd-page">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 import '../styles/service-detail.css';
 import '../styles/editorial-structures.css';
 
@@ -26,11 +27,7 @@ const FORMAT = [
 ];
 
 export default function AcademyWorkshopsPage() {
-  useSEO({
-    path: '/academy/workshops',
-    title: 'Serenest Academy — Workshops',
-    description: 'Live and recorded workshops from Serenest Academy for mental health professionals.',
-  });
+  useSEO({ path: '/academy/workshops', ...ROUTE_SEO['/academy/workshops'] });
 
   // No workshops are scheduled. Nothing is invented to fill the page.
   const upcoming = [];

@@ -32,6 +32,29 @@ const OUR_SERVICES = [
   },
 ];
 
+const CARE_TOPICS = [
+  {
+    title: 'Depression',
+    body: 'Online psychiatrist support, PHQ-9 screening, and follow-up care.',
+    href: '/online-psychiatrist-for-depression-india',
+  },
+  {
+    title: 'Anxiety',
+    body: 'Counselling and psychiatry for worry, panic, and GAD-7 screening.',
+    href: '/anxiety-counselling-online-india',
+  },
+  {
+    title: 'Adult ADHD',
+    body: 'Structured assessment with verified psychiatrists — not a same-day prescription.',
+    href: '/adhd-assessment-online-india',
+  },
+  {
+    title: 'OCD',
+    body: 'ERP-informed therapy and psychiatry for obsessions and compulsions.',
+    href: '/ocd-treatment-online-india',
+  },
+];
+
 const ARRIVE_PATHS = [
   {
     num: '01',
@@ -85,15 +108,15 @@ export default function HomePage() {
         <div className="hp-hero__content">
           <p className="hp-hero__brand">Serenest</p>
           <h1 id="home-hero-title" className="hp-hero__title">
-            Care for the mind, grounded in clinical practice.
+            Online psychiatry and therapy across India.
           </h1>
           <p className="hp-hero__body">
-            Psychiatry, therapy, addiction support, and professional learning —
-            brought together with clinical responsibility.
+            Consult a verified psychiatrist or therapist from home — plus
+            screening, addiction support, and clinician learning.
           </p>
           <div className="hp-hero__actions">
-            <HpBtn to="/services" variant="solid-light">Find the right service</HpBtn>
-            <HpBtn to="/book" variant="ghost-dark">Book an appointment</HpBtn>
+            <HpBtn to="/book" variant="solid-light">Book an appointment</HpBtn>
+            <HpBtn to="/services" variant="ghost-dark">Find the right service</HpBtn>
           </div>
         </div>
         <p className="hp-hero__note">
@@ -150,6 +173,31 @@ export default function HomePage() {
                 <p className="ed-index__body">{item.body}</p>
                 <span className="ed-index__go">
                   <span>View</span>
+                  <span className="hp-index__arrow" aria-hidden="true">→</span>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="ed-pace hp-topics" aria-labelledby="home-topics-title">
+        <div className="ed-shell">
+          <header className="ed-head">
+            <span className="ed-head__label">Common reasons people come</span>
+            <h2 id="home-topics-title">Start with the concern you recognise.</h2>
+            <p>Each page explains what online care can and cannot do — then how to book.</p>
+          </header>
+          <div className="ed-index hp-index">
+            {CARE_TOPICS.map((item, i) => (
+              <Link key={item.title} to={item.href} className="ed-index__row">
+                <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                <span>
+                  <h3 className="ed-index__title">{item.title}</h3>
+                </span>
+                <p className="ed-index__body">{item.body}</p>
+                <span className="ed-index__go">
+                  <span>Read</span>
                   <span className="hp-index__arrow" aria-hidden="true">→</span>
                 </span>
               </Link>

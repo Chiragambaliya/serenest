@@ -11,6 +11,10 @@ import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
 import { renderSeoHead, shouldNoindex, ROUTE_SEO, ROUTE_ALIASES, SITE_ORIGIN } from './src/lib/seo.js';
+import { BLOG_POSTS } from './src/lib/blogPosts.js';
+import { SCREENING_TOOLS } from './src/lib/screeningTools.js';
+import { getCheckEvidence } from './src/lib/checkEvidence.js';
+import { ACADEMY_PROGRAMS } from './src/lib/academyPrograms.js';
 import { handleAssistantChat } from './src/server/aiAssistant.js';
 import { generateAcademyContent } from './src/server/academyContentGen.js';
 import cron from 'node-cron';
@@ -2874,6 +2878,11 @@ const VALID_ROUTES = new Set([
   '/about',
   '/team',
   '/services',
+  '/services/psychiatry',
+  '/services/therapy',
+  '/services/addiction-care',
+  '/services/digital-consultations',
+  '/contact',
   '/professionals',
   '/professionals/learning',
   '/professionals/resources',
@@ -2914,9 +2923,12 @@ const VALID_ROUTES = new Set([
   '/evidence',
   '/academy',
   '/academy/login',
-  '/academy/learn',
-  '/academy/learn/pharmacology',
-  '/academy/learn/psychology',
+  '/academy/programs',
+  '/academy/workshops',
+  '/academy/learning-paths',
+  '/academy/faculty',
+  '/academy/resources',
+  '/academy/faqs',
   '/online-psychiatrist-consultation-india',
   '/online-psychiatrist-for-depression-india',
   '/anxiety-counselling-online-india',
@@ -2928,8 +2940,13 @@ const VALID_ROUTES = new Set([
   '/online-psychiatrist-prescription-india',
 ]);
 
-// Dynamic-route prefixes that the SPA legitimately serves.
-const VALID_PREFIXES = ['/blog/', '/consultation/', '/academy/program/', '/screening/tool/', '/evidence/'];
+// Dynamic-route slugs the SPA legitimately serves. Validating against the
+// real content lists (instead of accepting any suffix) means unknown slugs
+// return a genuine 404 rather than a soft-404 (200 with not-found UI), which
+// search engines penalise.
+const BLOG_SLUGS = new Set(BLOG_POSTS.map((p) => p.slug));
+const TOOL_KEYS = new Set(SCREENING_TOOLS.flatMap((t) => [t.slug, t.id].filter(Boolean)));
+const ACADEMY_SLUGS = new Set(ACADEMY_PROGRAMS.map((p) => p.slug));
 
 // Known stale URLs surfaced in search from prior site contents. These have no
 // healthcare replacement, so return 410 Gone to ask Google to drop them.
@@ -2951,7 +2968,13 @@ function normalize(pathname) {
 function isValidSpaRoute(pathname) {
   const norm = normalize(pathname);
   if (VALID_ROUTES.has(norm)) return true;
-  return VALID_PREFIXES.some((p) => pathname.startsWith(p) && pathname.length > p.length);
+  if (norm.startsWith('/blog/')) return BLOG_SLUGS.has(norm.slice('/blog/'.length));
+  if (norm.startsWith('/screening/tool/')) return TOOL_KEYS.has(norm.slice('/screening/tool/'.length));
+  if (norm.startsWith('/evidence/')) return Boolean(getCheckEvidence(norm.slice('/evidence/'.length)));
+  if (norm.startsWith('/academy/programs/')) return ACADEMY_SLUGS.has(norm.slice('/academy/programs/'.length));
+  // Consultation URLs are per-appointment (auth-gated, noindex) — accept any id.
+  if (norm.startsWith('/consultation/')) return norm.length > '/consultation/'.length;
+  return false;
 }
 
 // ── SEO injection ─────────────────────────────────────────────

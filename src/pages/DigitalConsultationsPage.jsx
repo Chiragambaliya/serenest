@@ -29,8 +29,8 @@ const FAQS = [
 export default function DigitalConsultationsPage() {
   useSEO({
     path: '/services/digital-consultations',
-    title: 'Digital Mental Health Consultations | Serenest',
-    description: 'How teleconsultation works on Serenest — what can be managed online, what needs in-person care, and the technology you need.',
+    title: 'How Online Mental Health Consultations Work | Serenest',
+    description: 'How teleconsultation works on Serenest — what can be managed online, what needs in-person care, and the technology you need for a session.',
   });
 
   return (

@@ -67,6 +67,15 @@ const FOOTER_GROUPS = [
     ],
   },
   {
+    title: 'Conditions',
+    links: [
+      { to: '/online-psychiatrist-for-depression-india', label: 'Depression' },
+      { to: '/anxiety-counselling-online-india', label: 'Anxiety' },
+      { to: '/adhd-assessment-online-india', label: 'Adult ADHD' },
+      { to: '/ocd-treatment-online-india', label: 'OCD' },
+    ],
+  },
+  {
     title: 'Learn',
     links: [
       { to: '/academy', label: 'Academy' },

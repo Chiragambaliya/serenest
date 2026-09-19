@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { canonicalUrl, SITE_ORIGIN } from './seo.js';
+import { canonicalUrl, ogTypeFor, SITE_ORIGIN } from './seo.js';
 
 // On initial document load, server.js injects the route-correct title,
 // meta description, canonical, OG tags, and JSON-LD into the HTML between
@@ -49,14 +49,17 @@ export function useSEO(opts) {
     setMeta('property', 'og:title', ogTitle || title);
     setMeta('property', 'og:description', ogDescription || description);
     setMeta('property', 'og:url', url);
-    setMeta('property', 'og:type', path === '/' ? 'website' : 'article');
+    setMeta('property', 'og:type', ogTypeFor(path || '/'));
     setMeta('property', 'og:site_name', 'Serenest');
+    setMeta('name', 'twitter:title', ogTitle || title);
+    setMeta('name', 'twitter:description', ogDescription || description);
 
     if (noindex) {
       setMeta('name', 'robots', 'noindex, nofollow');
     } else {
-      const el = document.head.querySelector('meta[name="robots"]');
-      if (el) el.remove();
+      // Mirror the server-rendered default so client navigation never leaves
+      // a stale noindex behind.
+      setMeta('name', 'robots', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
     }
   }, [path, title, description, ogTitle, ogDescription, noindex]);
 

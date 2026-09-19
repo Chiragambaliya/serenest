@@ -2,17 +2,14 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ACADEMY_PROGRAMS, ACADEMY_CATEGORIES } from '../lib/academyPrograms';
+import { ROUTE_SEO } from '../lib/seo';
 import '../styles/service-detail.css';
 import '../styles/editorial-structures.css';
 
 /* The catalogue reads as an index, not a card grid — it is an
    enumerable set, so it is numbered and ruled like contents. */
 export default function AcademyProgramsPage() {
-  useSEO({
-    path: '/academy/programs',
-    title: 'Serenest Academy — All Programs',
-    description: 'The full Serenest Academy program catalogue for psychology students, counsellors, psychiatrists, and mental health professionals.',
-  });
+  useSEO({ path: '/academy/programs', ...ROUTE_SEO['/academy/programs'] });
 
   let n = 0;
 

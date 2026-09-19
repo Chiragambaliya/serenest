@@ -149,14 +149,14 @@ const AUDIENCES = [
 ];
 
 const CONDITIONS = [
-  { name: 'Depression', symptoms: 'Low mood, fatigue, loss of interest' },
-  { name: 'Anxiety', symptoms: 'Worry, panic, social anxiety' },
-  { name: 'OCD', symptoms: 'Intrusive thoughts, compulsions' },
+  { name: 'Depression', symptoms: 'Low mood, fatigue, loss of interest', href: '/online-psychiatrist-for-depression-india' },
+  { name: 'Anxiety', symptoms: 'Worry, panic, social anxiety', href: '/anxiety-counselling-online-india' },
+  { name: 'OCD', symptoms: 'Intrusive thoughts, compulsions', href: '/ocd-treatment-online-india' },
   { name: 'Bipolar disorder', symptoms: 'Mood swings, mania, depression' },
   { name: 'PTSD', symptoms: 'Flashbacks, trauma-related distress' },
-  { name: 'ADHD (adults)', symptoms: 'Inattention, impulsivity' },
+  { name: 'ADHD (adults)', symptoms: 'Inattention, impulsivity', href: '/adhd-assessment-online-india' },
   { name: 'Sleep disorders', symptoms: 'Insomnia, disrupted sleep' },
-  { name: 'Stress & burnout', symptoms: 'Exhaustion, work-related stress' },
+  { name: 'Stress & burnout', symptoms: 'Exhaustion, work-related stress', href: '/burnout-check' },
 ];
 
 export default function ServicesPage() {
@@ -435,9 +435,11 @@ export default function ServicesPage() {
                 </tr>
               </thead>
               <tbody>
-                {CONDITIONS.map(({ name, symptoms }) => (
+                {CONDITIONS.map(({ name, symptoms, href }) => (
                   <tr key={name}>
-                    <th scope="row">{name}</th>
+                    <th scope="row">
+                      {href ? <Link to={href}>{name}</Link> : name}
+                    </th>
                     <td data-label="Common symptoms">{symptoms}</td>
                   </tr>
                 ))}

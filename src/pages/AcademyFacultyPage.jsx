@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 import { TEAM_MEMBERS } from '../lib/team';
 import ImagePlaceholder from '../components/ImagePlaceholder';
 import '../styles/service-detail.css';
@@ -30,11 +31,7 @@ const EXPECTATIONS = [
 ];
 
 export default function AcademyFacultyPage() {
-  useSEO({
-    path: '/academy/faculty',
-    title: 'Serenest Academy — Faculty',
-    description: 'Meet the clinicians teaching Serenest Academy programs, and how to apply to teach.',
-  });
+  useSEO({ path: '/academy/faculty', ...ROUTE_SEO['/academy/faculty'] });
 
   const lead = TEAM_MEMBERS[0];
 
