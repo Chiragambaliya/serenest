@@ -146,6 +146,12 @@ async function fetchPage(path) {
 async function checkIndexable(path) {
   const expected = ROUTE_SEO[path];
   const canonical = canonicalUrl(path);
+
+  if (!expected) {
+    fail(path, 'no ROUTE_SEO entry — the page would be served homepage metadata and noindex');
+    return;
+  }
+
   const { status, html } = await fetchPage(path);
 
   if (status !== 200) {
