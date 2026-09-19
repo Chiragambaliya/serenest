@@ -49,8 +49,8 @@ function BrandMark({ size = 42 }) {
 /* Primary navigation — editorial masthead, not a SaaS link strip. */
 const NAV_LINKS = [
   { to: '/services', label: 'Services' },
+  { to: '/screening', label: 'Screening' },
   { to: '/professionals', label: 'Professionals' },
-  { to: '/academy', label: 'Academy' },
   { to: '/about', label: 'About' },
   { to: '/resources', label: 'Reading' },
   { to: '/contact', label: 'Contact' },
@@ -69,7 +69,6 @@ const FOOTER_GROUPS = [
   {
     title: 'Learn',
     links: [
-      { to: '/academy', label: 'Academy' },
       { to: '/blog', label: 'Blog' },
       { to: '/guides', label: 'Guides' },
       { to: '/faq', label: 'FAQ' },
@@ -304,7 +303,6 @@ export default function SiteLayout() {
 
               <div className="menu-section">
                 <p className="menu-section-label">Quick links</p>
-                <Link to="/screening"                 className="menu-link" onClick={() => setMenuOpen(false)}>Self-Screening</Link>
                 <Link to="/patient/find-professional" className="menu-link" onClick={() => setMenuOpen(false)}>Find a Professional</Link>
                 <Link to="/pricing"                   className="menu-link" onClick={() => setMenuOpen(false)}>Pricing</Link>
                 <Link to="/blog"                      className="menu-link" onClick={() => setMenuOpen(false)}>Blog</Link>

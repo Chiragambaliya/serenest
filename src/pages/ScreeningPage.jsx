@@ -110,8 +110,8 @@ export default function ScreeningPage() {
 
         <section className="mhc-section" aria-labelledby="eco-title">
           <div className="mhc-section-head">
-            <h2 id="eco-title">Part of the Serenest ecosystem</h2>
-            <p>Understanding connects to learning and care — nothing here is meant to stand alone.</p>
+            <h2 id="eco-title">What to do next</h2>
+            <p>Understanding connects to guides and care — nothing here is meant to stand alone.</p>
           </div>
           <div className="mhc-grid">
             <Link to="/evidence" className="mhc-card">
@@ -119,15 +119,10 @@ export default function ScreeningPage() {
               <p className="mhc-card-blurb">Instruments, validation papers, licensing, and limitations for every launched check.</p>
               <span className="mhc-card-cta">Open evidence →</span>
             </Link>
-            <Link to="/blog" className="mhc-card">
-              <h3 className="mhc-card-title">Articles</h3>
+            <Link to="/guides" className="mhc-card">
+              <h3 className="mhc-card-title">Guides</h3>
               <p className="mhc-card-blurb">Plain-language guides on mood, anxiety, sleep, and seeking help.</p>
               <span className="mhc-card-cta">Browse guides →</span>
-            </Link>
-            <Link to="/academy" className="mhc-card">
-              <h3 className="mhc-card-title">Academy</h3>
-              <p className="mhc-card-blurb">Literacy and learning programmes from Serenest Education.</p>
-              <span className="mhc-card-cta">Explore Academy →</span>
             </Link>
             <Link to="/book" className="mhc-card">
               <h3 className="mhc-card-title">Professional care</h3>

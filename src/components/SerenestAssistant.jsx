@@ -66,7 +66,7 @@ export default function SerenestAssistant() {
     } catch (e) {
       const msg =
         e?.status === 503
-          ? 'The assistant is not available right now. Try WhatsApp (+91 7777936367), book online, or email support@serenest.fit.'
+          ? 'The assistant is not available right now. Try WhatsApp (+91 7777936367), book online, or email support@serenest.in.'
           : e?.message || 'Something went wrong. Please try again.';
       setErrorBanner(msg);
       setMessages(nextThread);
@@ -126,13 +126,13 @@ export default function SerenestAssistant() {
             <div className="srn-ai-thread" role="log" aria-live="polite">
               <div className="srn-ai-msg srn-ai-msg-assistant">
                 <p className="srn-ai-bubble">
-                  Hi — tell me what you&apos;re trying to do or where you&apos;re stuck. I&apos;ll point you to the right page and clear steps (booking, screening, services, pricing, professionals, Academy). If something looks broken on your device, I&apos;ll suggest quick checks and how to reach our team.
+                  Hi — tell me what you&apos;re trying to do or where you&apos;re stuck. I&apos;ll point you to the right page and clear steps (booking, screening, services, pricing, professionals). If something looks broken on your device, I&apos;ll suggest quick checks and how to reach our team.
                   For emergencies, use local emergency services (e.g. 112 in India).
                 </p>
               </div>
               {guideOnline === false ? (
                 <div className="srn-ai-error" role="status">
-                  Live AI replies are off right now — you can still browse the site, book at /book, WhatsApp +91 7777936367, or email support@serenest.fit.
+                  Live AI replies are off right now — you can still browse the site, book at /book, WhatsApp +91 7777936367, or email support@serenest.in.
                 </div>
               ) : null}
               {messages.map((m, i) => (

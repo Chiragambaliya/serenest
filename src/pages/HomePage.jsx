@@ -42,17 +42,17 @@ const ARRIVE_PATHS = [
   },
   {
     num: '02',
-    title: 'I am a clinician',
-    body: 'Learn beside a working practice. Academy programmes for psychiatrists, therapists, and trainees.',
-    href: '/academy',
-    cta: 'Visit the Academy',
+    title: 'I want to check in first',
+    body: 'Free, private screening (PHQ-9, GAD-7, and more). Educational results — not a diagnosis.',
+    href: '/screening',
+    cta: 'Start a check',
   },
   {
     num: '03',
-    title: 'I represent a team',
-    body: 'Corporate EAP and organisational mental-health support, designed with clinical responsibility.',
-    href: '/corporate',
-    cta: 'Corporate care',
+    title: 'I am ready to book',
+    body: 'Choose a consultation with a psychiatrist or therapist and take the next step.',
+    href: '/book',
+    cta: 'Book an appointment',
   },
 ];
 
@@ -88,8 +88,8 @@ export default function HomePage() {
             Care for the mind, grounded in clinical practice.
           </h1>
           <p className="hp-hero__body">
-            Psychiatry, therapy, addiction support, and professional learning —
-            brought together with clinical responsibility.
+            Psychiatry, therapy, and addiction support — confidential online care
+            with a licensed clinical team.
           </p>
           <div className="hp-hero__actions">
             <HpBtn to="/services" variant="solid-light">Find the right service</HpBtn>
@@ -107,7 +107,7 @@ export default function HomePage() {
           <header className="ed-head hp-arrive__head">
             <span className="ed-head__label">Begin</span>
             <h2 id="home-arrive-title">Tell us how you arrive.</h2>
-            <p>Three doors into Serenest. Choose the one that fits today.</p>
+            <p>Choose the care option that fits your needs today.</p>
           </header>
           <div className="hp-arrive__paths" role="list">
             {ARRIVE_PATHS.map((path) => (
@@ -158,19 +158,19 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="ed-pace ed-band-soft hp-academy" aria-labelledby="home-academy-title">
+      <section className="ed-pace ed-band-soft hp-academy" aria-labelledby="home-check-title">
         <div className="ed-shell hp-academy__grid">
           <header className="ed-head" style={{ marginBottom: 0 }}>
-            <span className="ed-head__label">For professionals</span>
-            <h2 id="home-academy-title">Learning beside a working clinical service.</h2>
+            <span className="ed-head__label">Check in</span>
+            <h2 id="home-check-title">Understand how you have been feeling.</h2>
             <p>
-              Practical education for psychiatrists, therapists, counsellors, and trainees —
-              designed where care actually happens.
+              Validated screening tools for mood, anxiety, stress, and burnout.
+              Private by default — results are educational, not a diagnosis.
             </p>
             <div className="hp-academy__actions">
-              <HpBtn to="/academy" variant="solid">Visit the Academy</HpBtn>
-              <Link className="hp-text-link" to="/professionals">
-                Clinician overview
+              <HpBtn to="/screening" variant="solid">Start a check</HpBtn>
+              <Link className="hp-text-link" to="/book">
+                Or book when you are ready
                 <span aria-hidden="true"> →</span>
               </Link>
             </div>
@@ -178,16 +178,16 @@ export default function HomePage() {
           <aside className="hp-academy__aside">
             <figure className="hp-academy__visual">
               <ImagePlaceholder
-                asset="academy-teaching-room.jpg"
-                direction="Quiet teaching room with books and notes — warm daylight, no people."
-                src="/images/editorial/academy-teaching-room-v1.png"
-                alt="A quiet teaching room with books and notes in warm daylight"
+                asset="home-screening-desk.jpg"
+                direction="Quiet desk in warm daylight — notebook, window, empty chair. No people."
+                src="/images/editorial/psychiatry-consultation-desk-v1.jpg"
+                alt="A quiet consultation desk in warm daylight"
                 loading="lazy"
               />
             </figure>
             <blockquote className="ed-pull hp-pull">
-              <p>“Education is not just information. It is transformation in practice.”</p>
-              <cite>Serenest Academy</cite>
+              <p>“A short check-in can make the next conversation with a clinician clearer.”</p>
+              <cite>Serenest Care</cite>
             </blockquote>
           </aside>
         </div>
@@ -204,7 +204,7 @@ export default function HomePage() {
             <a href="tel:7777936367">7777936367</a>
           </p>
           <div className="hp-hero__actions hp-close__actions">
-            <HpBtn to="/services" variant="ghost-dark">Explore services</HpBtn>
+            <HpBtn to="/screening" variant="ghost-dark">Start a check</HpBtn>
             <HpBtn to="/book" variant="solid-light">Book an appointment</HpBtn>
           </div>
         </div>

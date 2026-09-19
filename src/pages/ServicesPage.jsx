@@ -71,41 +71,6 @@ const CORE_SERVICES = [
   },
 ];
 
-const ACADEMY_SERVICES = [
-  {
-    tag: 'Guides',
-    title: 'Patient guides',
-    body: 'Explainers on depression, anxiety, ADHD, OCD, and help-seeking in India.',
-    features: ['Topic guides and screening explainers', 'Stigma-aware language', 'Paths to book when ready'],
-    href: '/guides',
-    cta: 'View all guides',
-  },
-  {
-    tag: 'Pharmacology',
-    title: 'Clinician pharmacology',
-    body: 'Telemedicine norms, prescribing, and Rx workflow for prescribers and trainees.',
-    features: ['Telemedicine guidelines context', 'SOAP and documentation', 'Continuity of care'],
-    href: '/professionals/learning#learning-pharmacology',
-    cta: 'Pharmacology track',
-  },
-  {
-    tag: 'Psychology',
-    title: 'Clinician psychology',
-    body: 'Assessment tools, psychoeducation, and carer skills on the learning hub.',
-    features: ['PHQ-9 / GAD-7 in practice', 'Psychoeducation modules', 'Stigma-aware communication'],
-    href: '/professionals/learning#learning-psychology',
-    cta: 'Psychology track',
-  },
-  {
-    tag: 'Partnerships',
-    title: 'Schools & workplaces',
-    body: 'Literacy talks, workshops, and outreach through Serenest Academy.',
-    features: ['Programme design for your audience', 'School, college, workplace', 'Pairs with clinical org plans'],
-    href: '/academy#contact',
-    cta: 'Collaborate',
-  },
-];
-
 const ORG_PROGRAMMES = [
   {
     tag: 'Corporate',
@@ -280,51 +245,56 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <section className="svc-section svc-section--cream" id="academy">
+      <section className="svc-section svc-section--cream" id="start">
         <div className="ed-shell ed-aside">
           <div>
-            <p className="ed-aside__label">Serenest Academy</p>
+            <p className="ed-aside__label">If you are unsure</p>
             <p className="ed-aside__note">
-              Educational material sits beside care, but does not replace clinical assessment.
+              Screening and guides help you prepare. They do not replace a clinical assessment.
             </p>
           </div>
           <div>
             <header className="ed-head ed-head--wide">
-              <h2>Literacy and learning — not a substitute for clinical care</h2>
+              <h2>A short check-in, then a clear next step</h2>
               <p>
-                Serenest Education Pvt Ltd publishes guides, clinician tracks, and partnership programmes
-                on the same site as telepsychiatry.
+                Start with a validated screening or a patient guide. When you are ready,
+                book a psychiatrist or therapist.
               </p>
             </header>
-
-            <div className="svc-academy__banner">
-              <div className="svc-academy__copy">
-                <p className="svc-academy__brand">Serenest Academy</p>
-                <p>
-                  Understand symptoms, reduce stigma, and find the right next step. For appointments,
-                  use Book or Screening — Academy content is educational.
-                </p>
-                <div className="svc-academy__actions">
-                  <Link className="btn btn-primary" to="/academy">Explore Academy</Link>
-                  <Link className="btn btn-ghost" to="/academy#guide">Ask Academy Guide</Link>
-                </div>
-              </div>
-            </div>
-
             <div className="ed-index">
-              {ACADEMY_SERVICES.map((item, i) => (
-                <Link key={item.tag} className="ed-index__row" to={item.href}>
-                  <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
-                  <span>
-                    <h3 className="ed-index__title">{item.title}</h3>
-                    <span className="ed-index__meta">{item.tag}</span>
-                  </span>
-                  <p className="ed-index__body">
-                    {item.body} {item.features.join(' · ')}
-                  </p>
-                  <span className="ed-index__go" aria-hidden="true">{item.cta} →</span>
-                </Link>
-              ))}
+              <Link className="ed-index__row" to="/screening">
+                <span className="ed-index__num">01</span>
+                <span>
+                  <h3 className="ed-index__title">Self-screening</h3>
+                  <span className="ed-index__meta">PHQ-9 · GAD-7 · more</span>
+                </span>
+                <p className="ed-index__body">
+                  Educational results, private by default — not a diagnosis.
+                </p>
+                <span className="ed-index__go" aria-hidden="true">Start a check →</span>
+              </Link>
+              <Link className="ed-index__row" to="/guides">
+                <span className="ed-index__num">02</span>
+                <span>
+                  <h3 className="ed-index__title">Patient guides</h3>
+                  <span className="ed-index__meta">Depression · anxiety · ADHD</span>
+                </span>
+                <p className="ed-index__body">
+                  Stigma-aware explainers on common presentations and seeking help in India.
+                </p>
+                <span className="ed-index__go" aria-hidden="true">View guides →</span>
+              </Link>
+              <Link className="ed-index__row" to="/book">
+                <span className="ed-index__num">03</span>
+                <span>
+                  <h3 className="ed-index__title">Book a consultation</h3>
+                  <span className="ed-index__meta">Psychiatry · therapy</span>
+                </span>
+                <p className="ed-index__body">
+                  Choose a clinician, mode, and slot. We confirm by phone or WhatsApp.
+                </p>
+                <span className="ed-index__go" aria-hidden="true">Book now →</span>
+              </Link>
             </div>
           </div>
         </div>

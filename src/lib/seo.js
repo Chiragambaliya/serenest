@@ -3,6 +3,7 @@ import { SCREENING_TOOLS } from './screeningTools.js';
 
 // Production canonical host. Matches the live www-redirect target.
 export const SITE_ORIGIN = 'https://www.serenest.in';
+export const OG_IMAGE = `${SITE_ORIGIN}/og-image.jpg`;
 
 export function canonicalUrl(path = '/') {
   const clean = path === '/' ? '/' : `/${path.replace(/^\/+|\/+$/g, '')}`;
@@ -14,10 +15,10 @@ export const ROUTE_SEO = {
   '/': {
     title: 'Online Psychiatry, Therapy & Wellness in India | Serenest',
     description:
-      "Serenest is India's mental health ecosystem: online psychiatry, therapy, counselling, screening, and de-addiction support with verified professionals.",
-    ogTitle: "Serenest | India's Mental Health Ecosystem",
+      "Serenest is India's clinical telepsychiatry service: online psychiatry, therapy, counselling, screening, and de-addiction support with verified professionals.",
+    ogTitle: 'Serenest | Online Psychiatry & Therapy in India',
     ogDescription:
-      'Online psychiatry, therapy, screening, de-addiction support, and clinician education — verified, private care across India.',
+      'Online psychiatry, therapy, screening, and de-addiction support — verified, private care across India.',
   },
   '/services': {
     title: 'Online Psychiatrist Consultation in India | Video, Audio & Chat',
@@ -116,10 +117,10 @@ export const ROUTE_SEO = {
   '/professionals': {
     title: 'For Mental Health Professionals | Join Serenest | India',
     description:
-      'Join Serenest as a verified clinician. Practice tools, learning resources, and free Serenest Academy access for approved professionals.',
+      'Join Serenest as a verified clinician. Practice tools, clinical resources, and support for approved professionals.',
     ogTitle: 'For Mental Health Professionals | Serenest India',
     ogDescription:
-      'Join Serenest as a verified clinician. Clinical learning, resources, and free Academy access for approved professionals.',
+      'Join Serenest as a verified clinician. Clinical resources and practice support for approved professionals.',
   },
   '/professionals/learning': {
     title: 'Clinical Learning Hub | Psychiatry & Psychology CPD | Serenest',
@@ -1198,6 +1199,11 @@ export function renderSeoHead(pathname, { noindex = false } = {}) {
     `<meta property="og:url" content="${escapeHtmlAttr(canonical)}" />`,
     `<meta property="og:type" content="${ogType}" />`,
     `<meta property="og:site_name" content="Serenest" />`,
+    `<meta property="og:image" content="${escapeHtmlAttr(OG_IMAGE)}" />`,
+    `<meta name="twitter:card" content="summary_large_image" />`,
+    `<meta name="twitter:title" content="${escapeHtmlAttr(seo.ogTitle || seo.title)}" />`,
+    `<meta name="twitter:description" content="${escapeHtmlAttr(seo.ogDescription || seo.description)}" />`,
+    `<meta name="twitter:image" content="${escapeHtmlAttr(OG_IMAGE)}" />`,
   ];
 
   if (noindex) {

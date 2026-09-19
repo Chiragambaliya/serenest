@@ -35,18 +35,6 @@ export const SITE_GUIDE_ROUTES = [
 
   { path: '/blog', label: 'Articles and explainers' },
 
-  { path: '/academy', label: 'Serenest Academy — literacy, learning, partnerships' },
-
-  { path: '/academy/program/clinical-excellence', label: 'Clinical Excellence — flagship course for practicing mental health professionals (free for Serenest pros)' },
-
-  { path: '/academy#tracks', label: 'Academy programmes (pharmacology & psychology overview)' },
-
-  { path: '/academy/learn', label: 'Academy learning hub (clinician tracks)' },
-
-  { path: '/academy/learn#learning-pharmacology', label: 'Pharmacology learning track' },
-
-  { path: '/academy/learn#learning-psychology', label: 'Psychology learning track' },
-
   { path: '/professionals', label: 'For clinicians — join or partner' },
 
   { path: '/professionals/resources', label: 'Professional resources and downloads' },
