@@ -1,6 +1,17 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PrescriptionDocument from '../components/PrescriptionDocument';
+import {
+  telHref,
+  waMeUrl,
+  waMePatientUrl,
+  screeningCallbackMessage,
+  contactReplyMessage,
+  searchAdminRecords,
+  rankBookingStatus,
+  isUnassignedActive,
+  screeningHasSafetyFlag,
+} from '../lib/adminOps';
 
 // ── API helper ──────────────────────────────────────────────────────────────
 const BASE = import.meta.env.VITE_API_URL ?? '';
@@ -114,7 +125,7 @@ function fmtDate(dateStr) {
 const TAB_GROUPS = [
   {
     label: null,
-    items: [{ id: 'overview', label: 'Overview', icon: '◈' }],
+    items: [{ id: 'overview', label: 'Command', icon: '◈' }],
   },
   {
     label: 'Patients',
@@ -167,14 +178,14 @@ const TAB_ICONS = {
 };
 
 const TAB_HELP = {
-  overview: 'Quick KPI view and shortcuts to each workflow.',
+  overview: 'Patient operations — pending requests, callbacks, and convert today.',
   traffic: 'Who is visiting — visit counts, top pages, referrers, and devices (anonymous analytics).',
   website: 'Every public route — open in a new tab, copy links for QA or campaigns, ping API health.',
-  bookings: 'Search bookings, update status, and manage patient requests.',
+  bookings: 'Call, WhatsApp, confirm, and assign a clinician. Live-refreshes every 20s.',
   professionals: 'View approved professionals and update their profiles.',
   applications: 'Review professional onboarding applications.',
   hr: 'Manage job applications, postings, interviews, and offers.',
-  messages: 'Read incoming contact/enquiry messages.',
+  messages: 'Read incoming contact/enquiry messages — call or WhatsApp from the row.',
   screenings: 'Review self-screening submissions and callback leads.',
   subscribers: 'People who opted in to email updates — export and reach out.',
   signups: 'View and export waitlist signups.',
@@ -302,7 +313,10 @@ export default function AdminPage() {
   const [bookingBusyId, setBookingBusyId] = useState(null);
   const [editPro, setEditPro]         = useState(null);
   const [editProData, setEditProData] = useState({});
-  const [assignBooking, setAssignBooking] = useState(null);
+  const [assignModal, setAssignModal] = useState(null); // { type:'professional', professional } | { type:'booking', booking }
+  const [commandQuery, setCommandQuery] = useState('');
+  const [lastSyncedAt, setLastSyncedAt] = useState(null);
+  const busyUiRef = useRef(false);
   const [prescribeBooking, setPrescribeBooking] = useState(null);
   const [rxForm, setRxForm] = useState(null);
   const [rxSaving, setRxSaving] = useState(false);
@@ -343,10 +357,13 @@ export default function AdminPage() {
   const authed = Boolean(secret);
 
   // ── fetch helpers ──────────────────────────────────────────
-  const load = useCallback(async (which = 'all') => {
+  const load = useCallback(async (which = 'all', opts = {}) => {
     if (!secret) return;
-    setLoading(true);
-    setError(null);
+    const silent = Boolean(opts.silent);
+    if (!silent) {
+      setLoading(true);
+      setError(null);
+    }
 
     const errors = [];
     const safe = async (fn) => {
@@ -415,13 +432,41 @@ export default function AdminPage() {
       }),
     ].filter(Boolean));
 
-    if (errors.length) setError([...new Set(errors)].join(' · '));
-    setLoading(false);
+    if (errors.length && !silent) setError([...new Set(errors)].join(' · '));
+    setLastSyncedAt(Date.now());
+    if (!silent) setLoading(false);
   }, [secret]);
 
   useEffect(() => {
     if (authed) load('all');
   }, [authed, load]);
+
+  // Silent poll so a new request-first booking shows up without a refresh.
+  useEffect(() => {
+    if (!authed) return;
+    const pollTabs = new Set(['overview', 'bookings', 'messages', 'screenings']);
+    const id = window.setInterval(() => {
+      if (document.hidden) return;
+      if (busyUiRef.current) return;
+      if (!pollTabs.has(tab)) return;
+      load('all', { silent: true });
+    }, 20000);
+    return () => window.clearInterval(id);
+  }, [authed, load, tab]);
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === '/' && !e.metaKey && !e.ctrlKey && !e.altKey) {
+        const tag = (document.activeElement?.tagName || '').toLowerCase();
+        if (tag === 'input' || tag === 'textarea') return;
+        e.preventDefault();
+        document.getElementById('admin-command')?.focus();
+      }
+      if (e.key === 'Escape') setCommandQuery('');
+    }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   // Lead-pipeline health check — warns when a channel that captures or alerts
   // on leads is unconfigured in production.
@@ -657,7 +702,8 @@ export default function AdminPage() {
       });
       setBookings((prev) => prev.map((b) => b.id === bookingId
         ? { ...b, professional_id: professionalId, status: 'confirmed' } : b));
-      setAssignBooking(null);
+      setAssignModal(null);
+      load('stats');
     } catch (e) { setError(e.message); }
   }
 
@@ -937,6 +983,46 @@ export default function AdminPage() {
     return map;
   }, [prescriptions]);
 
+  const professionalsById = useMemo(() => {
+    const map = {};
+    for (const p of professionals) map[p.id] = p;
+    return map;
+  }, [professionals]);
+
+  const pendingBookingsList = useMemo(
+    () => bookings.filter((b) => b.status === 'pending'),
+    [bookings],
+  );
+  const unassignedConfirmedList = useMemo(
+    () => bookings.filter((b) => b.status === 'confirmed' && !b.professional_id),
+    [bookings],
+  );
+  const unreadMessageCount = useMemo(
+    () => messages.filter((m) => !readMsgIds.has(m.id)).length,
+    [messages, readMsgIds],
+  );
+  const callbackScreeningsList = useMemo(
+    () => screenings.filter((s) => s.wants_callback),
+    [screenings],
+  );
+  const safetyScreeningsList = useMemo(
+    () => screenings.filter((s) => screeningHasSafetyFlag(s)),
+    [screenings],
+  );
+
+  const commandHits = useMemo(
+    () => searchAdminRecords({
+      query: commandQuery,
+      bookings,
+      messages,
+      screenings,
+      professionals,
+    }),
+    [commandQuery, bookings, messages, screenings, professionals],
+  );
+
+  const livePolling = tab === 'overview' || tab === 'bookings' || tab === 'messages' || tab === 'screenings';
+
   function openPastRx(rx) {
     const booking = rx.booking || {
       id: rx.appointment_id,
@@ -1145,8 +1231,8 @@ export default function AdminPage() {
         <div className="admin-login-card">
           <div className="admin-login-head">
             <div className="admin-login-mark">🛡</div>
-            <h1>Admin Panel</h1>
-            <p>Enter your admin secret to continue</p>
+            <h1>Operations</h1>
+            <p>Patient inbox — confirm requests, call, assign clinicians</p>
           </div>
 
           <form onSubmit={handleLogin} className="admin-login-form">
@@ -1176,7 +1262,26 @@ export default function AdminPage() {
 
   // ── dashboard ──────────────────────────────────────────────
   const activeTabLabel = TABS.find((t) => t.id === tab)?.label ?? 'Dashboard';
-  const anyModalOpen = Boolean(prescribeBooking || assignBooking || scheduleFor || offerFor);
+  const anyModalOpen = Boolean(prescribeBooking || assignModal || scheduleFor || offerFor);
+  busyUiRef.current = anyModalOpen || loading;
+
+  function renderBookingOps(b, variant = 'full') {
+    return (
+      <BookingOpsActions
+        booking={b}
+        busy={bookingBusyId === b.id}
+        clinician={b.professional_id ? professionalsById[b.professional_id] : null}
+        rx={rxByAppointmentId[b.id]}
+        variant={variant}
+        onConfirm={() => updateBookingStatus(b.id, 'confirmed')}
+        onComplete={() => updateBookingStatus(b.id, 'completed')}
+        onCancel={() => updateBookingStatus(b.id, 'cancelled')}
+        onAssign={() => setAssignModal({ type: 'booking', booking: b })}
+        onPrescribe={() => openPrescribe(b)}
+        onDelete={() => { if (window.confirm(`Delete booking for ${b.patient_name}? This cannot be undone.`)) deleteBooking(b.id); }}
+      />
+    );
+  }
 
   return (
     <div className={`admin-page admin-dashboard${anyModalOpen ? ' has-modal' : ''}`}>
@@ -1219,7 +1324,9 @@ export default function AdminPage() {
                     onClick={() => { setTab(t.id); if (t.id !== 'overview') load(t.id); setMobileSidebarOpen(false); }}
                   >
                     <span className="admin-nav-label">{t.label}</span>
-                    {t.id === 'bookings'      && stats?.pending_bookings     > 0 && <Pill n={stats.pending_bookings} />}
+                    {t.id === 'bookings'      && (stats?.pending_bookings || pendingBookingsList.length) > 0 && <Pill n={stats?.pending_bookings || pendingBookingsList.length} />}
+                    {t.id === 'messages'      && unreadMessageCount > 0 && <Pill n={unreadMessageCount} />}
+                    {t.id === 'screenings'    && (callbackScreeningsList.length + safetyScreeningsList.length) > 0 && <Pill n={callbackScreeningsList.length + safetyScreeningsList.length} color="#dc3545" />}
                     {t.id === 'professionals' && stats?.active_professionals > 0 && <Pill n={stats.active_professionals} color="#198754" />}
                     {t.id === 'applications'  && stats?.pending_applications > 0 && <Pill n={stats.pending_applications} />}
                     {t.id === 'hr'            && stats?.new_jobs             > 0 && <Pill n={stats.new_jobs} />}
@@ -1259,8 +1366,49 @@ export default function AdminPage() {
                 <p className="admin-topbar-help">{TAB_HELP[tab]}</p>
               </div>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
-              <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)', display: 'none' }} id="adm-clock" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+              <div className="admin-command">
+                <input
+                  id="admin-command"
+                  className="admin-command-input"
+                  value={commandQuery}
+                  onChange={(e) => setCommandQuery(e.target.value)}
+                  placeholder="Jump to a patient…  /"
+                  autoComplete="off"
+                />
+                {commandQuery.trim().length >= 2 && (
+                  <div className="admin-command-hits" role="listbox">
+                    {commandHits.length === 0 ? (
+                      <div className="admin-command-hit" style={{ cursor: 'default' }}>No matches</div>
+                    ) : commandHits.map((hit) => (
+                      <button
+                        key={`${hit.kind}-${hit.id}`}
+                        type="button"
+                        className="admin-command-hit"
+                        onClick={() => {
+                          setTab(hit.tab);
+                          if (hit.tab === 'bookings') {
+                            setBookingSearch(hit.title);
+                            setBookingFilter('all');
+                          }
+                          setCommandQuery('');
+                          load(hit.tab === 'overview' ? 'all' : hit.tab);
+                        }}
+                      >
+                        <div className="admin-command-hit-kind">{hit.kind}</div>
+                        <strong>{hit.title}</strong>
+                        <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{hit.sub}</div>
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              {lastSyncedAt && (
+                <span className="admin-live-meta">
+                  {livePolling && <span className="admin-live-dot" aria-hidden="true" />}
+                  {livePolling ? 'Live' : 'Updated'} {new Date(lastSyncedAt).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              )}
               <button
                 type="button"
                 onClick={() => load(tab === 'overview' ? 'all' : tab)}
@@ -1289,30 +1437,127 @@ export default function AdminPage() {
               </div>
             )}
 
-            {/* ── OVERVIEW ── */}
+            {/* ── COMMAND CENTER ── */}
         {tab === 'overview' && (
           <div>
-            <h2 style={{ fontWeight: 800, fontSize: '1.3rem', marginBottom: '1rem', letterSpacing: '-0.02em', color: 'var(--text)' }}>Dashboard Overview</h2>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-              <StatCard label="Total Bookings"      value={stats?.bookings}           sub={`${stats?.pending_bookings ?? 0} pending`} />
-              <StatCard label="Active Professionals" value={stats?.active_professionals} sub="approved & onboarded" color="var(--brand-600)" />
-              <StatCard label="Prof. Applications" value={stats?.applications}  sub={`${stats?.pending_applications ?? 0} pending`} color="var(--brand-700)" />
-              <StatCard label="Job Applications"   value={stats?.jobs}          sub={`${stats?.new_jobs ?? 0} new`} color="#e67e22" />
-              <StatCard label="Contact Messages"   value={stats?.messages}      color="#6f42c1" />
-              <StatCard label="Waitlist Signups"   value={stats?.signups}       color="#0d6efd" />
+            <h2 style={{ fontWeight: 800, fontSize: '1.3rem', marginBottom: 6, letterSpacing: '-0.02em', color: 'var(--text)' }}>Patient command center</h2>
+            <p style={{ fontSize: '0.88rem', color: 'var(--text-muted)', margin: '0 0 1rem', maxWidth: 720 }}>
+              Convert request-first bookings: call or WhatsApp, confirm the slot, then assign a clinician. Payment happens after you confirm.
+            </p>
+
+            <div className="admin-health-chips">
+              <HealthChip ok={health ? health.db === 'connected' : null} label="Database" okText="Connected" badText="Not connected" />
+              <HealthChip ok={health ? health.notifications === 'enabled' : null} label="Team email" okText="On" badText="Off" />
+              <HealthChip ok={health ? health.patient_email === 'enabled' : null} label="Patient email" okText="On" badText="Off" />
+              <HealthChip ok={health ? health.team_whatsapp === 'enabled' : null} label="WhatsApp alerts" okText="On" badText="Off" />
+              <HealthChip ok={health ? health.analytics === 'enabled' : null} label="GA4" okText="On" badText="Off" />
+              <span className={`admin-health-chip ${!health ? '' : health.payments === 'enabled' ? 'is-bad' : 'is-info'}`}>
+                Payments {!health ? '…' : health.payments === 'enabled' ? 'charging at booking' : 'request-first'}
+              </span>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+            <div className="admin-queue-grid">
+              <button type="button" className={`admin-queue-card ${pendingBookingsList.length ? 'is-urgent' : ''}`} style={{ borderTopColor: '#f59e0b' }} onClick={() => { setTab('bookings'); setBookingFilter('pending'); }}>
+                <span className="admin-queue-card-label">Pending requests</span>
+                <span className="admin-queue-card-value" style={{ color: '#b45309' }}>{pendingBookingsList.length || stats?.pending_bookings || 0}</span>
+                <span className="admin-queue-card-sub">Need confirm + assign</span>
+              </button>
+              <button type="button" className="admin-queue-card" style={{ borderTopColor: '#0d6efd' }} onClick={() => { setTab('bookings'); setBookingFilter('unassigned'); }}>
+                <span className="admin-queue-card-label">Unassigned confirmed</span>
+                <span className="admin-queue-card-value" style={{ color: '#0d6efd' }}>{unassignedConfirmedList.length || stats?.confirmed_unassigned || 0}</span>
+                <span className="admin-queue-card-sub">Confirmed, no clinician</span>
+              </button>
+              <button type="button" className={`admin-queue-card ${unreadMessageCount ? 'is-urgent' : ''}`} style={{ borderTopColor: '#6f42c1' }} onClick={() => setTab('messages')}>
+                <span className="admin-queue-card-label">Unread inbox</span>
+                <span className="admin-queue-card-value" style={{ color: '#6f42c1' }}>{unreadMessageCount}</span>
+                <span className="admin-queue-card-sub">{messages.length} total messages</span>
+              </button>
+              <button type="button" className={`admin-queue-card ${callbackScreeningsList.length ? 'is-urgent' : ''}`} style={{ borderTopColor: '#198754' }} onClick={() => setTab('screenings')}>
+                <span className="admin-queue-card-label">Callback check-ins</span>
+                <span className="admin-queue-card-value" style={{ color: '#198754' }}>{callbackScreeningsList.length || stats?.screening_callbacks || 0}</span>
+                <span className="admin-queue-card-sub">Asked to be called</span>
+              </button>
+              <button type="button" className={`admin-queue-card ${safetyScreeningsList.length ? 'is-urgent' : ''}`} style={{ borderTopColor: '#dc3545' }} onClick={() => setTab('screenings')}>
+                <span className="admin-queue-card-label">Safety flags</span>
+                <span className="admin-queue-card-value" style={{ color: '#dc3545' }}>{safetyScreeningsList.length}</span>
+                <span className="admin-queue-card-sub">PHQ-9 item 9</span>
+              </button>
+              <button type="button" className="admin-queue-card" style={{ borderTopColor: 'var(--brand-600)' }} onClick={() => setTab('professionals')}>
+                <span className="admin-queue-card-label">Clinicians ready</span>
+                <span className="admin-queue-card-value" style={{ color: 'var(--brand-600)' }}>{professionals.length || stats?.active_professionals || 0}</span>
+                <span className="admin-queue-card-sub">Assign from a request</span>
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
+              <h3 style={{ fontSize: '0.95rem', fontWeight: 800, margin: 0 }}>Inbox — act now</h3>
+              <button type="button" className="btn btn-ghost btn-sm" onClick={() => { setTab('bookings'); setBookingFilter('pending'); }}>All bookings →</button>
+            </div>
+
+            {pendingBookingsList.length === 0 && callbackScreeningsList.length === 0 && unreadMessageCount === 0 ? (
+              <EmptyState icon="✅" text="No pending patient requests. New bookings appear here automatically." />
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: '1.5rem' }}>
+                {pendingBookingsList.slice(0, 8).map((b) => {
+                  const clinician = b.professional_id ? professionalsById[b.professional_id] : null;
+                  return (
+                    <article key={b.id} className="admin-inbox-row is-pending">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
+                        <div>
+                          <strong>{b.patient_name}</strong>
+                          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                            {b.practitioner_type} · {b.mode} · {fmtDate(b.preferred_date)} {b.preferred_time}
+                            {clinician ? ` · ${clinician.full_name}` : ' · unassigned'}
+                          </div>
+                          {b.notes ? <div className="admin-booking-notes" style={{ marginTop: 6 }}>{b.notes}</div> : null}
+                        </div>
+                        <Badge status={b.status} />
+                      </div>
+                      {b._fallback ? <div style={{ fontSize: '0.72rem', color: '#856404', fontWeight: 700 }}>Saved to file inbox — database was unavailable</div> : null}
+                      {renderBookingOps(b, 'queue')}
+                    </article>
+                  );
+                })}
+                {callbackScreeningsList.slice(0, 4).map((s) => (
+                  <article key={s.id} className={`admin-inbox-row ${screeningHasSafetyFlag(s) ? 'is-safety' : ''}`}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
+                      <div>
+                        <strong>{s.name || 'Anonymous check-in'}</strong>
+                        {s.wants_callback && <span style={{ marginLeft: 8, background: '#fff3cd', color: '#856404', padding: '1px 7px', borderRadius: 99, fontSize: '0.65rem', fontWeight: 700 }}>Callback</span>}
+                        {screeningHasSafetyFlag(s) && <span style={{ marginLeft: 6, background: '#dc3545', color: '#fff', padding: '1px 7px', borderRadius: 99, fontSize: '0.65rem', fontWeight: 800 }}>Safety</span>}
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 2 }}>
+                          PHQ-9 {s.phq9_score ?? '—'} · GAD-7 {s.gad7_score ?? '—'} · {fmt(s.created_at)}
+                        </div>
+                      </div>
+                    </div>
+                    <LeadContactLinks phone={s.phone} email={s.email} waText={screeningCallbackMessage(s)} />
+                  </article>
+                ))}
+                {messages.filter((m) => !readMsgIds.has(m.id)).slice(0, 3).map((m) => (
+                  <article key={m.id} className="admin-inbox-row">
+                    <div>
+                      <strong>{m.name}</strong>
+                      <span style={{ marginLeft: 8, fontSize: '0.8rem', color: 'var(--text-muted)' }}>{m.subject || 'Message'}</span>
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 2 }}>{fmt(m.created_at)}</div>
+                    </div>
+                    <div className="admin-ops-actions">
+                      <LeadContactLinks phone={m.phone} email={m.email} waText={contactReplyMessage(m)} />
+                      <ActionBtn label="✓ Read" onClick={() => markMessageRead(m.id)} color="var(--brand-600)" />
+                    </div>
+                  </article>
+                ))}
+              </div>
+            )}
+
+            <h3 style={{ fontSize: '0.95rem', fontWeight: 800, margin: '0 0 10px' }}>More</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '0.75rem' }}>
               {[
-                { id: 'bookings',      icon: '📅', label: 'Manage Bookings',        desc: 'View, confirm & assign appointments' },
-                { id: 'prescriptions', icon: '📋', label: 'Past prescriptions',     desc: 'View, reopen, resend issued Rx' },
-                { id: 'professionals', icon: '🩺', label: 'Professionals',          desc: 'Manage psychiatrists, psychologists & therapists' },
-                { id: 'applications',  icon: '👩‍⚕️', label: 'Applications',          desc: 'Approve or reject professional sign-ups' },
-                { id: 'hr',            icon: '🧑‍💼', label: 'HR / Hiring',           desc: 'Review and manage job applications' },
-                { id: 'messages',      icon: '💬', label: 'Contact Messages',       desc: 'Read enquiries from patients & orgs' },
-                { id: 'screenings',    icon: '🧠', label: 'Screenings',             desc: 'PHQ-9 / GAD-7 exports & safety flags' },
-                { id: 'signups',       icon: '📋', label: 'Waitlist',               desc: 'People who signed up before launch' },
-                { id: 'website',       icon: '🌐', label: 'Website & pages',        desc: 'Every route — open, copy links, health check' },
+                { id: 'bookings',      icon: '📅', label: 'All bookings',     desc: 'Confirm, assign, room, Rx' },
+                { id: 'prescriptions', icon: '📋', label: 'Past prescriptions', desc: 'View, reopen, resend issued Rx' },
+                { id: 'professionals', icon: '🩺', label: 'Clinicians',       desc: 'Roster, fees, WhatsApp invite' },
+                { id: 'applications',  icon: '👩‍⚕️', label: 'Applications',     desc: 'Approve professional sign-ups' },
+                { id: 'hr',            icon: '🧑‍💼', label: 'HR / Hiring',      desc: 'Jobs, interviews, offers' },
+                { id: 'website',       icon: '🌐', label: 'Website & pages',  desc: 'Open routes, copy campaign links' },
               ].map((item) => (
                 <button
                   key={item.id}
@@ -1325,17 +1570,16 @@ export default function AdminPage() {
                     background: 'var(--surface)',
                     border: '1px solid var(--border)',
                     borderRadius: 12,
-                    padding: '1.25rem 1.5rem',
+                    padding: '1rem 1.15rem',
                     textAlign: 'left',
                     cursor: 'pointer',
-                    transition: 'box-shadow 0.15s',
                     display: 'flex', alignItems: 'flex-start', gap: 12,
                   }}
                 >
-                  <span style={{ fontSize: '1.5rem' }}>{item.icon}</span>
+                  <span style={{ fontSize: '1.25rem' }}>{item.icon}</span>
                   <div>
                     <div style={{ fontWeight: 700, marginBottom: 2 }}>{item.label}</div>
-                    <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>{item.desc}</div>
+                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{item.desc}</div>
                   </div>
                 </button>
               ))}
@@ -1607,7 +1851,7 @@ export default function AdminPage() {
                 }}
               />
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
-                {['all', 'pending', 'confirmed', 'completed', 'cancelled'].map((s) => (
+                {['all', 'pending', 'unassigned', 'confirmed', 'completed', 'cancelled'].map((s) => (
                   <button
                     key={s}
                     onClick={() => setBookingFilter(s)}
@@ -1631,17 +1875,26 @@ export default function AdminPage() {
             {(() => {
               const q = bookingSearch.trim().toLowerCase();
               const filteredBookings = bookings.filter((b) => {
-                const statusOk = bookingFilter === 'all' ? true : b.status === bookingFilter;
+                const statusOk = bookingFilter === 'all'
+                  ? true
+                  : bookingFilter === 'unassigned'
+                    ? isUnassignedActive(b)
+                    : b.status === bookingFilter;
                 if (!statusOk) return false;
                 if (!q) return true;
                 const hay = [
                   b.patient_name, b.patient_phone, b.patient_email,
-                  b.practitioner_type, b.mode, b.preferred_time,
+                  b.practitioner_type, b.mode, b.preferred_time, b.notes,
+                  b.professional_id ? professionalsById[b.professional_id]?.full_name : '',
                 ]
                   .filter(Boolean)
                   .join(' ')
                   .toLowerCase();
                 return hay.includes(q);
+              }).sort((a, b) => {
+                const d = rankBookingStatus(a.status) - rankBookingStatus(b.status);
+                if (d) return d;
+                return new Date(b.created_at) - new Date(a.created_at);
               });
 
               return filteredBookings.length === 0 ? (
@@ -1664,6 +1917,11 @@ export default function AdminPage() {
                       </div>
                       <div style={{ textAlign: 'right' }}>
                         <Badge status={b.status} />
+                        {b._fallback && (
+                          <div style={{ marginTop: 4, background: '#fff3cd', color: '#856404', padding: '2px 8px', borderRadius: 99, fontSize: '0.68rem', fontWeight: 700 }}>
+                            File inbox
+                          </div>
+                        )}
                         {b.payment_status === 'paid' && (
                           <div style={{ marginTop: 4, background: '#d1e7dd', color: '#0a3622', padding: '2px 8px', borderRadius: 99, fontSize: '0.68rem', fontWeight: 700 }}>
                             ✓ Paid{b.amount_paid ? ` ₹${b.amount_paid}` : ''}
@@ -1674,34 +1932,18 @@ export default function AdminPage() {
                     <div className="admin-booking-card-meta">
                       {b.practitioner_type} · {b.mode}<br />
                       {fmtDate(b.preferred_date)} · {b.preferred_time}
+                      {b.professional_id && professionalsById[b.professional_id]
+                        ? <> · {professionalsById[b.professional_id].full_name}</>
+                        : <> · <span style={{ color: '#b45309', fontWeight: 700 }}>Unassigned</span></>}
                       {rxByAppointmentId[b.id] && (
                         <> · <span style={{ fontWeight: 700, color: rxByAppointmentId[b.id].is_locked ? '#5b2a86' : '#856404' }}>
                           {rxByAppointmentId[b.id].is_locked ? 'Rx locked' : 'Rx draft'}
                         </span></>
                       )}
                     </div>
+                    {b.notes ? <div className="admin-booking-notes">{b.notes}</div> : null}
                     <div className="admin-booking-card-actions">
-                      {b.status === 'pending'   && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Confirm'}  onClick={() => updateBookingStatus(b.id, 'confirmed')}  color="#198754" disabled={bookingBusyId === b.id} />}
-                      {b.status !== 'completed' && b.status !== 'cancelled' && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Complete'} onClick={() => updateBookingStatus(b.id, 'completed')} color="#0d6efd" disabled={bookingBusyId === b.id} />}
-                      {b.status !== 'cancelled' && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Cancel'}   onClick={() => updateBookingStatus(b.id, 'cancelled')}  color="#dc3545" disabled={bookingBusyId === b.id} />}
-                      {b.status === 'confirmed' && (
-                        <Link to={`/consultation/${b.id}?mode=${b.mode}`} target="_blank" className="btn btn-sm btn-ghost">
-                          🎥 Room
-                        </Link>
-                      )}
-                      {(b.status === 'confirmed' || b.status === 'completed') && (
-                        <ActionBtn
-                          label={rxByAppointmentId[b.id]?.is_locked ? '📋 View Rx' : rxByAppointmentId[b.id] ? '📋 Edit Rx' : '📋 Issue Rx'}
-                          onClick={() => openPrescribe(b)}
-                          color="#6f42c1"
-                        />
-                      )}
-                      <ActionBtn
-                        label="🗑 Delete"
-                        onClick={() => { if (window.confirm(`Delete booking for ${b.patient_name}? This cannot be undone.`)) deleteBooking(b.id); }}
-                        color="#6c757d"
-                        disabled={bookingBusyId === b.id}
-                      />
+                      {renderBookingOps(b, 'full')}
                     </div>
                   </article>
                 ))}
@@ -1712,7 +1954,7 @@ export default function AdminPage() {
                 <table style={tableStyle}>
                   <thead>
                     <tr>
-                      {['Patient', 'Type', 'Mode', 'Date', 'Status', 'Actions'].map((h) => (
+                      {['Patient', 'Type', 'Clinician', 'Date', 'Status', 'Actions'].map((h) => (
                         <th key={h} style={thStyle}>{h}</th>
                       ))}
                     </tr>
@@ -1724,12 +1966,22 @@ export default function AdminPage() {
                           <strong>{b.patient_name}</strong><br />
                           <small style={{ color: 'var(--text-muted)' }}>{b.patient_phone}{b.patient_email ? ` · ${b.patient_email}` : ''}</small><br />
                           <small style={{ color: 'var(--text-muted)' }}>{fmt(b.created_at)}</small>
+                          {b.notes ? <div className="admin-booking-notes" style={{ marginTop: 6 }}>{b.notes}</div> : null}
                         </td>
-                        <td style={tdStyle}>{b.practitioner_type}</td>
-                        <td style={tdStyle}>{b.mode}</td>
+                        <td style={tdStyle}>{b.practitioner_type}<br /><small>{b.mode}</small></td>
+                        <td style={tdStyle}>
+                          {b.professional_id && professionalsById[b.professional_id]
+                            ? professionalsById[b.professional_id].full_name
+                            : <span style={{ color: '#b45309', fontWeight: 700 }}>Unassigned</span>}
+                        </td>
                         <td style={tdStyle}>{fmtDate(b.preferred_date)}<br /><small>{b.preferred_time}</small></td>
                         <td style={tdStyle}>
                           <Badge status={b.status} />
+                          {b._fallback && (
+                            <span style={{ display: 'inline-block', marginTop: 4, marginLeft: 4, background: '#fff3cd', color: '#856404', padding: '1px 8px', borderRadius: 99, fontSize: '0.68rem', fontWeight: 700 }}>
+                              File inbox
+                            </span>
+                          )}
                           {b.payment_status === 'paid' && (
                             <span style={{ display: 'inline-block', marginTop: 4, background: '#d1e7dd', color: '#0a3622', padding: '1px 8px', borderRadius: 99, fontSize: '0.68rem', fontWeight: 700 }}>
                               ✓ Paid{b.amount_paid ? ` ₹${b.amount_paid}` : ''}
@@ -1747,29 +1999,7 @@ export default function AdminPage() {
                           )}
                         </td>
                         <td style={tdStyle}>
-                          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
-                            {b.status === 'pending'   && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Confirm'}  onClick={() => updateBookingStatus(b.id, 'confirmed')}  color="#198754" disabled={bookingBusyId === b.id} />}
-                            {b.status !== 'completed' && b.status !== 'cancelled' && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Complete'} onClick={() => updateBookingStatus(b.id, 'completed')} color="#0d6efd" disabled={bookingBusyId === b.id} />}
-                            {b.status !== 'cancelled' && <ActionBtn label={bookingBusyId === b.id ? 'Updating…' : 'Cancel'}   onClick={() => updateBookingStatus(b.id, 'cancelled')}  color="#dc3545" disabled={bookingBusyId === b.id} />}
-                            {b.status === 'confirmed' && (
-                              <Link to={`/consultation/${b.id}?mode=${b.mode}`} target="_blank" className="btn btn-sm btn-ghost" style={{ fontSize: '0.75rem' }}>
-                                🎥 Room
-                              </Link>
-                            )}
-                            {(b.status === 'confirmed' || b.status === 'completed') && (
-                              <ActionBtn
-                                label={rxByAppointmentId[b.id]?.is_locked ? '📋 View Rx' : rxByAppointmentId[b.id] ? '📋 Edit Rx' : '📋 Issue Rx'}
-                                onClick={() => openPrescribe(b)}
-                                color="#6f42c1"
-                              />
-                            )}
-                            <ActionBtn
-                              label="🗑"
-                              onClick={() => { if (window.confirm(`Delete booking for ${b.patient_name}? This cannot be undone.`)) deleteBooking(b.id); }}
-                              color="#6c757d"
-                              disabled={bookingBusyId === b.id}
-                            />
-                          </div>
+                          {renderBookingOps(b, 'full')}
                         </td>
                       </tr>
                     ))}
@@ -2348,7 +2578,7 @@ export default function AdminPage() {
                           {!isEditing ? (
                             <>
                               <ActionBtn label="Edit Profile" onClick={() => { setEditPro(p.id); setEditProData({}); }} color="var(--brand-600)" />
-                              <ActionBtn label="Assign to Booking" onClick={() => setAssignBooking(p)} color="#0d6efd" />
+                              <ActionBtn label="Assign to Booking" onClick={() => setAssignModal({ type: 'professional', professional: p })} color="#0d6efd" />
                               <ActionBtn label="Deactivate" onClick={() => { if (window.confirm(`Deactivate ${p.full_name}?`)) deactivateProfessional(p.id); }} color="#dc3545" />
                             </>
                           ) : (
@@ -2361,36 +2591,6 @@ export default function AdminPage() {
                       </div>
                     );
                   })}
-                </div>
-              )}
-
-              {/* Assign to booking modal */}
-              {assignBooking && (
-                <div className="admin-modal-overlay" style={{
-                  position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1300,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem',
-                }}>
-                  <div className="admin-modal-panel" style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.5rem', maxWidth: 480, width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
-                    <h3 style={{ fontWeight: 800, marginBottom: '0.5rem' }}>Assign {assignBooking.full_name}</h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Select a pending booking to assign this professional to:</p>
-                    {bookings.filter((b) => b.status === 'pending').length === 0 ? (
-                      <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>No pending bookings to assign.</p>
-                    ) : (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                        {bookings.filter((b) => b.status === 'pending').map((b) => (
-                          <button key={b.id} onClick={() => assignProfessional(b.id, assignBooking.id)} style={{
-                            background: 'var(--bg)', border: '1px solid var(--border)',
-                            borderRadius: 8, padding: '10px 12px', textAlign: 'left', cursor: 'pointer',
-                            transition: 'border-color 0.15s',
-                          }}>
-                            <strong>{b.patient_name}</strong>
-                            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginLeft: 8 }}>{b.practitioner_type} · {b.mode} · {fmtDate(b.preferred_date)} {b.preferred_time}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                    <button onClick={() => setAssignBooking(null)} className="btn btn-ghost btn-sm" style={{ marginTop: '1rem' }}>Close</button>
-                  </div>
                 </div>
               )}
             </div>
@@ -2933,8 +3133,9 @@ export default function AdminPage() {
                           {m.email && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{m.email}</span>}
                           {m.phone && <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{m.phone}</span>}
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                           <small style={{ color: 'var(--text-muted)' }}>{fmt(m.created_at)}</small>
+                          <LeadContactLinks phone={m.phone} email={m.email} waText={contactReplyMessage(m)} />
                           {m.email && (
                             <a
                               href={`mailto:${m.email}?subject=Re: ${encodeURIComponent(m.subject || 'Your enquiry to Serenest')}`}
@@ -3059,20 +3260,7 @@ export default function AdminPage() {
                       </div>
 
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        {s.phone && (
-                          <a
-                            href={`https://wa.me/91${s.phone}?text=${encodeURIComponent(`Hi ${s.name ? s.name.split(' ')[0] : 'there'}, this is Serenest reaching out about your recent self-screening. Would you like to talk to one of our professionals?`)}`}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="btn btn-sm"
-                            style={{ background: '#25D366', color: '#fff', borderColor: '#25D366', fontSize: '0.8rem' }}
-                          >
-                            💬 WhatsApp
-                          </a>
-                        )}
-                        {s.phone && (
-                          <a href={`tel:${s.phone}`} className="btn btn-sm btn-ghost" style={{ fontSize: '0.8rem' }}>📞 Call</a>
-                        )}
+                        <LeadContactLinks phone={s.phone} email={s.email} waText={screeningCallbackMessage(s)} />
                       </div>
 
                       {s.optional_screenings && typeof s.optional_screenings === 'object' && (
@@ -3208,6 +3396,72 @@ export default function AdminPage() {
         </div>
       </div>
 
+      {assignModal?.type === 'professional' && (
+        <div className="admin-modal-overlay" style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1300,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem',
+        }}>
+          <div className="admin-modal-panel" style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.5rem', maxWidth: 480, width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+            <h3 style={{ fontWeight: 800, marginBottom: '0.5rem' }}>Assign {assignModal.professional.full_name}</h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>Pick a pending or unassigned request:</p>
+            {bookings.filter((b) => b.status === 'pending' || (b.status === 'confirmed' && !b.professional_id)).length === 0 ? (
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>No open bookings to assign.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {bookings.filter((b) => b.status === 'pending' || (b.status === 'confirmed' && !b.professional_id)).map((b) => (
+                  <button key={b.id} type="button" className="admin-assign-choice" onClick={() => assignProfessional(b.id, assignModal.professional.id)}>
+                    <strong>{b.patient_name}</strong>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginLeft: 8 }}>{b.status} · {b.practitioner_type} · {b.mode} · {fmtDate(b.preferred_date)} {b.preferred_time}</span>
+                  </button>
+                ))}
+              </div>
+            )}
+            <button type="button" onClick={() => setAssignModal(null)} className="btn btn-ghost btn-sm" style={{ marginTop: '1rem' }}>Close</button>
+          </div>
+        </div>
+      )}
+
+      {assignModal?.type === 'booking' && (
+        <div className="admin-modal-overlay" style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1300,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem',
+        }}>
+          <div className="admin-modal-panel" style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.5rem', maxWidth: 480, width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+            <h3 style={{ fontWeight: 800, marginBottom: '0.5rem' }}>Assign a clinician</h3>
+            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
+              For <strong>{assignModal.booking.patient_name}</strong> — {assignModal.booking.practitioner_type} · {assignModal.booking.mode} · {fmtDate(assignModal.booking.preferred_date)} {assignModal.booking.preferred_time}
+            </p>
+            {professionals.length === 0 ? (
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>No approved clinicians yet.</p>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[...professionals].sort((a, b) => {
+                  const wanted = assignModal.booking.practitioner_type;
+                  const am = a.role === wanted ? 0 : 1;
+                  const bm = b.role === wanted ? 0 : 1;
+                  return am - bm || String(a.full_name || '').localeCompare(String(b.full_name || ''));
+                }).map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    className="admin-assign-choice"
+                    onClick={() => assignProfessional(assignModal.booking.id, p.id)}
+                  >
+                    <strong>{p.full_name}</strong>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginLeft: 8 }}>
+                      {ROLE_LABELS[p.role] ?? p.role}
+                      {p.role === assignModal.booking.practitioner_type ? ' · matches request' : ''}
+                      {p.city ? ` · ${p.city}` : ''}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
+            <button type="button" onClick={() => setAssignModal(null)} className="btn btn-ghost btn-sm" style={{ marginTop: '1rem' }}>Close</button>
+          </div>
+        </div>
+      )}
+
       {/* ── Mobile bottom tab bar ── */}
       <nav className="admin-mobile-nav" aria-label="Mobile admin navigation">
         {[
@@ -3224,8 +3478,11 @@ export default function AdminPage() {
           >
             <span className="admin-mobile-tab-icon">{t.icon}</span>
             <span className="admin-mobile-tab-label">{t.label}</span>
-            {t.id === 'bookings' && stats?.pending_bookings > 0 && (
-              <span className="admin-mobile-badge">{stats.pending_bookings}</span>
+            {t.id === 'bookings' && (stats?.pending_bookings || pendingBookingsList.length) > 0 && (
+              <span className="admin-mobile-badge">{stats?.pending_bookings || pendingBookingsList.length}</span>
+            )}
+            {t.id === 'messages' && unreadMessageCount > 0 && (
+              <span className="admin-mobile-badge">{unreadMessageCount}</span>
             )}
           </button>
         ))}
@@ -3385,5 +3642,85 @@ function ActionBtn({ label, onClick, color, disabled = false }) {
     >
       {label}
     </button>
+  );
+}
+
+function HealthChip({ ok, label, okText, badText }) {
+  const cls = ok == null ? '' : ok ? 'is-ok' : 'is-bad';
+  const text = ok == null ? '…' : ok ? okText : badText;
+  return (
+    <span className={`admin-health-chip ${cls}`}>
+      {label} {text}
+    </span>
+  );
+}
+
+function LeadContactLinks({ phone, email, waText }) {
+  const tel = telHref(phone);
+  const wa = waMeUrl(phone, waText);
+  if (!tel && !wa && !email) return null;
+  return (
+    <span className="admin-ops-actions">
+      {tel && <a className="admin-ops-link admin-ops-link--call" href={tel}>Call</a>}
+      {wa && <a className="admin-ops-link admin-ops-link--wa" href={wa} target="_blank" rel="noreferrer">WhatsApp</a>}
+      {email && <a className="admin-ops-link admin-ops-link--mail" href={`mailto:${email}`}>Email</a>}
+    </span>
+  );
+}
+
+function BookingOpsActions({
+  booking,
+  busy,
+  clinician,
+  rx,
+  variant = 'full',
+  onConfirm,
+  onComplete,
+  onCancel,
+  onAssign,
+  onPrescribe,
+  onDelete,
+}) {
+  const b = booking;
+  const wa = waMePatientUrl(b);
+  const tel = telHref(b.patient_phone);
+  const queue = variant === 'queue';
+  return (
+    <div className="admin-ops-actions">
+      {tel && <a className="admin-ops-link admin-ops-link--call" href={tel}>Call</a>}
+      {wa && <a className="admin-ops-link admin-ops-link--wa" href={wa} target="_blank" rel="noreferrer">WhatsApp</a>}
+      {b.patient_email && (
+        <a className="admin-ops-link admin-ops-link--mail" href={`mailto:${b.patient_email}?subject=${encodeURIComponent('Your Serenest appointment request')}`}>
+          Email
+        </a>
+      )}
+      {b.status === 'pending' && (
+        <ActionBtn label={busy ? 'Updating…' : 'Confirm'} onClick={onConfirm} color="#198754" disabled={busy} />
+      )}
+      {(b.status === 'pending' || b.status === 'confirmed') && (
+        <ActionBtn label={clinician ? 'Reassign' : 'Assign'} onClick={onAssign} color="#0d6efd" disabled={busy} />
+      )}
+      {!queue && b.status !== 'completed' && b.status !== 'cancelled' && (
+        <ActionBtn label={busy ? 'Updating…' : 'Complete'} onClick={onComplete} color="#0d6efd" disabled={busy} />
+      )}
+      {!queue && b.status !== 'cancelled' && (
+        <ActionBtn label={busy ? 'Updating…' : 'Cancel'} onClick={onCancel} color="#dc3545" disabled={busy} />
+      )}
+      {b.status === 'confirmed' && (
+        <Link to={`/consultation/${b.id}?mode=${b.mode}`} target="_blank" className="btn btn-sm btn-ghost" style={{ fontSize: '0.75rem' }}>
+          Room
+        </Link>
+      )}
+      {!queue && (b.status === 'confirmed' || b.status === 'completed') && (
+        <ActionBtn
+          label={rx?.is_locked ? 'View Rx' : rx ? 'Edit Rx' : 'Issue Rx'}
+          onClick={onPrescribe}
+          color="#6f42c1"
+        />
+      )}
+      {!queue && (
+        <ActionBtn label="Delete" onClick={onDelete} color="#6c757d" disabled={busy} />
+      )}
+    </div>
   );
 }

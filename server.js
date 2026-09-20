@@ -699,15 +699,21 @@ app.get('/api/bookings/:id', async (req, res) => {
  * List all bookings (admin only — protect with ADMIN_SECRET in production).
  */
 app.get('/api/bookings', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  if (!requireAdmin(req, res)) return;
+
+  const fallback = fallbackLeadRecords('booking');
+  if (!supabase) return ok(res, { bookings: fallback });
 
   const { data, error } = await supabase
     .from('appointments')
     .select('*')
     .order('created_at', { ascending: false });
 
-  if (error) return err(res, 'Failed to fetch bookings', 500);
-  return ok(res, { bookings: data });
+  if (error) {
+    console.error('[GET /api/bookings]', error);
+    return ok(res, { bookings: fallback });
+  }
+  return ok(res, { bookings: [...(data || []), ...fallback] });
 });
 
 /**
@@ -957,15 +963,21 @@ app.post('/api/screening', async (req, res) => {
 
 /** GET /api/screening — admin only — list all screening responses */
 app.get('/api/screening', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  if (!requireAdmin(req, res)) return;
+
+  const fallback = fallbackLeadRecords('screening');
+  if (!supabase) return ok(res, { screenings: fallback });
 
   const { data, error } = await supabase
     .from('screening_responses')
     .select('*')
     .order('created_at', { ascending: false });
 
-  if (error) return err(res, 'Failed to fetch screenings', 500);
-  return ok(res, { screenings: data });
+  if (error) {
+    console.error('[GET /api/screening]', error);
+    return ok(res, { screenings: fallback });
+  }
+  return ok(res, { screenings: [...(data || []), ...fallback] });
 });
 
 // ══════════════════════════════════════════════════════════════
@@ -1477,7 +1489,8 @@ app.get('/api/professionals/verify', async (req, res) => {
 
 /** GET /api/professionals/list — all approved professionals with booking counts */
 app.get('/api/professionals/list', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  if (!requireAdmin(req, res)) return;
+  if (!supabase) return ok(res, { professionals: [] });
 
   const { role } = req.query;
   let query = supabase
@@ -2252,9 +2265,43 @@ function requireAdmin(req, res) {
   return true;
 }
 
+function fallbackLeadRecords(kind) {
+  return readFallbackLeads(kind).map((row) => ({
+    ...row,
+    _fallback: true,
+    created_at: row.created_at || row.received_at || null,
+    status: row.status || (kind === 'booking' ? 'pending' : row.status),
+  }));
+}
+
 /** GET /api/admin/stats — counts for the dashboard overview */
 app.get('/api/admin/stats', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  if (!requireAdmin(req, res)) return;
+
+  const emptyStats = {
+    bookings: 0,
+    applications: 0,
+    messages: 0,
+    signups: 0,
+    jobs: 0,
+    pending_bookings: 0,
+    confirmed_unassigned: 0,
+    screening_callbacks: 0,
+    pending_applications: 0,
+    fallback_applications: 0,
+    new_jobs: 0,
+    active_professionals: 0,
+  };
+
+  if (!supabase) {
+    const fallbackBookings = fallbackLeadRecords('booking');
+    emptyStats.bookings = fallbackBookings.length;
+    emptyStats.pending_bookings = fallbackBookings.filter((b) => (b.status || 'pending') === 'pending').length;
+    emptyStats.confirmed_unassigned = fallbackBookings.filter((b) => b.status === 'confirmed' && !b.professional_id).length;
+    const fallbackScreenings = fallbackLeadRecords('screening');
+    emptyStats.screening_callbacks = fallbackScreenings.filter((s) => s.wants_callback).length;
+    return ok(res, { stats: emptyStats });
+  }
 
   const tables = [
     'appointments', 'professional_applications',
@@ -2271,12 +2318,14 @@ app.get('/api/admin/stats', async (req, res) => {
     (r) => (r.error ? 0 : (r.count ?? 0))
   );
 
-  // pending counts + approved professionals
-  const [pendingBookings, pendingApps, newJobs, approvedProfessionals] = await Promise.all([
+  // pending counts + approved professionals + patient-ops queues
+  const [pendingBookings, pendingApps, newJobs, approvedProfessionals, confirmedUnassigned, callbackScreenings] = await Promise.all([
     supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
     supabase.from('professional_applications').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
     supabase.from('job_applications').select('*', { count: 'exact', head: true }).eq('status', 'new'),
     supabase.from('professional_applications').select('*', { count: 'exact', head: true }).eq('status', 'approved'),
+    supabase.from('appointments').select('*', { count: 'exact', head: true }).eq('status', 'confirmed').is('professional_id', null),
+    supabase.from('screening_responses').select('*', { count: 'exact', head: true }).eq('wants_callback', true),
   ]);
 
   const fileFallbackApps = readFallbackLeads('professional_application');
@@ -2300,6 +2349,8 @@ app.get('/api/admin/stats', async (req, res) => {
       signups,
       jobs,
       pending_bookings: pendingBookings.count ?? 0,
+      confirmed_unassigned: confirmedUnassigned.count ?? 0,
+      screening_callbacks: callbackScreenings.count ?? 0,
       pending_applications: (pendingApps.count ?? 0) + fallbackPending,
       fallback_applications: fallbackPending,
       new_jobs: newJobs.count ?? 0,
