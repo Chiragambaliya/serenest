@@ -15,7 +15,7 @@ const SPECIALTIES = [
 ];
 
 const SERVICES_FAQ = [
-  { question: 'Which service is right for me?', answer: 'If you\'re unsure, start with self-screening or book a psychiatry consultation — your clinician can help direct you to therapy, addiction support, or a combination, based on what you actually need.' },
+  { question: 'Which service is right for me?', answer: 'If you\'re unsure, start with a private check-in or request a psychiatry appointment — your clinician can help direct you to therapy, addiction support, or both, based on what you actually need. You are not charged when you send the request.' },
   { question: 'Can I switch between services?', answer: 'Yes. Many people use more than one — for example, psychiatry for medication management alongside ongoing therapy. Your clinicians can coordinate care between them.' },
   { question: 'Do all consultations happen online?', answer: 'Most care on Serenest happens over secure video, audio, or chat. Some situations need in-person assessment — your clinician will tell you clearly if that applies to you.' },
 ];
@@ -29,9 +29,9 @@ const CORE_SERVICES = [
     detail: 'Encrypted sessions with assessment, treatment plan, and follow-up guidance.',
     included: [
       '45-minute encrypted session',
-      'PHQ-9 / GAD-7 assessment',
-      'SOAP notes and treatment plan',
-      'Digital prescription if clinically appropriate',
+      'PHQ-9 / GAD-7 check-in',
+      'A written plan after the session',
+      'Digital prescription if your doctor decides it is appropriate',
     ],
     forWho: 'Anxiety, depression, OCD, PTSD, ADHD, sleep, stress, medication review',
     price: 'From ₹800 per session',
@@ -71,46 +71,19 @@ const CORE_SERVICES = [
   },
 ];
 
-const ORG_PROGRAMMES = [
-  {
-    tag: 'Corporate',
-    title: 'Workplace mental health',
-    body: 'Confidential telepsychiatry and counselling for employees.',
-    features: ['1-on-1 employee sessions', 'Manager training', 'Team wellbeing assessments', 'Dedicated psychiatry hours'],
-    mailSubject: 'Corporate%20Enquiry',
-    cta: 'Enquire for your company',
-  },
-  {
-    tag: 'Schools',
-    title: 'Student & staff wellbeing',
-    body: 'Age-appropriate care for students and support for teaching staff.',
-    features: ['Child & adolescent specialists', 'Parent guidance', 'ADHD assessments', 'Staff wellness'],
-    mailSubject: 'School%20Enquiry',
-    cta: 'Enquire for your school',
-  },
-  {
-    tag: 'Colleges',
-    title: 'Campus mental health',
-    body: 'On-demand student consultations and structured follow-up.',
-    features: ['Student appointments', 'Anxiety, depression & substance support', 'Referral pathways', 'Pulse surveys'],
-    mailSubject: 'College%20Enquiry',
-    cta: 'Enquire for your institution',
-  },
-];
-
 const STEPS = [
-  ['Register', 'Phone sign-up and brief intake.'],
-  ['Choose a clinician', 'Pick language, fee, and slot from verified professionals.'],
-  ['Pay & confirm', 'UPI, cards, or net banking — instant confirmation.'],
-  ['Join your session', 'Encrypted video, audio, or chat (~45 minutes).'],
-  ['Care plan', 'Summary and prescription where clinically appropriate.'],
+  ['Request a slot', 'Name, phone, and a preferred time. No payment yet.'],
+  ['We confirm', 'A team member calls or WhatsApps to lock the clinician and time.'],
+  ['Pay after confirm', 'UPI, cards, or net banking once the slot is locked.'],
+  ['Join your session', 'Encrypted video, audio, or chat — about 45 minutes.'],
+  ['Leave with a plan', 'A summary, and a prescription if your doctor decides it is appropriate.'],
 ];
 
 const AUDIENCES = [
-  ['First-time patients', 'Private care from home — a clear first step.'],
-  ['Long-term medication', 'Follow-ups and refills without repeated clinic visits.'],
+  ['First-time patients', 'Private care from home — a clear first step, no referral needed.'],
+  ['People on medication', 'Follow-ups and refills without repeated clinic visits.'],
   ['Smaller cities & towns', 'Verified specialists when local access is limited.'],
-  ['Clinicians on Serenest', 'Scheduling, notes, sessions, and payments in one place.'],
+  ['Someone booking for family', 'Request a slot for a parent, partner, or adult child — they stay in control of the session.'],
 ];
 
 const CONDITIONS = [
@@ -134,13 +107,13 @@ export default function ServicesPage() {
           <div>
             <h1>Find the care that fits what you&apos;re going through.</h1>
             <p className="svd-hero__lead">
-              Four kinds of clinical support, one team. If you&apos;re not sure where to start,
-              begin with a short self-screening or book a consultation and let your clinician
-              help direct you.
+              Psychiatry, therapy, addiction support, or a digital consult.
+              If you are not sure where to start, request a slot or take a short check-in —
+              you do not pay until we confirm the appointment.
             </p>
             <div className="svd-hero__actions">
-              <Link className="btn btn-primary btn-lg" to="/book">Book an Appointment</Link>
-              <Link className="btn btn-ghost btn-lg" to="/screening">Start with screening</Link>
+              <Link className="btn btn-primary btn-lg" to="/book">Request an appointment</Link>
+              <Link className="btn btn-ghost btn-lg" to="/screening">Start a free check</Link>
             </div>
           </div>
           <div className="svd-split__media">
@@ -160,7 +133,7 @@ export default function ServicesPage() {
           <div>
             <p className="ed-aside__label">Choose a starting point</p>
             <p className="ed-aside__note">
-              Each specialty has its own page with clinical scope and limits.
+              Each specialty has its own page. If you are unsure, request a slot and we will help you choose.
             </p>
           </div>
           <div>
@@ -187,9 +160,9 @@ export default function ServicesPage() {
       <section className="svc-section" id="core-services">
         <div className="ed-shell">
           <header className="ed-head ed-head--wide">
-            <span className="ed-head__label">Clinical services</span>
-            <h2>Six services for end-to-end care</h2>
-            <p>Verified clinicians, structured intake, and continuity — anywhere in India.</p>
+            <span className="ed-head__label">What you can get</span>
+            <h2>Care from the first conversation to follow-up</h2>
+            <p>A session, a written plan, and — when your doctor decides it is right — a prescription you can use.</p>
           </header>
 
           <table className="ed-table svc-core-table">
@@ -213,7 +186,7 @@ export default function ServicesPage() {
                   <td data-label="Price / status">{svc.price || '—'}</td>
                   <td data-label="Clinical use">{svc.lead}</td>
                   <td data-label="Next step">
-                    {svc.book && <Link className="ed-link" to="/book">Book now</Link>}
+                    {svc.book && <Link className="ed-link" to="/book">Request a slot</Link>}
                     {svc.link && <Link className="ed-link" to={svc.link.to}>{svc.link.label}</Link>}
                     {!svc.book && !svc.link && <span>—</span>}
                   </td>
@@ -250,15 +223,15 @@ export default function ServicesPage() {
           <div>
             <p className="ed-aside__label">If you are unsure</p>
             <p className="ed-aside__note">
-              Screening and guides help you prepare. They do not replace a clinical assessment.
+              A check-in can help you prepare. It does not replace talking to a clinician.
             </p>
           </div>
           <div>
             <header className="ed-head ed-head--wide">
               <h2>A short check-in, then a clear next step</h2>
               <p>
-                Start with a validated screening or a patient guide. When you are ready,
-                book a psychiatrist or therapist.
+                Start with a private check-in if you want language for how you have been feeling.
+                When you are ready, request a psychiatrist or therapist — payment comes after we confirm.
               </p>
             </header>
             <div className="ed-index">
@@ -287,13 +260,13 @@ export default function ServicesPage() {
               <Link className="ed-index__row" to="/book">
                 <span className="ed-index__num">03</span>
                 <span>
-                  <h3 className="ed-index__title">Book a consultation</h3>
+                  <h3 className="ed-index__title">Request a consultation</h3>
                   <span className="ed-index__meta">Psychiatry · therapy</span>
                 </span>
                 <p className="ed-index__body">
-                  Choose a clinician, mode, and slot. We confirm by phone or WhatsApp.
+                  Choose a preferred time. We confirm by phone or WhatsApp. You pay after the slot is locked.
                 </p>
-                <span className="ed-index__go" aria-hidden="true">Book now →</span>
+                <span className="ed-index__go" aria-hidden="true">Request a slot →</span>
               </Link>
             </div>
           </div>
@@ -301,44 +274,15 @@ export default function ServicesPage() {
       </section>
 
       <section className="svc-section" id="organisations">
-        <div className="ed-shell ed-aside">
-          <div>
-            <p className="ed-aside__label">Organisations</p>
-            <p className="ed-aside__note">
-              Clinical telepsychiatry and follow-up for teams and communities.
-            </p>
-          </div>
-          <div>
-            <header className="ed-head">
-              <h2>Workplace, school &amp; campus programmes</h2>
-              <p>Request a quote for your organisation and we will route it to support.</p>
-            </header>
-            <div className="ed-index">
-              {ORG_PROGRAMMES.map((prog, i) => (
-                <a
-                  key={prog.tag}
-                  className="ed-index__row"
-                  href={`mailto:support@serenest.in?subject=${prog.mailSubject}`}
-                >
-                  <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
-                  <span>
-                    <h3 className="ed-index__title">{prog.title}</h3>
-                    <span className="ed-index__meta">{prog.tag}</span>
-                  </span>
-                  <p className="ed-index__body">
-                    {prog.body} {prog.features.join(' · ')}
-                  </p>
-                  <span className="ed-index__go" aria-hidden="true">{prog.cta} →</span>
-                </a>
-              ))}
-            </div>
-            <div className="svc-band-cta">
-              <p>Need a custom plan for your organisation?</p>
-              <a className="btn btn-primary" href="mailto:support@serenest.in?subject=Organisation%20Partnership">
-                Get in touch
-              </a>
-            </div>
-          </div>
+        <div className="ed-shell">
+          <header className="ed-head ed-head--wide">
+            <span className="ed-head__label">Workplaces</span>
+            <h2>Looking for care for a team, school, or campus?</h2>
+            <p>That lives on a separate page so this one stays about your own appointment.</p>
+          </header>
+          <p>
+            <Link className="btn btn-ghost" to="/corporate">Workplace and campus programmes →</Link>
+          </p>
         </div>
       </section>
 
@@ -346,7 +290,7 @@ export default function ServicesPage() {
         <div className="ed-shell ed-aside">
           <div>
             <p className="ed-aside__label">How it works</p>
-            <p className="ed-aside__note">From booking to care plan.</p>
+            <p className="ed-aside__note">From the first request to your session.</p>
           </div>
           <div>
             <h2>Book to first session</h2>
@@ -366,11 +310,11 @@ export default function ServicesPage() {
       <section className="svc-section">
         <div className="ed-shell ed-aside">
           <div>
-            <p className="ed-aside__label">Made for</p>
-            <p className="ed-aside__note">The platform supports several different care contexts.</p>
+            <p className="ed-aside__label">Who this is for</p>
+            <p className="ed-aside__note">If any of these is you, request a slot — we will help with the rest.</p>
           </div>
           <div>
-            <h2>Who uses Serenest</h2>
+            <h2>People we already sit with</h2>
             <div className="ed-index">
               {AUDIENCES.map(([title, desc], i) => (
                 <article key={title} className="ed-index__row">
@@ -431,9 +375,9 @@ export default function ServicesPage() {
       <section className="svd-cta">
         <div className="container">
           <h2>Ready when you are</h2>
-          <p>Book a consultation, or reach us at support@serenest.in if you&apos;d rather ask first.</p>
+          <p>Request a slot, or write to support@serenest.in if you&apos;d rather ask first. You do not pay until we confirm.</p>
           <div className="svd-cta__actions">
-            <Link className="btn btn-primary btn-lg" to="/book">Book an Appointment</Link>
+            <Link className="btn btn-primary btn-lg" to="/book">Request an appointment</Link>
             <Link className="btn btn-ghost btn-lg" to="/contact">Contact us</Link>
           </div>
         </div>

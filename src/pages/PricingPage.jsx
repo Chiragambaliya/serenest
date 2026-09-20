@@ -35,7 +35,7 @@ const PLANS = [
     features: [
       'Video, audio, or chat session',
       'Structured therapy (CBT, DBT, trauma-informed)',
-      'SOAP notes and documentation',
+      'Written session notes',
       'Progress tracking over time',
     ],
   },
@@ -49,7 +49,7 @@ const PLANS = [
       'Video, audio, or chat session',
       'Psychological assessment',
       'Evidence-based therapy',
-      'SOAP notes and documentation',
+      'Written session notes',
       'Referral if medication is needed',
     ],
   },
@@ -64,7 +64,7 @@ const PLANS = [
       'Video, audio, or chat session',
       'Clinical assessment and diagnosis',
       'Digital prescription where applicable',
-      'SOAP notes and documentation',
+      'Written session notes',
       'Medication management support',
       'Follow-up care planning',
     ],
@@ -74,7 +74,7 @@ const PLANS = [
 const INCLUDED = [
   { label: 'PHQ-9 / GAD-7 assessments', note: 'Every session' },
   { label: 'End-to-end encrypted sessions', note: 'Always' },
-  { label: 'Clinical SOAP notes', note: 'Every session' },
+  { label: 'Written session notes', note: 'Every session' },
   { label: 'Permanent session records', note: 'Lifetime access' },
   { label: 'Medication tracking dashboard', note: 'Free' },
   { label: 'Easy re-booking and follow-ups', note: 'Anytime' },
@@ -158,12 +158,12 @@ export default function PricingPage() {
           <p className="pr-eyebrow">Pricing · Pan-India</p>
           <h1 className="pr-hero__title">Affordable mental health care. No surprises.</h1>
           <p className="pr-hero__lead">
-            Transparent, pay-per-session pricing. Pick the right clinician for your needs —
-            no subscriptions and no hidden fees.
+            Pay per session after we confirm your slot. Pick the clinician who fits —
+            no subscriptions and no charge when you send the request.
           </p>
           <div className="pr-hero__actions">
-            <Link className="btn btn-primary btn-lg" to="/book">Book a session</Link>
-            <Link className="btn btn-ghost btn-lg" to="/patient/find-professional">Meet our clinicians</Link>
+            <Link className="btn btn-primary btn-lg" to="/book">Request an appointment</Link>
+            <Link className="btn btn-ghost btn-lg" to="/patient/find-professional">Choose a clinician</Link>
           </div>
           <nav className="pr-hero__nav pr-hero__nav--quiet" aria-label="On this page">
             {HERO_NAV.map((item) => (
@@ -204,7 +204,7 @@ export default function PricingPage() {
                   <td data-label="Note">{plan.note}</td>
                   <td data-label="Key inclusions">{plan.features.join(' · ')}</td>
                   <td data-label="Next step">
-                    <Link className="ed-link" to="/book">Book now</Link>
+                    <Link className="ed-link" to="/book">Request a slot</Link>
                     <br />
                     <a
                       className="ed-link"
@@ -336,14 +336,14 @@ export default function PricingPage() {
       <section className="pr-cta">
         <div className="container pr-cta__inner">
           <div>
-            <h2>Ready to book your first session?</h2>
+            <h2>Ready for a first session?</h2>
             <p>
-              No referral needed · Confidential · Available across India.{' '}
+              No referral needed · Confidential · You pay after we confirm.{' '}
               <Link to="/services">See our services</Link>.
             </p>
           </div>
           <div className="pr-cta__actions">
-            <Link className="btn btn-primary btn-lg" to="/book">Book a consultation</Link>
+            <Link className="btn btn-primary btn-lg" to="/book">Request an appointment</Link>
             <Link className="btn btn-ghost btn-lg" to="/faq">View all FAQs</Link>
           </div>
         </div>

@@ -8,7 +8,7 @@ const FAQS = [
   {
     category: 'General',
     q: 'What is Serenest?',
-    a: 'Serenest is a privacy-first mental health platform designed around clinical workflows: intake, assessments, consults, records, and continuity.',
+    a: 'Serenest is online psychiatry and therapy for people in India. You request a slot, we confirm by phone or WhatsApp, and you meet a verified clinician on video, audio, or chat. You pay after the appointment is locked.',
   },
   {
     category: 'Prescriptions',
@@ -33,12 +33,17 @@ const FAQS = [
   {
     category: 'Payments',
     q: 'What payment methods are supported?',
-    a: 'We are building for UPI, cards, and net banking via Razorpay. If a payment option is not available in your flow yet, contact support and we’ll help.',
+    a: 'After we confirm your slot: UPI, cards, net banking, and wallets via Razorpay. Submitting a request does not charge you.',
   },
   {
     category: 'Technical',
     q: 'What if my internet drops mid-session?',
     a: 'Rejoin the session when your connection returns. If you cannot rejoin, contact support to help reschedule or complete the session.',
+  },
+  {
+    category: 'Payments',
+    q: 'Do I pay when I request an appointment?',
+    a: 'No. A request is not a charge. We confirm the clinician and time, then share payment steps.',
   },
   {
     category: 'Payments',
@@ -186,13 +191,13 @@ export default function FAQPage() {
           <div className="ed-facing">
             <div>
               <p className="ed-mono">Still have questions?</p>
-              <h2>Email support or book a consultation.</h2>
+              <h2>Email support or request a slot.</h2>
             </div>
             <div className="faq-editorial-actions">
               <a className="btn btn-primary" href="mailto:support@serenest.in?subject=FAQ%20Question">
                 Contact support →
               </a>
-              <Link className="btn btn-ghost" to="/book">Book now</Link>
+              <Link className="btn btn-ghost" to="/book">Request an appointment</Link>
               <Link className="btn btn-ghost" to="/privacy">Privacy policy</Link>
             </div>
           </div>

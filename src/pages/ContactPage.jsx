@@ -6,30 +6,30 @@ import '../styles/service-detail.css';
 
 const REASONS = [
   {
+    key: 'appointment',
+    label: 'I want an appointment',
+    body: 'Need help requesting, rescheduling, or choosing a clinician.',
+    subject: 'Appointment%20Help',
+    extra: { to: '/book', label: 'Or request a slot now' },
+  },
+  {
     key: 'patient',
-    label: 'Patient support',
+    label: 'I am already a patient',
     body: 'Questions about an existing consultation, prescription, or account.',
     subject: 'Patient%20Support',
   },
   {
-    key: 'appointment',
-    label: 'Appointment help',
-    body: 'Need help booking, rescheduling, or choosing a service.',
-    subject: 'Appointment%20Help',
-    extra: { to: '/book', label: 'Or book directly' },
+    key: 'general',
+    label: 'Something else',
+    body: 'Anything else — we will route it to the right person.',
+    subject: 'General%20Enquiry',
   },
   {
     key: 'professional',
-    label: 'Professional collaboration',
-    body: 'Partnering with Serenest as a clinician, clinic, or platform.',
+    label: 'I am a clinician or partner',
+    body: 'Joining Serenest as a clinician, clinic, or organisation.',
     subject: 'Professional%20Collaboration',
-    extra: { to: '/partner', label: 'Or see partner options' },
-  },
-  {
-    key: 'general',
-    label: 'General enquiries',
-    body: 'Anything else — we\'ll route it to the right person.',
-    subject: 'General%20Enquiry',
+    extra: { to: '/professionals', label: 'Or see the clinician page' },
   },
 ];
 
@@ -46,9 +46,9 @@ export default function ContactPage() {
           <p className="svd-eyebrow">Contact</p>
           <h1>What can we help with?</h1>
           <p className="svd-hero__lead">
-            Choose the reason you're reaching out and we'll make sure it gets to the right
-            person. For urgent clinical concerns, this page is not for emergencies —
-            contact local emergency services if you or someone else is at risk.
+            Most people write because they want an appointment. Choose a reason and we will
+            route it. This page is not for emergencies — contact local emergency services if
+            you or someone else is at immediate risk.
           </p>
         </div>
       </section>

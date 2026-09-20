@@ -42,8 +42,8 @@ const PLATFORM = [
   },
   {
     tag: 'Notes',
-    title: 'SOAP clinical notes',
-    body: 'Subjective, Objective, Assessment, Plan — locked after each session.',
+    title: 'A written plan after every session',
+    body: 'Your clinician keeps a structured note so follow-ups start from where you left off.',
   },
   {
     tag: 'Rx',

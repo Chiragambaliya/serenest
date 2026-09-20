@@ -51,8 +51,7 @@ const NAV_LINKS = [
   { to: '/services', label: 'Services' },
   { to: '/screening', label: 'Screening' },
   { to: '/patient/find-professional', label: 'Clinicians' },
-  { to: '/about', label: 'About' },
-  { to: '/resources', label: 'Reading' },
+  { to: '/pricing', label: 'Pricing' },
   { to: '/contact', label: 'Contact' },
 ];
 
@@ -60,10 +59,10 @@ const FOOTER_GROUPS = [
   {
     title: 'Care',
     links: [
-      { to: '/book', label: 'Book appointment' },
-      { to: '/patient/find-professional', label: 'Find a professional' },
-      { to: '/screening', label: 'Self screening' },
-      { to: '/pricing', label: 'Pricing' },
+      { to: '/book', label: 'Request an appointment' },
+      { to: '/patient/find-professional', label: 'Find a clinician' },
+      { to: '/screening', label: 'Private check-in' },
+      { to: '/pricing', label: 'Fees' },
     ],
   },
   {
@@ -101,11 +100,8 @@ const FOOTER_LEGAL = [
   { to: '/legal', label: 'All policies' },
 ];
 
-/* Secondary links kept in the footer and on their parent pages rather
-   than the header, to keep the nav bar from getting oversized:
-   Book a Consultation (/book), Self-Screening is in the header,
-   Find a clinician is in the header (/patient/find-professional),
-   For professionals stays in the footer (/professionals). */
+/* Header is the patient path: services, screening, clinicians, fees, contact.
+   About, reading, and clinician-recruitment stay in the footer. */
 
 export default function SiteLayout() {
   const [scrolled, setScrolled]   = useState(false);
@@ -194,7 +190,7 @@ export default function SiteLayout() {
             <BrandMark size={44} />
             <span className="brand-wordmark">
               <span className="brand-text">Serenest</span>
-              <span className="brand-tagline">Clinical practice</span>
+              <span className="brand-tagline">Online care</span>
             </span>
           </Link>
 
@@ -221,7 +217,7 @@ export default function SiteLayout() {
               </NavLink>
 
               <Link className="header-cta masthead__cta" to="/book">
-                <span className="masthead__cta-label">Book appointment</span>
+                <span className="masthead__cta-label">Request appointment</span>
                 <span className="masthead__cta-arrow" aria-hidden="true">→</span>
               </Link>
             </div>
@@ -260,7 +256,7 @@ export default function SiteLayout() {
                 <BrandMark size={32} />
                 <span className="brand-wordmark">
                   <span className="brand-text">Serenest</span>
-                  <span className="brand-tagline">Clinical practice</span>
+                  <span className="brand-tagline">Online care</span>
                 </span>
               </Link>
               <button
@@ -275,24 +271,8 @@ export default function SiteLayout() {
 
             {/* Nav links — grouped */}
             <nav className="menu-links" aria-label="Mobile navigation">
-              {user ? (
-                <div className="menu-section">
-                  <Link to="/patient/dashboard" className="menu-link menu-link--accent" onClick={() => setMenuOpen(false)}>
-                    {patientFirstName ? `Hi, ${patientFirstName}` : 'My account'}
-                    <span className="menu-link-arrow">→</span>
-                  </Link>
-                </div>
-              ) : (
-                <div className="menu-section">
-                  <Link to="/patient/login" className="menu-link menu-link--accent" onClick={() => setMenuOpen(false)}>
-                    Sign in
-                    <span className="menu-link-arrow">→</span>
-                  </Link>
-                </div>
-              )}
-
               <div className="menu-section">
-                <p className="menu-section-label">Menu</p>
+                <p className="menu-section-label">Care</p>
                 {NAV_LINKS.map((item) => (
                   <Link key={item.to} to={item.to} className="menu-link" onClick={() => setMenuOpen(false)}>
                     {item.label}
@@ -301,13 +281,18 @@ export default function SiteLayout() {
               </div>
 
               <div className="menu-section">
-                <p className="menu-section-label">Quick links</p>
-                <Link to="/patient/find-professional" className="menu-link" onClick={() => setMenuOpen(false)}>Find a Professional</Link>
-                <Link to="/pricing"                   className="menu-link" onClick={() => setMenuOpen(false)}>Pricing</Link>
-                <Link to="/blog"                      className="menu-link" onClick={() => setMenuOpen(false)}>Blog</Link>
-                <Link to="/faq"                        className="menu-link" onClick={() => setMenuOpen(false)}>FAQ</Link>
-                <Link to="/team"                       className="menu-link" onClick={() => setMenuOpen(false)}>Our Team</Link>
-                <Link to="/careers"                    className="menu-link" onClick={() => setMenuOpen(false)}>Careers</Link>
+                <p className="menu-section-label">Also</p>
+                <Link to="/faq" className="menu-link" onClick={() => setMenuOpen(false)}>FAQ</Link>
+                <Link to="/about" className="menu-link" onClick={() => setMenuOpen(false)}>About</Link>
+                {user ? (
+                  <Link to="/patient/dashboard" className="menu-link" onClick={() => setMenuOpen(false)}>
+                    {patientFirstName ? `Hi, ${patientFirstName}` : 'My account'}
+                  </Link>
+                ) : (
+                  <Link to="/patient/login" className="menu-link" onClick={() => setMenuOpen(false)}>
+                    Sign in
+                  </Link>
+                )}
               </div>
             </nav>
 
@@ -318,11 +303,11 @@ export default function SiteLayout() {
                 to="/book"
                 onClick={() => setMenuOpen(false)}
               >
-                <span className="masthead__cta-label">Book appointment</span>
+                <span className="masthead__cta-label">Request appointment</span>
                 <span className="masthead__cta-arrow" aria-hidden="true">→</span>
               </Link>
               <p className="menu-drawer-note">
-                Prefer a time — we confirm by phone or WhatsApp
+                Prefer a time — we confirm by phone or WhatsApp. You pay after.
               </p>
             </div>
           </aside>
@@ -340,7 +325,7 @@ export default function SiteLayout() {
           <div className="ed-footer__cta">
             <div className="ed-footer__cta-copy">
               <h3>Need help today?</h3>
-              <p>Book a consultation with a qualified mental health professional.</p>
+              <p>Request a slot. We confirm by phone or WhatsApp — you do not pay until then.</p>
             </div>
             <div className="ed-footer__cta-actions">
               <Link
@@ -352,7 +337,7 @@ export default function SiteLayout() {
                   }
                 }}
               >
-                Book appointment
+                Request appointment
               </Link>
               <a
                 className="btn btn-whatsapp"

@@ -19,10 +19,10 @@ export const ROUTE_SEO = {
   '/': {
     title: 'Online Psychiatrist & Therapy in India | Serenest',
     description:
-      "Book a verified online psychiatrist or therapist in India. Confidential video, audio, or chat care, plus free PHQ-9 and GAD-7 screening.",
-    ogTitle: 'Serenest | Online Psychiatry & Therapy in India',
+      'Talk to a verified online psychiatrist or therapist in India. Request a slot, pay after we confirm. Confidential video, audio, or chat, plus free PHQ-9 and GAD-7 screening.',
+    ogTitle: 'Serenest | Talk to a psychiatrist or therapist from home',
     ogDescription:
-      'Online psychiatry, therapy, screening, and de-addiction support — verified, private care across India.',
+      'Request a confidential appointment. We confirm by phone or WhatsApp — you pay after the slot is locked.',
   },
   '/services': {
     title: 'Online Psychiatrist Consultation in India | Video, Audio & Chat',

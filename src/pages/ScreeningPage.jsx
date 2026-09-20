@@ -22,11 +22,12 @@ export default function ScreeningPage() {
     <div className="mhc">
       <div className="mhc-wrap">
         <header className="mhc-hero">
-          <p className="mhc-eyebrow">Serenest Care · Mental Health Center</p>
+          <p className="mhc-eyebrow">Private check-in · not a diagnosis</p>
           <h1>Understand how you’ve been feeling</h1>
           <p className="mhc-hero-lead">
-            Short, validated checks in plain language. You’ll learn what your answers may suggest — and what they
-            do not mean — before any care options appear.
+            Short checks in plain language for mood, anxiety, stress, and more.
+            You will see what your answers may suggest — and what they do not mean —
+            before any booking options appear.
           </p>
 
           <Link to={pathway.href} className="mhc-pathway mhc-pathway-hero">

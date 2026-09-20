@@ -193,13 +193,13 @@ export default function PatientFindProfessionalPage() {
       {/* ── Page header ────────────────────────────────────── */}
       <section style={{ padding: '3rem 0 1.5rem' }}>
         <div className="container" style={{ textAlign: 'center', maxWidth: 720 }}>
-          <p style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--brand-600)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Find your match</p>
+          <p style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--brand-600)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>Find a clinician</p>
           <h1 style={{ fontSize: 'clamp(1.85rem, 4vw, 2.6rem)', fontWeight: 800, lineHeight: 1.1, marginBottom: 12, letterSpacing: '-0.02em' }}>
-            The right professional, <span style={{ background: 'linear-gradient(135deg, #7a9a5a, #46552f)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>matched to you</span>
+            Choose who you talk to
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.02rem', lineHeight: 1.55 }}>
-            Browse Serenest-verified psychiatrists, psychologists, therapists and counsellors.
-            Filter by language, city and budget. Request a slot — you pay after we confirm.
+            Verified psychiatrists, psychologists, therapists and counsellors.
+            Filter by language, city and fee. Request a slot — you pay after we confirm.
           </p>
         </div>
       </section>

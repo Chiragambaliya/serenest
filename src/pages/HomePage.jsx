@@ -27,7 +27,7 @@ const OUR_SERVICES = [
   {
     title: 'Digital Mental Health',
     meta: 'Teleconsultation',
-    body: 'Secure video, audio, and chat consultations, wherever you are in India.',
+    body: 'See a clinician on video, audio, or chat from anywhere in India — no clinic wait.',
     href: '/services/digital-consultations',
   },
 ];
@@ -35,24 +35,24 @@ const OUR_SERVICES = [
 const ARRIVE_PATHS = [
   {
     num: '01',
-    title: 'I need care',
-    body: 'Psychiatry, therapy, or addiction support — find the right clinical starting point.',
-    href: '/services',
-    cta: 'Explore services',
+    title: 'I need to talk to someone',
+    body: 'Request a psychiatrist or therapist slot. We confirm by phone or WhatsApp — you pay after the time is locked.',
+    href: '/book',
+    cta: 'Request an appointment',
   },
   {
     num: '02',
-    title: 'I want to check in first',
-    body: 'Free, private screening (PHQ-9, GAD-7, and more). Educational results — not a diagnosis.',
+    title: 'I want a private check-in first',
+    body: 'Free mood, anxiety, and stress checks. Results stay on your device and are not a diagnosis.',
     href: '/screening',
-    cta: 'Start a check',
+    cta: 'Start a free check',
   },
   {
     num: '03',
-    title: 'I am ready to book',
-    body: 'Choose a consultation with a psychiatrist or therapist and take the next step.',
-    href: '/book',
-    cta: 'Book an appointment',
+    title: 'I want to choose who I see',
+    body: 'Browse verified clinicians by language, city, and fee, then request a slot.',
+    href: '/patient/find-professional',
+    cta: 'Browse clinicians',
   },
 ];
 
@@ -85,15 +85,15 @@ export default function HomePage() {
         <div className="hp-hero__content">
           <p className="hp-hero__brand">Serenest</p>
           <h1 id="home-hero-title" className="hp-hero__title">
-            Care for the mind, grounded in clinical practice.
+            Talk to a psychiatrist or therapist — privately, from home.
           </h1>
           <p className="hp-hero__body">
-            Psychiatry, therapy, and addiction support — confidential online care
-            with a licensed clinical team.
+            Request a slot in minutes. We confirm by phone or WhatsApp.
+            You pay after the appointment is locked, not when you ask.
           </p>
           <div className="hp-hero__actions">
-            <HpBtn to="/services" variant="solid-light">Find the right service</HpBtn>
-            <HpBtn to="/book" variant="ghost-dark">Book an appointment</HpBtn>
+            <HpBtn to="/book" variant="solid-light">Request an appointment</HpBtn>
+            <HpBtn to="/screening" variant="ghost-dark">Start a free check</HpBtn>
           </div>
         </div>
         <p className="hp-hero__note">
@@ -106,8 +106,8 @@ export default function HomePage() {
         <div className="ed-shell">
           <header className="ed-head hp-arrive__head">
             <span className="ed-head__label">Begin</span>
-            <h2 id="home-arrive-title">Tell us how you arrive.</h2>
-            <p>Choose the care option that fits your needs today.</p>
+            <h2 id="home-arrive-title">How can we help today?</h2>
+            <p>Start with a conversation, a private check-in, or a clinician you choose.</p>
           </header>
           <div className="hp-arrive__paths" role="list">
             {ARRIVE_PATHS.map((path) => (
@@ -136,8 +136,8 @@ export default function HomePage() {
         <div className="ed-shell">
           <header className="ed-head">
             <span className="ed-head__label">Care</span>
-            <h2 id="home-services-title">Four kinds of support, one clinical team.</h2>
-            <p>Choose a starting point. Your clinician can help redirect if another service fits better.</p>
+            <h2 id="home-services-title">Start with what you are going through.</h2>
+            <p>Psychiatry, therapy, addiction support, or a digital consult — your clinician can redirect if another fit is better.</p>
           </header>
           <div className="ed-index hp-index">
             {OUR_SERVICES.map((item, i) => (
@@ -162,15 +162,15 @@ export default function HomePage() {
         <div className="ed-shell hp-academy__grid">
           <header className="ed-head" style={{ marginBottom: 0 }}>
             <span className="ed-head__label">Check in</span>
-            <h2 id="home-check-title">Understand how you have been feeling.</h2>
+            <h2 id="home-check-title">Not sure if you need an appointment yet?</h2>
             <p>
-              Validated screening tools for mood, anxiety, stress, and burnout.
-              Private by default — results are educational, not a diagnosis.
+              A short, private check-in for mood, anxiety, stress, or burnout.
+              Results stay on this device and are not a diagnosis.
             </p>
             <div className="hp-academy__actions">
-              <HpBtn to="/screening" variant="solid">Start a check</HpBtn>
+              <HpBtn to="/screening" variant="solid">Start a free check</HpBtn>
               <Link className="hp-text-link" to="/book">
-                Or book when you are ready
+                Skip this — request a slot
                 <span aria-hidden="true"> →</span>
               </Link>
             </div>
@@ -195,8 +195,8 @@ export default function HomePage() {
 
       <section className="ed-band hp-close" aria-labelledby="home-cta-title">
         <div className="ed-shell">
-          <h2 id="home-cta-title" style={{ maxWidth: '18ch' }}>
-            Start with the kind of support you need.
+          <h2 id="home-cta-title" style={{ maxWidth: '22ch' }}>
+            When you are ready, request a slot. We will take it from there.
           </h2>
           <p className="hp-cta__contact">
             <a href="mailto:support@serenest.in">support@serenest.in</a>
@@ -204,8 +204,8 @@ export default function HomePage() {
             <a href="tel:7777936367">7777936367</a>
           </p>
           <div className="hp-hero__actions hp-close__actions">
-            <HpBtn to="/screening" variant="ghost-dark">Start a check</HpBtn>
-            <HpBtn to="/book" variant="solid-light">Book an appointment</HpBtn>
+            <HpBtn to="/book" variant="solid-light">Request an appointment</HpBtn>
+            <HpBtn to="/screening" variant="ghost-dark">Start a free check</HpBtn>
           </div>
         </div>
       </section>
