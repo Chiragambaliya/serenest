@@ -1,7 +1,6 @@
 import { TEAM_MEMBERS } from './team.js';
 import { SCREENING_TOOLS } from './screeningTools.js';
 import { BLOG_POSTS } from './blogPosts.js';
-import { ACADEMY_PROGRAMS } from './academyPrograms.js';
 
 // Production canonical host. Matches the live www-redirect target.
 export const SITE_ORIGIN = 'https://www.serenest.in';
@@ -110,14 +109,6 @@ export const ROUTE_SEO = {
     ogTitle: 'Mental Health Guides | Serenest India',
     ogDescription:
       'Clear, clinical guides on common mental health topics and online care in India.',
-  },
-  '/academy': {
-    title: 'Serenest Academy | Mental Health Literacy & Learning India',
-    description:
-      'Flagship Clinical Excellence course for practicing professionals, plus certificates and fellowships. Free for approved Serenest professionals.',
-    ogTitle: 'Serenest Academy | Clinical Excellence Flagship Course',
-    ogDescription:
-      'Best course for mental health professionals — assessment, telepsychiatry, documentation, and measurement-based care. Free for Serenest pros.',
   },
   '/professionals': {
     title: 'For Mental Health Professionals | Join Serenest | India',
@@ -391,48 +382,6 @@ export const ROUTE_SEO = {
     ogTitle: 'Mood & Anxiety Check | Serenest',
     ogDescription: 'Guided PHQ-9 and GAD-7 screening with clear next steps. Not a diagnosis.',
   },
-  '/academy/programs': {
-    title: 'All Academy Programs | Serenest Academy',
-    description:
-      'Browse the full Serenest Academy catalogue for psychiatrists, psychologists, counsellors, and mental health students in India.',
-    ogTitle: 'Serenest Academy Programs',
-    ogDescription: 'Certificate programs, fellowships, and clinical training from Serenest Academy.',
-  },
-  '/academy/workshops': {
-    title: 'Academy Workshops | Serenest Academy',
-    description:
-      'Live and recorded workshops from Serenest Academy for practising mental health professionals.',
-    ogTitle: 'Serenest Academy Workshops',
-    ogDescription: 'Short intensives and workshops for clinicians and trainees.',
-  },
-  '/academy/learning-paths': {
-    title: 'Academy Learning Paths | Serenest Academy',
-    description:
-      'Suggested Serenest Academy program sequences for students, early-career clinicians, and practising professionals.',
-    ogTitle: 'Serenest Academy Learning Paths',
-    ogDescription: 'Program sequences matched to where you are in clinical practice.',
-  },
-  '/academy/faculty': {
-    title: 'Academy Faculty | Serenest Academy',
-    description:
-      'Meet the practising clinicians who teach Serenest Academy programs, and how to apply to teach.',
-    ogTitle: 'Serenest Academy Faculty',
-    ogDescription: 'Faculty who teach beside an active clinical practice.',
-  },
-  '/academy/faqs': {
-    title: 'Academy FAQs | Serenest Academy',
-    description:
-      'Answers about Serenest Academy enrolment, certificates, format, and free access for approved professionals.',
-    ogTitle: 'Serenest Academy FAQs',
-    ogDescription: 'Enrolment, certificates, and what Academy does not replace.',
-  },
-  '/academy/resources': {
-    title: 'Academy Resources | Serenest Academy',
-    description:
-      'Clinical reading lists and practice tools for Serenest Academy learners.',
-    ogTitle: 'Serenest Academy Resources',
-    ogDescription: 'Guides and tools for Academy learners and practising clinicians.',
-  },
 };
 
 // Interactive self-screening tool pages (/screening/tool/<slug>) — each
@@ -456,15 +405,6 @@ for (const post of BLOG_POSTS) {
     ogTitle: post.title,
     ogDescription: post.excerpt,
     ogType: 'article',
-  };
-}
-
-for (const program of ACADEMY_PROGRAMS) {
-  ROUTE_SEO[`/academy/programs/${program.slug}`] = {
-    title: `${program.title} | Serenest Academy`,
-    description: program.body || program.tagline || program.overview,
-    ogTitle: `${program.title} | Serenest Academy`,
-    ogDescription: program.tagline || program.body,
   };
 }
 
@@ -516,9 +456,6 @@ export const ROUTE_ALIASES = {
   // Retired / renamed public URLs
   '/preview': '/',
   '/disclaimer': '/emergency-disclaimer',
-  '/academy/learn': '/professionals/learning',
-  '/academy/learn/pharmacology': '/professionals/learning',
-  '/academy/learn/psychology': '/professionals/learning',
 
   // PHQ-9 keyword variants
   '/phq-9-test-online-india': '/phq-9-depression-screening',
@@ -544,7 +481,6 @@ export const NOINDEX_ROUTES = new Set([
   '/patient/dashboard',
   '/professionals/login',
   '/professionals/portal',
-  '/academy/login',
 ]);
 
 export function shouldNoindex(pathname) {
@@ -1081,36 +1017,6 @@ export const ROUTE_JSONLD = {
       },
     ],
   },
-  '/academy': {
-    '@context': 'https://schema.org',
-    '@graph': [
-      ORG_SCHEMA,
-      WEBSITE_SCHEMA,
-      {
-        '@type': 'EducationalOrganization',
-        '@id': `${SITE_ORIGIN}/academy#educationalorg`,
-        name: 'Serenest Academy',
-        url: `${SITE_ORIGIN}/academy`,
-        description:
-          'Serenest Academy provides clinician-led mental health education programs in India, including certificate programs, fellowships, CPD, and mentorship.',
-        parentOrganization: { '@id': `${SITE_ORIGIN}/#organization` },
-        areaServed: { '@type': 'Country', name: 'India' },
-        knowsAbout: ['Psychiatry', 'Clinical Psychology', 'Counselling', 'Mental Health Education'],
-      },
-      {
-        '@type': 'WebPage',
-        '@id': `${SITE_ORIGIN}/academy#webpage`,
-        url: `${SITE_ORIGIN}/academy`,
-        name: 'Serenest Academy | Mental Health Education India',
-        description:
-          'Clinician-led mental health education: certificate programs, fellowships, CPD, and mentorship for India\'s mental health workforce.',
-        inLanguage: 'en-IN',
-        isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
-        about: ['Mental health literacy', 'Health education', 'Psychiatry education'],
-      },
-      breadcrumbs('/academy', 'Serenest Academy'),
-    ],
-  },
   '/professionals': {
     '@context': 'https://schema.org',
     '@graph': [
@@ -1367,15 +1273,6 @@ function crumbTrail(pathname) {
   if (pathname.startsWith('/blog/')) {
     return [{ name: 'Blog', item: `${SITE_ORIGIN}/blog` }];
   }
-  if (pathname.startsWith('/academy/programs/')) {
-    return [
-      { name: 'Academy', item: `${SITE_ORIGIN}/academy` },
-      { name: 'Programs', item: `${SITE_ORIGIN}/academy/programs` },
-    ];
-  }
-  if (pathname.startsWith('/academy/') && pathname !== '/academy') {
-    return [{ name: 'Academy', item: `${SITE_ORIGIN}/academy` }];
-  }
   if (pathname.startsWith('/screening/')) {
     return [{ name: 'Screening', item: `${SITE_ORIGIN}/screening` }];
   }
@@ -1410,11 +1307,9 @@ function defaultJsonLd(pathname) {
   } else {
     const type = pathname === '/contact'
       ? 'ContactPage'
-      : pathname === '/faq' || pathname === '/academy/faqs'
+      : pathname === '/faq'
         ? 'FAQPage'
-        : pathname.startsWith('/academy')
-          ? 'CollectionPage'
-          : 'WebPage';
+        : 'WebPage';
     graph.push({
       '@type': type,
       '@id': `${url}#webpage`,
@@ -1460,7 +1355,6 @@ const SITEMAP_HINTS = {
   '/gad-7-anxiety-screening': { changefreq: 'monthly', priority: '0.85' },
   '/guides': { changefreq: 'weekly', priority: '0.85' },
   '/blog': { changefreq: 'weekly', priority: '0.8' },
-  '/academy': { changefreq: 'weekly', priority: '0.5' },
 };
 
 export function isIndexableSeoPath(pathname) {
@@ -1479,12 +1373,6 @@ function normalizeSeoPath(pathname) {
 export function resolveSeoRedirect(pathname) {
   const norm = normalizeSeoPath(pathname);
   if (ROUTE_ALIASES[norm]) return ROUTE_ALIASES[norm];
-
-  const academyLegacy = /^\/academy\/program\/([^/]+)$/.exec(norm);
-  if (academyLegacy) {
-    const slug = academyLegacy[1];
-    if (ACADEMY_PROGRAMS.some((p) => p.slug === slug)) return `/academy/programs/${slug}`;
-  }
 
   const resource = /^\/resources\/([^/]+)$/.exec(norm);
   if (resource) {
@@ -1518,8 +1406,8 @@ export function renderSitemapXml(lastmod = '2026-09-19') {
 
   const urls = paths.map((path) => {
     const hint = SITEMAP_HINTS[path] || {};
-    const changefreq = hint.changefreq || (path.startsWith('/blog/') ? 'monthly' : path.startsWith('/academy') ? 'monthly' : 'monthly');
-    const priority = hint.priority || (path.startsWith('/blog/') ? '0.65' : path.startsWith('/academy') ? '0.5' : '0.55');
+    const changefreq = hint.changefreq || 'monthly';
+    const priority = hint.priority || (path.startsWith('/blog/') ? '0.65' : '0.55');
     return [
       '  <url>',
       `    <loc>${canonicalUrl(path)}</loc>`,

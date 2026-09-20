@@ -33,11 +33,11 @@ const PATHS = [
     tone: 'clay',
   },
   {
-    icon: 'cap',
-    title: 'Students & learners',
-    body: 'Learn, upskill and advance your career in mental health.',
-    cta: 'Explore Academy',
-    to: '/academy',
+    icon: 'clipboard',
+    title: 'Self-check',
+    body: 'Understand how you have been feeling with a private, validated screening.',
+    cta: 'Start a check',
+    to: '/screening',
     tone: 'plum',
   },
 ];
@@ -62,7 +62,7 @@ const STORY_IMAGES = [
   '/images/editorial/psychiatry-followup-notes-v1.jpg',
   '/images/editorial/therapy-conversation-room-v1.jpg',
   '/images/editorial/addiction-recovery-path-v1.jpg',
-  '/images/editorial/serenest-academy-books.jpg',
+  '/images/editorial/psychiatry-consultation-desk-v1.jpg',
 ];
 
 export default function HomePageLocked() {
@@ -94,7 +94,7 @@ export default function HomePageLocked() {
             </p>
             <div className="lh-actions">
               <Link className="lh-btn lh-btn--rust" to="/services">Find your starting point</Link>
-              <Link className="lh-btn lh-btn--outline" to="/academy">Explore Serenest Academy</Link>
+              <Link className="lh-btn lh-btn--outline" to="/screening">Start a mental health check</Link>
             </div>
           </div>
 
@@ -173,20 +173,20 @@ export default function HomePageLocked() {
 
           <aside className="lh-academy" aria-labelledby="lh-academy-title">
             <div className="lh-academy__copy">
-              <p className="lh-eyebrow">Serenest Academy</p>
-              <h2 id="lh-academy-title">Learning that strengthens practice.</h2>
-              <p>Education that empowers professionals and strengthens mental healthcare.</p>
+              <p className="lh-eyebrow">Mental Health Center</p>
+              <h2 id="lh-academy-title">Understand how you have been feeling.</h2>
+              <p>Private, validated checks for mood, anxiety, stress, and burnout — educational, not a diagnosis.</p>
               <ul>
-                <li>Clinical psychiatry and psychopharmacology</li>
-                <li>Major psychotherapy schools and techniques</li>
-                <li>Case discussions and masterclasses</li>
-                <li>Supervision, mentorship and ethical practice</li>
+                <li>PHQ-9 mood check</li>
+                <li>GAD-7 anxiety check</li>
+                <li>Burnout Check (BAT-12)</li>
+                <li>Clear next steps toward care</li>
               </ul>
-              <Link className="lh-btn lh-btn--green" to="/academy">Explore Serenest Academy</Link>
+              <Link className="lh-btn lh-btn--green" to="/screening">Start a check</Link>
             </div>
             <picture className="lh-academy__art">
-              <source srcSet="/images/editorial/serenest-academy-books.webp" type="image/webp" />
-              <img src="/images/editorial/serenest-academy-books.jpg" alt="" width="720" height="720" loading="lazy" />
+              <source srcSet="/images/editorial/psychiatry-consultation-desk-v1.jpg" type="image/jpeg" />
+              <img src="/images/editorial/psychiatry-consultation-desk-v1.jpg" alt="" width="720" height="720" loading="lazy" />
             </picture>
           </aside>
         </div>
@@ -267,7 +267,7 @@ export default function HomePageLocked() {
           <div>
             <p className="lh-eyebrow">Stay in the loop</p>
             <h2 id="lh-newsletter-title">Useful updates, not noise.</h2>
-            <p>Occasional mental-health and Academy updates. No spam.</p>
+            <p>Occasional mental-health updates. No spam.</p>
           </div>
           <EmailCapture source="homepage_newsletter" variant="light" />
         </div>

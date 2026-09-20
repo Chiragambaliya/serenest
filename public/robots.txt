@@ -9,6 +9,5 @@ Disallow: /patient/dashboard
 Disallow: /professionals/apply
 Disallow: /professionals/login
 Disallow: /professionals/portal
-Disallow: /academy/login
 
 Sitemap: https://www.serenest.in/sitemap.xml

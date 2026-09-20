@@ -32,7 +32,6 @@ const ROUTES_200 = [
   '/about',
   '/faq',
   '/guides',
-  '/academy',
   '/privacy',
   '/contact',
   '/services/psychiatry',
@@ -42,8 +41,6 @@ const ROUTES_200 = [
   '/careers',
   '/blog',
   '/online-psychiatrist-gujarat',
-  '/academy/programs',
-  '/academy/programs/clinical-excellence',
   '/screening/tool/pss-10',
   '/blog/telemedicine-guidelines-india',
   '/screening/pathway/mood-anxiety',
@@ -75,8 +72,6 @@ const ROUTES_301 = [
   ['/online-psychiatrist-rajkot', 'https://www.serenest.in/online-psychiatrist-gujarat'],
   ['/resources', 'https://www.serenest.in/blog'],
   ['/resources/telemedicine-guidelines-india', 'https://www.serenest.in/blog/telemedicine-guidelines-india'],
-  ['/academy/program/clinical-excellence', 'https://www.serenest.in/academy/programs/clinical-excellence'],
-  ['/academy/learn', 'https://www.serenest.in/professionals/learning'],
   ['/disclaimer', 'https://www.serenest.in/emergency-disclaimer'],
   ['/phq-9-test-online-india', 'https://www.serenest.in/phq-9-depression-screening'],
   ['/gad-7-test-online-india', 'https://www.serenest.in/gad-7-anxiety-screening'],
@@ -90,11 +85,16 @@ const ROUTES_410 = [
   '/travelx-tour-guides-section',
   '/2025/11/05/kak-zritelnye-effekty-ukrepljajut-vpechatlenija/',
   '/2025/11/05/kak-zritelnye-effekty-ukrepljajut-vpechatlenija',
+  '/academy',
+  '/academy/',
+  '/academy/programs',
+  '/academy/programs/clinical-excellence',
+  '/academy/login',
+  '/academy/learn',
 ];
 const ROUTES_404 = [
   '/this-route-does-not-exist',
   '/random/garbage',
-  '/academy/programs/not-a-real-program',
   '/blog/not-a-real-post',
 ];
 
@@ -295,14 +295,15 @@ console.log('\nSitemap coverage:');
       `${SITE_ORIGIN}/services/psychiatry`,
       `${SITE_ORIGIN}/online-psychiatrist-gujarat`,
       `${SITE_ORIGIN}/blog/telemedicine-guidelines-india`,
-      `${SITE_ORIGIN}/academy/programs/clinical-excellence`,
+      `${SITE_ORIGIN}/screening`,
     ];
     for (const loc of mustInclude) {
       if (!html.includes(`<loc>${loc}</loc>`)) fail('/sitemap.xml', `missing ${loc}`);
     }
+    if (html.includes('/academy')) fail('/sitemap.xml', 'still lists retired Academy URLs');
     if (!html.includes('<lastmod>')) fail('/sitemap.xml', 'missing lastmod');
-    if (mustInclude.every((loc) => html.includes(`<loc>${loc}</loc>`)) && html.includes('<lastmod>')) {
-      pass('/sitemap.xml', 'includes core Care URLs + lastmod');
+    if (mustInclude.every((loc) => html.includes(`<loc>${loc}</loc>`)) && html.includes('<lastmod>') && !html.includes('/academy')) {
+      pass('/sitemap.xml', 'includes core Care URLs + lastmod, no Academy');
     }
   }
 }

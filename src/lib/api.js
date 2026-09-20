@@ -81,7 +81,7 @@ export const professionals = {
   /** Public directory: approved professionals (sanitized fields). */
   directory: () => get('/api/professionals/directory'),
 
-  /** Is this email a joined (approved) professional? Gates Academy clinician content. */
+  /** Is this email a joined (approved) professional? */
   verify: (email) => get(`/api/professionals/verify?email=${encodeURIComponent(email)}`),
 };
 
@@ -110,13 +110,6 @@ export const payments = {
   order: (data) => post('/api/payments/order', data),
 };
 
-// ── Academy content (announcements / updates) ───────────────
-export const academyContent = {
-  /** Public — active items, pinned first. */
-  list: () => get('/api/academy/content'),
-};
-
-// ── Subscribers (opt-in email capture) ─────────────────────
 export const subscribers = {
   /** Save an opt-in email. @param {{ email: string, source?: string }} data */
   add: (data) => post('/api/subscribe', data),
@@ -137,8 +130,6 @@ export const contact = {
  */
 export const assistant = {
   chat: (messages) => post('/api/assistant/chat', { messages }),
-  /** Academy literacy assistant — uses academy-specific system prompt on the server. */
-  academyChat: (messages) => post('/api/assistant/chat', { messages, context: 'academy' }),
   /** Lets the team know Serenest Guide was opened (server dedupes per visitor/day). */
   notifyGuideOpened: (payload) => post('/api/assistant/notify-open', payload),
 };

@@ -221,12 +221,11 @@ export default function ProfessionalPortalPage() {
                   border: '1px solid #c5ddb4',
                 }}
               >
-                <p style={{ fontWeight: 800, marginBottom: 6 }}>Serenest Academy — free for you</p>
+                <p style={{ fontWeight: 800, marginBottom: 6 }}>Clinical learning hub</p>
                 <p className="muted" style={{ fontSize: '0.88rem', marginBottom: 14, lineHeight: 1.5 }}>
-                  As an approved Serenest professional, Academy programs are included at no charge.
-                  Open Academy and claim a free seat for any track.
+                  Pharmacology and psychology tracks for approved clinicians — documentation, telemedicine, and practice tools.
                 </p>
-                <Link className="btn btn-primary" to="/academy">Open Academy free →</Link>
+                <Link className="btn btn-primary" to="/professionals/learning">Open learning hub →</Link>
               </div>
 
               {/* Editable profile */}

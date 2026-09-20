@@ -1,8 +1,8 @@
 # Serenest
 
 Clinical telepsychiatry for India — online psychiatry, therapy, counselling,
-self-screening (PHQ-9 / GAD-7), and de-addiction support, plus Serenest
-Academy for clinician education. Live at **https://www.serenest.in**.
+self-screening (PHQ-9 / GAD-7), and de-addiction support. Live at
+**https://www.serenest.in**.
 
 ## Stack
 

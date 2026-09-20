@@ -6,7 +6,6 @@ const BASE = import.meta.env.VITE_API_URL ?? '';
 
 /**
  * True when the signed-in user is an approved Serenest professional.
- * Academy is free for those accounts.
  */
 export function useProfessionalAccess() {
   const { user, loading: authLoading } = useAuth();

@@ -5380,9 +5380,8 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 /* ============================================================
-   Serenest Academy (literacy & learning) — `.ed-*` namespace.
-   Lives on `/academy` inside the same React app. Reuses the
-   main shell and sage/cream palette; Fraunces headings, Inter body.
+   Editorial page namespace — `.ed-*`.
+   Reuses the main shell and sage/cream palette.
    ============================================================ */
 
 .ed-page {

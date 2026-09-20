@@ -1,8 +1,7 @@
 # Deploy Serenest to Render as serenest.in
 
 Follow these steps to deploy the site and use the domain **serenest.in**.
-The deploy is **one Node web service** — Serenest clinical and Serenest
-Academy now ship together (Academy lives at `/academy`).
+The deploy is **one Node web service** for the Serenest clinical site.
 
 ---
 
@@ -91,4 +90,4 @@ Where you manage DNS for **serenest.in** (registrar, Cloudflare, etc.):
 | 4 | Render → Settings → Custom Domains | Add `serenest.in` (and optionally `www.serenest.in`) |
 | 5 | Your DNS (registrar/Cloudflare) | Add CNAME record(s) as shown by Render |
 
-Live URL: **https://serenest.in** · Academy: **https://serenest.in/academy**
+Live URL: **https://serenest.in**

@@ -2,7 +2,7 @@
 import { chromium } from 'playwright';
 
 const BASE = process.argv[2] || 'http://127.0.0.1:4173';
-const PAGES = ['/', '/services', '/academy', '/pricing', '/about', '/professionals', '/team', '/contact', '/faq'];
+const PAGES = ['/', '/services', '/pricing', '/about', '/professionals', '/team', '/contact', '/faq'];
 const WIDTHS = [1440, 768, 390];
 
 const browser = await chromium.launch({ args: ['--no-sandbox', '--disable-dev-shm-usage'] });
