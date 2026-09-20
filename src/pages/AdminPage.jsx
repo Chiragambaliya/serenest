@@ -1502,7 +1502,7 @@ export default function AdminPage() {
                   const clinician = b.professional_id ? professionalsById[b.professional_id] : null;
                   return (
                     <article key={b.id} className="admin-inbox-row is-pending">
-                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, flexWrap: 'wrap', alignItems: 'flex-start' }}>
                         <div>
                           <strong>{b.patient_name}</strong>
                           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 2 }}>
