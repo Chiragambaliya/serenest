@@ -361,7 +361,12 @@ export default function PatientFindProfessionalPage() {
             <p style={{ color: 'var(--text-muted)' }}>Finding professionals…</p>
           </div>
         ) : error ? (
-          <EmptyState icon="⚠" title="Couldn't load professionals" body={error} />
+          <EmptyState
+            icon="⚠"
+            title="Couldn't load professionals"
+            body={`${error} You can still request a slot and we'll match you.`}
+            cta={<Link className="btn btn-primary" to="/book">Request an appointment</Link>}
+          />
         ) : professionals.length === 0 ? (
           <EmptyState
             icon="🩺"

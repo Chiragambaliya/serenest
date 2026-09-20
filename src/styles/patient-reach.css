@@ -192,6 +192,11 @@
     padding-bottom: 4.85rem;
   }
 
+  /* CookieConsent lives outside SiteLayout, so :has() is required. */
+  body:has(.patient-dock) .privacy-banner {
+    bottom: calc(4.85rem + env(safe-area-inset-bottom, 0px) + 0.5rem);
+  }
+
   .hp-trust__list {
     grid-template-columns: 1fr 1fr;
   }
