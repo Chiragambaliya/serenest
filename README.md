@@ -11,8 +11,7 @@ self-screening (PHQ-9 / GAD-7), and de-addiction support. Live at
   `/api/*` routes, with per-route SEO injection.
 - **Database & auth:** Supabase (Postgres). Schema in `supabase/`.
 - **Video:** Daily.co · **Payments:** Razorpay · **Email:** Resend ·
-  **WhatsApp pings:** CallMeBot · **AI:** OpenAI (site guide), Anthropic
-  (content generation).
+  **WhatsApp pings:** CallMeBot · **AI:** OpenAI (site guide).
 - **Hosting:** Render (`render.yaml`) — see `DEPLOY.md`.
 
 ## Run locally

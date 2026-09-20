@@ -18,7 +18,7 @@ const supabase = createClient(
 //   W1: First Step     — lower the barrier to seeking help
 //   W2: Know Yourself  — conditions, screening tools, pricing transparency
 //   W3: Not Alone      — destigmatize, community, supporting others
-//   W4: Grow           — academy, career, professional recruitment
+//   W4: Grow           — careers, clinician recruitment, peer learning
 // ─────────────────────────────────────────────────────────────────────────────
 
 const IST_OFFSET = '+05:30';
@@ -26,7 +26,6 @@ const IG_TAGS = {
   core: '#MentalHealth #MentalHealthIndia #SerenestMind',
   care: '#OnlineTherapy #TelepsychiatryIndia #AnxietyAwareness #DepressionSupport',
   pro:  '#PsychologyIndia #MentalHealthProfessionals #ClinicalPsychology',
-  acad: '#PsychologyStudents #MentalHealthEducation #CounsellingIndia',
   corp: '#WorkplaceWellness #EmployeeMentalHealth #HRIndia',
 };
 
@@ -92,24 +91,24 @@ serenest.in`,
   {
     platform: 'linkedin',
     scheduled_at: '2026-07-02T08:00:00+05:30',
-    caption: `Serenest Academy now has 4 certificate programs open for enrollment.
+    caption: `Serenest is expanding its clinician network across India.
 
-📚 Certificate in Counselling Skills — 6 weeks, 12 modules
-🧠 Certificate in Clinical Psychology — 8 weeks, 16 modules
-💻 Certificate in Digital Mental Health — 4 weeks, 8 modules
-🏅 Fellowship in Telepsychiatry — 12 weeks, 24 modules
+We're looking for:
+→ Psychiatrists (MD/DPM/DNB)
+→ Clinical psychologists (MPhil/PhD)
+→ Counselling psychologists
+→ Licensed counsellors and therapists with structured training
 
-Every program is:
-→ Designed and delivered by practicing mental health professionals
-→ Case-based — real clinical scenarios, not just theory
-→ Flexible — self-paced with live sessions
-→ Credential-bearing — recognised across India's mental health sector
+What you get:
+→ 100% remote consults — clinic, home, or anywhere
+→ You set your hours
+→ Booking, billing, reminders, and records on the platform
+→ Prescription tools aligned with India's telemedicine guidelines
+→ A growing patient base of people who booked because they want care
 
-Whether you're a psychology student, a fresh graduate, or a licensed professional seeking CPD, there's a track for you.
+You stay the clinical expert. We are the infrastructure.
 
-Who is this for? Counsellors seeking structure. Psychiatry residents building digital skills. Clinical psychologists wanting a fellowship. HR professionals who want to understand the clinical reality.
-
-Enrollment is open. DM or visit serenest.in/academy.`,
+If this is relevant to you, DM us with your specialty and location, or visit serenest.in/professionals.`,
     hashtags: null,
   },
   {
@@ -368,11 +367,11 @@ The gap is real. Video sessions are not just "regular sessions over a screen." T
 • Documentation and continuity have new standards under India's telemedicine guidelines
 • Crisis protocols need to account for geographic distance
 
-Serenest Academy's Certificate in Digital Mental Health — 4 weeks, 8 modules, clinician-led — addresses exactly this gap.
+Serenest's clinician learning hub covers the practical difference: remote risk assessment, alliance over video, documentation under India's telemedicine guidelines, and crisis protocols when the patient is not in the same city.
 
-If you're practicing or training in mental health and have not yet built formal skills in digital delivery, this program is for you.
+If you already practice and want to deliver care online with a structured platform behind you, join the network.
 
-Enrollment open → serenest.in/academy`,
+Apply at serenest.in/professionals`,
     hashtags: null,
   },
   {
@@ -416,47 +415,32 @@ If you believe access is infrastructure — build with us.`,
   {
     platform: 'instagram',
     scheduled_at: '2026-07-20T09:00:00+05:30',
-    caption: `Study mental health from anywhere in India. 🎓
+    caption: `Not sure where to start? Begin with a free check-in. 🧠
 
-Serenest Academy offers clinician-led certificate programs in:
+PHQ-9, GAD-7, and other validated tools — a few minutes, no login, private by default.
 
-🎓 Counselling Skills (6 weeks)
-🧠 Clinical Psychology (8 weeks)
-💻 Digital Mental Health (4 weeks)
-🏅 Telepsychiatry Fellowship (12 weeks)
+Your score is not a diagnosis. It gives you language for how you have been feeling, so a conversation with a psychiatrist or therapist can be clearer.
 
-Every program is:
-→ Fully online — study from Mumbai, Mysore, or Manipur
-→ Case-based — real clinical scenarios, not just theory
-→ Flexible — learn at your own pace
-→ Credential-bearing — recognised across India's mental health sector
+When you are ready, book online. Pay per session. No subscription.
 
-Plus: 1:1 mentorship, CV review, placement guidance, and access to a growing professional network.
-
-Whether you're a student, a fresh graduate, or a clinician seeking CPD — there's a track for you.
-
-serenest.in/academy 💚`,
-    hashtags: `${igt('core','acad','pro')} #MentalHealthCareers #PsychologyCourse #CounsellingCertificate`,
+serenest.in/screening 💚`,
+    hashtags: `${igt('core','care')} #FreeScreening #MentalHealthIndia #OnlinePsychiatrist`,
   },
   {
     platform: 'linkedin',
     scheduled_at: '2026-07-21T08:00:00+05:30',
-    caption: `A certificate tells an employer you completed a course.
-A mentor tells them you can think clinically.
+    caption: `Supervision is what turns knowledge into safe practice.
 
-At Serenest Academy, every program includes both.
+On Serenest, clinicians are not left to invent a telepsychiatry workflow alone. The professional hub includes:
 
-1:1 clinical mentorship is not an add-on. It's a core part of our learning model. Here's what it actually provides:
+→ Clinical reference tracks for pharmacology and psychology
+→ Documentation and telemedicine norms for India
+→ Peer learning with other verified clinicians on the platform
+→ Continuity tools so remote care is not a one-off video call
 
-→ Weekly or bi-weekly sessions with an experienced clinician in your specialty
-→ Case discussion — bring real cases (anonymised) and work through them
-→ Career guidance — specialty choices, practice models, geographic considerations
-→ Interview preparation — case-based discussion skills and how to present clinically
-→ A long-term professional relationship, not a transactional course completion
+We hire licensed professionals and give them infrastructure — not a course catalogue.
 
-The difference between a graduate who can recite DSM criteria and a clinician who can assess a patient is supervision. We make that accessible.
-
-If you're building your career in mental health, DM us or visit serenest.in/academy.`,
+If you already practice and want to consult online with that support behind you, visit serenest.in/professionals.`,
     hashtags: null,
   },
   {
