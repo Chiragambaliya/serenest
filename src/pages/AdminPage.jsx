@@ -223,7 +223,7 @@ const SITE_PAGE_GROUPS = [
   {
     title: 'Patient journey',
     pages: [
-      { label: 'Book a session', path: '/book', hint: 'Multi-step booking' },
+      { label: 'Request appointment', path: '/book', hint: 'Contact-first booking' },
       { label: 'Find a professional', path: '/patient/find-professional', hint: 'Directory & filters' },
       { label: 'Self-screening', path: '/screening', hint: 'PHQ-9 / GAD-7' },
       {

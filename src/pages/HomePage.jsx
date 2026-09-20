@@ -4,6 +4,12 @@ import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { useSectionReveal } from '../hooks/useReveal';
 import ImagePlaceholder from '../components/ImagePlaceholder';
+import {
+  CARE_PHONE_DISPLAY,
+  CARE_TEL_HREF,
+  TRUST_POINTS,
+  careWaHref,
+} from '../lib/patientReach';
 
 const OUR_SERVICES = [
   {
@@ -95,11 +101,27 @@ export default function HomePage() {
             <HpBtn to="/book" variant="solid-light">Request an appointment</HpBtn>
             <HpBtn to="/screening" variant="ghost-dark">Start a free check</HpBtn>
           </div>
+          <p className="hp-hero__reach">
+            <a href={CARE_TEL_HREF}>Call {CARE_PHONE_DISPLAY}</a>
+            <span aria-hidden="true">·</span>
+            <a href={careWaHref()} target="_blank" rel="noreferrer">WhatsApp us</a>
+          </p>
         </div>
         <p className="hp-hero__note">
           Not for emergencies. If you or someone else is at immediate risk, contact local
           emergency services or a crisis helpline.
         </p>
+      </section>
+
+      <section className="hp-trust" aria-label="How Serenest care works">
+        <ul className="hp-trust__list">
+          {TRUST_POINTS.map((point) => (
+            <li key={point.id} className="hp-trust__item">
+              <span className="hp-trust__mark" aria-hidden="true" />
+              {point.label}
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="ed-pace hp-arrive" aria-labelledby="home-arrive-title">
@@ -201,7 +223,9 @@ export default function HomePage() {
           <p className="hp-cta__contact">
             <a href="mailto:support@serenest.in">support@serenest.in</a>
             <span aria-hidden="true"> · </span>
-            <a href="tel:7777936367">7777936367</a>
+            <a href={CARE_TEL_HREF}>{CARE_PHONE_DISPLAY}</a>
+            <span aria-hidden="true"> · </span>
+            <a href={careWaHref()} target="_blank" rel="noreferrer">WhatsApp</a>
           </p>
           <div className="hp-hero__actions hp-close__actions">
             <HpBtn to="/book" variant="solid-light">Request an appointment</HpBtn>

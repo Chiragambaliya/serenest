@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import { CARE_PHONE_DISPLAY, CARE_TEL_HREF, careWaHref } from '../lib/patientReach';
 import '../styles/service-detail.css';
 
 const REASONS = [
@@ -81,14 +82,36 @@ export default function ContactPage() {
             <h2>{reason.label}</h2>
             <p className="ed-lede">{reason.body}</p>
             <div className="contact-reason-detail__actions">
-              <a
-                className="btn btn-primary"
-                href={`mailto:support@serenest.in?subject=${reason.subject}`}
-              >
-                Email us
-              </a>
-              {reason.extra && (
-                <Link className="btn btn-ghost" to={reason.extra.to}>{reason.extra.label}</Link>
+              {reason.extra?.to === '/book' ? (
+                <>
+                  <Link className="btn btn-primary" to="/book">Request an appointment</Link>
+                  <a
+                    className="btn btn-whatsapp"
+                    href={careWaHref()}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    WhatsApp
+                  </a>
+                  <a
+                    className="btn btn-ghost"
+                    href={`mailto:support@serenest.in?subject=${reason.subject}`}
+                  >
+                    Email us
+                  </a>
+                </>
+              ) : (
+                <>
+                  <a
+                    className="btn btn-primary"
+                    href={`mailto:support@serenest.in?subject=${reason.subject}`}
+                  >
+                    Email us
+                  </a>
+                  {reason.extra && (
+                    <Link className="btn btn-ghost" to={reason.extra.to}>{reason.extra.label}</Link>
+                  )}
+                </>
               )}
             </div>
           </div>
@@ -112,13 +135,21 @@ export default function ContactPage() {
                 <p className="ed-index__body">support@serenest.in</p>
                 <span className="ed-index__go" aria-hidden="true">Write →</span>
               </a>
-              <a className="ed-index__row" href="tel:917777936367">
+              <a className="ed-index__row" href={CARE_TEL_HREF}>
                 <span className="ed-index__num">02</span>
                 <span>
-                  <h3 className="ed-index__title">Phone / WhatsApp</h3>
+                  <h3 className="ed-index__title">Call</h3>
                 </span>
-                <p className="ed-index__body">+91 77779 36367</p>
+                <p className="ed-index__body">{CARE_PHONE_DISPLAY}</p>
                 <span className="ed-index__go" aria-hidden="true">Call →</span>
+              </a>
+              <a className="ed-index__row" href={careWaHref()} target="_blank" rel="noreferrer">
+                <span className="ed-index__num">03</span>
+                <span>
+                  <h3 className="ed-index__title">WhatsApp</h3>
+                </span>
+                <p className="ed-index__body">{CARE_PHONE_DISPLAY}</p>
+                <span className="ed-index__go" aria-hidden="true">Chat →</span>
               </a>
             </div>
           </div>

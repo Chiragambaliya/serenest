@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { professionals as professionalsApi } from '../lib/api';
 import { buildBookPath, preferModeFromPro } from '../lib/bookingHandoff';
+import { careWaHref } from '../lib/patientReach';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 
@@ -366,7 +367,7 @@ export default function PatientFindProfessionalPage() {
             icon="🩺"
             title="No verified professionals yet"
             body="We're onboarding carefully. In the meantime, you can request a session and we'll match you."
-            cta={<Link className="btn btn-primary" to="/book">Book a session</Link>}
+            cta={<Link className="btn btn-primary" to="/book">Request an appointment</Link>}
           />
         ) : shown.length === 0 ? (
           <EmptyState
@@ -502,10 +503,10 @@ function ProfessionalCard({ p }) {
           className="btn btn-primary"
           style={{ flex: 1, justifyContent: 'center', display: 'flex' }}
         >
-          Book session →
+          Request slot →
         </Link>
         <a
-          href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I'd like to book a session with ${p.name} (${p.roleLabel})`)}`}
+          href={careWaHref(`Hi, I'd like to book a session with ${p.name} (${p.roleLabel})`)}
           target="_blank"
           rel="noreferrer"
           style={{

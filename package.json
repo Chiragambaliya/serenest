@@ -12,8 +12,9 @@
     "verify:seo": "node scripts/verify-seo.mjs",
     "test:screening": "node scripts/test-screening-tools.mjs",
     "test:admin-ops": "node scripts/test-admin-ops.mjs",
-    "test": "npm run test:screening && npm run test:admin-ops",
-    "lint": "node --check server.js && node --check src/server/aiAssistant.js && node --check src/server/siteGuideRoutes.js && node --check src/lib/checkEvidence.js && node --check src/lib/checkSession.js && node --check src/lib/adminOps.js && node --check scripts/test-screening-tools.mjs && node --check scripts/test-admin-ops.mjs"
+    "test:patient-reach": "node scripts/test-patient-reach.mjs",
+    "test": "npm run test:screening && npm run test:admin-ops && npm run test:patient-reach",
+    "lint": "node --check server.js && node --check src/server/aiAssistant.js && node --check src/server/siteGuideRoutes.js && node --check src/lib/checkEvidence.js && node --check src/lib/checkSession.js && node --check src/lib/adminOps.js && node --check src/lib/patientReach.js && node --check scripts/test-screening-tools.mjs && node --check scripts/test-admin-ops.mjs && node --check scripts/test-patient-reach.mjs"
   },
   "dependencies": {
     "@daily-co/daily-js": "^0.66.0",

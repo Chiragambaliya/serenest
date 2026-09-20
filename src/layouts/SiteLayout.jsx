@@ -5,6 +5,12 @@ import EmailCapture from '../components/EmailCapture';
 import { useAuth } from '../lib/useAuth';
 import { useMainReveal } from '../hooks/useReveal';
 import { openPrivacyChoices } from '../lib/privacyConsent';
+import {
+  CARE_PHONE_DISPLAY,
+  CARE_TEL_HREF,
+  careWaHref,
+  hideReachDock,
+} from '../lib/patientReach';
 
 /* Editorial seal — filled oval with a drawn S, not a generic leaf. */
 function BrandMark({ size = 42 }) {
@@ -169,15 +175,12 @@ export default function SiteLayout() {
   const navClass = ({ isActive }) =>
     isActive ? 'nav-link nav-link-active' : 'nav-link';
 
-  // Avoid covering form CTA buttons on mobile pages.
-  const hideFloatingWhatsApp =
-    location.pathname.startsWith('/book') ||
-    location.pathname.startsWith('/professionals/apply') ||
-    location.pathname.startsWith('/admin') ||
-    location.pathname.startsWith('/consultation');
+  // Avoid covering form CTA buttons on booking / admin / consult pages.
+  const hideDock = hideReachDock(location.pathname);
+  const careWa = careWaHref();
 
   return (
-    <div className="theme-editorial">
+    <div className={`theme-editorial${hideDock ? ' theme-editorial--no-dock' : ''}`}>
       <a className="skip-link" href="#main">Skip to content</a>
 
       <header className={`header masthead ${scrolled ? 'is-scrolled' : 'is-top'}`}>
@@ -207,6 +210,17 @@ export default function SiteLayout() {
             </div>
 
             <div className="masthead__actions">
+              <a className="masthead__reach" href={CARE_TEL_HREF}>
+                Call
+              </a>
+              <a
+                className="masthead__reach"
+                href={careWa}
+                target="_blank"
+                rel="noreferrer"
+              >
+                WhatsApp
+              </a>
               <NavLink
                 to={user ? '/patient/dashboard' : '/patient/login'}
                 className="masthead__account"
@@ -223,16 +237,23 @@ export default function SiteLayout() {
             </div>
           </nav>
 
-          <button
-            type="button"
-            className={`menu-btn ${menuOpen ? 'is-open' : ''}`}
-            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-            aria-expanded={menuOpen}
-            aria-controls="mobile-menu"
-            onClick={() => setMenuOpen((v) => !v)}
-          >
-            <span className="menu-bars" aria-hidden="true" />
-          </button>
+          <div className="masthead__mobile-actions">
+            {location.pathname !== '/book' && (
+              <Link className="header-cta masthead__cta masthead__cta--compact" to="/book">
+                <span className="masthead__cta-label">Request</span>
+              </Link>
+            )}
+            <button
+              type="button"
+              className={`menu-btn ${menuOpen ? 'is-open' : ''}`}
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
+              aria-controls="mobile-menu"
+              onClick={() => setMenuOpen((v) => !v)}
+            >
+              <span className="menu-bars" aria-hidden="true" />
+            </button>
+          </div>
         </div>
       </header>
 
@@ -309,6 +330,11 @@ export default function SiteLayout() {
               <p className="menu-drawer-note">
                 Prefer a time — we confirm by phone or WhatsApp. You pay after.
               </p>
+              <p className="menu-drawer-note">
+                <a href={CARE_TEL_HREF}>{CARE_PHONE_DISPLAY}</a>
+                {' · '}
+                <a href={careWa} target="_blank" rel="noreferrer">WhatsApp</a>
+              </p>
             </div>
           </aside>
         </div>
@@ -341,7 +367,7 @@ export default function SiteLayout() {
               </Link>
               <a
                 className="btn btn-whatsapp"
-                href="https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest"
+                href={careWa}
                 target="_blank"
                 rel="noreferrer"
               >
@@ -360,7 +386,7 @@ export default function SiteLayout() {
               <div className="ed-footer__contact">
                 <a href="mailto:support@serenest.in">support@serenest.in</a>
                 <span aria-hidden="true" className="ed-footer__dot" />
-                <a href="tel:+917777936367">+91 77779 36367</a>
+                <a href={CARE_TEL_HREF}>{CARE_PHONE_DISPLAY}</a>
               </div>
             </div>
 
@@ -417,42 +443,26 @@ export default function SiteLayout() {
         </div>
       </footer>
 
-      {/* WhatsApp floating button */}
-      {!hideFloatingWhatsApp && (
-        <a
-          href="https://wa.me/917777936367?text=Hi%2C%20I%27d%20like%20to%20book%20a%20session%20with%20Serenest"
-          target="_blank"
-          rel="noreferrer noopener"
-          aria-label="Chat with us on WhatsApp"
-          style={{
-            position: 'fixed',
-            bottom: '1.5rem',
-            right: '1.5rem',
-            zIndex: 999,
-            width: 56,
-            height: 56,
-            borderRadius: '50%',
-            background: '#25D366',
-            boxShadow: '0 4px 16px rgba(37,211,102,0.45)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transition: 'transform 0.2s, box-shadow 0.2s',
-            textDecoration: 'none',
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'scale(1.1)';
-            e.currentTarget.style.boxShadow = '0 6px 24px rgba(37,211,102,0.6)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'scale(1)';
-            e.currentTarget.style.boxShadow = '0 4px 16px rgba(37,211,102,0.45)';
-          }}
-        >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="white" aria-hidden="true">
-            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-          </svg>
-        </a>
+      {/* WhatsApp FAB (desktop) + sticky request dock (mobile) */}
+      {!hideDock && (
+        <>
+          <a
+            className="wa-fab"
+            href={careWa}
+            target="_blank"
+            rel="noreferrer noopener"
+            aria-label="Chat with us on WhatsApp"
+          >
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="white" aria-hidden="true">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+            </svg>
+          </a>
+          <nav className="patient-dock" aria-label="Request care">
+            <a className="patient-dock__call" href={CARE_TEL_HREF}>Call</a>
+            <Link className="patient-dock__book" to="/book">Request appointment</Link>
+            <a className="patient-dock__wa" href={careWa} target="_blank" rel="noreferrer">WhatsApp</a>
+          </nav>
+        </>
       )}
     </div>
   );

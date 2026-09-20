@@ -7,6 +7,15 @@ import { ROUTE_SEO } from '../lib/seo';
 import { useAuth } from '../lib/useAuth';
 import { trackEvent } from '../lib/analytics';
 import { screeningNote, suggestRoleFromScreening } from '../lib/bookingHandoff';
+import {
+  BOOKING_STEPS,
+  CARE_PHONE_DISPLAY,
+  CARE_TEL_HREF,
+  canContinueContactStep,
+  careWaHref,
+  indiaMobileDigits,
+  isIndiaMobile,
+} from '../lib/patientReach';
 
 const DEFAULT_FEE_INR = 499;
 
@@ -257,10 +266,9 @@ export default function BookingPage() {
     [mode],
   );
 
-  const phoneClean = phone.replace(/[^\d]/g, '');
-  const isPhoneValid = phoneClean.length === 10 && /^[6-9]/.test(phoneClean);
-  const isNameValid = name.trim().length >= 2;
-  const canContinueStep3 = isNameValid && isPhoneValid && consent;
+  const phoneClean = indiaMobileDigits(phone);
+  const isPhoneValid = isIndiaMobile(phone);
+  const canContinueYou = canContinueContactStep({ name, phone, consent });
 
   return (
     <div className="page">
@@ -269,12 +277,16 @@ export default function BookingPage() {
           <div className="section-head about-hero-head">
             <p className="kicker">Booking</p>
             <h1 className="page-title">
-              {hasPro ? `Book a session with ${preProName}` : 'Book an appointment in minutes.'}
+              {hasPro ? `Request a session with ${preProName}` : 'Request an appointment in minutes.'}
             </h1>
             <p className="about-subtext">
               {hasPro
-                ? `${preProLabel}${preProFee ? ` · ₹${preProFee}` : ''}${preProDur ? ` · ${preProDur} min` : ''}. Pick a preferred slot and share your details — we'll confirm shortly.`
-                : 'Choose your practitioner type and consultation mode, pick a preferred slot, and share your details. We confirm by phone or WhatsApp — you do not pay until the slot is confirmed.'}
+                ? `${preProLabel}${preProFee ? ` · ₹${preProFee}` : ''}${preProDur ? ` · ${preProDur} min` : ''}. Start with your name and number — we'll confirm the slot by phone or WhatsApp. You do not pay until then.`
+                : 'Start with your name and number, then pick a preferred time. We confirm by phone or WhatsApp — you do not pay until the slot is locked.'}
+            </p>
+            <p className="booking-reach">
+              <a href={CARE_TEL_HREF}>Call {CARE_PHONE_DISPLAY}</a>
+              <a href={careWaHref()} target="_blank" rel="noreferrer">WhatsApp us now</a>
             </p>
           </div>
           {hasPro && (
@@ -326,22 +338,12 @@ export default function BookingPage() {
           <div className="booking-shell tile">
             <div className="booking-top">
               <div className="booking-steps" aria-label="Booking steps">
-                <div className={`step-chip ${step === 1 ? 'is-active' : ''}`}>
-                  <span className="step-dot" aria-hidden="true" />
-                  Choose
-                </div>
-                <div className={`step-chip ${step === 2 ? 'is-active' : ''}`}>
-                  <span className="step-dot" aria-hidden="true" />
-                  Slot
-                </div>
-                <div className={`step-chip ${step === 3 ? 'is-active' : ''}`}>
-                  <span className="step-dot" aria-hidden="true" />
-                  Details
-                </div>
-                <div className={`step-chip ${step === 4 ? 'is-active' : ''}`}>
-                  <span className="step-dot" aria-hidden="true" />
-                  Confirm
-                </div>
+                {BOOKING_STEPS.map((s) => (
+                  <div key={s.id} className={`step-chip ${step === s.id ? 'is-active' : ''}`}>
+                    <span className="step-dot" aria-hidden="true" />
+                    {s.label}
+                  </div>
+                ))}
               </div>
 
               <div className="booking-summary" aria-label="Selection summary">
@@ -356,9 +358,98 @@ export default function BookingPage() {
             {step === 1 && (
               <div className="booking-body">
                 <div className="section-head" style={{ marginBottom: 10 }}>
-                  <p className="section-label">Step 1</p>
-                  <h2>{hasPro ? `Booking with ${preProName}` : 'Choose your care type.'}</h2>
+                  <p className="section-label">Step 1 of 3</p>
+                  <h2>How can we reach you?</h2>
+                  <p>We confirm by phone or WhatsApp. Share a number we can use — you do not pay on this form.</p>
+                </div>
+
+                <div className="form-grid">
+                  <label className="field">
+                    <span className="field-label">Full name</span>
+                    <input
+                      className="input"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      placeholder="Your name"
+                      autoComplete="name"
+                    />
+                  </label>
+
+                  <label className="field">
+                    <span className="field-label">Phone (India)</span>
+                    <div className="input-row">
+                      <span className="input-prefix">+91</span>
+                      <input
+                        className="input"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="10-digit number"
+                        inputMode="numeric"
+                        autoComplete="tel"
+                        aria-invalid={phone.length > 0 && !isPhoneValid}
+                      />
+                    </div>
+                    {phone.length > 0 && !isPhoneValid && (
+                      <span className="field-hint">Enter a valid 10-digit number starting with 6–9.</span>
+                    )}
+                  </label>
+
+                  <label className="field">
+                    <span className="field-label">Email (optional)</span>
+                    <input
+                      className="input"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                    />
+                    <span className="field-hint">
+                      {patientEmailOn
+                        ? "If provided, we'll send a short booking confirmation."
+                        : "Optional. We'll confirm this request on WhatsApp or phone."}
+                    </span>
+                  </label>
+
+                  <label className="field">
+                    <span className="field-label">Preferred language</span>
+                    <select className="input" value={language} onChange={(e) => setLanguage(e.target.value)}>
+                      <option>English</option>
+                      <option>Hindi</option>
+                      <option>Gujarati</option>
+                    </select>
+                  </label>
+
+                  <label className="consent">
+                    <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+                    <span>
+                      I consent to being contacted about this appointment and acknowledge this is not for emergencies.
+                    </span>
+                  </label>
+                </div>
+
+                <div className="booking-actions">
+                  <Link className="btn btn-ghost" to="/services">
+                    View services
+                  </Link>
+                  <button
+                    className="btn btn-primary"
+                    type="button"
+                    onClick={() => setStep(2)}
+                    disabled={!canContinueYou}
+                  >
+                    Continue to care →
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {step === 2 && (
+              <div className="booking-body">
+                <div className="section-head" style={{ marginBottom: 10 }}>
+                  <p className="section-label">Step 2 of 3</p>
+                  <h2>{hasPro ? `Care with ${preProName}` : 'Choose care and a preferred time.'}</h2>
                   {hasPro && <p className="muted">{preProLabel}{preProFee ? ` · ₹${preProFee}` : ''}{preProDur ? ` · ${preProDur} min` : ''}</p>}
+                  {!hasPro && <p>Pick who you want to see and a preferred slot. We will confirm or suggest the next available time when we reach out.</p>}
                 </div>
 
                 <div className="form-grid">
@@ -439,26 +530,7 @@ export default function BookingPage() {
                   </div>
                 </div>
 
-                <div className="booking-actions">
-                  <Link className="btn btn-ghost" to="/services">
-                    View services
-                  </Link>
-                  <button className="btn btn-primary" type="button" onClick={() => setStep(2)}>
-                    Continue →
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {step === 2 && (
-              <div className="booking-body">
-                <div className="section-head" style={{ marginBottom: 10 }}>
-                  <p className="section-label">Step 2</p>
-                  <h2>Pick a preferred slot.</h2>
-                  <p>Choose a preferred day and time. Our team will confirm the slot (or suggest the next available) when we reach out.</p>
-                </div>
-
-                <div className="slot-grid">
+                <div className="slot-grid" style={{ marginTop: 18 }}>
                   <div className="slot-days">
                     {days.map((d) => (
                       <button
@@ -486,119 +558,32 @@ export default function BookingPage() {
                   </div>
                 </div>
 
+                <label className="field field-wide" style={{ marginTop: 16 }}>
+                  <span className="field-label">Brief reason / notes (optional)</span>
+                  <textarea
+                    className="input textarea"
+                    value={note}
+                    onChange={(e) => setNote(e.target.value)}
+                    placeholder="What would you like help with?"
+                    rows={3}
+                  />
+                </label>
+
                 <div className="booking-actions">
                   <button className="btn btn-ghost" type="button" onClick={() => setStep(1)}>
                     ← Back
                   </button>
                   <button className="btn btn-primary" type="button" onClick={() => setStep(3)}>
-                    Continue →
+                    Review request →
                   </button>
                 </div>
               </div>
             )}
 
-            {step === 3 && (
+            {step === 3 && !confirmation && (
               <div className="booking-body">
                 <div className="section-head" style={{ marginBottom: 10 }}>
-                  <p className="section-label">Step 3</p>
-                  <h2>Your details.</h2>
-                </div>
-
-                <div className="form-grid">
-                  <label className="field">
-                    <span className="field-label">Full name</span>
-                    <input
-                      className="input"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Your name"
-                      autoComplete="name"
-                    />
-                  </label>
-
-                  <label className="field">
-                    <span className="field-label">Phone (India)</span>
-                    <div className="input-row">
-                      <span className="input-prefix">+91</span>
-                      <input
-                        className="input"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="10-digit number"
-                        inputMode="numeric"
-                        autoComplete="tel"
-                        aria-invalid={phone.length > 0 && !isPhoneValid}
-                      />
-                    </div>
-                    {phone.length > 0 && !isPhoneValid && (
-                      <span className="field-hint">Enter a valid 10-digit number starting with 6–9.</span>
-                    )}
-                  </label>
-
-                  <label className="field">
-                    <span className="field-label">Email (optional)</span>
-                    <input
-                      className="input"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="you@example.com"
-                      autoComplete="email"
-                    />
-                    <span className="field-hint">
-                      {patientEmailOn
-                        ? "If provided, we'll send a short booking confirmation."
-                        : "Optional. We'll confirm this request on WhatsApp or phone."}
-                    </span>
-                  </label>
-
-                  <label className="field">
-                    <span className="field-label">Preferred language</span>
-                    <select className="input" value={language} onChange={(e) => setLanguage(e.target.value)}>
-                      <option>English</option>
-                      <option>Hindi</option>
-                      <option>Gujarati</option>
-                    </select>
-                  </label>
-
-                  <label className="field field-wide">
-                    <span className="field-label">Brief reason / notes (optional)</span>
-                    <textarea
-                      className="input textarea"
-                      value={note}
-                      onChange={(e) => setNote(e.target.value)}
-                      placeholder="What would you like help with?"
-                      rows={4}
-                    />
-                  </label>
-
-                  <label className="consent">
-                    <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
-                    <span>
-                      I consent to being contacted about this appointment and acknowledge this is not for emergencies.
-                    </span>
-                  </label>
-                </div>
-
-                <div className="booking-actions">
-                  <button className="btn btn-ghost" type="button" onClick={() => setStep(2)}>
-                    ← Back
-                  </button>
-                  <button
-                    className="btn btn-primary"
-                    type="button"
-                    onClick={() => setStep(4)}
-                    disabled={!canContinueStep3}
-                  >
-                    Review →
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {step === 4 && !confirmation && (
-              <div className="booking-body">
-                <div className="section-head" style={{ marginBottom: 10 }}>
-                  <p className="section-label">Step 4</p>
+                  <p className="section-label">Step 3 of 3</p>
                   <h2>Confirm your request.</h2>
                 </div>
 
@@ -638,6 +623,10 @@ export default function BookingPage() {
                       <span className="confirm-v">{name}</span>
                     </div>
                     <div className="confirm-row">
+                      <span className="confirm-k">Phone</span>
+                      <span className="confirm-v">+91 {phoneClean}</span>
+                    </div>
+                    <div className="confirm-row">
                       <span className="confirm-k">Email</span>
                       <span className="confirm-v">{email || '—'}</span>
                     </div>
@@ -672,7 +661,7 @@ export default function BookingPage() {
                   <button
                     className="btn btn-ghost"
                     type="button"
-                    onClick={() => setStep(3)}
+                    onClick={() => setStep(2)}
                     disabled={submitting}
                   >
                     ← Back
@@ -742,7 +731,7 @@ export default function BookingPage() {
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
                   <a
                     className="btn btn-primary"
-                    href={`https://wa.me/917777936367?text=${encodeURIComponent(`Hi, I just booked a ${selectedTypeLabel} session (Ref: ${confirmation.id?.slice(0, 8).toUpperCase()})`)}`}
+                    href={careWaHref(`Hi, I just booked a ${selectedTypeLabel} session (Ref: ${confirmation.id?.slice(0, 8).toUpperCase()})`)}
                     target="_blank"
                     rel="noreferrer"
                   >

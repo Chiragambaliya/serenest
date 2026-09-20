@@ -43,7 +43,7 @@ export const ROUTE_SEO = {
   '/book': {
     title: 'Book an Online Psychiatrist Appointment in India | Serenest',
     description:
-      'Request a confidential online psychiatry or counselling appointment in India. We confirm by phone or WhatsApp — you pay after the slot is confirmed.',
+      'Request a confidential online psychiatry or counselling appointment in India. Start with your name and number — we confirm by phone or WhatsApp. You pay after the slot is confirmed.',
     ogTitle: 'Book an Online Psychiatrist | Serenest',
     ogDescription:
       'Request an appointment in minutes. We confirm by phone or WhatsApp, then share payment steps.',

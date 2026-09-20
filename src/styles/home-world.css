@@ -138,6 +138,7 @@
   .home--lean .hp-hero__content > *:nth-child(2) { animation-delay: 140ms; }
   .home--lean .hp-hero__content > *:nth-child(3) { animation-delay: 220ms; }
   .home--lean .hp-hero__content > *:nth-child(4) { animation-delay: 300ms; }
+  .home--lean .hp-hero__content > *:nth-child(5) { animation-delay: 360ms; }
 
   .home--lean .hp-hero__media .editorial-image {
     animation: hp-media-in 1.2s var(--hp-ease) both;

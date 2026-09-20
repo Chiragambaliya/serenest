@@ -7,6 +7,11 @@ import '../styles/service-detail.css';
 const FAQS = [
   {
     category: 'General',
+    q: 'How do I request an appointment?',
+    a: 'Share your name and phone first, pick a preferred time, and submit. We confirm by phone or WhatsApp. You pay after the slot is locked — not when you request.',
+  },
+  {
+    category: 'General',
     q: 'What is Serenest?',
     a: 'Serenest is online psychiatry and therapy for people in India. You request a slot, we confirm by phone or WhatsApp, and you meet a verified clinician on video, audio, or chat. You pay after the appointment is locked.',
   },
