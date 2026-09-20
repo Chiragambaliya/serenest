@@ -137,6 +137,7 @@ export default function BookingPage() {
   const [submitError, setSubmitError] = useState(null);
   const [confirmation, setConfirmation] = useState(null);
   const [paymentsOn, setPaymentsOn] = useState(false);
+  const [patientEmailOn, setPatientEmailOn] = useState(false);
 
   // Prefill from signed-in patient when query params didn't already set fields.
   useEffect(() => {
@@ -150,11 +151,17 @@ export default function BookingPage() {
     if (digits.length === 10) setPhone((prev) => prev || digits);
   }, [user]);
 
-  // Detect whether the server requires payment before booking.
+  // Detect pay-at-booking vs request-first, and whether confirmations email.
   useEffect(() => {
     health()
-      .then((h) => setPaymentsOn(h.payments === 'enabled'))
-      .catch(() => setPaymentsOn(false));
+      .then((h) => {
+        setPaymentsOn(h.payments === 'enabled');
+        setPatientEmailOn(h.patient_email === 'enabled');
+      })
+      .catch(() => {
+        setPaymentsOn(false);
+        setPatientEmailOn(false);
+      });
   }, []);
 
   const payAmount = hasPro
@@ -267,7 +274,7 @@ export default function BookingPage() {
             <p className="about-subtext">
               {hasPro
                 ? `${preProLabel}${preProFee ? ` · ₹${preProFee}` : ''}${preProDur ? ` · ${preProDur} min` : ''}. Pick a preferred slot and share your details — we'll confirm shortly.`
-                : 'Choose your practitioner type and consultation mode, pick a preferred slot, and share your details. We confirm by phone or WhatsApp.'}
+                : 'Choose your practitioner type and consultation mode, pick a preferred slot, and share your details. We confirm by phone or WhatsApp — you do not pay until the slot is confirmed.'}
             </p>
           </div>
           {hasPro && (
@@ -537,7 +544,11 @@ export default function BookingPage() {
                       placeholder="you@example.com"
                       autoComplete="email"
                     />
-                    <span className="field-hint">If provided, we&apos;ll send a short booking confirmation.</span>
+                    <span className="field-hint">
+                      {patientEmailOn
+                        ? "If provided, we'll send a short booking confirmation."
+                        : "Optional. We'll confirm this request on WhatsApp or phone."}
+                    </span>
                   </label>
 
                   <label className="field">
@@ -674,14 +685,14 @@ export default function BookingPage() {
                   >
                     {submitting
                       ? (paymentsOn ? 'Opening payment…' : 'Submitting…')
-                      : (paymentsOn ? `Pay ₹${payAmount} & confirm →` : 'Confirm booking →')}
+                      : (paymentsOn ? `Pay ₹${payAmount} & confirm →` : 'Request appointment →')}
                   </button>
                 </div>
 
                 <p className="fineprint" style={{ marginTop: 12 }}>
                   {paymentsOn
                     ? 'Secure payment via Razorpay. You are only charged once you complete payment, and your slot is confirmed instantly after.'
-                    : "We'll reach out on WhatsApp / phone with the next available verified practitioner and payment steps."}
+                    : "This is a request, not a charge. We'll reach out on WhatsApp or phone to confirm the clinician and slot, then share payment steps."}
                   {' '}
                   If urgent or in danger, contact emergency services.
                 </p>

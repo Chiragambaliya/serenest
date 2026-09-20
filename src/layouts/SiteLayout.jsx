@@ -50,7 +50,7 @@ function BrandMark({ size = 42 }) {
 const NAV_LINKS = [
   { to: '/services', label: 'Services' },
   { to: '/screening', label: 'Screening' },
-  { to: '/professionals', label: 'Professionals' },
+  { to: '/patient/find-professional', label: 'Clinicians' },
   { to: '/about', label: 'About' },
   { to: '/resources', label: 'Reading' },
   { to: '/contact', label: 'Contact' },
@@ -103,10 +103,9 @@ const FOOTER_LEGAL = [
 
 /* Secondary links kept in the footer and on their parent pages rather
    than the header, to keep the nav bar from getting oversized:
-   Book a Consultation (/book), Find a Professional
-   (/patient/find-professional), Self-Screening (/screening), Pricing
-   (/pricing), Blog (/blog), FAQ (/faq), Corporate EAP (/corporate),
-   Partner (/partner), Careers (/careers), Our Team (/team). */
+   Book a Consultation (/book), Self-Screening is in the header,
+   Find a clinician is in the header (/patient/find-professional),
+   For professionals stays in the footer (/professionals). */
 
 export default function SiteLayout() {
   const [scrolled, setScrolled]   = useState(false);

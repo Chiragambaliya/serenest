@@ -106,7 +106,7 @@ const PAYMENTS = ['Razorpay', 'UPI', 'Credit card', 'Debit card', 'Net banking',
 const FAQ = [
   {
     q: 'Are the prices fixed or can they vary?',
-    a: 'Each clinician sets their own fee within the range shown. The exact fee is shown before you confirm — there are no surprises at checkout.',
+    a: 'Each clinician sets their own fee within the range shown. Request an appointment first — we confirm by phone or WhatsApp, then share payment steps. You are not charged when you submit the request.',
   },
   {
     q: 'Are prescriptions valid at pharmacies?',
@@ -114,7 +114,7 @@ const FAQ = [
   },
   {
     q: 'What payment methods are accepted?',
-    a: 'UPI, credit and debit cards, net banking, and popular wallets — all powered by Razorpay with 256-bit encryption.',
+    a: 'After we confirm your slot: UPI, credit and debit cards, net banking, and popular wallets via Razorpay. Submitting a booking request does not charge you.',
   },
   {
     q: 'Can I reschedule my appointment?',

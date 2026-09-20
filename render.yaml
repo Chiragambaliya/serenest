@@ -61,9 +61,12 @@ services:
       # - key: NOTIFY_EACH_UNIQUE_VISITOR_EMAIL
       #   value: "true"
 
-      # ── Payments via Razorpay (optional) ─────────────────────
-      # Both keys set → bookings are paid + confirmed instantly.
-      # Unset → manual "we'll call you back" booking flow.
+      # ── Payments via Razorpay ────────────────────────────────
+      # Request-first is the default (PAYMENTS_ENABLED=false): bookings are
+      # unpaid requests; the team confirms, then shares payment.
+      # Set PAYMENTS_ENABLED=true *and* both keys to charge at booking.
+      - key: PAYMENTS_ENABLED
+        value: "false"
       - key: RAZORPAY_KEY_ID
         sync: false
       - key: RAZORPAY_KEY_SECRET

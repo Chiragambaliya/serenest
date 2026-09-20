@@ -54,6 +54,40 @@ For local dev, copy `.env.example` to `.env` and set `OPENAI_API_KEY` there too.
 
 ---
 
+## 3b. Lead alerts (Resend) — so you actually see patients
+
+Without these, new bookings only ping WhatsApp (if CallMeBot is set) or sit unread in `/admin`.
+
+1. Create a free API key at [resend.com](https://resend.com) (3,000 emails/month).
+2. Render → your **serenest** web service → **Environment** → add:
+   - **Key:** `RESEND_API_KEY` → **Value:** `re_…`
+   - **Key:** `NOTIFY_EMAIL` → **Value:** the inbox that should get every booking/screening (comma-separate for more than one)
+   - **Key:** `NOTIFY_FROM` → already `Serenest Alerts <onboarding@resend.dev>` in `render.yaml`. After you verify `serenest.in` in Resend, change this to e.g. `Serenest <alerts@serenest.in>` for better deliverability.
+3. Save and wait for redeploy.
+4. Confirm: `https://www.serenest.in/api/health` shows `"notifications": "enabled"` and `"patient_email": "enabled"`.
+
+Team WhatsApp (already used in production) stays on via `CALLMEBOT_WHATSAPP_APIKEY` + `CALLMEBOT_WHATSAPP_PHONE`.
+
+---
+
+## 3c. Analytics (GA4) + Google recrawl
+
+1. Create a GA4 property → copy the **Measurement ID** (`G-XXXXXXXXXX`).
+2. Render → **Environment** → add:
+   - **Key:** `GA_MEASUREMENT_ID` → **Value:** `G-XXXXXXXXXX`
+3. Save and wait for redeploy. `/api/health` should show `"analytics": "enabled"`.
+4. The site still asks visitors to **Allow analytics** (DPDP). Essential-only visitors are not tracked.
+5. In [Google Search Console](https://search.google.com/search-console) for `https://www.serenest.in/`:
+   - URL inspection → `https://www.serenest.in/` → **Request indexing**
+   - Repeat for `/book`, `/screening`, `/patient/find-professional`, `/sitemap.xml`
+   - Submit the sitemap `https://www.serenest.in/sitemap.xml` if it is not already added
+
+Bookings are **request-first** by default (`PAYMENTS_ENABLED=false`): the patient is not charged until you confirm the slot. To charge at booking again, set `PAYMENTS_ENABLED=true` (Razorpay keys can stay in the environment unused until then).
+
+Point leftover properties at Care: set `serenest.co.in` and the LinkedIn company website to `https://www.serenest.in` so Google does not split ranking.
+
+---
+
 ## 4. Add custom domain serenest.in
 
 1. In your web service on Render, go to **Settings** → **Custom Domains**.
@@ -87,6 +121,8 @@ Where you manage DNS for **serenest.in** (registrar, Cloudflare, etc.):
 | 1 | Render | New → Web Service, connect repo, build `npm install && npm run build`, start `npm start` |
 | 2 | Render → Environment | Add Supabase vars (optional) |
 | 3 | Render → Environment | Add `OPENAI_API_KEY` for Serenest Guide |
+| 3b | Render → Environment | Add `RESEND_API_KEY` + `NOTIFY_EMAIL` so bookings email you |
+| 3c | Render → Environment | Add `GA_MEASUREMENT_ID`; request indexing in Search Console |
 | 4 | Render → Settings → Custom Domains | Add `serenest.in` (and optionally `www.serenest.in`) |
 | 5 | Your DNS (registrar/Cloudflare) | Add CNAME record(s) as shown by Render |
 

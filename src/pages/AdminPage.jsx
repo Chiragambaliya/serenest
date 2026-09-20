@@ -444,6 +444,12 @@ export default function AdminPage() {
       } else if (health.notifications !== 'enabled') {
         issues.push('Team email alerts are off (set RESEND_API_KEY + NOTIFY_EMAIL) — lead alerts currently arrive on WhatsApp only.');
       }
+      if (health.analytics !== 'enabled') {
+        issues.push('Google Analytics is off (set GA_MEASUREMENT_ID) — you cannot see which pages convert. Optional analytics stay off until a visitor clicks Allow analytics.');
+      }
+      if (health.patient_email !== 'enabled') {
+        issues.push('Patient confirmation emails are off (set RESEND_API_KEY) — requesters will not get an email after booking.');
+      }
     }
     const fallbackN = fallbackAppCount || stats?.fallback_applications || 0;
     if (fallbackN > 0) {

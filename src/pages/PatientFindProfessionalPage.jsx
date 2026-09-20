@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { professionals as professionalsApi } from '../lib/api';
 import { buildBookPath, preferModeFromPro } from '../lib/bookingHandoff';
+import { useSEO } from '../lib/useSEO';
+import { ROUTE_SEO } from '../lib/seo';
 
 const VALID_ROLES = ['psychiatrist', 'psychologist', 'therapist', 'counsellor'];
 
@@ -102,6 +104,7 @@ function Avatar({ name, role, size = 56 }) {
 }
 
 export default function PatientFindProfessionalPage() {
+  useSEO({ path: '/patient/find-professional', ...ROUTE_SEO['/patient/find-professional'] });
   // ── Filters ────────────────────────────────────────────────
   const [searchParams] = useSearchParams();
   const initialRole = VALID_ROLES.includes(searchParams.get('role')) ? searchParams.get('role') : 'all';
@@ -195,7 +198,8 @@ export default function PatientFindProfessionalPage() {
             The right professional, <span style={{ background: 'linear-gradient(135deg, #7a9a5a, #46552f)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>matched to you</span>
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.02rem', lineHeight: 1.55 }}>
-            Browse Serenest-verified psychiatrists, psychologists, therapists and counsellors. Filter by language, city and budget.
+            Browse Serenest-verified psychiatrists, psychologists, therapists and counsellors.
+            Filter by language, city and budget. Request a slot — you pay after we confirm.
           </p>
         </div>
       </section>

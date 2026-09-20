@@ -43,10 +43,18 @@ export const ROUTE_SEO = {
   '/book': {
     title: 'Book an Online Psychiatrist Appointment in India | Serenest',
     description:
-      'Choose your care type, consultation mode, and appointment slot for a confidential online mental health consultation with Serenest.',
+      'Request a confidential online psychiatry or counselling appointment in India. We confirm by phone or WhatsApp — you pay after the slot is confirmed.',
     ogTitle: 'Book an Online Psychiatrist | Serenest',
     ogDescription:
-      'Book a confidential online psychiatry or counselling appointment in minutes.',
+      'Request an appointment in minutes. We confirm by phone or WhatsApp, then share payment steps.',
+  },
+  '/patient/find-professional': {
+    title: 'Find an Online Psychiatrist or Therapist in India | Serenest',
+    description:
+      'Browse verified psychiatrists and therapists on Serenest. Filter by language, city, and fee, then request an appointment — pay after we confirm.',
+    ogTitle: 'Find a Clinician | Serenest',
+    ogDescription:
+      'Verified psychiatrists and therapists across India. Request a slot; pay after confirmation.',
   },
   '/screening': {
     title: 'Mental Health Center — Mood, Anxiety & Stress Checks | Serenest',
@@ -476,7 +484,6 @@ export const NOINDEX_ROUTES = new Set([
   '/admin',
   '/preview',
   '/professionals/apply',
-  '/patient/find-professional',
   '/patient/login',
   '/patient/dashboard',
   '/professionals/login',
@@ -1279,6 +1286,9 @@ function crumbTrail(pathname) {
   if (pathname.startsWith('/professionals/')) {
     return [{ name: 'Professionals', item: `${SITE_ORIGIN}/professionals` }];
   }
+  if (pathname.startsWith('/patient/find-professional')) {
+    return [{ name: 'Care', item: `${SITE_ORIGIN}/` }];
+  }
   return [];
 }
 
@@ -1343,6 +1353,7 @@ const SITEMAP_HINTS = {
   '/services/psychiatry': { changefreq: 'monthly', priority: '0.9' },
   '/services/therapy': { changefreq: 'monthly', priority: '0.9' },
   '/book': { changefreq: 'weekly', priority: '0.95' },
+  '/patient/find-professional': { changefreq: 'weekly', priority: '0.9' },
   '/screening': { changefreq: 'weekly', priority: '0.9' },
   '/pricing': { changefreq: 'monthly', priority: '0.85' },
   '/contact': { changefreq: 'monthly', priority: '0.8' },
@@ -1395,7 +1406,7 @@ export function isKnownDynamicSpaPath(pathname) {
   return false;
 }
 
-export function renderSitemapXml(lastmod = '2026-09-19') {
+export function renderSitemapXml(lastmod = '2026-09-20') {
   const paths = Object.keys(ROUTE_SEO)
     .filter(isIndexableSeoPath)
     .sort((a, b) => {

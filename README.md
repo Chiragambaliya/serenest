@@ -37,7 +37,7 @@ missing (also verifiable live at `/api/health`):
 | `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY` | Patient/professional login is disabled in the browser |
 | `RESEND_API_KEY`, `NOTIFY_EMAIL` | **No email alerts for new leads** — you only see them in `/admin` |
 | `CALLMEBOT_WHATSAPP_APIKEY`, `CALLMEBOT_WHATSAPP_PHONE` | No WhatsApp pings for leads/visitors |
-| `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` | Payments off — bookings become manual "we'll call you back" requests |
+| `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` + `PAYMENTS_ENABLED=true` | Charge at booking. Default is **request-first** (no charge until the team confirms) |
 | `GA_MEASUREMENT_ID` | No analytics — no traffic or conversion measurement |
 | `ADMIN_SECRET` | Admin dashboard/API unprotected routes refuse access |
 | `DAILY_API_KEY` | Video consultation rooms can't be created |

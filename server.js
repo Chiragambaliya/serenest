@@ -491,12 +491,12 @@ const RZP_KEY_SECRET = process.env.RAZORPAY_KEY_SECRET;
 const DEFAULT_FEE_INR = Number(process.env.DEFAULT_FEE_INR) || 499;
 
 /**
- * Payments are enforced only once both Razorpay keys are present — and can be
- * turned off with PAYMENTS_ENABLED=false as a kill-switch (e.g. if Razorpay is
- * down or under review), so patients can still book and pay offline.
+ * Request-first is the default: a booking is a callback request, paid after
+ * the team confirms the slot. Charge at booking only when PAYMENTS_ENABLED is
+ * explicitly true *and* both Razorpay keys are present.
  */
 function paymentsEnabled() {
-  if (String(process.env.PAYMENTS_ENABLED).toLowerCase() === 'false') return false;
+  if (!/^(1|true|yes)$/i.test(String(process.env.PAYMENTS_ENABLED || ''))) return false;
   return Boolean(RZP_KEY_ID && RZP_KEY_SECRET);
 }
 
@@ -597,9 +597,9 @@ app.post('/api/payments/order', async (req, res) => {
 
 /**
  * POST /api/bookings
- * Create a new appointment booking request. When payments are enabled the
- * request must carry a verified Razorpay payment; the booking is only saved
- * after the signature checks out.
+ * Create a new appointment booking request. Payment at booking is opt-in
+ * (PAYMENTS_ENABLED=true). Default is request-first: save unpaid, confirm
+ * by phone/WhatsApp, then collect payment.
  */
 app.post('/api/bookings', async (req, res) => {
   const {
@@ -2971,7 +2971,7 @@ app.listen(port, () => {
   console.log(`   Alert: ${notify.isConfigured() ? '✅ Team email (Resend)' : '⚠️  Team email incomplete'} (RESEND_API_KEY + NOTIFY_EMAIL)`);
   console.log(`   Patient email: ${notify.isPatientEmailEnabled() ? '✅ Resend key set' : '⚠️  Add RESEND_API_KEY for confirmations'}`);
   console.log(`   Team WhatsApp: ${notify.hasTeamWhatsApp() ? '✅ CallMeBot configured' : '○ Optional: CALLMEBOT_WHATSAPP_APIKEY + CALLMEBOT_WHATSAPP_PHONE'}`);
-  console.log(`   Payments: ${paymentsEnabled() ? '✅ Razorpay enabled' : '○ Disabled (set RAZORPAY_KEY_ID + RAZORPAY_KEY_SECRET)'}`);
+  console.log(`   Payments: ${paymentsEnabled() ? '✅ Charge at booking (Razorpay)' : '○ Request-first (set PAYMENTS_ENABLED=true to charge at booking)'}`);
   console.log(`   Analytics: ${GA_ID ? `✅ GA4 (${GA_ID})` : '○ Disabled (set GA_MEASUREMENT_ID)'}\n`);
 
   // Lead-pipeline warnings — these misconfigurations are the ones that

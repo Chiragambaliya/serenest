@@ -51,6 +51,7 @@ const ROUTES_200 = [
   '/phq-9-depression-screening',
   '/gad-7-anxiety-screening',
   '/online-psychiatrist-prescription-india',
+  '/patient/find-professional',
 ];
 const ROUTES_301 = [
   ['/online-psychiatrist-consultation-india', 'https://www.serenest.in/services'],
@@ -296,6 +297,7 @@ console.log('\nSitemap coverage:');
       `${SITE_ORIGIN}/online-psychiatrist-gujarat`,
       `${SITE_ORIGIN}/blog/telemedicine-guidelines-india`,
       `${SITE_ORIGIN}/screening`,
+      `${SITE_ORIGIN}/patient/find-professional`,
     ];
     for (const loc of mustInclude) {
       if (!html.includes(`<loc>${loc}</loc>`)) fail('/sitemap.xml', `missing ${loc}`);
