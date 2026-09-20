@@ -1999,7 +1999,8 @@ app.get('/api/rooms/:appointmentId', async (req, res) => {
  * Must be registered before /:appointmentId so Express does not treat "list" as an id.
  */
 app.get('/api/prescriptions', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  if (!requireAdmin(req, res)) return;
+  if (!supabase) return ok(res, { prescriptions: [] });
 
   const { data: rows, error } = await supabase
     .from('prescriptions')
@@ -2009,7 +2010,7 @@ app.get('/api/prescriptions', async (req, res) => {
 
   if (error) {
     console.error('[GET /api/prescriptions]', error);
-    return err(res, 'Failed to load prescriptions', 500);
+    return ok(res, { prescriptions: [] });
   }
 
   const prescriptions = rows || [];

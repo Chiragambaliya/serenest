@@ -379,12 +379,12 @@ export default function AdminPage() {
         setStats(r.stats);
       }),
       (which === 'all' || which === 'bookings' || which === 'prescriptions') && safe(async () => {
-        const [rBookings, rRx] = await Promise.all([
-          adminFetch('/api/bookings', secret),
-          adminFetch('/api/prescriptions', secret),
-        ]);
-        setBookings(rBookings.bookings ?? []);
-        setPrescriptions(rRx.prescriptions ?? []);
+        const r = await adminFetch('/api/bookings', secret);
+        setBookings(r.bookings ?? []);
+      }),
+      (which === 'all' || which === 'bookings' || which === 'prescriptions') && safe(async () => {
+        const r = await adminFetch('/api/prescriptions', secret);
+        setPrescriptions(r.prescriptions ?? []);
       }),
       (which === 'all' || which === 'applications') && safe(async () => {
         const r = await adminFetch('/api/professionals/applications', secret);
