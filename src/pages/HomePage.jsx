@@ -10,6 +10,7 @@ import {
   TRUST_POINTS,
   careWaHref,
 } from '../lib/patientReach';
+import { CONDITION_SPECIALTIES, SPECIALTY_INDEX_PATH } from '../lib/specialties';
 
 const OUR_SERVICES = [
   {
@@ -177,6 +178,32 @@ export default function HomePage() {
               </Link>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="ed-pace hp-specialties-block" aria-labelledby="home-specialties-title">
+        <div className="ed-shell">
+          <header className="ed-head">
+            <span className="ed-head__label">Specialties</span>
+            <h2 id="home-specialties-title">Start from the problem, not a menu.</h2>
+            <p>
+              Adult psychiatry and therapy for the concerns below. Each specialty explains what a
+              video visit can cover, and when you need a hospital instead.
+            </p>
+          </header>
+          <ul className="hp-specialties">
+            {CONDITION_SPECIALTIES.map((item) => (
+              <li key={item.id}>
+                <Link to={item.path}>{item.name}</Link>
+              </li>
+            ))}
+          </ul>
+          <p className="hp-specialties__more">
+            <Link className="hp-text-link" to={SPECIALTY_INDEX_PATH}>
+              See every specialty
+              <span aria-hidden="true"> →</span>
+            </Link>
+          </p>
         </div>
       </section>
 

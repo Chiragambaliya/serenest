@@ -1,6 +1,11 @@
 import { TEAM_MEMBERS } from './team.js';
 import { SCREENING_TOOLS } from './screeningTools.js';
 import { BLOG_POSTS } from './blogPosts.js';
+import {
+  OWNED_SPECIALTIES,
+  SPECIALTIES,
+  SPECIALTY_INDEX_PATH,
+} from './specialties.js';
 
 // Production canonical host. Matches the live www-redirect target.
 export const SITE_ORIGIN = 'https://www.serenest.in';
@@ -1366,7 +1371,82 @@ const SITEMAP_HINTS = {
   '/gad-7-anxiety-screening': { changefreq: 'monthly', priority: '0.85' },
   '/guides': { changefreq: 'weekly', priority: '0.85' },
   '/blog': { changefreq: 'weekly', priority: '0.8' },
+  [SPECIALTY_INDEX_PATH]: { changefreq: 'monthly', priority: '0.9' },
 };
+
+const SPECIALTY_INDEX_DESCRIPTION =
+  'Every adult mental-health specialty on Serenest — psychiatry, therapy, addiction, and condition-specific care. Request a slot and say what you need. Not an emergency service.';
+
+ROUTE_SEO[SPECIALTY_INDEX_PATH] = {
+  title: 'Mental Health Specialties Online in India | Serenest',
+  description: SPECIALTY_INDEX_DESCRIPTION,
+  ogTitle: 'Mental Health Specialties | Serenest',
+  ogDescription: SPECIALTY_INDEX_DESCRIPTION,
+};
+
+ROUTE_JSONLD[SPECIALTY_INDEX_PATH] = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    ORG_SCHEMA,
+    WEBSITE_SCHEMA,
+    {
+      '@type': 'CollectionPage',
+      '@id': `${SITE_ORIGIN}${SPECIALTY_INDEX_PATH}#webpage`,
+      url: `${SITE_ORIGIN}${SPECIALTY_INDEX_PATH}`,
+      name: 'Mental health specialties',
+      description: SPECIALTY_INDEX_DESCRIPTION,
+      inLanguage: 'en-IN',
+      isPartOf: { '@id': `${SITE_ORIGIN}/#website` },
+      publisher: { '@id': `${SITE_ORIGIN}/#organization` },
+      mainEntity: {
+        '@type': 'ItemList',
+        itemListElement: SPECIALTIES.map((item, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: item.name,
+          url: `${SITE_ORIGIN}${item.path}`,
+        })),
+      },
+    },
+    breadcrumbs(
+      SPECIALTY_INDEX_PATH,
+      'Specialties',
+      [{ name: 'Services', item: `${SITE_ORIGIN}/services` }],
+    ),
+  ],
+};
+
+for (const specialty of OWNED_SPECIALTIES) {
+  ROUTE_SEO[specialty.path] = {
+    title: specialty.seoTitle,
+    description: specialty.seoDescription,
+    ogTitle: specialty.seoTitle,
+    ogDescription: specialty.seoDescription,
+  };
+  SITEMAP_HINTS[specialty.path] = { changefreq: 'monthly', priority: '0.85' };
+  ROUTE_JSONLD[specialty.path] = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      ORG_SCHEMA,
+      WEBSITE_SCHEMA,
+      medicalWebPage(specialty.path, {
+        name: specialty.name,
+        description: specialty.seoDescription,
+        about: specialty.about,
+        lastReviewed: '2026-09-21',
+      }),
+      faqGraph(specialty.path, specialty.faqs),
+      breadcrumbs(
+        specialty.path,
+        specialty.name,
+        [{ name: 'Specialties', item: `${SITE_ORIGIN}${SPECIALTY_INDEX_PATH}` }],
+      ),
+    ],
+  };
+  for (const alias of specialty.aliases || []) {
+    if (!ROUTE_SEO[alias] && !ROUTE_ALIASES[alias]) ROUTE_ALIASES[alias] = specialty.path;
+  }
+}
 
 export function isIndexableSeoPath(pathname) {
   if (!ROUTE_SEO[pathname]) return false;
