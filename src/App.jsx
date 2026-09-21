@@ -9,6 +9,7 @@ import {
   getPrivacyChoice,
   PRIVACY_CHOICE_EVENT,
 } from './lib/privacyConsent';
+import { OWNED_SPECIALTIES } from './lib/specialties';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
@@ -49,6 +50,8 @@ const Phq9Page = lazy(() => import('./pages/Phq9Page'));
 const Gad7Page = lazy(() => import('./pages/Gad7Page'));
 const OnlinePrescriptionPage = lazy(() => import('./pages/OnlinePrescriptionPage'));
 const GujaratPsychiatristPage = lazy(() => import('./pages/GujaratPsychiatristPage'));
+const SpecialtiesPage = lazy(() => import('./pages/SpecialtiesPage'));
+const SpecialtyPage = lazy(() => import('./pages/SpecialtyPage'));
 const GuidesPage = lazy(() => import('./pages/GuidesPage'));
 const PatientAuthPage = lazy(() => import('./pages/PatientAuthPage'));
 const PatientDashboardPage = lazy(() => import('./pages/PatientDashboardPage'));
@@ -221,6 +224,10 @@ export default function App() {
           <Route path="phq-9-depression-screening" element={<S><Phq9Page /></S>} />
           <Route path="gad-7-anxiety-screening" element={<S><Gad7Page /></S>} />
           <Route path="online-psychiatrist-prescription-india" element={<S><OnlinePrescriptionPage /></S>} />
+          <Route path="specialties" element={<S><SpecialtiesPage /></S>} />
+          {OWNED_SPECIALTIES.map((item) => (
+            <Route key={item.path} path={item.path.slice(1)} element={<S><SpecialtyPage /></S>} />
+          ))}
 
           <Route path="*" element={<S><NotFoundPage /></S>} />
         </Route>

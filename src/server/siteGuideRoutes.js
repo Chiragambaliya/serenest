@@ -1,3 +1,5 @@
+import { SPECIALTIES, SPECIALTY_INDEX_PATH } from '../lib/specialties.js';
+
 /**
 
  * Public routes Serenest Guide may recommend.
@@ -58,13 +60,19 @@ export const SITE_GUIDE_ROUTES = [
 
   { path: '/online-psychiatrist-prescription-india', label: 'Online psychiatric prescriptions in India (info)' },
 
+  { path: SPECIALTY_INDEX_PATH, label: 'Every adult mental-health specialty' },
+  ...SPECIALTIES.map((item) => ({ path: item.path, label: item.name })),
+
 ];
 
 
 
 export function formatSiteGuideForPrompt() {
-
-  return SITE_GUIDE_ROUTES.map((r) => `- **${r.path}** — ${r.label}`).join('\n');
-
+  const seen = new Set();
+  return SITE_GUIDE_ROUTES.filter((route) => {
+    if (seen.has(route.path)) return false;
+    seen.add(route.path);
+    return true;
+  }).map((route) => `- **${route.path}** — ${route.label}`).join('\n');
 }
 

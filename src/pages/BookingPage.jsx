@@ -80,18 +80,26 @@ export default function BookingPage() {
   const preTool     = searchParams.get('tool') ?? '';
   const preScore    = searchParams.get('score') ?? '';
   const preBand     = searchParams.get('band') ?? '';
+  const preRole     = searchParams.get('role') ?? '';
+  const preConcern  = (searchParams.get('concern') ?? '').trim().slice(0, 120);
   const hasPro = Boolean(preProName);
 
+  const roleFromQuery = PRACTITIONER_TYPES.some((t) => t.id === preRole) ? preRole : '';
   const suggestedRole = preProRole
+    || roleFromQuery
     || (prePhq || preGad ? suggestRoleFromScreening(prePhq, preGad) : '')
     || '';
 
   const handoffNote = useMemo(
-    () => screeningNote({
-      phq: prePhq, gad: preGad, phqSev: prePhqSev, gadSev: preGadSev,
-      tool: preTool, score: preScore, band: preBand,
-    }),
-    [prePhq, preGad, prePhqSev, preGadSev, preTool, preScore, preBand],
+    () => {
+      const screening = screeningNote({
+        phq: prePhq, gad: preGad, phqSev: prePhqSev, gadSev: preGadSev,
+        tool: preTool, score: preScore, band: preBand,
+      });
+      const concernLine = preConcern ? `Asked about: ${preConcern}.` : '';
+      return [concernLine, screening].filter(Boolean).join(' ');
+    },
+    [prePhq, preGad, prePhqSev, preGadSev, preTool, preScore, preBand, preConcern],
   );
 
   const { days, times } = useMemo(() => makeSlots(), []);

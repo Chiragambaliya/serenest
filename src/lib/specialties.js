@@ -1,0 +1,782 @@
+/**
+ * Every adult mental-health specialty Serenest can take a patient for.
+ * Existing long-form pages stay canonical (`owned: false`). New specialties
+ * are rendered by SpecialtyPage from this catalog.
+ */
+import { buildBookPath } from './bookingHandoff.js';
+
+export const SPECIALTY_INDEX_PATH = '/specialties';
+
+const TELEMED = {
+  href: 'https://www.mohfw.gov.in/pdf/Telemedicine.pdf',
+  label: 'Telemedicine Practice Guidelines (2020), Government of India',
+  note: 'Framework for telemedicine consultations and digital prescriptions in India.',
+};
+
+const NIMHANS = {
+  href: 'https://nimhans.ac.in/',
+  label: 'NIMHANS, Bengaluru',
+  note: 'India’s apex centre for mental health.',
+};
+
+function refs(...extra) {
+  return [TELEMED, NIMHANS, ...extra];
+}
+
+export const SPECIALTIES = [
+  {
+    id: 'psychiatry',
+    kind: 'care',
+    owned: false,
+    name: 'Psychiatry',
+    path: '/services/psychiatry',
+    summary: 'Assessment, diagnosis, and medication management from a licensed psychiatrist.',
+    symptoms: 'Medical assessment and prescribing',
+    role: 'psychiatrist',
+  },
+  {
+    id: 'therapy',
+    kind: 'care',
+    owned: false,
+    name: 'Therapy and counselling',
+    path: '/services/therapy',
+    summary: 'Structured talk therapy for individuals, couples, and families.',
+    symptoms: 'Talking treatment, including CBT',
+    role: 'therapist',
+  },
+  {
+    id: 'addiction',
+    kind: 'care',
+    owned: false,
+    name: 'Addiction and recovery',
+    path: '/services/addiction-care',
+    summary: 'Assessment, counselling, and relapse-prevention support for substance use.',
+    symptoms: 'Alcohol, tobacco, and other substance use',
+    role: 'psychiatrist',
+  },
+  {
+    id: 'digital',
+    kind: 'care',
+    owned: false,
+    name: 'Digital consultations',
+    path: '/services/digital-consultations',
+    summary: 'How video, audio, and chat visits work, and what they cannot replace.',
+    symptoms: 'Teleconsultation itself',
+    role: 'psychiatrist',
+  },
+  {
+    id: 'depression',
+    kind: 'condition',
+    owned: false,
+    name: 'Depression',
+    path: '/online-psychiatrist-for-depression-india',
+    summary: 'Low mood, loss of interest, and depression-related concerns.',
+    symptoms: 'Low mood, fatigue, loss of interest',
+    role: 'psychiatrist',
+  },
+  {
+    id: 'anxiety',
+    kind: 'condition',
+    owned: false,
+    name: 'Anxiety',
+    path: '/anxiety-counselling-online-india',
+    summary: 'Worry, panic, and other anxiety presentations, with GAD-7 when useful.',
+    symptoms: 'Worry, panic, social anxiety',
+    role: 'psychiatrist',
+  },
+  {
+    id: 'ocd',
+    kind: 'condition',
+    owned: false,
+    name: 'OCD',
+    path: '/ocd-treatment-online-india',
+    summary: 'Intrusive thoughts and compulsions, including ERP-focused therapy.',
+    symptoms: 'Intrusive thoughts, compulsions',
+    role: 'psychiatrist',
+  },
+  {
+    id: 'adhd',
+    kind: 'condition',
+    owned: false,
+    name: 'ADHD (adults)',
+    path: '/adhd-assessment-online-india',
+    summary: 'Structured adult ADHD assessment. Not a same-day prescription service.',
+    symptoms: 'Inattention, impulsivity, restlessness',
+    role: 'psychiatrist',
+  },
+  {
+    id: 'bipolar',
+    kind: 'condition',
+    owned: true,
+    name: 'Bipolar disorder',
+    path: '/bipolar-disorder-care-online-india',
+    aliases: ['/online-psychiatrist-for-bipolar-india', '/bipolar-treatment-online-india'],
+    summary: 'Mood episodes that swing between depression and elevated or irritable energy.',
+    symptoms: 'Mood swings, elevated energy, depression',
+    role: 'psychiatrist',
+    about: ['Bipolar Disorder', 'Bipolar I Disorder', 'Bipolar II Disorder'],
+    seoTitle: 'Bipolar Disorder Care Online in India | Serenest',
+    seoDescription:
+      'Online psychiatrist care for bipolar disorder in India. Structured mood history, safety review, and medication follow-up where clinically appropriate. Not an emergency service.',
+    kicker: 'Bipolar disorder',
+    titleLead: 'Online care for bipolar disorder in India —',
+    titleEmphasis: 'mood history first, not a label from one bad week.',
+    lead: 'Request a psychiatrist appointment if your mood has swung between prolonged low periods and periods of unusually high energy, less sleep, or risky behaviour. Assessment takes a timeline. It is not decided from a single screening score.',
+    looksLike:
+      'People describe weeks of depression, then a stretch of needing little sleep, talking more, spending more, or feeling unusually driven or irritable. A clinician separates bipolar-pattern illness from depression alone, substances, medical illness, and ordinary stress.',
+    points: [
+      { title: 'A mood timeline', body: 'The visit maps past highs and lows, sleep, family history, and what has already been tried — not only how you feel today.' },
+      { title: 'Safety before a new plan', body: 'Current risk, substances, pregnancy, and other medicines are reviewed before any prescribing decision.' },
+      { title: 'Follow-up, not a one-off', body: 'Mood-stabilising treatment, when used, needs monitoring. Online follow-up can continue a plan once it is clinically suitable.' },
+    ],
+    limits: [
+      { title: 'A manic episode may need in-person care', body: 'If you are not sleeping, cannot stay safe, or others say you are out of character and at risk, go to a hospital. Do not wait for a video slot.' },
+      { title: 'No same-day mood-stabiliser promise', body: 'Starting or changing lithium, anticonvulsants, or antipsychotics is a clinical decision after history. Some monitoring needs a local lab or clinic.' },
+      { title: 'Not a diagnosis from a quiz', body: 'Serenest does not offer a bipolar self-test that confirms the condition.' },
+    ],
+    emergencyNote: 'If you are in a severe manic or depressive episode and cannot stay safe, contact local emergency services or go to the nearest hospital.',
+    screen: { to: '/phq-9-depression-screening', label: 'PHQ-9 is a depression screen, not a bipolar test' },
+    related: ['depression', 'psychosis', 'addiction'],
+    faqs: [
+      { q: 'Can bipolar disorder be managed online in India?', a: 'Stable follow-up and a structured first assessment can often happen by secure video. A severe manic episode, inability to stay safe, or the need for urgent physical monitoring belongs in a hospital or in-person clinic.' },
+      { q: 'Will I get a mood-stabiliser prescription in the first session?', a: 'Not automatically. The psychiatrist needs a mood history, other medicines, medical risks, and a safety review. Prescribing follows the Telemedicine Practice Guidelines, 2020, and is not guaranteed.' },
+      { q: 'How is this different from the depression page?', a: 'Depression care covers persistent low mood. This page is for people whose history also includes elevated, irritable, or high-energy episodes. The clinician decides which pattern fits.' },
+      { q: 'What if I think I am manic right now?', a: 'If sleep has collapsed, spending or behaviour feels out of control, or people close to you are frightened, seek emergency or in-person care now. An online booking is not the right first step in that state.' },
+    ],
+    references: refs({
+      href: 'https://www.who.int/news-room/fact-sheets/detail/bipolar-disorder',
+      label: 'WHO — Bipolar disorder fact sheet',
+    }),
+  },
+  {
+    id: 'ptsd',
+    kind: 'condition',
+    owned: true,
+    name: 'PTSD and trauma',
+    path: '/ptsd-treatment-online-india',
+    aliases: ['/ptsd-counselling-online-india', '/trauma-therapy-online-india'],
+    summary: 'Care after trauma, including nightmares, avoidance, and feeling constantly on edge.',
+    symptoms: 'Flashbacks, nightmares, avoidance',
+    role: 'psychologist',
+    about: ['Post-Traumatic Stress Disorder', 'Trauma-related distress'],
+    seoTitle: 'PTSD Treatment Online in India | Serenest',
+    seoDescription:
+      'Online PTSD and trauma care in India with verified clinicians. Structured assessment, trauma-focused therapy when suitable, and psychiatry input if medication is needed. Not a crisis service.',
+    kicker: 'PTSD and trauma',
+    titleLead: 'Online PTSD and trauma care in India —',
+    titleEmphasis: 'you set the pace of what you tell.',
+    lead: 'Request care if a frightening or overwhelming experience is still running your sleep, your body, or what you avoid. You do not have to retell the whole event in a booking form or in the first minutes of a session.',
+    looksLike:
+      'After an accident, assault, disaster, medical emergency, or other trauma, some people stay watchful, have nightmares, feel numb, or organise life around avoiding reminders. A clinician looks at timing, safety, and whether trauma-focused therapy, psychiatry, or both is the right next step.',
+    points: [
+      { title: 'Assessment before exposure work', body: 'The first task is safety, sleep, and whether you are ready for trauma-focused therapy — not a demand to describe everything at once.' },
+      { title: 'A private check is not a diagnosis', body: 'The PCL-5 check on Serenest is a screening aid. Only a clinician can decide whether PTSD, another condition, or both fits.' },
+      { title: 'Psychiatry when medicine may help', body: 'If nightmares, panic, or depression are severe, the team can involve a psychiatrist. Medication is one option, decided in the visit.' },
+    ],
+    limits: [
+      { title: 'Ongoing danger needs a local plan', body: 'If you are still being harmed, or you cannot stay safe tonight, contact emergency services or a local support service. Online therapy is not a rescue service.' },
+      { title: 'Not every trauma memory is treated in session one', body: 'Trauma-focused work is paced. Some people need stabilisation first. Your clinician will say if in-person care is safer.' },
+      { title: 'No guaranteed recovery timeline', body: 'Serenest does not promise that symptoms will stop after a set number of sessions.' },
+    ],
+    emergencyNote: 'If you are in immediate danger, or you have thoughts of harming yourself, contact local emergency services, iCall (7777936367), or AASRA (+91-9820466726).',
+    screen: { to: '/screening/tool/ptsd-pcl-5', label: 'Take the PCL-5 trauma check' },
+    related: ['anxiety', 'depression', 'addiction'],
+    faqs: [
+      { q: 'Can PTSD be treated online in India?', a: 'Yes, for many people. Trauma-focused therapy and psychiatric follow-up can be delivered by video when you have a private space and the presentation is suitable. Severe dissociation, active danger, or inability to stay safe may need in-person care.' },
+      { q: 'Is the PCL-5 check a PTSD diagnosis?', a: 'No. PCL-5 is a screening questionnaire. It can help you and your clinician talk about symptoms. It does not confirm PTSD.' },
+      { q: 'Do I have to describe the trauma in the first session?', a: 'No. You can say as much or as little as you can manage. A careful clinician starts with safety, sleep, and what you want from care before any detailed trauma work.' },
+      { q: 'When is online trauma care the wrong setting?', a: 'If you are in current danger, acutely suicidal, severely dissociated, or unable to stay present in a session, seek local emergency or in-person care. Your clinician will also redirect you if video is not enough.' },
+    ],
+    references: refs({
+      href: 'https://www.nimh.nih.gov/health/topics/post-traumatic-stress-disorder-ptsd',
+      label: 'NIMH — Post-traumatic stress disorder',
+    }),
+  },
+  {
+    id: 'panic',
+    kind: 'condition',
+    owned: true,
+    name: 'Panic disorder',
+    path: '/panic-disorder-treatment-online-india',
+    aliases: ['/panic-attack-treatment-online-india', '/online-psychiatrist-for-panic-india'],
+    summary: 'Sudden surges of fear with a pounding heart, breathlessness, or fear of dying.',
+    symptoms: 'Sudden fear, chest tightness, fear of the next attack',
+    role: 'psychiatrist',
+    about: ['Panic Disorder', 'Panic Attacks'],
+    seoTitle: 'Panic Disorder Treatment Online in India | Serenest',
+    seoDescription:
+      'Online care for panic attacks and panic disorder in India. A psychiatrist can review sudden fear episodes and medical red flags. Not a substitute for emergency chest-pain care.',
+    kicker: 'Panic disorder',
+    titleLead: 'Online care for panic attacks in India —',
+    titleEmphasis: 'sudden fear, taken seriously.',
+    lead: 'A panic attack can feel like a heart attack. If you have chest pain, fainting, or a new severe physical symptom, get emergency medical care first. If attacks keep returning and medical danger has been ruled out, a Serenest clinician can assess panic disorder and plan treatment.',
+    looksLike:
+      'Attacks often peak within minutes: racing heart, shortness of breath, dizziness, trembling, or a fear that you are dying or losing control. Between attacks, many people start avoiding places where an attack might happen.',
+    points: [
+      { title: 'Medical danger is checked first', body: 'New chest pain, collapse, or a first severe episode belongs in an emergency department. Psychiatry comes after immediate medical risk is addressed.' },
+      { title: 'Pattern, not one bad afternoon', body: 'The clinician asks how often attacks happen, what you avoid, and whether depression, substances, or thyroid and heart history are in the picture.' },
+      { title: 'Therapy and medicine are both options', body: 'CBT for panic is often first-line. A psychiatrist may also discuss medication. Benzodiazepines are tightly limited online.' },
+    ],
+    limits: [
+      { title: 'Chest pain is an emergency until a doctor says otherwise', body: 'Do not book a video visit as your only response to crushing chest pain, severe breathlessness, or fainting.' },
+      { title: 'No standing sedative prescription', body: 'Benzodiazepines and other controlled medicines have specific limits under India’s telemedicine rules. A clinician will not promise them on request.' },
+      { title: 'This page is narrower than general anxiety', body: 'Ongoing worry without sudden attacks is covered on the anxiety page. You can still book if you are unsure which fits.' },
+    ],
+    emergencyNote: 'Call local emergency services for chest pain, collapse, trouble breathing, or any symptom you fear is a heart or breathing emergency.',
+    screen: { to: '/gad-7-anxiety-screening', label: 'GAD-7 screens anxiety broadly, not panic alone' },
+    related: ['anxiety', 'social-anxiety', 'phobia'],
+    faqs: [
+      { q: 'Are panic attacks a medical emergency?', a: 'A single surge of fear is often panic, but new chest pain, fainting, or severe breathlessness can be a medical emergency. Get that checked in person. Recurrent attacks after medical causes are addressed can be assessed online.' },
+      { q: 'Can a psychiatrist distinguish panic from a heart problem on video?', a: 'A psychiatrist can take a history and advise you. They cannot examine your heart or run an ECG through the website. If a physical cause has not been ruled out, they will tell you to see a local doctor.' },
+      { q: 'Will I be prescribed a benzodiazepine for panic?', a: 'Do not expect that. Those medicines are restricted under the Telemedicine Practice Guidelines, 2020. Treatment more often involves therapy and, when appropriate, other medicines the psychiatrist judges suitable.' },
+      { q: 'How is this different from the anxiety page?', a: 'The anxiety page covers ongoing worry and several anxiety disorders. This page is for sudden panic attacks and the fear of the next one.' },
+    ],
+    references: refs({
+      href: 'https://www.nimh.nih.gov/health/topics/anxiety-disorders',
+      label: 'NIMH — Anxiety disorders',
+    }),
+  },
+  {
+    id: 'social-anxiety',
+    kind: 'condition',
+    owned: true,
+    name: 'Social anxiety',
+    path: '/social-anxiety-treatment-online-india',
+    aliases: ['/social-anxiety-counselling-online-india'],
+    summary: 'Intense fear of being judged, speaking, or being watched in ordinary social situations.',
+    symptoms: 'Fear of judgement, avoidance of speaking or meetings',
+    role: 'therapist',
+    about: ['Social Anxiety Disorder'],
+    seoTitle: 'Social Anxiety Treatment Online in India | Serenest',
+    seoDescription:
+      'Online therapy for social anxiety in India. Structured help for fear of judgement, speaking, and avoidance. A psychiatrist can join if medication is being considered.',
+    kicker: 'Social anxiety',
+    titleLead: 'Online treatment for social anxiety in India —',
+    titleEmphasis: 'fear of people, not a personality flaw.',
+    lead: 'Request therapy if meeting people, speaking in class or at work, or eating in front of others has become something you plan your life around avoiding. Shyness that does not limit you is not the same thing.',
+    looksLike:
+      'Social anxiety shows up as dread before conversations, blushing or a racing heart when attention turns to you, replaying what you said afterwards, and declining invitations or promotions that require speaking.',
+    points: [
+      { title: 'Talking treatment is the usual start', body: 'CBT and graded practice are common approaches. You and the therapist choose steps you can actually try between sessions.' },
+      { title: 'Video can be part of the work', body: 'Being on camera is hard for some people with social anxiety. You can say that. Audio is available, and the pace can be slower.' },
+      { title: 'A psychiatrist if medicine is on the table', body: 'If anxiety is severe or therapy alone has not been enough, a psychiatrist can review whether medication is appropriate.' },
+    ],
+    limits: [
+      { title: 'Avoidance is not cured in one call', body: 'Practice between sessions is part of care. Serenest does not promise you will feel comfortable in every room.' },
+      { title: 'Not a public-speaking course', body: 'This is clinical care for fear and avoidance, not a coaching product for presentations.' },
+      { title: 'Autism and social anxiety are different questions', body: 'Serenest does not offer a standalone autism assessment on this page. A clinician can say if a different evaluation is needed.' },
+    ],
+    emergencyNote: 'If fear has tipped into hopelessness or thoughts of self-harm, contact a crisis line or emergency services rather than waiting for a routine slot.',
+    screen: { to: '/gad-7-anxiety-screening', label: 'Start with a GAD-7 anxiety check' },
+    related: ['anxiety', 'panic', 'phobia'],
+    faqs: [
+      { q: 'Can social anxiety be treated without medication?', a: 'Often, yes. Structured therapy is a common starting point. Medication is a separate decision with a psychiatrist when symptoms are severe or therapy has not been enough.' },
+      { q: 'Is an online session too hard if talking to people is the problem?', a: 'It can feel hard, and you can say so. Sessions can use audio, a slower pace, or a support person nearby if that is safer. You do not have to perform.' },
+      { q: 'How is this different from being shy?', a: 'Shyness is a temperament. Social anxiety disorder is fear and avoidance that restricts study, work, or relationships. A clinician helps you tell the difference. You do not need to be sure before you book.' },
+      { q: 'What happens in a first session?', a: 'The therapist asks which situations you avoid, what you fear will happen, and what you want to be able to do. You leave with a next step, not a demand to attend a party that week.' },
+    ],
+    references: refs({
+      href: 'https://www.nimh.nih.gov/health/topics/anxiety-disorders',
+      label: 'NIMH — Anxiety disorders',
+    }),
+  },
+  {
+    id: 'phobia',
+    kind: 'condition',
+    owned: true,
+    name: 'Specific phobias',
+    path: '/specific-phobia-treatment-online-india',
+    aliases: ['/phobia-treatment-online-india'],
+    summary: 'Marked fear of a particular object or situation, such as flying, needles, animals, or heights.',
+    symptoms: 'Fear and avoidance of one specific trigger',
+    role: 'therapist',
+    about: ['Specific Phobia'],
+    seoTitle: 'Phobia Treatment Online in India | Serenest',
+    seoDescription:
+      'Online therapy for specific phobias in India, including graded exposure when it is safe to do from home. Not for medical emergencies triggered by the fear.',
+    kicker: 'Specific phobias',
+    titleLead: 'Online help for a specific phobia —',
+    titleEmphasis: 'one fear that has started running the plan.',
+    lead: 'Book if a particular trigger — flying, needles, animals, heights, vomiting, or something else — makes you cancel parts of ordinary life. Care is usually graded practice with a therapist, not a pep talk.',
+    looksLike:
+      'You know the fear is larger than the danger, and you still avoid the trigger or endure it with dread. Blood-injection-injury fears can also cause fainting, which needs a safer plan than “just face it”.',
+    points: [
+      { title: 'Exposure is planned, not sprung on you', body: 'Steps are agreed. Some practice can happen on video. Some triggers still need an in-person plan.' },
+      { title: 'Fainting risk is named', body: 'If you faint at the sight of blood or needles, the therapist will not treat that like an ordinary fear of dogs.' },
+      { title: 'Psychiatry is available if panic or depression sits alongside', body: 'A phobia page starts with therapy. A psychiatrist joins when there is a medical or medication question.' },
+    ],
+    limits: [
+      { title: 'We cannot put you on a plane from the website', body: 'Real-world steps may need a local support person. Serenest plans the clinical work. It does not accompany you.' },
+      { title: 'Needle phobia does not replace medical consent', body: 'If you need an injection or procedure, the treating hospital still handles that procedure. We can help with the fear around it.' },
+      { title: 'Not every fear is a phobia', body: 'A clinician will say if what you describe is panic disorder, OCD, PTSD, or ordinary caution.' },
+    ],
+    emergencyNote: 'If a fear episode includes chest pain, collapse, or trouble breathing, seek emergency medical care.',
+    screen: null,
+    related: ['panic', 'anxiety', 'ocd'],
+    faqs: [
+      { q: 'Can a specific phobia be treated online?', a: 'Many can, using graded exposure and response work on video, with practice you continue at home. Some steps — a flight, a medical procedure — still happen in the real world with a plan.' },
+      { q: 'What is exposure therapy here?', a: 'You and the therapist build a ladder from easier contact with the fear to harder contact, and you stay with the feeling without the usual escape. It is collaborative. You are not ambushed with your worst fear.' },
+      { q: 'Do I need a psychiatrist for a phobia?', a: 'Usually you start with a therapist or psychologist. See a psychiatrist if panic, depression, or medication questions are part of the picture, or if your clinician suggests it.' },
+      { q: 'What if I am afraid of doctors or needles?', a: 'Say that when you book. Blood and needle fears can cause fainting and need a specific approach. We will not pretend a video session replaces the clinic where a procedure has to happen.' },
+    ],
+    references: refs(),
+  },
+  {
+    id: 'sleep',
+    kind: 'condition',
+    owned: true,
+    name: 'Sleep and insomnia',
+    path: '/insomnia-treatment-online-india',
+    aliases: ['/insomnia-psychiatrist-online-india', '/sleep-disorder-treatment-online-india'],
+    summary: 'Trouble falling asleep, staying asleep, or sleeping enough to function.',
+    symptoms: 'Insomnia, unrefreshing sleep, daytime exhaustion',
+    role: 'psychiatrist',
+    about: ['Insomnia', 'Sleep Disorders'],
+    seoTitle: 'Insomnia Treatment Online in India | Serenest',
+    seoDescription:
+      'Online psychiatrist and therapy care for insomnia in India. Sleep history, mental health review, and treatment planning. Not a sleep laboratory or a sleeping-pill service.',
+    kicker: 'Sleep and insomnia',
+    titleLead: 'Online insomnia care in India —',
+    titleEmphasis: 'a sleep history, not a pill menu.',
+    lead: 'Request an appointment if poor sleep has lasted and is affecting your days. Serenest can assess insomnia alongside mood, anxiety, and substances. We do not run overnight sleep studies.',
+    looksLike:
+      'Insomnia may mean lying awake for hours, waking and being unable to return to sleep, or dreading bedtime. Snoring with gasping, pauses in breathing, or severe daytime sleepiness can point to a sleep-breathing problem that needs an in-person sleep assessment.',
+    points: [
+      { title: 'The pattern matters', body: 'The clinician asks about timing, caffeine, screens, shift work, pain, mood, and medicines — not only “I cannot sleep”.' },
+      { title: 'CBT for insomnia is a real option', body: 'Stimulus control and sleep-window work are often more useful than a sedative. A therapist or psychiatrist can start that plan.' },
+      { title: 'Psychiatry looks for what sits underneath', body: 'Depression, anxiety, mania, trauma, and alcohol commonly disturb sleep. Treating only the night can miss the cause.' },
+    ],
+    limits: [
+      { title: 'No sleep lab on this website', body: 'Suspected sleep apnoea, narcolepsy, or seizures need in-person medical assessment. We will say so.' },
+      { title: 'Sleeping pills are not the product', body: 'Sedatives can be considered in limited situations and are often a poor long-term plan. They are not promised.' },
+      { title: 'One bad week is not chronic insomnia', body: 'Short sleep around an exam or a journey may not need a clinic. Book if the problem is sticking.' },
+    ],
+    emergencyNote: 'Seek emergency care for chest pain, severe breathlessness at night, confusion, or thoughts of harming yourself.',
+    screen: null,
+    related: ['depression', 'anxiety', 'bipolar'],
+    faqs: [
+      { q: 'Can insomnia be treated online?', a: 'Yes, when the main problem is sleeplessness tied to habits, worry, mood, or a psychiatric condition. A sleep study, if needed, happens at a local centre — not on Serenest.' },
+      { q: 'Will I get sleeping pills?', a: 'Only if a psychiatrist decides they are appropriate after a history. Many people are offered a behavioural sleep plan instead. Controlled sedatives have extra limits online.' },
+      { q: 'Do you diagnose sleep apnoea?', a: 'No. Loud snoring, witnessed breathing pauses, or morning headaches need an in-person medical or sleep assessment. Mention them so we do not treat the wrong problem.' },
+      { q: 'When is poor sleep a psychiatry issue?', a: 'When it arrives with low mood, anxiety, trauma, possible mania, substances, or it has lasted long enough to impair work and safety. If you are unsure, book and the clinician will sort the route.' },
+    ],
+    references: refs({
+      href: 'https://www.nhlbi.nih.gov/health/insomnia',
+      label: 'NHLBI — Insomnia',
+    }),
+  },
+  {
+    id: 'burnout',
+    kind: 'condition',
+    owned: true,
+    name: 'Stress and burnout',
+    path: '/stress-and-burnout-care-online-india',
+    aliases: ['/burnout-treatment-online-india', '/work-stress-counselling-online-india'],
+    summary: 'Exhaustion, cynicism, and reduced capacity that track work or caregiving load.',
+    symptoms: 'Exhaustion, detachment, work stress',
+    role: 'therapist',
+    about: ['Burnout', 'Occupational Stress'],
+    seoTitle: 'Stress and Burnout Care Online in India | Serenest',
+    seoDescription:
+      'Online therapy for work stress and burnout in India. The free burnout check is not a diagnosis. A clinician can tell burnout from depression and plan next steps.',
+    kicker: 'Stress and burnout',
+    titleLead: 'Online care for stress and burnout —',
+    titleEmphasis: 'load, exhaustion, and what else it might be.',
+    lead: 'Book if work, study, or caregiving has left you exhausted, detached, or unable to recover on days off. Burnout is a useful description. It is not, by itself, a psychiatric diagnosis — and sometimes the picture is depression, anxiety, or both.',
+    looksLike:
+      'People describe dreading the workday, feeling numb with patients or family, snapping at home, and sleeping poorly even when the laptop is shut. A check-in score can start the conversation. It does not decide the care.',
+    points: [
+      { title: 'Start with the free check if you want words first', body: 'The BAT-12 burnout check stays educational. Bring the result to a session or skip it and book directly.' },
+      { title: 'Therapy looks at the load and the person', body: 'Boundaries, rest, and thinking patterns matter. So does whether you are depressed, drinking more, or not safe.' },
+      { title: 'Workplaces can be a separate path', body: 'If you are asking for a whole team, use the corporate page. This specialty is for you as a person.' },
+    ],
+    limits: [
+      { title: 'We will not call burnout a diagnosis on a form', body: 'A clinician may find depression, an anxiety disorder, a sleep disorder, or no disorder. The label follows the assessment.' },
+      { title: 'A session cannot fix an unsafe workplace', body: 'Care can help you think and recover. It does not replace labour protections or a manager’s responsibility.' },
+      { title: 'The screening result is not a medical record by itself', body: 'Unless you choose to share it, a self-check on your device is not a Serenest diagnosis.' },
+    ],
+    emergencyNote: 'If stress has come with thoughts of suicide or you cannot stay safe, contact emergency services or a crisis helpline now.',
+    screen: { to: '/burnout-check', label: 'Read the burnout check, then decide' },
+    related: ['depression', 'anxiety', 'sleep'],
+    faqs: [
+      { q: 'Is burnout a medical diagnosis?', a: 'Not in the way depression or an anxiety disorder is. It describes exhaustion tied to prolonged stress, often at work. A clinician still checks whether another condition is present.' },
+      { q: 'How is this different from the free burnout check?', a: 'The check is a private questionnaire and an explanation. This page is for booking a person — a therapist, and a psychiatrist if the picture looks like illness rather than load alone.' },
+      { q: 'Can I book if work stress is my only concern?', a: 'Yes. You do not need a diagnosis to request a slot. Say that work is the reason. We confirm by phone or WhatsApp.' },
+      { q: 'When is burnout actually depression?', a: 'When low mood, loss of interest, guilt, or hopelessness spread beyond the job and into the rest of life, or when you cannot function. The PHQ-9 can be a starting screen. The clinician makes the call.' },
+    ],
+    references: refs({
+      href: 'https://www.who.int/news/item/28-05-2019-burn-out-an-occupational-phenomenon-international-classification-of-diseases',
+      label: 'WHO — Burn-out as an occupational phenomenon',
+    }),
+  },
+  {
+    id: 'alcohol',
+    kind: 'condition',
+    owned: true,
+    name: 'Alcohol use',
+    path: '/alcohol-use-support-online-india',
+    aliases: ['/alcohol-deaddiction-online-india', '/online-psychiatrist-for-alcohol-india'],
+    summary: 'Drinking that is hard to cut down, plus support that knows withdrawal can be dangerous.',
+    symptoms: 'Difficulty cutting down, withdrawal, hidden drinking',
+    role: 'psychiatrist',
+    about: ['Alcohol Use Disorder'],
+    seoTitle: 'Alcohol Use Support Online in India | Serenest',
+    seoDescription:
+      'Online psychiatrist support for alcohol use in India. Assessment, counselling, and relapse planning. Withdrawal can be a medical emergency — Serenest does not provide home detox.',
+    kicker: 'Alcohol use',
+    titleLead: 'Online support for alcohol use in India —',
+    titleEmphasis: 'help without a home-detox promise.',
+    lead: 'Request a psychiatrist if drinking is hard to control, harming sleep, mood, or relationships, or you want a plan to cut down. If you are shaking, confused, or having seizures after stopping, that is an emergency — go to a hospital. Serenest does not run home detox.',
+    looksLike:
+      'People drink more than they planned, hide it, feel unwell when they stop, or notice mood and sleep collapsing around alcohol. A short AUDIT-C check can open the conversation. It is not a diagnosis.',
+    points: [
+      { title: 'Withdrawal risk is asked early', body: 'Morning drinking, past seizures, or severe shakes change the plan. Those situations need a medical setting, not a video taper.' },
+      { title: 'Counselling and medicine can both be discussed', body: 'Relapse-prevention work is part of care. Medicines that reduce craving are a psychiatrist’s decision, not a checkout item.' },
+      { title: 'Other substances have a home too', body: 'Tobacco, opioids, and other drugs are covered under addiction and recovery. Say what you actually use so matching is honest.' },
+    ],
+    limits: [
+      { title: 'No online detox', body: 'Alcohol withdrawal can cause seizures and delirium. Stopping suddenly after heavy daily use needs in-person medical care.' },
+      { title: 'AUDIT-C is a screen', body: 'A high score means “talk to a clinician”, not “you have alcohol use disorder”.' },
+      { title: 'We will not help you hide drinking from a doctor who is treating you', body: 'Safe prescribing depends on an honest history. Care is still confidential within the usual clinical limits.' },
+    ],
+    emergencyNote: 'Seizures, confusion, vomiting blood, severe shakes, or thoughts of suicide after drinking or stopping need emergency care now.',
+    screen: { to: '/screening/tool/alcohol-audit-c', label: 'Take the AUDIT-C alcohol check' },
+    related: ['addiction', 'depression', 'sleep'],
+    faqs: [
+      { q: 'Can I detox from alcohol online?', a: 'No. Serenest does not provide home alcohol detox. If you get shakes, confusion, or have had a withdrawal seizure, go to a hospital. Online care is for assessment, counselling, and follow-up when it is medically safe.' },
+      { q: 'What is AUDIT-C?', a: 'A brief alcohol-use questionnaire. On Serenest it is a private screen, not a diagnosis. You can share the result when you book.' },
+      { q: 'Will you prescribe anti-craving medicine?', a: 'A psychiatrist may consider it after a proper history, including liver risk, other medicines, and pregnancy. It is not issued because a form asked for it.' },
+      { q: 'What if I am in withdrawal today?', a: 'Do not wait for a Serenest callback. Severe alcohol withdrawal is a medical emergency. Use a local hospital.' },
+    ],
+    references: refs({
+      href: 'https://www.who.int/news-room/fact-sheets/detail/alcohol',
+      label: 'WHO — Alcohol fact sheet',
+    }),
+  },
+  {
+    id: 'eating',
+    kind: 'condition',
+    owned: true,
+    name: 'Eating concerns',
+    path: '/eating-concerns-support-online-india',
+    aliases: ['/eating-disorder-support-online-india', '/binge-eating-help-online-india'],
+    summary: 'Binge eating, restriction, or purging that is affecting health or daily life.',
+    symptoms: 'Bingeing, restriction, purging, body distress',
+    role: 'psychiatrist',
+    about: ['Eating Disorders', 'Binge-Eating Disorder'],
+    seoTitle: 'Eating Disorder Support Online in India | Serenest',
+    seoDescription:
+      'Online psychiatric assessment for eating concerns in India, including binge eating and restriction. Medically unstable eating disorders need in-person care. SCOFF is not a diagnosis.',
+    kicker: 'Eating concerns',
+    titleLead: 'Online support for eating concerns —',
+    titleEmphasis: 'assessment first, hospital when the body is at risk.',
+    lead: 'Book a psychiatrist if eating, weight, or compensation — vomiting, laxatives, driven exercise — is taking over. Some eating disorders are medically dangerous. Very low weight, fainting, or frequent purging may need a hospital, not a video visit as the only care.',
+    looksLike:
+      'Concerns include binge episodes with loss of control, strict restriction, fear of weight gain, or secret purging. The SCOFF questions are a rough screen. They do not diagnose anorexia, bulimia, or binge-eating disorder.',
+    points: [
+      { title: 'Medical risk is part of the first question', body: 'Fainting, chest pain, vomiting blood, very low weight, or inability to keep fluids down needs urgent in-person care.' },
+      { title: 'Psychiatry and therapy can work together', body: 'A doctor looks at physical risk, mood, and medicine. A therapist can work on the eating pattern when that is safe.' },
+      { title: 'You can book without naming a diagnosis', body: '“I binge and I am frightened” is enough to request a slot. The clinician does the sorting.' },
+    ],
+    limits: [
+      { title: 'No online refeeding programme', body: 'Serenest does not provide inpatient eating-disorder treatment, meal supervision, or daily medical monitoring.' },
+      { title: 'SCOFF is not a diagnosis', body: 'A positive screen means a conversation is reasonable. It does not confirm an eating disorder.' },
+      { title: 'Weight loss drugs are not offered here', body: 'This is mental health care. It is not a metabolic or cosmetic clinic.' },
+    ],
+    emergencyNote: 'Fainting, chest pain, vomiting blood, confusion, or being unable to keep down fluids needs emergency medical care.',
+    screen: { to: '/screening/tool/eating-scoff', label: 'Take the SCOFF eating-patterns check' },
+    related: ['depression', 'anxiety', 'ocd'],
+    faqs: [
+      { q: 'Do you treat anorexia online?', a: 'We can assess and help plan care. If weight, heart rhythm, or hydration is unstable, treatment has to include in-person medical monitoring. Serenest will not pretend a video session replaces that.' },
+      { q: 'Is the SCOFF check a diagnosis?', a: 'No. It is a short screen for eating concerns. Only a clinician, with a proper history, can diagnose an eating disorder.' },
+      { q: 'When do I need a hospital instead of Serenest?', a: 'Fainting, chest pain, blood in vomit, confusion, pregnancy with inability to keep food or fluids down, or a very low weight with rapid loss. Go to emergency care, then use online follow-up only if a doctor says it is safe.' },
+      { q: 'Can a psychiatrist help with binge eating?', a: 'Yes. Binge-eating concerns can be assessed online, including mood and medicine options, when there is no medical emergency. Therapy is often part of the plan.' },
+    ],
+    references: refs({
+      href: 'https://www.nimh.nih.gov/health/topics/eating-disorders',
+      label: 'NIMH — Eating disorders',
+    }),
+  },
+  {
+    id: 'grief',
+    kind: 'condition',
+    owned: true,
+    name: 'Grief and loss',
+    path: '/grief-counselling-online-india',
+    aliases: ['/bereavement-counselling-online-india'],
+    summary: 'Support after a death or other major loss, including when grief starts to look like illness.',
+    symptoms: 'Bereavement, yearning, difficulty functioning after a loss',
+    role: 'therapist',
+    about: ['Grief', 'Bereavement'],
+    seoTitle: 'Grief Counselling Online in India | Serenest',
+    seoDescription:
+      'Online grief counselling in India after a death or major loss. Grief is not automatically a disorder. A clinician can help when mourning becomes depression or you cannot function.',
+    kicker: 'Grief and loss',
+    titleLead: 'Online grief counselling in India —',
+    titleEmphasis: 'room for mourning, and a clinician if you are stuck.',
+    lead: 'You can book after a death, a miscarriage, or another loss without calling it a disorder. Grief is a human response. Ask for care when the pain is not moving, daily life has stopped, or low mood, panic, or hopelessness has taken over.',
+    looksLike:
+      'Yearning, disbelief, anger, and waves of sadness are common. Seek an appointment sooner if you cannot work or care for children, you are not eating or sleeping at all, you are using alcohol to get through the day, or you do not want to stay alive.',
+    points: [
+      { title: 'Counselling does not rush you to “move on”', body: 'The work is to have a place to talk, and to notice if grief has become depression or another condition that needs treatment.' },
+      { title: 'A psychiatrist is available', body: 'If there is severe depression, panic, or a question of medicine, the therapist can bring in a psychiatrist. Medicine is not the default for ordinary grief.' },
+      { title: 'Faith and family stay yours', body: 'Clinicians do not replace rituals, elders, or community. They add a private clinical conversation.' },
+    ],
+    limits: [
+      { title: 'Grief is not billed as a disease by default', body: 'We will not stamp a disorder on normal mourning. If a diagnosis fits, the clinician will explain why.' },
+      { title: 'We are not a funeral or legal service', body: 'Practical arrangements after a death sit outside Serenest.' },
+      { title: 'Acute suicidal grief is an emergency', body: 'If you might act on thoughts of dying, contact a crisis line or emergency services before waiting for a callback.' },
+    ],
+    emergencyNote: 'If grief includes a plan to harm yourself, contact emergency services, iCall (7777936367), or AASRA (+91-9820466726).',
+    screen: { to: '/phq-9-depression-screening', label: 'PHQ-9 can describe mood; it does not measure grief' },
+    related: ['depression', 'ptsd', 'therapy'],
+    faqs: [
+      { q: 'Is grief a mental illness?', a: 'No. Most grief is not a psychiatric disorder. Care is still reasonable when you want support, and necessary when you cannot function or depression, trauma, or suicidal thinking is present.' },
+      { q: 'When should a psychiatrist be involved?', a: 'When there is severe depression, panic, inability to sleep or eat, substance use, or a question about medication. A therapist is often the right start.' },
+      { q: 'Can I book soon after someone has died?', a: 'Yes. You do not have to wait a set number of weeks. Say what happened only if you want to. The note on the booking form can be as short as “recent bereavement”.' },
+      { q: 'How is this different from depression care?', a: 'Depression care is for depressive illness, with or without a loss. Grief counselling starts from the loss. The two overlap, and the clinician will tell you if the depression page’s kind of treatment is a better fit.' },
+    ],
+    references: refs(),
+  },
+  {
+    id: 'perinatal',
+    kind: 'condition',
+    owned: true,
+    name: 'Perinatal mental health',
+    path: '/perinatal-mental-health-online-india',
+    aliases: ['/postpartum-depression-online-india', '/pregnancy-mental-health-online-india'],
+    summary: 'Mental health care in pregnancy and the year after birth. Not obstetric care.',
+    symptoms: 'Low mood, anxiety, or intrusive thoughts in pregnancy or postpartum',
+    role: 'psychiatrist',
+    about: ['Perinatal Depression', 'Postpartum Depression', 'Perinatal Anxiety'],
+    seoTitle: 'Perinatal Mental Health Online in India | Serenest',
+    seoDescription:
+      'Online psychiatrist care for mental health in pregnancy and after birth in India. Not a substitute for your obstetrician. Medication decisions are individual and coordinated.',
+    kicker: 'Pregnancy and postpartum',
+    titleLead: 'Perinatal mental health care online —',
+    titleEmphasis: 'psychiatry and therapy, not a replacement for your obstetrician.',
+    lead: 'Book if you are pregnant or in the year after birth and mood, anxiety, intrusive thoughts, or bonding feel wrong. Serenest does not provide scans, delivery care, or paediatric care. Your obstetrician or midwife remains responsible for the pregnancy.',
+    looksLike:
+      'This includes persistent low mood, panic, rage, scary intrusive thoughts about harm, or feeling detached from the baby. Occasional tearfulness in the first days after birth is common. Care is for symptoms that are severe, lasting, or frightening.',
+    points: [
+      { title: 'Medicine in pregnancy is a specific decision', body: 'A psychiatrist weighs illness risk and medicine risk with you. Nothing is started because a webpage listed it. Your obstetrician should be in the loop.' },
+      { title: 'Intrusive thoughts are assessable', body: 'Unwanted thoughts of harm, when they horrify you, are often anxiety or OCD — not a wish to act. A clinician still checks safety directly.' },
+      { title: 'Partners can ask for their own appointment', body: 'This page is for the person who needs care. A partner books their own session. It is not couples therapy by default.' },
+    ],
+    limits: [
+      { title: 'Not obstetrics or baby care', body: 'Bleeding, reduced fetal movement, severe headache, seizures, or a baby who is unwell need your maternity or paediatric team, or emergency services.' },
+      { title: 'Postpartum psychosis is an emergency', body: 'Confusion, bizarre beliefs, or inability to care for the baby safely need a hospital the same day, not a routine video slot.' },
+      { title: 'We do not guarantee a medicine is “safe in pregnancy”', body: 'That sentence is never absolute. The psychiatrist explains the trade-off for your situation.' },
+    ],
+    emergencyNote: 'Confusion, hallucinations, or thoughts of harming yourself or the baby after birth are an emergency. Go to hospital. For pregnancy emergencies such as heavy bleeding or seizures, contact your obstetric team or emergency services.',
+    screen: { to: '/screening/pathway/mood-anxiety', label: 'Mood and anxiety check (not a perinatal diagnosis)' },
+    related: ['depression', 'anxiety', 'ocd'],
+    faqs: [
+      { q: 'Can I take psychiatric medicine while pregnant or breastfeeding?', a: 'Sometimes, yes — and sometimes stopping a needed medicine is riskier than continuing. Only the psychiatrist, with your obstetric context, can advise. Do not start or stop a medicine because of a general article.' },
+      { q: 'Do you provide obstetric or delivery care?', a: 'No. Serenest is mental health care. Your obstetrician, midwife, or hospital handles the pregnancy and birth.' },
+      { q: 'Can my partner book?', a: 'Yes, for their own appointment. This specialty is not a joint parenting class. Couples counselling is a separate page if the relationship is the main issue.' },
+      { q: 'What about anxiety after the baby, not only depression?', a: 'Postpartum anxiety, panic, and OCD-pattern intrusive thoughts are reasons to book. Mention pregnancy or a recent birth in the note so the clinician prepares.' },
+    ],
+    references: refs({
+      href: 'https://www.who.int/teams/mental-health-and-substance-use/promotion-prevention/maternal-mental-health',
+      label: 'WHO — Maternal mental health',
+    }),
+  },
+  {
+    id: 'older-adult',
+    kind: 'condition',
+    owned: true,
+    name: 'Older-adult mental health',
+    path: '/older-adult-mental-health-online-india',
+    aliases: ['/geriatric-psychiatry-online-india', '/elderly-depression-online-india'],
+    summary: 'Depression, anxiety, sleep, and cognitive concerns in later life. Not a dementia clinic by video alone.',
+    symptoms: 'Low mood, anxiety, memory worries in later life',
+    role: 'psychiatrist',
+    about: ['Late-life Depression', 'Geriatric Mental Health'],
+    seoTitle: 'Older Adult Mental Health Online in India | Serenest',
+    seoDescription:
+      'Online psychiatry for older adults in India: depression, anxiety, sleep, and a first look at memory concerns. Dementia diagnosis usually needs an in-person examination.',
+    kicker: 'Later life',
+    titleLead: 'Mental health care for older adults —',
+    titleEmphasis: 'depression and anxiety are treatable at any age.',
+    lead: 'Book for a parent or for yourself if low mood, anxiety, sleep, or medicines have become the problem in later life. Memory complaints can be discussed. A firm dementia diagnosis usually needs an in-person exam and sometimes a local physician’s tests.',
+    looksLike:
+      'Later-life depression can look like withdrawal, irritability, or “just old age”. Anxiety and poor sleep are common. New confusion, a sudden change, falls, or a suspected stroke are medical emergencies, not a telepsychiatry booking.',
+    points: [
+      { title: 'A family member may help with history', body: 'With the patient’s consent, someone in the house can join the video to describe changes. The patient remains the person receiving care.' },
+      { title: 'Medicines are reviewed carefully', body: 'Older adults are more sensitive to sedatives and to interactions. A psychiatrist will not add a sleeping pill by default.' },
+      { title: 'Memory concerns get an honest limit', body: 'We can screen the story and advise. Imaging, blood tests, and a neurological exam happen locally when they are needed.' },
+    ],
+    limits: [
+      { title: 'Sudden confusion is an emergency', body: 'Delirium from infection, stroke, or medicines needs a hospital. Do not book Serenest as the response to a sudden change in alertness.' },
+      { title: 'We do not diagnose dementia from a video alone', body: 'A clinician may suspect a cognitive disorder and will say what in-person steps are required.' },
+      { title: 'This is adult care for the older person', body: 'It is not a caregiving agency, home nurse, or old-age home placement service.' },
+    ],
+    emergencyNote: 'Sudden confusion, one-sided weakness, chest pain, a fall with head injury, or inability to stay safe needs emergency services.',
+    screen: { to: '/phq-9-depression-screening', label: 'PHQ-9 depression check' },
+    related: ['depression', 'sleep', 'anxiety'],
+    faqs: [
+      { q: 'Can memory problems be assessed online?', a: 'A psychiatrist can take a history and say whether memory complaints might be depression, medicines, or a cognitive disorder. Confirming dementia usually needs in-person examination and tests Serenest cannot run.' },
+      { q: 'Do you diagnose dementia on video?', a: 'No. We will not issue a dementia diagnosis from a website visit alone. We can help with mood, anxiety, sleep, and a plan for the right local assessment.' },
+      { q: 'Is this only for depression in older age?', a: 'Depression is common and treatable, and so are anxiety, grief, and sleep problems. Mention the main concern when you book.' },
+      { q: 'Can an adult child attend?', a: 'Yes, if the older adult agrees. Book in the patient’s name. If they cannot consent or are acutely confused, they need in-person medical care rather than a routine online slot.' },
+    ],
+    references: refs({
+      href: 'https://www.nimh.nih.gov/health/publications/older-adults-and-depression',
+      label: 'NIMH — Older adults and depression',
+    }),
+  },
+  {
+    id: 'psychosis',
+    kind: 'condition',
+    owned: true,
+    name: 'Psychosis follow-up',
+    path: '/psychosis-care-online-india',
+    aliases: ['/schizophrenia-follow-up-online-india', '/online-psychiatrist-for-schizophrenia-india'],
+    summary: 'Follow-up for psychosis or schizophrenia when the person is stable enough for a video visit.',
+    symptoms: 'Voices, unusual beliefs, follow-up after a psychotic episode',
+    role: 'psychiatrist',
+    about: ['Schizophrenia', 'Psychosis'],
+    seoTitle: 'Psychosis Follow-up Online in India | Serenest',
+    seoDescription:
+      'Online psychiatrist follow-up for stable psychosis or schizophrenia in India. Acute psychosis, aggression, or inability to stay safe needs a hospital — not a video booking.',
+    kicker: 'Psychosis and schizophrenia',
+    titleLead: 'Online follow-up for psychosis —',
+    titleEmphasis: 'for people well enough to use a video visit.',
+    lead: 'This page is for follow-up: voices, unusual beliefs, or a schizophrenia diagnosis when the person can take part in a conversation and stay safe at home. A first severe episode, aggression, or not eating or drinking needs a hospital. Serenest is not an acute psychiatry ward.',
+    looksLike:
+      'Suitable concerns include a stable person who needs medicine review, sleep has slipped, or family wants a planned follow-up after discharge. Unsuitable concerns include someone who is frightened, threatening, or unreachable — that is an emergency.',
+    points: [
+      { title: 'A psychiatrist leads this specialty', body: 'Antipsychotic decisions, side effects, and medical history belong with a medical doctor, not a counselling-only visit.' },
+      { title: 'Family can join with consent', body: 'A relative may help describe sleep, medicines, and safety. The patient’s consent and privacy still matter.' },
+      { title: 'Side effects are part of follow-up', body: 'Stiffness, restlessness, weight, and sedation are reasons to book — not reasons to stop a medicine on your own before the visit.' },
+    ],
+    limits: [
+      { title: 'Acute psychosis is not managed on this website', body: 'If someone is a danger to themselves or others, or cannot care for basic needs, contact emergency services or take them to hospital.' },
+      { title: 'No first-call promise of an antipsychotic', body: 'Starting or changing these medicines needs history, sometimes blood tests, and a judgement that video care is safe.' },
+      { title: 'We do not provide involuntary treatment', body: 'Serenest cannot detain, inject, or compel care. Local mental health law and hospitals cover emergencies.' },
+    ],
+    emergencyNote: 'If someone is violent, profoundly confused, not eating or drinking, or you fear they will be harmed, call emergency services or go to the nearest hospital with a psychiatry service.',
+    screen: null,
+    related: ['bipolar', 'addiction', 'psychiatry'],
+    faqs: [
+      { q: 'Can schizophrenia be treated fully online?', a: 'Stable follow-up often can. An acute psychotic episode, especially with risk or inability to care for oneself, needs a hospital. Serenest will say when video is the wrong place.' },
+      { q: 'What if someone is hearing voices right now and is frightened?', a: 'If they are safe, calm enough to talk, and you can wait for a planned appointment, book and say that clearly. If they are unsafe or out of control, use emergency services tonight.' },
+      { q: 'Is online follow-up possible after a hospital stay?', a: 'Often, yes, once the treating team says the person is stable enough. Bring discharge papers and the current medicine list to the video visit.' },
+      { q: 'Will antipsychotics be prescribed on the first call?', a: 'Only if the psychiatrist has enough history and judges it safe and appropriate under telemedicine rules. It is not guaranteed, and some situations need blood tests or an in-person exam first.' },
+    ],
+    references: refs({
+      href: 'https://www.who.int/news-room/fact-sheets/detail/schizophrenia',
+      label: 'WHO — Schizophrenia fact sheet',
+    }),
+  },
+  {
+    id: 'couples',
+    kind: 'condition',
+    owned: true,
+    name: 'Couples and relationships',
+    path: '/couples-counselling-online-india',
+    aliases: ['/relationship-counselling-online-india', '/marriage-counselling-online-india'],
+    summary: 'Structured counselling for two adults in a relationship. Not a legal or mediation service.',
+    symptoms: 'Conflict, distance, trust, communication',
+    role: 'therapist',
+    about: ['Relationship Distress'],
+    seoTitle: 'Couples Counselling Online in India | Serenest',
+    seoDescription:
+      'Online couples counselling in India for two adults. Structured sessions for conflict, trust, and communication. Not for active violence — that needs a local safety plan.',
+    kicker: 'Couples',
+    titleLead: 'Online couples counselling in India —',
+    titleEmphasis: 'two adults, one structured conversation.',
+    lead: 'Book if you and a partner want help with conflict, distance, trust, or a decision about the relationship. Sessions are therapy, not a court, a religious ruling, or a guarantee you will stay together.',
+    looksLike:
+      'Couples come for repeated fights, silence, an affair, in-law pressure, or a sense of living side by side. If there is hitting, threats, or coercive control, a joint video session can be unsafe. Get local help and a safety plan first.',
+    points: [
+      { title: 'Both people should agree to be there', body: 'Couples work needs two willing adults. One person cannot book a partner into treatment against their will.' },
+      { title: 'Individual care still exists', body: 'If one person is depressed, drinking, or traumatised, they may also need their own psychiatrist or therapist. Say that when you book.' },
+      { title: 'Privacy has a limit in joint sessions', body: 'What is said with both of you present is heard by both of you. The therapist will explain confidentiality, including risk of harm.' },
+    ],
+    limits: [
+      { title: 'Not a service for active violence', body: 'Do not use a joint session to confront someone who is harming you. Contact local support or emergency services.' },
+      { title: 'Not legal advice or divorce paperwork', body: 'Therapists do not file cases, draft agreements, or take sides as advocates.' },
+      { title: 'No promise the relationship continues', body: 'A good outcome is sometimes a clearer, safer separation. That is a clinical result, not a failure of the website.' },
+    ],
+    emergencyNote: 'If you are being hurt or threatened, contact local emergency services or a trusted person nearby. Do not wait for a couples slot.',
+    screen: null,
+    related: ['therapy', 'grief', 'addiction'],
+    faqs: [
+      { q: 'Do both people need to attend?', a: 'For couples counselling, yes — both adults need to agree. If your partner will not attend, book an individual therapy appointment instead.' },
+      { q: 'Is this marriage counselling or psychiatry?', a: 'It is therapy for the relationship. If mood, anxiety, or substances are the main issue for one person, they should also consider their own psychiatric or therapy appointment.' },
+      { q: 'Can we book if there is abuse?', a: 'Do not book a joint session while violence or threats are ongoing. That can increase risk. Use local emergency or support services, and an individual session only if it is safe to do so.' },
+      { q: 'How private is a couples session?', a: 'The session is confidential within clinical and legal limits, but both partners hear what is said in the room. The therapist will not keep a dangerous secret that leaves someone at risk.' },
+    ],
+    references: refs(),
+  },
+  {
+    id: 'medication-review',
+    kind: 'condition',
+    owned: true,
+    name: 'Medication review',
+    path: '/psychiatric-medication-review-online-india',
+    aliases: ['/psychiatric-refill-online-india', '/online-psychiatry-follow-up-india'],
+    summary: 'Follow-up for people already on psychiatric medicine, or unsure whether medicine is needed.',
+    symptoms: 'Refills, side effects, dose questions',
+    role: 'psychiatrist',
+    about: ['Psychiatric Medication Review'],
+    seoTitle: 'Psychiatric Medication Review Online in India | Serenest',
+    seoDescription:
+      'Online psychiatric medication review in India. A registered psychiatrist decides refills, side effects, and dose changes under telemedicine rules. Not a guaranteed refill desk.',
+    kicker: 'Medication review',
+    titleLead: 'Online psychiatric medication review —',
+    titleEmphasis: 'a doctor’s decision, not an automatic refill.',
+    lead: 'Book a psychiatrist if you are already on psychiatric medicine, having side effects, or wondering whether medicine should start, change, or stop. Bring the current prescription names and doses. A refill is possible only when the clinician agrees it is appropriate.',
+    looksLike:
+      'People book because a strip is running out, sleep or mood changed after a dose change, or another doctor started a medicine and they want a psychiatry view. Some medicines cannot be started or continued online.',
+    points: [
+      { title: 'The old prescription matters', body: 'Names, doses, and who prescribed them change the visit. A photo or a clear list is enough to prepare. The psychiatrist still has to assess you.' },
+      { title: 'Side effects are a reason to be seen', body: 'Restlessness, stiffness, weight change, sexual side effects, or feeling flat should be said plainly. Do not stop a medicine abruptly unless a doctor has told you the stop is urgent.' },
+      { title: 'Rules are India’s, not a shop’s', body: 'The Telemedicine Practice Guidelines, 2020 limit some categories, including many controlled medicines. The psychiatrist will tell you if an in-person visit is required.' },
+    ],
+    limits: [
+      { title: 'No guaranteed refill', body: 'Requesting a slot is not an order for the same medicine. The doctor may continue, change, pause, or refuse.' },
+      { title: 'Controlled medicines are restricted', body: 'Many sedatives, stimulants, and other controlled drugs cannot be prescribed online, or only in narrow situations. Do not book expecting them.' },
+      { title: 'This is not a general-physician refill for non-psychiatric drugs', body: 'Blood pressure, diabetes, and other medical prescriptions belong with the doctor treating that condition.' },
+    ],
+    emergencyNote: 'Severe allergic reaction, chest pain, confusion, suicidal thinking, or a seizure needs emergency care — not a refill appointment.',
+    screen: { to: '/online-psychiatrist-prescription-india', label: 'How online psychiatric prescriptions work in India' },
+    related: ['psychiatry', 'depression', 'adhd'],
+    faqs: [
+      { q: 'Can I get a refill of my psychiatric medicine online?', a: 'Sometimes. A registered psychiatrist must review you and decide the medicine is still appropriate and permitted online. Payment for a slot is not payment for a guaranteed prescription.' },
+      { q: 'What should I have ready?', a: 'The medicine names and doses, how long you have taken them, side effects, other doctors’ medicines, and whether you are pregnant or planning pregnancy. Past reports help. They are not mandatory to request the slot.' },
+      { q: 'Will the dose change in one session?', a: 'It might, or the psychiatrist may keep the dose and review you again. Changes depend on symptoms, risks, and how long you have been on the medicine.' },
+      { q: 'Which medicines cannot be prescribed online?', a: 'India’s telemedicine rules restrict some categories, including many controlled substances. The psychiatrist applies those rules to your case. Serenest will not bypass them.' },
+    ],
+    references: refs(),
+  },
+];
+
+export const CARE_SPECIALTIES = SPECIALTIES.filter((item) => item.kind === 'care');
+export const CONDITION_SPECIALTIES = SPECIALTIES.filter((item) => item.kind === 'condition');
+export const OWNED_SPECIALTIES = SPECIALTIES.filter((item) => item.owned);
+
+export function specialtyById(id) {
+  return SPECIALTIES.find((item) => item.id === id) || null;
+}
+
+export function specialtyByPath(pathname) {
+  const norm = !pathname || pathname === '/'
+    ? '/'
+    : `/${String(pathname).replace(/^\/+|\/+$/g, '')}`;
+  return SPECIALTIES.find((item) => item.path === norm) || null;
+}
+
+export function bookPathFor(specialty) {
+  if (!specialty) return '/book';
+  return buildBookPath({
+    role: specialty.role,
+    concern: specialty.name,
+  });
+}
+
+export function relatedOf(specialty) {
+  return (specialty?.related || []).map(specialtyById).filter(Boolean);
+}
