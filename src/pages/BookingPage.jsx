@@ -41,21 +41,43 @@ function pad2(n) {
   return String(n).padStart(2, '0');
 }
 
+const SLOT_TIMES = ['10:00', '11:30', '13:00', '15:30', '17:00', '19:00'];
+
+function localDateKey(dt) {
+  return `${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}-${pad2(dt.getDate())}`;
+}
+
 function makeSlots() {
   const now = new Date();
   const day0 = new Date(now);
   day0.setHours(0, 0, 0, 0);
 
+  // Skip today once its last slot (with a 1-hour confirmation buffer) has
+  // passed — otherwise patients request times that are already gone.
+  const lastSlotMinutes = 19 * 60;
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  const startOffset = nowMinutes + 60 > lastSlotMinutes ? 1 : 0;
+
   const days = [];
-  for (let d = 0; d < 7; d += 1) {
+  for (let d = startOffset; d < 7 + startOffset; d += 1) {
     const dt = new Date(day0);
     dt.setDate(day0.getDate() + d);
     const label = dt.toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short' });
-    days.push({ key: dt.toISOString().slice(0, 10), label, date: dt });
+    days.push({ key: localDateKey(dt), label, date: dt });
   }
 
-  const times = ['10:00', '11:30', '13:00', '15:30', '17:00', '19:00'];
-  return { days, times };
+  return { days, times: SLOT_TIMES };
+}
+
+/** Times still requestable for the selected day (all, unless it is today). */
+function timesForDay(dayKey) {
+  const now = new Date();
+  if (dayKey !== localDateKey(now)) return SLOT_TIMES;
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  return SLOT_TIMES.filter((t) => {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m > nowMinutes + 60;
+  });
 }
 
 export default function BookingPage() {
@@ -133,7 +155,14 @@ export default function BookingPage() {
     setSelectedProId('');
   }, [practitionerType]);
   const [dayKey, setDayKey] = useState(days[0]?.key ?? '');
-  const [time, setTime] = useState(times[0] ?? '');
+  const availableTimes = useMemo(() => timesForDay(dayKey), [dayKey]);
+  const [time, setTime] = useState(() => timesForDay(days[0]?.key ?? '')[0] ?? times[0] ?? '');
+
+  // Keep the picked time valid when switching to a day with fewer open slots.
+  useEffect(() => {
+    if (!availableTimes.includes(time)) setTime(availableTimes[0] ?? '');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [availableTimes]);
 
   const [name, setName] = useState(preName);
   const [phone, setPhone] = useState(prePhone);
@@ -545,7 +574,7 @@ export default function BookingPage() {
                   </div>
 
                   <div className="slot-times">
-                    {times.map((t) => (
+                    {availableTimes.map((t) => (
                       <button
                         key={t}
                         type="button"
