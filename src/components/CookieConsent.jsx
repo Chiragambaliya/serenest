@@ -49,24 +49,12 @@ export default function CookieConsent() {
       aria-live="polite"
       tabIndex="-1"
     >
-      <div className="privacy-banner__icon" aria-hidden="true">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 3 5.5 5.7v5.2c0 4.5 2.7 8.1 6.5 10.1 3.8-2 6.5-5.6 6.5-10.1V5.7L12 3Z" />
-          <path d="m9.3 12 1.8 1.8 3.9-4.1" />
-        </svg>
-      </div>
       <div className="privacy-banner__copy">
-        <p className="privacy-banner__eyebrow">Your privacy, your choice</p>
-        <h2 id="privacy-banner-title">Optional analytics stay off unless you allow them.</h2>
+        <h2 id="privacy-banner-title">Analytics stay off unless you allow them.</h2>
         <p id="privacy-banner-description">
-          Essential storage keeps sign-in and preferences working. With your permission, privacy-conscious
-          analytics help us understand which pages are useful. We never use advertising trackers or sell
-          health information.
+          Essential storage keeps sign-in working. No ad trackers, ever.{' '}
+          <Link to="/privacy">Privacy</Link> · <Link to="/cookie-policy">Cookies</Link>
         </p>
-        <div className="privacy-banner__links">
-          <Link to="/privacy">Privacy policy</Link>
-          <Link to="/cookie-policy">Cookie details</Link>
-        </div>
       </div>
       <div className="privacy-banner__actions">
         <button className="privacy-choice privacy-choice--essential" type="button" onClick={() => choose('essential')}>
