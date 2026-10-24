@@ -22,6 +22,7 @@ import './styles/masthead.css';
 import './styles/world-motion.css';
 import './styles/visual-polish.css';
 import './styles/patient-reach.css';
+import './styles/care-surface.css';
 
 // Must match Vite `base` so routes and assets resolve when deployed under a subpath.
 const basename = (import.meta.env.BASE_URL ?? '/').replace(/\/$/, '') || undefined;

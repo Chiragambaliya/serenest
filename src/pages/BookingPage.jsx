@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { bookings, professionals as professionalsApi, payments, health } from '../lib/api';
 import { CONSULTATION_MODES } from '../lib/consultationModes';
@@ -15,6 +15,7 @@ import {
   careWaHref,
   indiaMobileDigits,
   isIndiaMobile,
+  isPatientNameValid,
 } from '../lib/patientReach';
 
 const DEFAULT_FEE_INR = 499;
@@ -145,6 +146,11 @@ export default function BookingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [confirmation, setConfirmation] = useState(null);
+  const [contactHint, setContactHint] = useState('');
+  const shellRef = useRef(null);
+  const nameRef = useRef(null);
+  const phoneRef = useRef(null);
+  const consentRef = useRef(null);
   const [paymentsOn, setPaymentsOn] = useState(false);
   const [patientEmailOn, setPatientEmailOn] = useState(false);
 
@@ -172,6 +178,11 @@ export default function BookingPage() {
         setPatientEmailOn(false);
       });
   }, []);
+
+  useEffect(() => {
+    if (step === 1) return;
+    shellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [step]);
 
   const payAmount = hasPro
     ? (Number(preProFee) || DEFAULT_FEE_INR)
@@ -269,6 +280,30 @@ export default function BookingPage() {
   const phoneClean = indiaMobileDigits(phone);
   const isPhoneValid = isIndiaMobile(phone);
   const canContinueYou = canContinueContactStep({ name, phone, consent });
+  const nameMissing = !isPatientNameValid(name);
+  const showNameError = Boolean(contactHint) && nameMissing;
+  const showPhoneError = Boolean(contactHint) && !isPhoneValid;
+  const showConsentError = Boolean(contactHint) && !consent;
+
+  function goToCare() {
+    if (nameMissing) {
+      setContactHint('Add your name so we know who to call.');
+      nameRef.current?.focus();
+      return;
+    }
+    if (!isPhoneValid) {
+      setContactHint('Enter a 10-digit Indian mobile number starting with 6–9.');
+      phoneRef.current?.focus();
+      return;
+    }
+    if (!consent) {
+      setContactHint('Tick consent so we can contact you about this appointment.');
+      consentRef.current?.focus();
+      return;
+    }
+    setContactHint('');
+    setStep(2);
+  }
 
   return (
     <div className="page">
@@ -335,14 +370,23 @@ export default function BookingPage() {
 
       <section className="section">
         <div className="container">
-          <div className="booking-shell tile">
+          <div className="booking-shell tile" ref={shellRef}>
             <div className="booking-top">
               <div className="booking-steps" aria-label="Booking steps">
                 {BOOKING_STEPS.map((s) => (
-                  <div key={s.id} className={`step-chip ${step === s.id ? 'is-active' : ''}`}>
+                  <button
+                    key={s.id}
+                    type="button"
+                    className={`step-chip ${step === s.id ? 'is-active' : ''} ${step > s.id ? 'is-done' : ''}`}
+                    aria-current={step === s.id ? 'step' : undefined}
+                    disabled={Boolean(confirmation) || s.id > step}
+                    onClick={() => {
+                      if (s.id < step) setStep(s.id);
+                    }}
+                  >
                     <span className="step-dot" aria-hidden="true" />
                     {s.label}
-                  </div>
+                  </button>
                 ))}
               </div>
 
@@ -364,29 +408,32 @@ export default function BookingPage() {
                 </div>
 
                 <div className="form-grid">
-                  <label className="field">
+                  <label className={`field ${showNameError ? 'booking-field--invalid' : ''}`}>
                     <span className="field-label">Full name</span>
                     <input
+                      ref={nameRef}
                       className="input"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="Your name"
                       autoComplete="name"
+                      aria-invalid={showNameError}
                     />
                   </label>
 
-                  <label className="field">
+                  <label className={`field ${showPhoneError ? 'booking-field--invalid' : ''}`}>
                     <span className="field-label">Phone (India)</span>
                     <div className="input-row">
                       <span className="input-prefix">+91</span>
                       <input
+                        ref={phoneRef}
                         className="input"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
                         placeholder="10-digit number"
                         inputMode="numeric"
                         autoComplete="tel"
-                        aria-invalid={phone.length > 0 && !isPhoneValid}
+                        aria-invalid={showPhoneError || (phone.length > 0 && !isPhoneValid)}
                       />
                     </div>
                     {phone.length > 0 && !isPhoneValid && (
@@ -419,13 +466,22 @@ export default function BookingPage() {
                     </select>
                   </label>
 
-                  <label className="consent">
-                    <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
+                  <label className={`consent ${showConsentError ? 'booking-field--invalid' : ''}`}>
+                    <input
+                      ref={consentRef}
+                      type="checkbox"
+                      checked={consent}
+                      onChange={(e) => setConsent(e.target.checked)}
+                    />
                     <span>
                       I consent to being contacted about this appointment and acknowledge this is not for emergencies.
                     </span>
                   </label>
                 </div>
+
+                {contactHint && !canContinueYou && (
+                  <p className="booking-gate" role="alert">{contactHint}</p>
+                )}
 
                 <div className="booking-actions">
                   <Link className="btn btn-ghost" to="/services">
@@ -434,8 +490,7 @@ export default function BookingPage() {
                   <button
                     className="btn btn-primary"
                     type="button"
-                    onClick={() => setStep(2)}
-                    disabled={!canContinueYou}
+                    onClick={goToCare}
                   >
                     Continue to care →
                   </button>
@@ -473,7 +528,7 @@ export default function BookingPage() {
                   {!hasPro && (
                     <div className="field-wide">
                       <div className="field-label">
-                        Choose your counsellor <span className="muted" style={{ fontWeight: 400 }}>(optional)</span>
+                        Choose a clinician <span className="muted" style={{ fontWeight: 400 }}>(optional)</span>
                       </div>
                       {directoryLoading ? (
                         <p className="muted" style={{ marginTop: 8 }}>Loading available professionals…</p>
@@ -594,7 +649,7 @@ export default function BookingPage() {
                       <span className="confirm-v">{selectedTypeLabel}</span>
                     </div>
                     <div className="confirm-row">
-                      <span className="confirm-k">Counsellor</span>
+                      <span className="confirm-k">Clinician</span>
                       <span className="confirm-v">
                         {hasPro ? preProName : (selectedPro?.full_name ?? 'Any available')}
                       </span>
@@ -690,56 +745,38 @@ export default function BookingPage() {
 
             {/* ── Success screen ───────────────────────────── */}
             {confirmation && (
-              <div className="booking-body" style={{ textAlign: 'center', padding: '2rem 1rem' }}>
-                <div style={{
-                  width: 80, height: 80, borderRadius: '50%',
-                  background: 'linear-gradient(135deg, #9bb481, #46552f)',
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '2.4rem', color: '#fff', marginBottom: '1.25rem',
-                  boxShadow: '0 8px 24px rgba(70, 85, 47, 0.35)',
-                }}>✓</div>
-
-                <h2 style={{ fontSize: '1.7rem', fontWeight: 800, marginBottom: 8 }}>
-                  Booking received!
-                </h2>
-                <p style={{ color: 'var(--text-muted)', maxWidth: 460, margin: '0 auto 1.5rem' }}>
-                  Thank you, <strong>{name.split(' ')[0]}</strong>. We've received your request for a{' '}
+              <div className="booking-body booking-success">
+                <div className="booking-success__mark" aria-hidden="true">✓</div>
+                <h2>Request received</h2>
+                <p className="booking-success__lead">
+                  Thank you, <strong>{name.split(' ')[0]}</strong>. We have your request for a{' '}
                   <strong>{selectedTypeLabel.toLowerCase()}</strong> {selectedModeLabel.toLowerCase()} session
                   on <strong>{dayLabel}</strong> at <strong>{time}</strong>.
                 </p>
 
-                <div style={{
-                  display: 'inline-block', textAlign: 'left',
-                  background: 'var(--surface)', border: '1px solid var(--border)',
-                  borderRadius: 12, padding: '1rem 1.25rem',
-                  marginBottom: '1.5rem', minWidth: 280,
-                }}>
-                  <div style={{ fontSize: '0.78rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 6 }}>
-                    Booking reference
-                  </div>
-                  <div style={{ fontFamily: 'monospace', fontSize: '0.95rem', color: 'var(--brand-700)', fontWeight: 700 }}>
-                    {confirmation.id?.slice(0, 8).toUpperCase()}
-                  </div>
+                <div className="booking-success__ref">
+                  <span>Booking reference</span>
+                  <strong>{confirmation.id?.slice(0, 8).toUpperCase()}</strong>
                 </div>
 
-                <p style={{ fontSize: '0.92rem', marginBottom: '1.5rem' }}>
+                <p className="booking-success__lead">
                   {confirmation.status === 'confirmed'
                     ? <>Your session is confirmed. Join from your patient dashboard or the consultation room at the booked time.</>
-                    : <>Status: <strong>awaiting confirmation</strong>. Our team will contact you on <strong>+91 {phoneClean}</strong> shortly to confirm your professional and timing.</>}
+                    : <>Status: <strong>awaiting confirmation</strong>. Our team will contact you on <strong>+91 {phoneClean}</strong> to lock the clinician and time.</>}
                 </p>
 
-                <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
+                <div className="booking-success__actions">
                   <a
                     className="btn btn-primary"
-                    href={careWaHref(`Hi, I just booked a ${selectedTypeLabel} session (Ref: ${confirmation.id?.slice(0, 8).toUpperCase()})`)}
+                    href={careWaHref(`Hi, I just requested a ${selectedTypeLabel} session (Ref: ${confirmation.id?.slice(0, 8).toUpperCase()})`)}
                     target="_blank"
                     rel="noreferrer"
                   >
-                    💬 Chat on WhatsApp
+                    Chat on WhatsApp
                   </a>
                   {confirmation.status === 'confirmed' && (
                     <Link className="btn btn-ghost" to={`/consultation/${confirmation.id}?mode=${mode}`}>
-                      🎥 Open consultation room
+                      Open consultation room
                     </Link>
                   )}
                   <Link className="btn btn-ghost" to="/patient/dashboard">

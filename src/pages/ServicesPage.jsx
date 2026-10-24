@@ -184,7 +184,12 @@ export default function ServicesPage() {
                   </th>
                   <td data-label="Type">{svc.tag}</td>
                   <td data-label="Price / status">{svc.price || '—'}</td>
-                  <td data-label="Clinical use">{svc.lead}</td>
+                  <td data-label="Clinical use">
+                    <span className="svc-core-use">{svc.lead}</span>
+                    {svc.detail && <span className="svc-core-included">{svc.detail}</span>}
+                    {svc.included && <span className="svc-core-included">{svc.included.join(' · ')}</span>}
+                    {svc.forWho && <span className="svc-core-included">{svc.forWho}</span>}
+                  </td>
                   <td data-label="Next step">
                     {svc.book && <Link className="ed-link" to="/book">Request a slot</Link>}
                     {svc.link && <Link className="ed-link" to={svc.link.to}>{svc.link.label}</Link>}
@@ -194,27 +199,6 @@ export default function ServicesPage() {
               ))}
             </tbody>
           </table>
-
-          <div className="svc-detail-index">
-            <p className="ed-mono">What is included</p>
-            <div className="ed-index">
-              {CORE_SERVICES.map((svc, i) => (
-                <article key={svc.title} className="ed-index__row">
-                  <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
-                  <span>
-                    <h3 className="ed-index__title">{svc.title}</h3>
-                    <span className="ed-index__meta">{svc.tag}</span>
-                  </span>
-                  <div className="ed-index__body">
-                    {svc.detail && <p>{svc.detail}</p>}
-                    {svc.included && <p>{svc.included.join(' · ')}</p>}
-                    {svc.forWho && <p>{svc.forWho}</p>}
-                  </div>
-                  <span className="ed-index__go" aria-hidden="true">{svc.price || ''}</span>
-                </article>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 

@@ -11,30 +11,21 @@ import {
   careWaHref,
 } from '../lib/patientReach';
 
-const OUR_SERVICES = [
+const REQUEST_STEPS = [
   {
-    title: 'Psychiatry',
-    meta: 'Assessment · medication',
-    body: 'Assessment, diagnosis, and medication management from a licensed psychiatrist.',
-    href: '/services/psychiatry',
+    num: '01',
+    title: 'Request a time',
+    body: 'Your name, a phone number, and a preferred slot. Nothing is charged on the form.',
   },
   {
-    title: 'Therapy and Counselling',
-    meta: 'Talk therapy',
-    body: 'Structured talk therapy for individuals, couples, and families.',
-    href: '/services/therapy',
+    num: '02',
+    title: 'We confirm',
+    body: 'A coordinator calls or WhatsApps to lock the clinician and the time.',
   },
   {
-    title: 'Addiction and Recovery',
-    meta: 'Substance use',
-    body: 'Assessment, counselling, and relapse-prevention support for substance use.',
-    href: '/services/addiction-care',
-  },
-  {
-    title: 'Digital Mental Health',
-    meta: 'Teleconsultation',
-    body: 'See a clinician on video, audio, or chat from anywhere in India — no clinic wait.',
-    href: '/services/digital-consultations',
+    num: '03',
+    title: 'Then you pay',
+    body: 'UPI, card, or net banking only after the appointment is locked.',
   },
 ];
 
@@ -42,7 +33,7 @@ const ARRIVE_PATHS = [
   {
     num: '01',
     title: 'I need to talk to someone',
-    body: 'Request a psychiatrist or therapist slot. We confirm by phone or WhatsApp — you pay after the time is locked.',
+    body: 'Request a psychiatrist or therapist. We confirm by phone or WhatsApp.',
     href: '/book',
     cta: 'Request an appointment',
   },
@@ -62,11 +53,47 @@ const ARRIVE_PATHS = [
   },
 ];
 
-function HpBtn({ to, variant = 'solid', children, arrow = true }) {
+const CARE_SERVICES = [
+  {
+    title: 'Psychiatry',
+    meta: 'From ₹1,200',
+    body: 'Assessment, diagnosis, and medication management with a licensed psychiatrist.',
+    href: '/services/psychiatry',
+  },
+  {
+    title: 'Therapy and counselling',
+    meta: 'From ₹800',
+    body: 'Structured talk therapy for individuals, couples, and families.',
+    href: '/services/therapy',
+  },
+  {
+    title: 'Addiction and recovery',
+    meta: 'Substance use',
+    body: 'Assessment, counselling, and relapse-prevention support.',
+    href: '/services/addiction-care',
+  },
+  {
+    title: 'Digital consultations',
+    meta: 'Video · audio · chat',
+    body: 'See a clinician from anywhere in India. No clinic wait.',
+    href: '/services/digital-consultations',
+  },
+];
+
+const CONCERNS = [
+  { label: 'Low mood', href: '/online-psychiatrist-for-depression-india' },
+  { label: 'Anxiety', href: '/anxiety-counselling-online-india' },
+  { label: 'ADHD', href: '/adhd-assessment-online-india' },
+  { label: 'OCD', href: '/ocd-treatment-online-india' },
+  { label: 'Addiction', href: '/services/addiction-care' },
+  { label: 'Sleep and stress', href: '/book' },
+];
+
+function CareBtn({ to, variant = 'solid', children }) {
   return (
-    <Link className={`hp-btn hp-btn--${variant}`} to={to}>
-      <span className="hp-btn__label">{children}</span>
-      {arrow ? <span className="hp-btn__arrow" aria-hidden="true">→</span> : null}
+    <Link className={`care-btn care-btn--${variant}`} to={to}>
+      <span>{children}</span>
+      <span className="care-btn__arrow" aria-hidden="true">→</span>
     </Link>
   );
 }
@@ -76,75 +103,80 @@ export default function HomePage() {
   const rootRef = useSectionReveal();
 
   return (
-    <div className="home home--lean" ref={rootRef}>
-      <section className="hp-hero hp-hero--bleed" aria-labelledby="home-hero-title">
-        <div className="hp-hero__media" aria-hidden="true">
-          <ImagePlaceholder
-            asset="home-hero-patient-consultation.jpg"
-            direction="Quiet consulting room in warm daylight — empty chairs, a side table, a window. No people."
-            src="/images/editorial/home-consultation-room-v1.jpg"
-            alt=""
-            loading="eager"
-          />
-        </div>
-        <div className="hp-hero__veil" aria-hidden="true" />
-        <div className="hp-hero__content">
-          <p className="hp-hero__brand">Serenest</p>
-          <h1 id="home-hero-title" className="hp-hero__title">
+    <div className="home home--care" ref={rootRef}>
+      <section className="care-hero" aria-labelledby="home-hero-title">
+        <div className="care-hero__copy">
+          <p className="care-kicker">Care across India</p>
+          <h1 id="home-hero-title">
             Talk to a psychiatrist or therapist — privately, from home.
           </h1>
-          <p className="hp-hero__body">
-            Request a slot in minutes. We confirm by phone or WhatsApp.
+          <p className="care-hero__lead">
+            Request a slot in a few minutes. We confirm by phone or WhatsApp.
             You pay after the appointment is locked, not when you ask.
           </p>
-          <div className="hp-hero__actions">
-            <HpBtn to="/book" variant="solid-light">Request an appointment</HpBtn>
-            <HpBtn to="/screening" variant="ghost-dark">Start a free check</HpBtn>
+          <div className="care-hero__actions">
+            <CareBtn to="/book">Request an appointment</CareBtn>
+            <CareBtn to="/screening" variant="ghost">Start a free check</CareBtn>
           </div>
-          <p className="hp-hero__reach">
+          <p className="care-hero__reach">
             <a href={CARE_TEL_HREF}>Call {CARE_PHONE_DISPLAY}</a>
             <span aria-hidden="true">·</span>
             <a href={careWaHref()} target="_blank" rel="noreferrer">WhatsApp us</a>
+            <span aria-hidden="true">·</span>
+            <Link to="/pricing">Fees from ₹800</Link>
+          </p>
+          <p className="care-hero__note">
+            Not for emergencies. If you or someone else is at immediate risk, contact local
+            emergency services or a crisis helpline.
           </p>
         </div>
-        <p className="hp-hero__note">
-          Not for emergencies. If you or someone else is at immediate risk, contact local
-          emergency services or a crisis helpline.
-        </p>
+
+        <div className="care-hero__stage">
+          <figure className="care-hero__photo">
+            <ImagePlaceholder
+              asset="home-hero-patient-consultation.jpg"
+              direction="Quiet consulting room in warm daylight — empty chairs, a side table, a window. No people."
+              src="/images/editorial/home-consultation-room-v1.jpg"
+              alt="A quiet consulting room in warm daylight"
+              loading="eager"
+            />
+          </figure>
+          <ol className="care-hero__steps" aria-label="How a request works">
+            {REQUEST_STEPS.map((step) => (
+              <li key={step.num}>
+                <span className="care-hero__step-num">{step.num}</span>
+                <span>
+                  <strong>{step.title}</strong>
+                  <span>{step.body}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
       </section>
 
-      <section className="hp-trust" aria-label="How Serenest care works">
-        <ul className="hp-trust__list">
+      <section className="care-trust" aria-label="How Serenest care works">
+        <ul>
           {TRUST_POINTS.map((point) => (
-            <li key={point.id} className="hp-trust__item">
-              <span className="hp-trust__mark" aria-hidden="true" />
-              {point.label}
-            </li>
+            <li key={point.id}>{point.label}</li>
           ))}
         </ul>
       </section>
 
-      <section className="ed-pace hp-arrive" aria-labelledby="home-arrive-title">
-        <div className="ed-shell">
-          <header className="ed-head hp-arrive__head">
-            <span className="ed-head__label">Begin</span>
+      <section className="care-band" aria-labelledby="home-arrive-title">
+        <div className="care-shell">
+          <header className="care-head">
+            <p className="care-kicker">Begin</p>
             <h2 id="home-arrive-title">How can we help today?</h2>
             <p>Start with a conversation, a private check-in, or a clinician you choose.</p>
           </header>
-          <div className="hp-arrive__paths" role="list">
+          <div className="care-paths">
             {ARRIVE_PATHS.map((path) => (
-              <Link
-                key={path.num}
-                to={path.href}
-                className="hp-arrive__path"
-                role="listitem"
-              >
-                <span className="hp-arrive__num ed-mono">{path.num}</span>
-                <span className="hp-arrive__copy">
-                  <span className="hp-arrive__title">{path.title}</span>
-                  <span className="hp-arrive__body">{path.body}</span>
-                </span>
-                <span className="hp-arrive__cta">
+              <Link key={path.num} to={path.href} className="care-path">
+                <span className="care-path__num">{path.num}</span>
+                <span className="care-path__title">{path.title}</span>
+                <span className="care-path__body">{path.body}</span>
+                <span className="care-path__cta">
                   {path.cta}
                   <span aria-hidden="true"> →</span>
                 </span>
@@ -154,82 +186,91 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="ed-pace hp-care" aria-labelledby="home-services-title">
-        <div className="ed-shell">
-          <header className="ed-head">
-            <span className="ed-head__label">Care</span>
-            <h2 id="home-services-title">Start with what you are going through.</h2>
-            <p>Psychiatry, therapy, addiction support, or a digital consult — your clinician can redirect if another fit is better.</p>
+      <section className="care-band care-band--paper" aria-labelledby="home-services-title">
+        <div className="care-shell">
+          <header className="care-head care-head--split">
+            <div>
+              <p className="care-kicker">Care</p>
+              <h2 id="home-services-title">Start with what you are going through.</h2>
+            </div>
+            <p>
+              Psychiatry, therapy, addiction support, or a digital consult.
+              Your clinician can redirect you if another fit is better.
+              <Link to="/pricing"> See fees</Link>.
+            </p>
           </header>
-          <div className="ed-index hp-index">
-            {OUR_SERVICES.map((item, i) => (
-              <Link key={item.title} to={item.href} className="ed-index__row">
-                <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
-                <span>
-                  <h3 className="ed-index__title">{item.title}</h3>
-                  <span className="ed-index__meta">{item.meta}</span>
-                </span>
-                <p className="ed-index__body">{item.body}</p>
-                <span className="ed-index__go">
-                  <span>View</span>
-                  <span className="hp-index__arrow" aria-hidden="true">→</span>
-                </span>
+          <div className="care-services">
+            {CARE_SERVICES.map((item) => (
+              <Link key={item.title} to={item.href} className="care-service">
+                <span className="care-service__meta">{item.meta}</span>
+                <span className="care-service__title">{item.title}</span>
+                <span className="care-service__body">{item.body}</span>
+                <span className="care-service__go">View <span aria-hidden="true">→</span></span>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="ed-pace ed-band-soft hp-academy" aria-labelledby="home-check-title">
-        <div className="ed-shell hp-academy__grid">
-          <header className="ed-head" style={{ marginBottom: 0 }}>
-            <span className="ed-head__label">Check in</span>
+      <section className="care-band" aria-labelledby="home-check-title">
+        <div className="care-shell care-check">
+          <figure className="care-check__photo">
+            <ImagePlaceholder
+              asset="home-screening-desk.jpg"
+              direction="Quiet desk in warm daylight — notebook, window, empty chair. No people."
+              src="/images/editorial/psychiatry-consultation-desk-v1.jpg"
+              alt="A quiet desk beside a window"
+              loading="eager"
+            />
+          </figure>
+          <div className="care-check__copy">
+            <p className="care-kicker">Private check-in</p>
             <h2 id="home-check-title">Not sure if you need an appointment yet?</h2>
             <p>
-              A short, private check-in for mood, anxiety, stress, or burnout.
-              Results stay on this device and are not a diagnosis.
+              A short check-in for mood, anxiety, stress, or burnout.
+              Results stay on this device. They are not a diagnosis, and you can skip straight to a request.
             </p>
-            <div className="hp-academy__actions">
-              <HpBtn to="/screening" variant="solid">Start a free check</HpBtn>
-              <Link className="hp-text-link" to="/book">
-                Skip this — request a slot
-                <span aria-hidden="true"> →</span>
-              </Link>
+            <div className="care-hero__actions">
+              <CareBtn to="/screening">Start a free check</CareBtn>
+              <CareBtn to="/book" variant="ghost">Request a slot instead</CareBtn>
             </div>
-          </header>
-          <aside className="hp-academy__aside">
-            <figure className="hp-academy__visual">
-              <ImagePlaceholder
-                asset="home-screening-desk.jpg"
-                direction="Quiet desk in warm daylight — notebook, window, empty chair. No people."
-                src="/images/editorial/psychiatry-consultation-desk-v1.jpg"
-                alt="A quiet consultation desk in warm daylight"
-                loading="lazy"
-              />
-            </figure>
-            <blockquote className="ed-pull hp-pull">
-              <p>“A short check-in can make the next conversation with a clinician clearer.”</p>
-              <cite>Serenest Care</cite>
-            </blockquote>
-          </aside>
+          </div>
         </div>
       </section>
 
-      <section className="ed-band hp-close" aria-labelledby="home-cta-title">
-        <div className="ed-shell">
-          <h2 id="home-cta-title" style={{ maxWidth: '22ch' }}>
-            When you are ready, request a slot. We will take it from there.
-          </h2>
-          <p className="hp-cta__contact">
+      <section className="care-band care-band--paper" aria-labelledby="home-concerns-title">
+        <div className="care-shell">
+          <header className="care-head care-head--split">
+            <div>
+              <p className="care-kicker">Common reasons</p>
+              <h2 id="home-concerns-title">You do not need the perfect words.</h2>
+            </div>
+            <p>Pick a starting point. Each page explains what a clinician can and cannot do online.</p>
+          </header>
+          <ul className="care-concerns">
+            {CONCERNS.map((item) => (
+              <li key={item.label}>
+                <Link to={item.href}>{item.label}</Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      <section className="care-close" aria-labelledby="home-cta-title">
+        <div className="care-shell">
+          <p className="care-kicker care-kicker--light">When you are ready</p>
+          <h2 id="home-cta-title">Request a slot. We will take it from there.</h2>
+          <p className="care-close__contact">
             <a href="mailto:support@serenest.in">support@serenest.in</a>
             <span aria-hidden="true"> · </span>
             <a href={CARE_TEL_HREF}>{CARE_PHONE_DISPLAY}</a>
             <span aria-hidden="true"> · </span>
             <a href={careWaHref()} target="_blank" rel="noreferrer">WhatsApp</a>
           </p>
-          <div className="hp-hero__actions hp-close__actions">
-            <HpBtn to="/book" variant="solid-light">Request an appointment</HpBtn>
-            <HpBtn to="/screening" variant="ghost-dark">Start a free check</HpBtn>
+          <div className="care-hero__actions care-close__actions">
+            <CareBtn to="/book" variant="light">Request an appointment</CareBtn>
+            <CareBtn to="/screening" variant="line">Start a free check</CareBtn>
           </div>
         </div>
       </section>
