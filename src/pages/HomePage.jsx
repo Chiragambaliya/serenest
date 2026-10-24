@@ -180,8 +180,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="ed-pace ed-band-soft hp-academy" aria-labelledby="home-check-title">
-        <div className="ed-shell hp-academy__grid">
+      <section className="ed-pace ed-band-soft hp-checkin" aria-labelledby="home-check-title">
+        <div className="ed-shell hp-checkin__grid">
           <header className="ed-head" style={{ marginBottom: 0 }}>
             <span className="ed-head__label">Check in</span>
             <h2 id="home-check-title">Not sure if you need an appointment yet?</h2>
@@ -189,7 +189,7 @@ export default function HomePage() {
               A short, private check-in for mood, anxiety, stress, or burnout.
               Results stay on this device and are not a diagnosis.
             </p>
-            <div className="hp-academy__actions">
+            <div className="hp-checkin__actions">
               <HpBtn to="/screening" variant="solid">Start a free check</HpBtn>
               <Link className="hp-text-link" to="/book">
                 Skip this — request a slot
@@ -197,8 +197,8 @@ export default function HomePage() {
               </Link>
             </div>
           </header>
-          <aside className="hp-academy__aside">
-            <figure className="hp-academy__visual">
+          <aside className="hp-checkin__aside">
+            <figure className="hp-checkin__visual">
               <ImagePlaceholder
                 asset="home-screening-desk.jpg"
                 direction="Quiet desk in warm daylight — notebook, window, empty chair. No people."
