@@ -95,7 +95,9 @@ function err(res, message, status = 400) {
 
 function requireDb(res) {
   if (!supabase) {
-    err(res, 'Database not configured. Set SUPABASE_URL and SUPABASE_SERVICE_KEY.', 503);
+    // Patient-presentable message — config detail (SUPABASE_URL +
+    // SUPABASE_SERVICE_KEY) is reported in the startup log and /api/health.
+    err(res, 'This service is temporarily unavailable. Please try again in a few minutes.', 503);
     return false;
   }
   return true;

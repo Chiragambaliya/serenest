@@ -363,8 +363,8 @@ export default function PatientFindProfessionalPage() {
         ) : error ? (
           <EmptyState
             icon="⚠"
-            title="Couldn't load professionals"
-            body={`${error} You can still request a slot and we'll match you.`}
+            title="The clinician directory is taking a moment"
+            body="We couldn't load the list right now. You can still request a slot and we'll match you with a verified clinician."
             cta={<Link className="btn btn-primary" to="/book">Request an appointment</Link>}
           />
         ) : professionals.length === 0 ? (
