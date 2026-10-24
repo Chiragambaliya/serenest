@@ -1914,6 +1914,8 @@ a.pro-hub-tile:hover .learning-card-aux {
   border: 1px solid var(--border);
   border-radius: var(--r-card, 14px);
   box-shadow: var(--shadow-sm);
+  /* goToStep() scrolls the shell into view — keep it clear of the masthead */
+  scroll-margin-top: 92px;
 }
 
 .booking-top {
@@ -1939,6 +1941,7 @@ a.pro-hub-tile:hover .learning-card-aux {
   gap: 6px;
   font-size: 13px;
   font-weight: 700;
+  font-family: inherit;
   color: var(--muted);
   padding: 6px 12px;
   border-radius: var(--r-full);
@@ -1947,22 +1950,48 @@ a.pro-hub-tile:hover .learning-card-aux {
   transition: all 180ms ease;
 }
 
+button.step-chip:disabled {
+  cursor: default;
+}
+
 .step-chip.is-active {
   color: var(--teal-700);
   background: var(--teal-50);
   border-color: var(--border-brand);
 }
 
+/* Completed steps are tappable shortcuts back */
+.step-chip.is-done {
+  color: var(--teal-700);
+  border-color: var(--border-brand);
+  cursor: pointer;
+}
+
+.step-chip.is-done:not(:disabled):hover {
+  background: var(--teal-50);
+}
+
 .step-dot {
+  display: inline-grid;
+  place-items: center;
   width: 7px;
   height: 7px;
   border-radius: 50%;
   background: var(--border);
   flex-shrink: 0;
-  transition: background 180ms;
+  font-size: 9px;
+  line-height: 1;
+  color: #fff;
+  transition: background 180ms, width 180ms, height 180ms;
 }
 
 .step-chip.is-active .step-dot { background: var(--teal-500); }
+
+.step-chip.is-done .step-dot {
+  width: 15px;
+  height: 15px;
+  background: var(--teal-600);
+}
 
 .booking-summary {
   display: flex;
@@ -2023,6 +2052,16 @@ a.pro-hub-tile:hover .learning-card-aux {
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 132px), 1fr));
 }
 
+/* Booking wizard: auto-fit stretches the cards across the row instead of
+   leaving a ragged widow (4 practitioner types, 3 modes). */
+.booking-body .choice-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+}
+
+.booking-body .choice-grid--modes {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+}
+
 .booking-actions {
   display: flex;
   gap: 10px;
@@ -2070,19 +2109,48 @@ a.pro-hub-tile:hover .learning-card-aux {
 }
 
 /* Booking confirmation card */
+.confirm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+  gap: 14px;
+  margin-bottom: 16px;
+}
+
 .confirm-card {
   background: var(--bg-2);
   border: 1px solid var(--border);
   border-radius: var(--r-md);
-  padding: 20px;
-  display: grid;
-  gap: 10px;
+  padding: 6px 18px;
+  display: block;
 }
 
 .confirm-row {
   display: flex;
+  align-items: baseline;
+  justify-content: space-between;
   gap: 12px;
   font-size: 14px;
+  padding: 10px 0;
+}
+
+.confirm-row + .confirm-row {
+  border-top: 1px solid var(--border-soft, rgba(28, 26, 23, 0.08));
+}
+
+.confirm-k {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.confirm-v {
+  color: var(--ink);
+  font-weight: 600;
+  text-align: right;
+  overflow-wrap: anywhere;
 }
 
 .confirm-label {

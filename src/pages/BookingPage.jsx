@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { bookings, professionals as professionalsApi, payments, health } from '../lib/api';
 import { CONSULTATION_MODES } from '../lib/consultationModes';
@@ -118,6 +118,16 @@ export default function BookingPage() {
 
   const { days, times } = useMemo(() => makeSlots(), []);
   const [step, setStep] = useState(1);
+  const shellRef = useRef(null);
+
+  // Tapping Continue/Back at the bottom of a long step leaves the viewport
+  // scrolled past the next step's heading — bring the wizard back into view.
+  function goToStep(n) {
+    setStep(n);
+    requestAnimationFrame(() => {
+      shellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  }
 
   const [practitionerType, setPractitionerType] = useState(suggestedRole || 'psychiatrist');
   const [mode, setMode] = useState(
@@ -230,6 +240,9 @@ export default function BookingPage() {
         const res = await bookings.create(bookingData);
         setConfirmation(res.booking);
         trackEvent('book_request_submitted', { practitioner_type: practitionerType, mode, paid: false });
+        requestAnimationFrame(() => {
+          shellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
         return;
       }
 
@@ -264,6 +277,9 @@ export default function BookingPage() {
               });
               setConfirmation(res.booking);
               trackEvent('book_request_submitted', { practitioner_type: practitionerType, mode, paid: true });
+              requestAnimationFrame(() => {
+                shellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              });
               resolve();
             } catch (e) {
               reject(e);
@@ -364,15 +380,27 @@ export default function BookingPage() {
 
       <section className="section">
         <div className="container">
-          <div className="booking-shell tile">
+          <div className="booking-shell tile" ref={shellRef}>
             <div className="booking-top">
               <div className="booking-steps" aria-label="Booking steps">
-                {BOOKING_STEPS.map((s) => (
-                  <div key={s.id} className={`step-chip ${step === s.id ? 'is-active' : ''}`}>
-                    <span className="step-dot" aria-hidden="true" />
-                    {s.label}
-                  </div>
-                ))}
+                {BOOKING_STEPS.map((s) => {
+                  const isDone = confirmation ? true : s.id < step;
+                  const canJump = !confirmation && s.id < step;
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      className={`step-chip ${step === s.id && !confirmation ? 'is-active' : ''} ${isDone ? 'is-done' : ''}`}
+                      disabled={!canJump}
+                      onClick={() => goToStep(s.id)}
+                      aria-current={step === s.id && !confirmation ? 'step' : undefined}
+                      title={canJump ? `Back to “${s.label}”` : undefined}
+                    >
+                      <span className="step-dot" aria-hidden="true">{isDone ? '✓' : ''}</span>
+                      {s.label}
+                    </button>
+                  );
+                })}
               </div>
 
               <div className="booking-summary" aria-label="Selection summary">
@@ -385,7 +413,13 @@ export default function BookingPage() {
             </div>
 
             {step === 1 && (
-              <div className="booking-body">
+              <form
+                className="booking-body"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (canContinueYou) goToStep(2);
+                }}
+              >
                 <div className="section-head" style={{ marginBottom: 10 }}>
                   <p className="section-label">Step 1 of 3</p>
                   <h2>How can we reach you?</h2>
@@ -410,11 +444,13 @@ export default function BookingPage() {
                       <span className="input-prefix">+91</span>
                       <input
                         className="input"
+                        type="tel"
                         value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
+                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                         placeholder="10-digit number"
                         inputMode="numeric"
-                        autoComplete="tel"
+                        maxLength={10}
+                        autoComplete="tel-national"
                         aria-invalid={phone.length > 0 && !isPhoneValid}
                       />
                     </div>
@@ -427,6 +463,7 @@ export default function BookingPage() {
                     <span className="field-label">Email (optional)</span>
                     <input
                       className="input"
+                      type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
@@ -462,14 +499,13 @@ export default function BookingPage() {
                   </Link>
                   <button
                     className="btn btn-primary"
-                    type="button"
-                    onClick={() => setStep(2)}
+                    type="submit"
                     disabled={!canContinueYou}
                   >
                     Continue to care →
                   </button>
                 </div>
-              </div>
+              </form>
             )}
 
             {step === 2 && (
@@ -482,7 +518,7 @@ export default function BookingPage() {
                 </div>
 
                 <div className="form-grid">
-                  <div>
+                  <div className="field-wide">
                     <div className="field-label">Practitioner {hasPro && <span className="summary-pill" style={{ marginLeft: 6 }}>{preProLabel}</span>}</div>
                     <div className="choice-grid">
                       {PRACTITIONER_TYPES.map((t) => (
@@ -540,7 +576,7 @@ export default function BookingPage() {
                     </div>
                   )}
 
-                  <div>
+                  <div className="field-wide">
                     <div className="field-label">Consultation mode</div>
                     <div className="choice-grid choice-grid--modes">
                       {CONSULTATION_MODES.map((m) => (
@@ -560,30 +596,36 @@ export default function BookingPage() {
                 </div>
 
                 <div className="slot-grid" style={{ marginTop: 18 }}>
-                  <div className="slot-days">
-                    {days.map((d) => (
-                      <button
-                        key={d.key}
-                        type="button"
-                        className={`slot-chip ${dayKey === d.key ? 'is-selected' : ''}`}
-                        onClick={() => setDayKey(d.key)}
-                      >
-                        {d.label}
-                      </button>
-                    ))}
+                  <div>
+                    <div className="field-label">Preferred day</div>
+                    <div className="slot-days">
+                      {days.map((d) => (
+                        <button
+                          key={d.key}
+                          type="button"
+                          className={`slot-chip ${dayKey === d.key ? 'is-selected' : ''}`}
+                          onClick={() => setDayKey(d.key)}
+                        >
+                          {d.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
-                  <div className="slot-times">
-                    {availableTimes.map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        className={`slot-chip ${time === t ? 'is-selected' : ''}`}
-                        onClick={() => setTime(t)}
-                      >
-                        {t}
-                      </button>
-                    ))}
+                  <div>
+                    <div className="field-label">Preferred time</div>
+                    <div className="slot-times">
+                      {availableTimes.map((t) => (
+                        <button
+                          key={t}
+                          type="button"
+                          className={`slot-chip ${time === t ? 'is-selected' : ''}`}
+                          onClick={() => setTime(t)}
+                        >
+                          {t}
+                        </button>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
@@ -599,10 +641,10 @@ export default function BookingPage() {
                 </label>
 
                 <div className="booking-actions">
-                  <button className="btn btn-ghost" type="button" onClick={() => setStep(1)}>
+                  <button className="btn btn-ghost" type="button" onClick={() => goToStep(1)}>
                     ← Back
                   </button>
-                  <button className="btn btn-primary" type="button" onClick={() => setStep(3)}>
+                  <button className="btn btn-primary" type="button" onClick={() => goToStep(3)}>
                     Review request →
                   </button>
                 </div>
@@ -690,7 +732,7 @@ export default function BookingPage() {
                   <button
                     className="btn btn-ghost"
                     type="button"
-                    onClick={() => setStep(2)}
+                    onClick={() => goToStep(2)}
                     disabled={submitting}
                   >
                     ← Back
