@@ -482,7 +482,7 @@ export default function AdminPage() {
     const issues = [];
     if (health) {
       if (health.db !== 'connected') {
-        issues.push('Database is NOT configured (SUPABASE_URL + SUPABASE_SERVICE_KEY) — bookings and screenings are only being saved to the on-server fallback file, which is lost on redeploy.');
+        issues.push('Database is NOT configured (SUPABASE_URL + SUPABASE_SECRET_KEY) — bookings and screenings are only being saved to the on-server fallback file, which is lost on redeploy.');
       }
       if (health.notifications !== 'enabled' && health.team_whatsapp !== 'enabled') {
         issues.push('No lead alerts are configured — new bookings will not email (RESEND_API_KEY + NOTIFY_EMAIL) or WhatsApp (CALLMEBOT_*) anyone. You will only see leads by checking this dashboard.');

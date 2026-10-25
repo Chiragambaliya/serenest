@@ -15,12 +15,16 @@ services:
       # ── Supabase ─────────────────────────────────────────────
       - key: VITE_SUPABASE_URL
         sync: false   # you'll paste this in Render dashboard
-      - key: VITE_SUPABASE_ANON_KEY
+      - key: VITE_SUPABASE_PUBLISHABLE_KEY
         sync: false
+      - key: VITE_SUPABASE_ANON_KEY
+        sync: false   # legacy; used when the publishable key is unset
       - key: SUPABASE_URL
         sync: false
-      - key: SUPABASE_SERVICE_KEY
+      - key: SUPABASE_SECRET_KEY
         sync: false
+      - key: SUPABASE_SERVICE_KEY
+        sync: false   # legacy; used when SUPABASE_SECRET_KEY is unset
 
       # ── Security ─────────────────────────────────────────────
       - key: ADMIN_SECRET

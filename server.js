@@ -30,9 +30,13 @@ const dist = join(__dirname, 'dist');
 // mint a fresh rate-limit identity per request.
 app.set('trust proxy', 1);
 
-// ── Supabase admin client (service role — server only) ───────
-const supabase = (process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_KEY)
-  ? createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY)
+// ── Supabase admin client (secret key — server only) ─────────
+// Accept the current secret key and the legacy service_role name.
+const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_KEY;
+const supabase = (process.env.SUPABASE_URL && supabaseKey)
+  ? createClient(process.env.SUPABASE_URL, supabaseKey, {
+      auth: { persistSession: false, autoRefreshToken: false },
+    })
   : null;
 
 // ── Security headers (Helmet) ────────────────────────────────
@@ -95,7 +99,7 @@ function err(res, message, status = 400) {
 
 function requireDb(res) {
   if (!supabase) {
-    err(res, 'Database not configured. Set SUPABASE_URL and SUPABASE_SERVICE_KEY.', 503);
+    err(res, 'Database not configured. Set SUPABASE_URL and SUPABASE_SECRET_KEY.', 503);
     return false;
   }
   return true;
@@ -3017,7 +3021,7 @@ app.use((error, _req, res, _next) => {
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`\n🟢 Serenest server running on http://localhost:${port}`);
-  console.log(`   DB:    ${supabase ? '✅ Supabase connected' : '⚠️  Not configured (set SUPABASE_URL + SUPABASE_SERVICE_KEY)'}`);
+  console.log(`   DB:    ${supabase ? '✅ Supabase connected' : '⚠️  Not configured (set SUPABASE_URL + SUPABASE_SECRET_KEY)'}`);
   console.log(`   Video: ${process.env.DAILY_API_KEY ? '✅ Daily.co configured' : '⚠️  Not configured (set DAILY_API_KEY)'}`);
   console.log(`   Admin: ${process.env.ADMIN_SECRET ? '✅ Secret set' : '⚠️  Not configured (set ADMIN_SECRET)'}`);
   console.log(`   Alert: ${notify.isConfigured() ? '✅ Team email (Resend)' : '⚠️  Team email incomplete'} (RESEND_API_KEY + NOTIFY_EMAIL)`);
@@ -3031,7 +3035,7 @@ app.listen(port, () => {
   if (!supabase) {
     console.warn('🚨 LEADS AT RISK: database not configured. Bookings and screenings are being');
     console.warn(`   captured to ${FALLBACK_LEADS_FILE} only (lost on redeploy).`);
-    console.warn('   Set SUPABASE_URL + SUPABASE_SERVICE_KEY in your hosting dashboard.\n');
+    console.warn('   Set SUPABASE_URL + SUPABASE_SECRET_KEY in your hosting dashboard.\n');
   }
   if (!notify.isConfigured() && !notify.hasTeamWhatsApp()) {
     console.warn('🚨 NO LEAD ALERTS: neither team email (RESEND_API_KEY + NOTIFY_EMAIL) nor');
