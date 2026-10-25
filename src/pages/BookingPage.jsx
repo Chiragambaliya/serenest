@@ -107,7 +107,8 @@ export default function BookingPage() {
   const [language, setLanguage] = useState(preLang || 'English');
   const [note, setNote] = useState(startingNote);
   const [consent, setConsent] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(Boolean(startingNote || preEmail));
+  const [changeOpen, setChangeOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(Boolean(preEmail));
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
@@ -312,7 +313,11 @@ export default function BookingPage() {
               Thank you, <strong>{name.split(' ')[0]}</strong>. We have your request for a{' '}
               <strong>{selectedTypeLabel.toLowerCase()}</strong> {selectedModeLabel.toLowerCase()} session
               {clinicianName ? <> with <strong>{clinicianName}</strong></> : null}
-              {' '}on <strong>{dayLabel}</strong> at <strong>{timeLabel}</strong>.
+              {' '}
+              {dayLabel === 'Today' || dayLabel === 'Tomorrow'
+                ? <strong>{dayLabel.toLowerCase()}</strong>
+                : <>on <strong>{dayLabel}</strong></>}
+              {' '}at <strong>{timeLabel}</strong>.
             </p>
             <div className="booking-success__ref">
               <span>Booking reference</span>
@@ -342,7 +347,7 @@ export default function BookingPage() {
             <p className="book-easy__lead">
               {hasPro
                 ? `${preProLabel || selectedTypeLabel}${preProFee ? ` · ₹${preProFee}` : ''}${preProDur ? ` · ${preProDur} min` : ''}. Add your name and number. We confirm by phone or WhatsApp.`
-                : 'Add your name and number. A time is already picked — change it only if you want to. We confirm by phone or WhatsApp.'}
+                : 'Your name and mobile number are enough. The next open time is already chosen.'}
             </p>
 
             {visitReason && (
@@ -392,71 +397,87 @@ export default function BookingPage() {
                 </label>
               </div>
 
-              {!hasPro && (
-                <fieldset className="book-easy__set">
-                  <legend>Who</legend>
-                  <div className="book-easy__chips">
-                    {PRACTITIONER_TYPES.map((type) => (
-                      <button
-                        key={type.id}
-                        type="button"
-                        className={`book-chip ${practitionerType === type.id ? 'is-selected' : ''}`}
-                        aria-pressed={practitionerType === type.id}
-                        onClick={() => setPractitionerType(type.id)}
-                      >
-                        {type.label}
-                      </button>
-                    ))}
-                  </div>
-                </fieldset>
-              )}
+              <p className="book-easy__recap">
+                {selectedTypeLabel}
+                {clinicianName ? ` · ${clinicianName}` : ''}
+                {` · ${selectedModeLabel} · ${dayLabel} · ${timeLabel}`}
+                {paymentsOn ? '' : '. You pay after we confirm.'}
+              </p>
 
-              <fieldset className="book-easy__set">
-                <legend>How</legend>
-                <div className="book-easy__chips">
-                  {CONSULTATION_MODES.map((item) => (
-                    <button
-                      key={item.id}
-                      type="button"
-                      className={`book-chip ${mode === item.id ? 'is-selected' : ''}`}
-                      aria-pressed={mode === item.id}
-                      onClick={() => setMode(item.id)}
-                    >
-                      {item.label}
-                    </button>
-                  ))}
-                </div>
-              </fieldset>
+              <details
+                className="book-easy__more"
+                open={changeOpen}
+                onToggle={(event) => setChangeOpen(event.currentTarget.open)}
+              >
+                <summary>Change time or clinician</summary>
+                <div className="book-easy__more-body">
+                  {!hasPro && (
+                    <fieldset className="book-easy__set">
+                      <legend>Who</legend>
+                      <div className="book-easy__chips">
+                        {PRACTITIONER_TYPES.map((type) => (
+                          <button
+                            key={type.id}
+                            type="button"
+                            className={`book-chip ${practitionerType === type.id ? 'is-selected' : ''}`}
+                            aria-pressed={practitionerType === type.id}
+                            onClick={() => setPractitionerType(type.id)}
+                          >
+                            {type.label}
+                          </button>
+                        ))}
+                      </div>
+                    </fieldset>
+                  )}
 
-              <fieldset className="book-easy__set">
-                <legend>When</legend>
-                <div className="book-easy__days" role="listbox" aria-label="Day">
-                  {slots.map((day) => (
-                    <button
-                      key={day.key}
-                      type="button"
-                      className={`book-chip book-chip--day ${dayKey === day.key ? 'is-selected' : ''}`}
-                      aria-pressed={dayKey === day.key}
-                      onClick={() => chooseDay(day.key)}
-                    >
-                      {day.label}
-                    </button>
-                  ))}
+                  <fieldset className="book-easy__set">
+                    <legend>How</legend>
+                    <div className="book-easy__chips">
+                      {CONSULTATION_MODES.map((item) => (
+                        <button
+                          key={item.id}
+                          type="button"
+                          className={`book-chip ${mode === item.id ? 'is-selected' : ''}`}
+                          aria-pressed={mode === item.id}
+                          onClick={() => setMode(item.id)}
+                        >
+                          {item.label}
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
+
+                  <fieldset className="book-easy__set">
+                    <legend>When</legend>
+                    <div className="book-easy__days" role="listbox" aria-label="Day">
+                      {slots.map((day) => (
+                        <button
+                          key={day.key}
+                          type="button"
+                          className={`book-chip book-chip--day ${dayKey === day.key ? 'is-selected' : ''}`}
+                          aria-pressed={dayKey === day.key}
+                          onClick={() => chooseDay(day.key)}
+                        >
+                          {day.label}
+                        </button>
+                      ))}
+                    </div>
+                    <div className="book-easy__chips" role="listbox" aria-label="Time">
+                      {(activeDay?.times ?? []).map((slot) => (
+                        <button
+                          key={slot}
+                          type="button"
+                          className={`book-chip ${time === slot ? 'is-selected' : ''}`}
+                          aria-pressed={time === slot}
+                          onClick={() => setTime(slot)}
+                        >
+                          {formatSlotTime(slot)}
+                        </button>
+                      ))}
+                    </div>
+                  </fieldset>
                 </div>
-                <div className="book-easy__chips" role="listbox" aria-label="Time">
-                  {(activeDay?.times ?? []).map((slot) => (
-                    <button
-                      key={slot}
-                      type="button"
-                      className={`book-chip ${time === slot ? 'is-selected' : ''}`}
-                      aria-pressed={time === slot}
-                      onClick={() => setTime(slot)}
-                    >
-                      {formatSlotTime(slot)}
-                    </button>
-                  ))}
-                </div>
-              </fieldset>
+              </details>
 
               <details
                 className="book-easy__more"
@@ -543,12 +564,6 @@ export default function BookingPage() {
                   ? (paymentsOn ? 'Opening payment…' : 'Sending…')
                   : (paymentsOn ? `Pay ₹${payAmount} and confirm` : 'Request appointment')}
               </button>
-              <p className="book-easy__recap">
-                {selectedTypeLabel}
-                {clinicianName ? ` · ${clinicianName}` : ''}
-                {` · ${selectedModeLabel} · ${dayLabel} · ${timeLabel}`}
-                {paymentsOn ? '' : '. You pay after we confirm.'}
-              </p>
             </form>
 
             <p className="book-easy__alt">
