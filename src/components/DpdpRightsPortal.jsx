@@ -141,7 +141,7 @@ export default function DpdpRightsPortal({ defaultType = 'withdraw_consent', com
               ✓ DPDP Request Registered · Reference {receipt.id}
             </div>
             <p className="srn-ai-capture__copy">
-              Thank you, <strong>{receipt.name}</strong>. Your <strong>{receipt.request_label}</strong> request under <strong>{receipt.dpdp_section}</strong> of the Digital Personal Data Protection Act, 2023 has been logged ({new Date(receipt.created_at).toLocaleString('en-IN')}).
+              Thank you, <strong>{receipt.name}</strong>. Your <strong>{receipt.request_label}</strong> request under <strong>{receipt.dpdp_section}</strong> of the Digital Personal Data Protection Act, 2023 has been logged ({new Date(receipt.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Calcutta' })} IST).
               {receipt.request_type === 'withdraw_consent' && (
                 <> Optional browser analytics and local session check-in storage on this device have also been cleared immediately.</>
               )}
