@@ -248,6 +248,7 @@ export default function ScreeningToolPage() {
               <ScreeningResultPanel
                 tool={tool}
                 result={result}
+                answers={answers}
                 crisisFlag={crisisFlag}
                 crisisAcknowledged={crisisAck}
                 hideCareUntilReady={crisisFlag}

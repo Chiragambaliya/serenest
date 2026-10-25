@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { careTier, maxScore, getAllTools } from '../../lib/screeningTools';
 import { getCheckEvidence, getLandingPathForTool } from '../../lib/checkEvidence';
+import { assistant } from '../../lib/api';
+import { careWaHref, isIndiaMobile } from '../../lib/patientReach';
 import ScribaInsight from './ScribaInsight';
 import CheckPrivacyPanel from './CheckPrivacyPanel';
 import CheckEvidencePanel from './CheckEvidencePanel';
@@ -51,11 +53,12 @@ function BandScale({ tool, value, max, band }) {
 }
 
 /**
- * Education-first result: understand → learn → then care options.
+ * Education-first result + AI Pattern Analysis & Instant Lead/Callback Capture.
  */
 export default function ScreeningResultPanel({
   tool,
   result,
+  answers = [],
   crisisFlag,
   crisisAcknowledged,
   onRetake,
@@ -76,6 +79,106 @@ export default function ScreeningResultPanel({
   const relatedChecks = getAllTools()
     .filter((t) => t.id !== tool.id)
     .slice(0, 4);
+
+  // Extract highest-rated question texts for AI pattern analysis
+  const highItems = useMemo(() => {
+    if (!Array.isArray(answers) || !tool?.questions?.length) return [];
+    const pairs = tool.questions
+      .map((q, idx) => ({ text: q.text, val: Number(answers[idx] ?? 0) }))
+      .filter((p) => Number.isFinite(p.val) && p.val >= 2)
+      .sort((a, b) => b.val - a.val);
+    return pairs.slice(0, 3).map((p) => p.text);
+  }, [answers, tool]);
+
+  // Live AI Analysis state
+  const [aiAnalysis, setAiAnalysis] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+
+  // Inline Lead + Callback Capture state
+  const [leadName, setLeadName] = useState('');
+  const [leadPhone, setLeadPhone] = useState('');
+  const [leadEmail, setLeadEmail] = useState('');
+  const [leadSubmitting, setLeadSubmitting] = useState(false);
+  const [leadError, setLeadError] = useState('');
+  const [capturedBooking, setCapturedBooking] = useState(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    setAiLoading(true);
+    assistant
+      .analyze({
+        toolId: tool.id,
+        toolName: tool.name,
+        humanTitle: tool.humanTitle,
+        score: isCount ? result.count : (tool.scoring === 'mean' ? Number(value).toFixed(2) : value),
+        maxScore: tool.scoring === 'mean' ? Number(max).toFixed(1) : max,
+        bandLabel: band.label,
+        bandDesc: band.desc,
+        highItems,
+        crisisFlag: Boolean(crisisFlag),
+      })
+      .then((res) => {
+        if (!cancelled && res?.analysis) {
+          setAiAnalysis(res.analysis);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!cancelled) setAiLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [tool.id, tool.name, tool.humanTitle, tool.scoring, isCount, result.count, value, max, band.label, band.desc, highItems, crisisFlag]);
+
+  async function handleCaptureAnalysisLead(e) {
+    e.preventDefault();
+    setLeadError('');
+    if (!leadName.trim() || leadName.trim().length < 2) {
+      setLeadError('Please enter your name.');
+      return;
+    }
+    if (!isIndiaMobile(leadPhone)) {
+      setLeadError('Please enter a valid 10-digit Indian mobile number (starts with 6–9).');
+      return;
+    }
+    setLeadSubmitting(true);
+    try {
+      const specialist = aiAnalysis?.recommended_specialist;
+      const res = await assistant.acquire({
+        patient_name: leadName.trim(),
+        patient_phone: leadPhone,
+        patient_email: leadEmail.trim() || undefined,
+        concern: `${tool.name} (${band.label}): ${highItems.join('; ') || band.desc}`,
+        practitioner_type: specialist?.type || 'psychiatrist',
+        mode: specialist?.mode || 'video',
+        notes:
+          aiAnalysis?.clinician_brief
+          || `[Screening Result · ${tool.name}: ${value}/${max} (${band.label})]\n${band.desc}`,
+        screening_meta: {
+          reason: `screening-${tool.id}`,
+          band_label: band.label,
+          conditions: [tool.name, band.label],
+          ...(tool.id === 'phq9'
+            ? { phq9_answers: answers, phq9_score: value, phq9_severity: band.label }
+            : {}),
+          ...(tool.id === 'gad7'
+            ? { gad7_answers: answers, gad7_score: value, gad7_severity: band.label }
+            : {}),
+        },
+      });
+      if (res?.booking) {
+        setCapturedBooking(res.booking);
+      }
+    } catch (err) {
+      setLeadError(err?.message || 'Could not save your request right now. Please try again.');
+    } finally {
+      setLeadSubmitting(false);
+    }
+  }
+
+  const deepBookHref = aiAnalysis?.book_path
+    || `/book?tool=${encodeURIComponent(tool.name)}&score=${encodeURIComponent(String(value))}&band=${encodeURIComponent(band.label)}`;
 
   return (
     <div>
@@ -102,6 +205,127 @@ export default function ScreeningResultPanel({
           {band.desc}
         </p>
       </div>
+
+      {/* ── AI Pattern Analysis & Instant Lead Capture Card ───────── */}
+      <section className="ai-triage-card" style={{ marginTop: '1.25rem' }} aria-labelledby="ai-result-analysis-title">
+        <div className="ai-triage-head">
+          <div className="ai-triage-head__copy">
+            <span className="ai-triage-eyebrow">
+              <span className="ai-triage-spark" aria-hidden="true">✦</span>
+              Serenest Care AI · Personalized Pattern Analysis
+            </span>
+            <h2 id="ai-result-analysis-title" className="ai-triage-title">
+              {aiAnalysis?.headline || `${tool.name} Pattern Reading: ${band.label}`}
+            </h2>
+            <p className="ai-triage-sub">
+              {aiLoading
+                ? 'Analyzing your response pattern…'
+                : (aiAnalysis?.pattern_reading || insight?.body)}
+            </p>
+          </div>
+        </div>
+
+        <div className="ai-triage-body">
+          {aiAnalysis?.key_drivers?.length > 0 && (
+            <div className="ai-analysis-cols">
+              <div className="ai-analysis-box">
+                <div className="ai-analysis-box__label">Key drivers in your responses</div>
+                <ul className="ai-analysis-list">
+                  {aiAnalysis.key_drivers.map((d, idx) => (
+                    <li key={idx}>{d}</li>
+                  ))}
+                </ul>
+              </div>
+              <div className="ai-analysis-box">
+                <div className="ai-analysis-box__label">Recommended 3-step action plan</div>
+                <ol className="ai-analysis-list">
+                  {aiAnalysis.action_plan.map((stepText, idx) => (
+                    <li key={idx}>{stepText}</li>
+                  ))}
+                </ol>
+              </div>
+            </div>
+          )}
+
+          {showCare && (
+            <div className="ai-triage-result">
+              <div className="ai-triage-result__top">
+                <div>
+                  <div className="ai-triage-badges">
+                    <span className="ai-badge ai-badge--primary">
+                      ✦ Matched Specialist: {aiAnalysis?.recommended_specialist?.label || 'Psychiatrist'}
+                    </span>
+                    <span className="ai-badge">
+                      {aiAnalysis?.recommended_specialist?.badge || 'Clinical evaluation'}
+                    </span>
+                    <span className="ai-badge">
+                      Starts at ₹{aiAnalysis?.recommended_specialist?.starting_fee_inr || 499} (pay after confirmation)
+                    </span>
+                  </div>
+                  <p className="ai-triage-rationale">
+                    {aiAnalysis?.recommended_specialist?.rationale || careText}
+                  </p>
+                </div>
+                <Link className="btn btn-ghost" to={deepBookHref}>
+                  Customize slot →
+                </Link>
+              </div>
+
+              {capturedBooking ? (
+                <div className="srn-ai-capture srn-ai-capture--done" role="status">
+                  <div className="srn-ai-capture__badge">
+                    ✓ Analysis Saved &amp; Callback Registered · Ref {String(capturedBooking.id || '').slice(0, 8).toUpperCase()}
+                  </div>
+                  <p className="srn-ai-capture__copy">
+                    Thank you, <strong>{capturedBooking.patient_name}</strong>. Your {tool.name} analysis has been attached to your intake brief, and our care team will reach out on <strong>+91 {capturedBooking.patient_phone}</strong> to confirm your <strong>{aiAnalysis?.recommended_specialist?.label || 'clinician'}</strong> session.
+                  </p>
+                  <a
+                    className="btn btn-primary"
+                    href={careWaHref(`Hi, I completed the ${tool.name} analysis on Serenest (Ref: ${String(capturedBooking.id || '').slice(0, 8).toUpperCase()})`)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Confirm on WhatsApp →
+                  </a>
+                </div>
+              ) : (
+                <form className="ai-fast-acquire" onSubmit={handleCaptureAnalysisLead}>
+                  <div className="ai-fast-acquire__head">
+                    <strong>✦ Save this AI analysis &amp; get a clinician callback</strong>
+                    <span>We send your {tool.name} brief to your clinician · Pay ₹499 only after confirmation</span>
+                  </div>
+                  <div className="ai-fast-acquire__row">
+                    <input
+                      type="text"
+                      className="input"
+                      placeholder="Your full name"
+                      value={leadName}
+                      onChange={(e) => setLeadName(e.target.value)}
+                      autoComplete="name"
+                    />
+                    <input
+                      type="tel"
+                      className="input"
+                      placeholder="10-digit mobile (+91)"
+                      inputMode="numeric"
+                      maxLength={10}
+                      value={leadPhone}
+                      onChange={(e) => setLeadPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      autoComplete="tel-national"
+                    />
+                    <button type="submit" className="btn btn-primary" disabled={leadSubmitting}>
+                      {leadSubmitting
+                        ? 'Saving…'
+                        : `Send analysis & request ${aiAnalysis?.recommended_specialist?.label || 'clinician'} callback →`}
+                    </button>
+                  </div>
+                  {leadError && <p className="ai-triage-error" role="alert">{leadError}</p>}
+                </form>
+              )}
+            </div>
+          )}
+        </div>
+      </section>
 
       <ScribaInsight insight={insight} />
 
@@ -192,8 +416,8 @@ export default function ScreeningResultPanel({
             Talk with a clinician — when you are ready. Understanding yourself comes first.
           </p>
           <div className="mhc-care-actions">
-            <Link className="btn btn-primary" to="/book">
-              Talk to a clinician
+            <Link className="btn btn-primary" to={deepBookHref}>
+              Book with this AI analysis →
             </Link>
             <Link className="btn btn-ghost" to="/patient/find-professional">
               Find a professional

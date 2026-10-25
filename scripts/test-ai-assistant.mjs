@@ -5,6 +5,7 @@
 import assert from 'node:assert/strict';
 import {
   analyzeCareTriage,
+  analyzeMentalHealth,
   buildConciergeReply,
   extractLeadFromMessages,
   nextDefaultSlot,
@@ -97,5 +98,34 @@ const llmsTxt = renderLlmsTxt('https://www.serenest.in');
 assert.match(llmsTxt, /Serenest/);
 assert.match(llmsTxt, /\/api\/assistant\/acquire/);
 assert.doesNotMatch(llmsTxt, /\/academy/i);
+
+// 9. AI Mental Health Pattern & Screening Result Analyzer
+const toolAnalysis = analyzeMentalHealth({
+  toolId: 'phq9',
+  toolName: 'PHQ-9',
+  humanTitle: 'Check your mood',
+  score: 16,
+  maxScore: 27,
+  bandLabel: 'Moderately severe',
+  bandDesc: 'A clinician evaluation is recommended.',
+  highItems: ['Trouble falling or staying asleep, or sleeping too much', 'Feeling tired or having little energy'],
+});
+assert.equal(toolAnalysis.severity_tier, 'high');
+assert.equal(toolAnalysis.recommended_specialist.type, 'psychiatrist');
+assert.equal(toolAnalysis.key_drivers.length, 2);
+assert.equal(toolAnalysis.action_plan.length, 3);
+assert.match(toolAnalysis.clinician_brief, /PHQ-9: 16\/27/);
+
+const symptomAnalysis = analyzeMentalHealth({
+  symptoms: ['Work burnout & mental distance', 'Constant worry or overthinking'],
+  sleepState: 'strained',
+  energyState: 'heavy',
+  stressState: 'heavy',
+  concern: 'Exhausted from office deadlines',
+});
+assert.equal(symptomAnalysis.severity_tier, 'elevated');
+assert.ok(symptomAnalysis.key_drivers.length >= 2);
+assert.equal(symptomAnalysis.action_plan.length, 3);
+assert.ok(symptomAnalysis.recommended_specialist.label);
 
 console.log('ai-assistant helpers: ok');

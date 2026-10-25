@@ -628,6 +628,11 @@ export function buildAiCareCatalog(siteOrigin = 'https://www.serenest.in') {
         path: '/api/assistant/triage',
         description: 'Non-diagnostic clinical intake matcher: maps free-text concerns to specialist type, consultation mode, rationale, and a structured clinician intake brief.',
       },
+      analyze: {
+        method: 'POST',
+        path: '/api/assistant/analyze',
+        description: 'AI mental health pattern & screening result analyzer: produces key drivers, a 3-step action plan, specialist match, and a clinician-ready brief.',
+      },
       acquire: {
         method: 'POST',
         path: '/api/assistant/acquire',
@@ -678,6 +683,7 @@ export function renderLlmsTxt(siteOrigin = 'https://www.serenest.in') {
     '## AI & Agent Integration Endpoints',
     `- \`GET ${siteOrigin}/api/ai/catalog\` — Structured JSON catalog of specialists, fees, modes, and routes.`,
     `- \`POST ${siteOrigin}/api/assistant/triage\` — Non-diagnostic clinical intake matcher (\`{ concern, duration, preferredMode }\`).`,
+    `- \`POST ${siteOrigin}/api/assistant/analyze\` — AI mental health pattern & screening analyzer (\`{ toolId, score, bandLabel, symptoms, concern }\`).`,
     `- \`POST ${siteOrigin}/api/assistant/acquire\` — Direct AI client acquisition endpoint (\`{ patient_name, patient_phone, concern }\`).`,
     '',
   ].join('\n');
@@ -955,5 +961,315 @@ export async function handleAssistantChat(req, res, { onAcquireLead } = {}) {
     reply: fallback.reply,
     recommendation: fallback.recommendation,
     suggestions: fallback.suggestions,
+  });
+}
+
+/**
+ * Pure deterministic AI Mental Health Pattern & Screening Result Analyzer.
+ * Supports both:
+ *   1. Validated tool results (`toolId`, `toolName`, `score`, `maxScore`, `bandLabel`, `highItems`)
+ *   2. Multi-dimension symptom & check-in reflection (`symptoms`, `sleepState`, `energyState`, `stressState`, `concern`)
+ */
+export function analyzeMentalHealth({
+  toolId = '',
+  toolName = '',
+  humanTitle = '',
+  score = null,
+  maxScore = null,
+  bandLabel = '',
+  bandDesc = '',
+  highItems = [],
+  crisisFlag = false,
+  phqScore = null,
+  gadScore = null,
+  concern = '',
+  symptoms = [],
+  sleepState = '',
+  energyState = '',
+  stressState = '',
+} = {}) {
+  const symptomList = Array.isArray(symptoms) ? symptoms.map(String).filter(Boolean) : [];
+  const itemSignals = Array.isArray(highItems) ? highItems.map(String).filter(Boolean) : [];
+  const combinedText = [
+    toolName,
+    humanTitle,
+    bandLabel,
+    bandDesc,
+    concern,
+    ...symptomList,
+    ...itemSignals,
+    sleepState ? `sleep: ${sleepState}` : '',
+    energyState ? `energy: ${energyState}` : '',
+    stressState ? `stress: ${stressState}` : '',
+  ]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+
+  const isCrisis = Boolean(crisisFlag) || detectCrisis(combinedText);
+
+  // Determine severity tier
+  const bandLower = (bandLabel || '').toLowerCase();
+  let severityTier = 'moderate';
+  if (
+    isCrisis
+    || /severe|high risk|higher risk|higher concern|possible dependence|positive screen/i.test(bandLower)
+    || Number(phqScore) >= 15
+    || Number(gadScore) >= 15
+    || (sleepState === 'heavy' && energyState === 'heavy' && stressState === 'heavy')
+  ) {
+    severityTier = 'high';
+  } else if (
+    /moderately|moderate|elevated|at risk|consistent with/i.test(bandLower)
+    || Number(phqScore) >= 10
+    || Number(gadScore) >= 10
+    || symptomList.length >= 3
+    || [sleepState, energyState, stressState].filter((s) => s === 'heavy').length >= 2
+  ) {
+    severityTier = 'elevated';
+  } else if (/minimal|low|good|unlikely|normal/i.test(bandLower) && symptomList.length <= 1) {
+    severityTier = 'low';
+  }
+
+  // Run triage to match specialist + mode
+  const triage = analyzeCareTriage({
+    concern: combinedText,
+    screening: toolName
+      ? `${toolName}: ${score ?? '—'}${maxScore ? `/${maxScore}` : ''} (${bandLabel || 'completed'})`
+      : '',
+  });
+
+  // Override specialist by toolId + severityTier when appropriate
+  let recRole = triage.practitioner_type;
+  if (severityTier === 'high' || ['asrs', 'auditc', 'pcl5'].includes(toolId)) {
+    recRole = 'psychiatrist';
+  } else if (toolId === 'bat12' || toolId === 'pss10') {
+    recRole = severityTier === 'elevated' ? 'therapist' : 'counsellor';
+  } else if (toolId === 'phq9' || toolId === 'gad7') {
+    recRole = severityTier === 'elevated' ? 'psychologist' : recRole;
+  }
+  const roleMeta = ROLE_META[recRole] || ROLE_META.psychiatrist;
+
+  // Build key drivers
+  const keyDrivers = [];
+  if (itemSignals.length > 0) {
+    for (const item of itemSignals.slice(0, 3)) {
+      keyDrivers.push(`Elevated response on: “${item}”`);
+    }
+  } else {
+    if (sleepState === 'heavy' || sleepState === 'strained' || /sleep|insomnia|waking/i.test(combinedText)) {
+      keyDrivers.push('Sleep rhythm & physical restoration strain — disrupted rest often amplifies both mood and worry.');
+    }
+    if (energyState === 'heavy' || energyState === 'strained' || /exhaust|fatigue|energy|burnout|drained/i.test(combinedText)) {
+      keyDrivers.push('Sustained energy depletion & mental fatigue — carrying cognitive load without enough recovery margin.');
+    }
+    if (stressState === 'heavy' || stressState === 'strained' || /anxiet|worry|overthink|panic|restless/i.test(combinedText)) {
+      keyDrivers.push('Hyper-vigilance & overthinking loops — nervous system staying switched on even during rest.');
+    }
+    for (const sym of symptomList) {
+      if (keyDrivers.length >= 3) break;
+      if (!keyDrivers.some((d) => d.toLowerCase().includes(sym.slice(0, 8).toLowerCase()))) {
+        keyDrivers.push(`Reported pattern: ${sym}`);
+      }
+    }
+  }
+  if (keyDrivers.length === 0) {
+    keyDrivers.push(
+      toolName
+        ? `${toolName} responses sit in the “${bandLabel || 'Observed'}” band — useful baseline context for a clinician.`
+        : 'Initial self-reflection across mood, energy, and daily stress load.',
+    );
+  }
+
+  // Build 3-step action plan
+  const actionPlan = [];
+  if (severityTier === 'high') {
+    actionPlan.push('Prioritize a structured evaluation with a Psychiatrist (MD) this week so biological, sleep, and medical factors are properly assessed.');
+    actionPlan.push('Avoid making major work or life decisions while exhausted — reduce non-essential commitments for the next 7 days.');
+    actionPlan.push('Share your structured intake brief below when booking so you do not have to repeat your story from scratch.');
+  } else if (severityTier === 'elevated') {
+    actionPlan.push(`Schedule a first session with a ${roleMeta.label} to map what is keeping these symptoms active and agree on a 4-week plan.`);
+    actionPlan.push('Anchor one daily transition (consistent wake time, 15-minute daylight walk, or a hard screen cutoff 45 minutes before bed).');
+    actionPlan.push('Re-check your score in 2 weeks on Serenest to track whether the pattern is easing or needs medical review.');
+  } else {
+    actionPlan.push('Protect your baseline routines: consistent sleep window, steady meals, and noticing early signs of overload.');
+    actionPlan.push(`Consider a single exploratory session with a ${roleMeta.label} if you want clarity on specific stressors or patterns.`);
+    actionPlan.push('Bookmark this check and revisit in 2–4 weeks if life demands increase.');
+  }
+
+  const headline = toolName
+    ? `${toolName} AI Pattern Reading: ${bandLabel || 'Completed'}`
+    : severityTier === 'high'
+      ? 'High Strain Pattern — Prompt Clinical Assessment Recommended'
+      : severityTier === 'elevated'
+        ? 'Moderate-to-Elevated Strain — Structured Support Recommended'
+        : 'Manageable Baseline with Actionable Focus Areas';
+
+  const patternReading = toolName
+    ? `Your responses on the ${humanTitle || toolName} (${score !== null ? `${score}${maxScore ? `/${maxScore}` : ''} · ` : ''}${bandLabel}) point to ${
+        severityTier === 'high'
+          ? 'a heavier symptom load that deserves timely, compassionate clinical attention from a specialist.'
+          : severityTier === 'elevated'
+            ? 'a meaningful pattern that is likely taking a daily toll on your energy, focus, or peace of mind.'
+            : 'a lighter or manageable pattern right now, where proactive self-care and early reflection go a long way.'
+      } ${roleMeta.summary}`
+    : `Based on the symptoms and daily load you selected, your pattern reflects ${
+        (keyDrivers[0] || 'emotional and cognitive strain').replace(/\.$/, '').toLowerCase()
+      }. Starting with a ${roleMeta.label} (${roleMeta.badge}) gives you a clear, non-judgmental plan.`;
+
+  // Build clinician brief
+  const briefLines = [];
+  if (toolName) {
+    briefLines.push(`[AI Screening Analysis · ${toolName}: ${score ?? '—'}${maxScore ? `/${maxScore}` : ''} (${bandLabel})]`);
+  } else if (phqScore !== null || gadScore !== null) {
+    briefLines.push(`[AI Pathway Analysis · PHQ-9: ${phqScore ?? '—'} · GAD-7: ${gadScore ?? '—'}]`);
+  } else {
+    briefLines.push(`[AI Mental Health Analysis ·Matched: ${roleMeta.label}]`);
+  }
+  if (symptomList.length) {
+    briefLines.push(`Reported experiences: ${symptomList.join(', ')}.`);
+  }
+  if (itemSignals.length) {
+    briefLines.push(`Notable check items: ${itemSignals.slice(0, 3).join('; ')}.`);
+  }
+  if (sleepState || energyState || stressState) {
+    briefLines.push(
+      `Daily check-in — Sleep: ${sleepState || '—'}, Energy: ${energyState || '—'}, Stress/Worry: ${stressState || '—'}.`,
+    );
+  }
+  if (concern && concern.trim()) {
+    briefLines.push(`Patient note: ${concern.trim().slice(0, 220)}`);
+  }
+  briefLines.push(`Recommended care path: ${roleMeta.label} (${triage.mode}) · ${headline}`);
+
+  const clinicianBrief = briefLines.join('\n');
+  const nextSlot = nextDefaultSlot();
+  const bookParams = new URLSearchParams({
+    prole: recRole,
+    mode: triage.mode,
+    ...(toolName ? { tool: toolName } : {}),
+    ...(score !== null && score !== undefined ? { score: String(score) } : {}),
+    ...(bandLabel ? { band: bandLabel } : {}),
+    note: clinicianBrief,
+  });
+
+  return {
+    crisis: isCrisis,
+    crisis_notice: isCrisis
+      ? 'If you are in immediate danger or having thoughts of self-harm, please call 112 / 108 or India’s 24×7 Tele-MANAS helpline at 14416 right away.'
+      : null,
+    headline,
+    severity_tier: severityTier,
+    pattern_reading: patternReading,
+    key_drivers: keyDrivers,
+    action_plan: actionPlan,
+    recommended_specialist: {
+      type: recRole,
+      label: roleMeta.label,
+      badge: roleMeta.badge,
+      summary: roleMeta.summary,
+      mode: triage.mode,
+      starting_fee_inr: roleMeta.starting_fee_inr,
+      rationale: triage.rationale,
+    },
+    suggested_check: triage.suggested_screening,
+    clinician_brief: clinicianBrief,
+    book_path: `/book?${bookParams.toString()}`,
+    next_slot: nextSlot,
+    disclaimer:
+      'Serenest AI Analysis organizes your responses into educational patterns and a clinician handoff brief — it is not a medical diagnosis.',
+  };
+}
+
+/**
+ * POST /api/assistant/analyze
+ * Returns a structured AI mental health analysis from either a completed
+ * screening check or an interactive symptom check-in on /screening.
+ */
+export async function handleMentalHealthAnalysis(req, res) {
+  const payload = req.body || {};
+  const baseline = analyzeMentalHealth(payload);
+
+  const apiKey = process.env.OPENAI_API_KEY?.trim();
+  if (!apiKey || baseline.crisis) {
+    return res.status(200).json({
+      ok: true,
+      engine: 'clinical-analyzer',
+      analysis: baseline,
+    });
+  }
+
+  const model = (process.env.OPENAI_MODEL || DEFAULT_MODEL).trim();
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model,
+        response_format: { type: 'json_object' },
+        max_tokens: 550,
+        temperature: 0.4,
+        messages: [
+          {
+            role: 'system',
+            content:
+              'You are Serenest Care AI, a non-diagnostic mental health pattern analyzer for an Indian telepsychiatry platform. ' +
+              'Return JSON with keys: headline (short empathetic title), pattern_reading (2-3 warm sentences explaining what the pattern suggests without diagnosing), ' +
+              'key_drivers (array of 3 concise observations), action_plan (array of 3 practical next steps), ' +
+              'practitioner_type ("psychiatrist"|"psychologist"|"therapist"|"counsellor").',
+          },
+          {
+            role: 'user',
+            content: JSON.stringify(payload),
+          },
+        ],
+      }),
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      const parsed = JSON.parse(data?.choices?.[0]?.message?.content || '{}');
+      const role = VALID_ROLES.includes(parsed.practitioner_type)
+        ? parsed.practitioner_type
+        : baseline.recommended_specialist.type;
+      const roleMeta = ROLE_META[role];
+      return res.status(200).json({
+        ok: true,
+        engine: 'openai',
+        analysis: {
+          ...baseline,
+          headline: typeof parsed.headline === 'string' && parsed.headline.trim()
+            ? parsed.headline.trim()
+            : baseline.headline,
+          pattern_reading: typeof parsed.pattern_reading === 'string' && parsed.pattern_reading.trim()
+            ? parsed.pattern_reading.trim()
+            : baseline.pattern_reading,
+          key_drivers: Array.isArray(parsed.key_drivers) && parsed.key_drivers.length
+            ? parsed.key_drivers.slice(0, 3).map(String)
+            : baseline.key_drivers,
+          action_plan: Array.isArray(parsed.action_plan) && parsed.action_plan.length
+            ? parsed.action_plan.slice(0, 3).map(String)
+            : baseline.action_plan,
+          recommended_specialist: {
+            ...baseline.recommended_specialist,
+            type: role,
+            label: roleMeta.label,
+            badge: roleMeta.badge,
+            summary: roleMeta.summary,
+          },
+        },
+      });
+    }
+  } catch (e) {
+    console.warn('[POST /api/assistant/analyze] falling back to clinical-analyzer:', e?.message);
+  }
+
+  return res.status(200).json({
+    ok: true,
+    engine: 'clinical-analyzer',
+    analysis: baseline,
   });
 }

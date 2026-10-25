@@ -131,6 +131,8 @@ export const contact = {
 export const assistant = {
   chat: (messages, context) => post('/api/assistant/chat', { messages, context }),
   triage: (payload) => post('/api/assistant/triage', payload),
+  /** AI mental health pattern & screening result analyzer. */
+  analyze: (payload) => post('/api/assistant/analyze', payload),
   /** One-step AI client acquisition: creates a matched booking request directly. */
   acquire: (payload) => post('/api/assistant/acquire', payload),
   /** Lets the team know Serenest Guide was opened (server dedupes per visitor/day). */

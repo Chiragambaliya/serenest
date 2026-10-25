@@ -14,6 +14,7 @@ import { renderSeoHead, renderSitemapXml, shouldNoindex, ROUTE_SEO, SITE_ORIGIN,
 import {
   handleAssistantChat,
   handleCareTriage,
+  handleMentalHealthAnalysis,
   analyzeCareTriage,
   nextDefaultSlot,
   buildAiCareCatalog,
@@ -2800,6 +2801,11 @@ app.post('/api/assistant/triage', (req, res, next) => {
   handleCareTriage(req, res).catch(next);
 });
 
+/** POST /api/assistant/analyze — body: { toolId?, toolName?, score?, bandLabel?, symptoms?, concern?, ... } */
+app.post('/api/assistant/analyze', (req, res, next) => {
+  handleMentalHealthAnalysis(req, res).catch(next);
+});
+
 /**
  * POST /api/assistant/acquire
  * One-step AI client acquisition: matches the visitor's concern to the right
@@ -2819,6 +2825,7 @@ app.post('/api/assistant/acquire', async (req, res) => {
     preferred_time,
     language = 'English',
     notes = '',
+    screening_meta = null,
   } = req.body || {};
 
   if (!patient_name?.trim()) return err(res, 'Please enter your name so our care team knows who to reach.');
@@ -2861,7 +2868,40 @@ app.post('/api/assistant/acquire', async (req, res) => {
   };
 
   const booking = await persistBookingRecord(record);
-  return ok(res, { booking, triage, slot }, 201);
+
+  // If this lead originated from an AI Screening / Mental Health Analysis,
+  // also record the screening response so it surfaces in the Admin Screenings inbox.
+  let screeningRecord = null;
+  if (screening_meta && typeof screening_meta === 'object') {
+    const scrRow = {
+      name: patient_name.trim(),
+      phone,
+      email: patient_email?.trim() || null,
+      reason: screening_meta.reason || 'ai-analysis-lead',
+      conditions: Array.isArray(screening_meta.conditions) ? screening_meta.conditions : [],
+      format: resolvedMode,
+      frequency: null,
+      phq9_answers: screening_meta.phq9_answers || null,
+      phq9_score: screening_meta.phq9_score ?? null,
+      phq9_severity: screening_meta.phq9_severity || screening_meta.band_label || null,
+      gad7_answers: screening_meta.gad7_answers || null,
+      gad7_score: screening_meta.gad7_score ?? null,
+      gad7_severity: screening_meta.gad7_severity || null,
+      wants_callback: true,
+      status: 'new',
+    };
+    if (supabase) {
+      const { data } = await supabase.from('screening_responses').insert(scrRow).select().single();
+      if (data) screeningRecord = data;
+    }
+    if (!screeningRecord) {
+      screeningRecord = { id: crypto.randomUUID(), ...scrRow };
+      captureFallbackLead('screening', screeningRecord);
+    }
+    notify.screening(screeningRecord);
+  }
+
+  return ok(res, { booking, screening: screeningRecord, triage, slot }, 201);
 });
 
 /** POST /api/assistant/chat — body: { messages: [{ role, content }], context? } */
