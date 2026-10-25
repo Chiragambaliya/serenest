@@ -19,7 +19,7 @@ export default function AdhdPage() {
         lead={
           <>A structured adult ADHD evaluation by a verified Indian psychiatrist. Detailed developmental and current-symptom history, validated rating scales, and a clinical decision on next steps. We do not offer same-day ADHD prescriptions.</>
         }
-        primaryHref="/book"
+        primaryHref="/book?reason=adhd"
         primaryLabel="Book an ADHD assessment"
         secondaryHref="/services"
         secondaryLabel="How online care works"
@@ -121,7 +121,7 @@ export default function AdhdPage() {
       <CTA
         heading="Ready for a structured adult ADHD assessment?"
         body="Book with a verified Indian psychiatrist. Bring school/work history and any past reports."
-        primaryHref="/book"
+        primaryHref="/book?reason=adhd"
         primaryLabel="Book an ADHD assessment"
       />
     </div>

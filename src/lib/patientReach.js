@@ -103,5 +103,87 @@ export const TRUST_POINTS = [
   { id: 'pay', label: 'Pay after we confirm' },
   { id: 'private', label: 'Private sessions' },
   { id: 'india', label: 'Care from anywhere in India' },
+  { id: 'language', label: 'Ask for English, Hindi, or Gujarati' },
   { id: 'verified', label: 'Verified clinicians' },
 ];
+
+/**
+ * Reasons a patient visitor can start from. The request link opens booking
+ * with that reason; `learn` is the longer page for people who want to read first.
+ */
+export const PATIENT_REASONS = [
+  {
+    id: 'low-mood',
+    label: 'Low mood',
+    practitioner: 'psychiatrist',
+    learn: '/online-psychiatrist-for-depression-india',
+    note: 'Starting point: low mood.',
+  },
+  {
+    id: 'anxiety',
+    label: 'Anxiety',
+    practitioner: 'therapist',
+    learn: '/anxiety-counselling-online-india',
+    note: 'Starting point: anxiety.',
+  },
+  {
+    id: 'adhd',
+    label: 'ADHD',
+    practitioner: 'psychiatrist',
+    learn: '/adhd-assessment-online-india',
+    note: 'Starting point: ADHD.',
+  },
+  {
+    id: 'ocd',
+    label: 'OCD',
+    practitioner: 'psychiatrist',
+    learn: '/ocd-treatment-online-india',
+    note: 'Starting point: OCD.',
+  },
+  {
+    id: 'addiction',
+    label: 'Addiction',
+    practitioner: 'psychiatrist',
+    learn: '/services/addiction-care',
+    note: 'Starting point: addiction and recovery.',
+  },
+  {
+    id: 'sleep-stress',
+    label: 'Sleep and stress',
+    practitioner: 'therapist',
+    learn: '/screening',
+    note: 'Starting point: sleep and stress.',
+  },
+  {
+    id: 'psychiatry',
+    label: 'Psychiatry',
+    practitioner: 'psychiatrist',
+    note: 'Starting point: psychiatry.',
+    chip: false,
+  },
+  {
+    id: 'therapy',
+    label: 'Therapy',
+    practitioner: 'therapist',
+    note: 'Starting point: therapy or counselling.',
+    chip: false,
+  },
+  {
+    id: 'video',
+    label: 'Video, audio, or chat',
+    practitioner: 'psychiatrist',
+    note: 'Starting point: a video, audio, or chat session.',
+    chip: false,
+  },
+];
+
+export function patientReasonById(id) {
+  const key = String(id || '').trim().toLowerCase();
+  return PATIENT_REASONS.find((reason) => reason.id === key) || null;
+}
+
+export function bookHrefForReason(id) {
+  const reason = patientReasonById(id);
+  if (!reason) return '/book';
+  return `/book?reason=${encodeURIComponent(reason.id)}`;
+}

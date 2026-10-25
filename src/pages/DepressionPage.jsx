@@ -19,7 +19,7 @@ export default function DepressionPage() {
         lead={
           <>Consult a verified Indian psychiatrist online for low mood, loss of interest, and depression-related concerns. A structured assessment, PHQ-9 screening, and an individualized care plan — therapy, medication review, or both, based on clinical judgment.</>
         }
-        primaryHref="/book"
+        primaryHref="/book?reason=low-mood"
         primaryLabel="Book a depression consultation"
         secondaryHref="/phq-9-depression-screening"
         secondaryLabel="Take the PHQ-9 screening"
@@ -120,7 +120,7 @@ export default function DepressionPage() {
       <CTA
         heading="Ready to consult an online psychiatrist for depression?"
         body="Take 3 minutes of PHQ-9 screening, or go straight to booking with a verified Indian psychiatrist."
-        primaryHref="/book"
+        primaryHref="/book?reason=low-mood"
         primaryLabel="Book a consultation"
         secondaryHref="/pricing"
         secondaryLabel="See pricing"

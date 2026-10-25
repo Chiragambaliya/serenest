@@ -19,7 +19,7 @@ export default function AnxietyPage() {
         lead={
           <>Online anxiety counselling and psychiatrist support with verified Indian clinicians. GAD-7 screening, structured assessment, and a stepped-care plan — therapy, lifestyle support, or medication review where clinically appropriate.</>
         }
-        primaryHref="/book"
+        primaryHref="/book?reason=anxiety"
         primaryLabel="Book an anxiety consultation"
         secondaryHref="/gad-7-anxiety-screening"
         secondaryLabel="Take the GAD-7 screening"
@@ -122,7 +122,7 @@ export default function AnxietyPage() {
       <CTA
         heading="Ready to start online anxiety care?"
         body="Take 3 minutes of GAD-7 screening, or go straight to booking with a verified clinician."
-        primaryHref="/book"
+        primaryHref="/book?reason=anxiety"
         primaryLabel="Book a consultation"
       />
     </div>

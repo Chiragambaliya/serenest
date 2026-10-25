@@ -320,7 +320,7 @@
 
 @media (min-width: 800px) {
   .care-trust ul {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   }
 }
 
@@ -383,6 +383,42 @@
   border-color: rgba(47, 59, 36, 0.35);
   transform: translateY(-2px);
   box-shadow: 0 12px 28px rgba(30, 42, 33, 0.07);
+}
+
+.care-service__title {
+  color: inherit;
+  text-decoration: none;
+}
+
+.care-service__title:hover {
+  color: var(--care-forest-mid);
+}
+
+.care-service__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.1rem;
+  align-items: center;
+  margin-top: auto;
+  padding-top: 1.1rem;
+}
+
+.care-service__actions .care-service__go {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.care-service__about {
+  font-size: 0.82rem;
+  font-weight: 650;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--care-muted);
+  text-decoration: none;
+}
+
+.care-service__about:hover {
+  color: var(--care-forest-mid);
 }
 
 .care-path__num,
@@ -489,6 +525,17 @@
 .care-concerns a:hover {
   border-color: var(--care-forest-mid);
   background: #fff;
+}
+
+.care-concerns__read {
+  margin: 0.9rem 0 0;
+  font-size: 0.9rem;
+  color: var(--care-muted);
+}
+
+.care-concerns__read a {
+  color: var(--care-forest-mid);
+  font-weight: 650;
 }
 
 /* ── Close ────────────────────────────────────────────────────── */
@@ -711,6 +758,43 @@
   max-width: 46ch;
   color: #5c6758;
   line-height: 1.55;
+}
+
+.book-easy__reason {
+  margin: 1rem 0 0;
+  padding: 0.75rem 0.9rem;
+  border-radius: 12px;
+  background: #f3f6ee;
+  color: #2f3b24;
+  line-height: 1.5;
+}
+
+/* Keep the first-visit privacy card from covering the request buttons on a phone. */
+@media (max-width: 960px) {
+  body:has(.patient-dock) .privacy-banner {
+    padding: 14px 14px 12px;
+  }
+
+  body:has(.patient-dock) .privacy-banner h2 {
+    font-size: 1.15rem;
+  }
+
+  body:has(.patient-dock) .privacy-banner__copy > p:last-of-type {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+  }
+
+  body:has(.patient-dock) .privacy-banner__actions {
+    flex-direction: row;
+    gap: 8px;
+  }
+
+  body:has(.patient-dock) .privacy-banner__actions .privacy-choice {
+    width: auto;
+    flex: 1;
+  }
 }
 
 .book-easy__note {

@@ -19,7 +19,7 @@ export default function OcdPage() {
         lead={
           <>Online assessment and treatment for obsessive-compulsive disorder with verified Indian psychiatrists and psychologists. Structured clinical evaluation, exposure and response prevention (ERP) where appropriate, and medication review when clinically indicated — across India.</>
         }
-        primaryHref="/book"
+        primaryHref="/book?reason=ocd"
         primaryLabel="Book an OCD consultation"
         secondaryHref="/screening"
         secondaryLabel="Take PHQ-9 / GAD-7 screening"
@@ -121,7 +121,7 @@ export default function OcdPage() {
       <CTA
         heading="Ready to start online OCD care?"
         body="Book a consultation with a verified clinician, or begin with PHQ-9 / GAD-7 screening if you are unsure where to start."
-        primaryHref="/book"
+        primaryHref="/book?reason=ocd"
         primaryLabel="Book a consultation"
       />
     </div>

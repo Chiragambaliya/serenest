@@ -7,7 +7,9 @@ import ImagePlaceholder from '../components/ImagePlaceholder';
 import {
   CARE_PHONE_DISPLAY,
   CARE_TEL_HREF,
+  PATIENT_REASONS,
   TRUST_POINTS,
+  bookHrefForReason,
   careWaHref,
 } from '../lib/patientReach';
 
@@ -59,41 +61,49 @@ const CARE_SERVICES = [
     meta: 'From ₹1,200',
     body: 'Assessment, diagnosis, and medication management with a licensed psychiatrist.',
     href: '/services/psychiatry',
+    reason: 'psychiatry',
   },
   {
     title: 'Therapy and counselling',
     meta: 'From ₹800',
     body: 'Structured talk therapy for individuals, couples, and families.',
     href: '/services/therapy',
+    reason: 'therapy',
   },
   {
     title: 'Addiction and recovery',
     meta: 'Substance use',
     body: 'Assessment, counselling, and relapse-prevention support.',
     href: '/services/addiction-care',
+    reason: 'addiction',
   },
   {
     title: 'Digital consultations',
     meta: 'Video · audio · chat',
     body: 'See a clinician from anywhere in India. No clinic wait.',
     href: '/services/digital-consultations',
+    reason: 'video',
   },
 ];
 
-const CONCERNS = [
-  { label: 'Low mood', href: '/online-psychiatrist-for-depression-india' },
-  { label: 'Anxiety', href: '/anxiety-counselling-online-india' },
-  { label: 'ADHD', href: '/adhd-assessment-online-india' },
-  { label: 'OCD', href: '/ocd-treatment-online-india' },
-  { label: 'Addiction', href: '/services/addiction-care' },
-  { label: 'Sleep and stress', href: '/book' },
-];
-
-function CareBtn({ to, variant = 'solid', children }) {
-  return (
-    <Link className={`care-btn care-btn--${variant}`} to={to}>
+function CareBtn({ to, href, variant = 'solid', children }) {
+  const className = `care-btn care-btn--${variant}`;
+  const inner = (
+    <>
       <span>{children}</span>
       <span className="care-btn__arrow" aria-hidden="true">→</span>
+    </>
+  );
+  if (href) {
+    return (
+      <a className={className} href={href} target="_blank" rel="noreferrer">
+        {inner}
+      </a>
+    );
+  }
+  return (
+    <Link className={className} to={to}>
+      {inner}
     </Link>
   );
 }
@@ -111,17 +121,17 @@ export default function HomePage() {
             Talk to a psychiatrist or therapist — privately, from home.
           </h1>
           <p className="care-hero__lead">
-            Request a slot in a few minutes. We confirm by phone or WhatsApp.
-            You pay after the appointment is locked, not when you ask.
+            Request a slot in a few minutes, or message us on WhatsApp.
+            We confirm the clinician and the time. You pay after it is locked, not when you ask.
           </p>
           <div className="care-hero__actions">
             <CareBtn to="/book">Request an appointment</CareBtn>
-            <CareBtn to="/screening" variant="ghost">Start a free check</CareBtn>
+            <CareBtn href={careWaHref()} variant="ghost">WhatsApp us</CareBtn>
           </div>
           <p className="care-hero__reach">
             <a href={CARE_TEL_HREF}>Call {CARE_PHONE_DISPLAY}</a>
             <span aria-hidden="true">·</span>
-            <a href={careWaHref()} target="_blank" rel="noreferrer">WhatsApp us</a>
+            <Link to="/screening">Free private check</Link>
             <span aria-hidden="true">·</span>
             <Link to="/pricing">Fees from ₹800</Link>
           </p>
@@ -201,12 +211,15 @@ export default function HomePage() {
           </header>
           <div className="care-services">
             {CARE_SERVICES.map((item) => (
-              <Link key={item.title} to={item.href} className="care-service">
+              <article key={item.title} className="care-service">
                 <span className="care-service__meta">{item.meta}</span>
-                <span className="care-service__title">{item.title}</span>
+                <Link className="care-service__title" to={item.href}>{item.title}</Link>
                 <span className="care-service__body">{item.body}</span>
-                <span className="care-service__go">View <span aria-hidden="true">→</span></span>
-              </Link>
+                <span className="care-service__actions">
+                  <Link className="care-service__go" to={bookHrefForReason(item.reason)}>Request <span aria-hidden="true">→</span></Link>
+                  <Link className="care-service__about" to={item.href}>About</Link>
+                </span>
+              </article>
             ))}
           </div>
         </div>
@@ -245,15 +258,24 @@ export default function HomePage() {
               <p className="care-kicker">Common reasons</p>
               <h2 id="home-concerns-title">You do not need the perfect words.</h2>
             </div>
-            <p>Pick a starting point. Each page explains what a clinician can and cannot do online.</p>
+            <p>Tap a reason to start a request. Read the longer page only if you want more detail first.</p>
           </header>
           <ul className="care-concerns">
-            {CONCERNS.map((item) => (
-              <li key={item.label}>
-                <Link to={item.href}>{item.label}</Link>
+            {PATIENT_REASONS.filter((item) => item.chip !== false).map((item) => (
+              <li key={item.id}>
+                <Link to={bookHrefForReason(item.id)}>{item.label}</Link>
               </li>
             ))}
           </ul>
+          <p className="care-concerns__read">
+            Read first:{' '}
+            {PATIENT_REASONS.filter((item) => item.chip !== false && item.learn && item.learn !== '/screening').map((item, index, list) => (
+              <span key={item.id}>
+                <Link to={item.learn}>{item.label}</Link>
+                {index < list.length - 1 ? ' · ' : ''}
+              </span>
+            ))}
+          </p>
         </div>
       </section>
 

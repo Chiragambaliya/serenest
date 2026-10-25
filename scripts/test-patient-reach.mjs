@@ -17,6 +17,9 @@ import {
   formatSlotTime,
   localDateKey,
   upcomingSlots,
+  PATIENT_REASONS,
+  patientReasonById,
+  bookHrefForReason,
 } from '../src/lib/patientReach.js';
 
 assert.equal(indiaMobileDigits('9876543210'), '9876543210');
@@ -56,6 +59,13 @@ assert.equal(eveningSlots[0].label, 'Tomorrow');
 assert.equal(eveningSlots[0].times.includes('10:00'), true);
 assert.equal(eveningSlots[0].key, '2026-10-26');
 assert.ok(TRUST_POINTS.some((p) => /pay after/i.test(p.label)));
+assert.ok(TRUST_POINTS.some((p) => /Hindi/i.test(p.label)));
+assert.ok(PATIENT_REASONS.filter((r) => r.chip !== false).length >= 6);
+assert.equal(patientReasonById('anxiety')?.practitioner, 'therapist');
+assert.equal(patientReasonById('ANXIETY')?.label, 'Anxiety');
+assert.equal(patientReasonById('nope'), null);
+assert.equal(bookHrefForReason('low-mood'), '/book?reason=low-mood');
+assert.equal(bookHrefForReason(''), '/book');
 
 assert.equal(hideReachDock('/book'), true);
 assert.equal(hideReachDock('/book?pid=1'), true);

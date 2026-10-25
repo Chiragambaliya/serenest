@@ -16,6 +16,7 @@ import {
   indiaMobileDigits,
   isIndiaMobile,
   isPatientNameValid,
+  patientReasonById,
   upcomingSlots,
 } from '../lib/patientReach';
 
@@ -70,9 +71,11 @@ export default function BookingPage() {
   const preScore = searchParams.get('score') ?? '';
   const preBand = searchParams.get('band') ?? '';
   const hasPro = Boolean(preProName);
+  const visitReason = patientReasonById(searchParams.get('reason'));
 
   const suggestedRole = preProRole
     || (prePhq || preGad ? suggestRoleFromScreening(prePhq, preGad) : '')
+    || visitReason?.practitioner
     || '';
 
   const handoffNote = useMemo(
@@ -82,6 +85,8 @@ export default function BookingPage() {
     }),
     [prePhq, preGad, prePhqSev, preGadSev, preTool, preScore, preBand],
   );
+
+  const startingNote = [visitReason?.note, handoffNote].filter(Boolean).join(' ');
 
   const slots = useMemo(() => upcomingSlots(new Date()), []);
   const [practitionerType, setPractitionerType] = useState(
@@ -100,9 +105,9 @@ export default function BookingPage() {
   const [phone, setPhone] = useState(phoneInputDigits(prePhone));
   const [email, setEmail] = useState(preEmail);
   const [language, setLanguage] = useState(preLang || 'English');
-  const [note, setNote] = useState(handoffNote);
+  const [note, setNote] = useState(startingNote);
   const [consent, setConsent] = useState(false);
-  const [moreOpen, setMoreOpen] = useState(Boolean(handoffNote || preEmail));
+  const [moreOpen, setMoreOpen] = useState(Boolean(startingNote || preEmail));
 
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
@@ -339,6 +344,13 @@ export default function BookingPage() {
                 ? `${preProLabel || selectedTypeLabel}${preProFee ? ` · ₹${preProFee}` : ''}${preProDur ? ` · ${preProDur} min` : ''}. Add your name and number. We confirm by phone or WhatsApp.`
                 : 'Add your name and number. A time is already picked — change it only if you want to. We confirm by phone or WhatsApp.'}
             </p>
+
+            {visitReason && (
+              <p className="book-easy__reason">
+                You are requesting care for <strong>{visitReason.label}</strong>.
+                The clinician type is already set — change it if you want someone else.
+              </p>
+            )}
 
             {handoffNote && (
               <div className="callout book-easy__note">
