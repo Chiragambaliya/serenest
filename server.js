@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
+import { clinicianRoleFromLabel, mergeAcceptedRoster } from './src/lib/adminOps.js';
 import { renderSeoHead, renderSitemapXml, shouldNoindex, ROUTE_SEO, SITE_ORIGIN, resolveSeoRedirect, isKnownDynamicSpaPath } from './src/lib/seo.js';
 import { handleAssistantChat } from './src/server/aiAssistant.js';
 import cron from 'node-cron';
@@ -350,7 +351,72 @@ async function transitionJobApplication(id, nextStatus, extra = {}) {
     }
   }
 
+  if (nextStatus === 'hired' && application) {
+    try {
+      await ensureAcceptedHireOnRoster(application, { promoteExisting: true });
+    } catch (e) {
+      console.warn('[hiring] accepted applicant was not added to the clinician roster:', e.message);
+    }
+  }
+
   return { application, error: null, changed: true, emailed };
+}
+
+/**
+ * An accepted careers application should appear with the other clinicians.
+ * Missing phone or a schema mismatch must not undo the accept itself.
+ */
+async function ensureAcceptedHireOnRoster(application, { promoteExisting = false } = {}) {
+  if (!supabase || !application) return null;
+  const phone = String(application.phone || '').trim();
+  const email = String(application.email || '').trim();
+  const name = String(application.full_name || '').trim();
+  if (!name || !phone) return null;
+
+  let existing = null;
+  if (email) {
+    const { data } = await supabase
+      .from('professional_applications')
+      .select('id, status')
+      .ilike('email', email)
+      .limit(1);
+    existing = data?.[0] || null;
+  }
+  if (!existing) {
+    const { data } = await supabase
+      .from('professional_applications')
+      .select('id, status')
+      .eq('phone', phone)
+      .limit(1);
+    existing = data?.[0] || null;
+  }
+
+  if (existing) {
+    if (promoteExisting && existing.status !== 'approved') {
+      await supabase
+        .from('professional_applications')
+        .update({ status: 'approved' })
+        .eq('id', existing.id);
+    }
+    return existing;
+  }
+
+  const role = clinicianRoleFromLabel(application.role) || 'therapist';
+  const { data, error } = await insertProfessionalApplication({
+    role,
+    role_label: application.role || role,
+    designation: application.role || role,
+    full_name: name,
+    phone,
+    email: email || null,
+    city: application.city || null,
+    status: 'approved',
+  });
+  if (error) {
+    console.warn('[hiring] roster insert failed:', error.message);
+    return null;
+  }
+  return data;
 }
 
 async function patchJobApplicationRecord(id, updates) {
@@ -1487,23 +1553,66 @@ app.get('/api/professionals/verify', async (req, res) => {
   return ok(res, { joined: (count ?? 0) > 0 });
 });
 
-/** GET /api/professionals/list — all approved professionals with booking counts */
-app.get('/api/professionals/list', async (req, res) => {
-  if (!requireAdmin(req, res)) return;
-  if (!supabase) return ok(res, { professionals: [] });
-
-  const { role } = req.query;
-  let query = supabase
+async function loadApprovedProfessionals() {
+  const withBookings = await supabase
     .from('professional_applications')
     .select('*, appointments(id, status, preferred_date, preferred_time, patient_name, mode)')
     .eq('status', 'approved')
     .order('full_name');
 
-  if (role) query = query.eq('role', role);
+  if (!withBookings.error) return withBookings.data || [];
 
-  const { data, error } = await query;
-  if (error) return err(res, 'Failed to fetch professionals', 500);
-  return ok(res, { professionals: data });
+  console.warn('[GET /api/professionals/list] booking join skipped:', withBookings.error.message);
+  const plain = await supabase
+    .from('professional_applications')
+    .select('*')
+    .eq('status', 'approved')
+    .order('full_name');
+
+  if (plain.error) {
+    const failure = new Error(plain.error.message || 'Failed to fetch professionals');
+    failure.cause = plain.error;
+    throw failure;
+  }
+  return plain.data || [];
+}
+
+/** GET /api/professionals/list — approved clinicians plus people already accepted in hiring */
+app.get('/api/professionals/list', async (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  if (!supabase) return ok(res, { professionals: [] });
+
+  let approved;
+  try {
+    approved = await loadApprovedProfessionals();
+  } catch (e) {
+    console.error('[GET /api/professionals/list]', e);
+    return err(res, 'Failed to fetch professionals', 500);
+  }
+
+  const { data: hires, error: hireError } = await supabase
+    .from('job_applications')
+    .select('id, full_name, email, phone, city, role, status')
+    .eq('status', 'hired');
+
+  if (hireError) console.warn('[GET /api/professionals/list] accepted hires', hireError.message);
+
+  const acceptedHires = hires || [];
+  for (const hire of acceptedHires) {
+    try {
+      await ensureAcceptedHireOnRoster(hire, { promoteExisting: false });
+    } catch (e) {
+      console.warn('[GET /api/professionals/list] roster sync', e.message);
+    }
+  }
+
+  let professionals = mergeAcceptedRoster(approved, acceptedHires);
+  const role = req.query.role;
+  if (role) {
+    professionals = professionals.filter((p) => p.role === role || clinicianRoleFromLabel(p.role_label) === role);
+  }
+
+  return ok(res, { professionals });
 });
 
 /** PATCH /api/professionals/:id — update professional profile details (admin) */

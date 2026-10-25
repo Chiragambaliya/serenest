@@ -141,3 +141,65 @@ export function screeningHasSafetyFlag(screening) {
   const q9 = Array.isArray(screening?.phq9_answers) ? screening.phq9_answers[8] : 0;
   return Number(q9) > 0;
 }
+
+/** Map a free-text role (“Clinical Psychologist”) onto the roster slug. */
+export function clinicianRoleFromLabel(role) {
+  const s = String(role || '').toLowerCase();
+  if (!s) return null;
+  if (s.includes('psychiatr')) return 'psychiatrist';
+  if (s.includes('psycholog')) return 'psychologist';
+  if (s.includes('counsel') || s.includes('counsell')) return 'counsellor';
+  if (s.includes('therap')) return 'therapist';
+  if (s === 'psychiatrist' || s === 'psychologist' || s === 'therapist' || s === 'counsellor') return s;
+  return null;
+}
+
+export function isAcceptedHire(row) {
+  const status = String(row?.status || '').toLowerCase();
+  return status === 'hired' || status === 'accepted';
+}
+
+function rosterKey(row) {
+  const email = String(row?.email || '').trim().toLowerCase();
+  const phone = String(row?.phone || '').replace(/\D/g, '');
+  return email || phone || '';
+}
+
+/**
+ * Approved clinicians plus people already accepted in hiring.
+ * A hire who is already on the roster is not added again.
+ */
+export function mergeAcceptedRoster(professionals, hires) {
+  const seen = new Set();
+  const out = [];
+
+  for (const row of professionals || []) {
+    const key = rosterKey(row);
+    if (key && seen.has(key)) continue;
+    if (key) seen.add(key);
+    const role = clinicianRoleFromLabel(row?.role) || clinicianRoleFromLabel(row?.role_label) || row?.role;
+    out.push({ ...row, role });
+  }
+
+  for (const hire of hires || []) {
+    if (!isAcceptedHire(hire)) continue;
+    const key = rosterKey(hire);
+    if (key && seen.has(key)) continue;
+    if (key) seen.add(key);
+    const role = clinicianRoleFromLabel(hire.role) || clinicianRoleFromLabel(hire.role_label) || 'therapist';
+    out.push({
+      id: hire.id,
+      full_name: hire.full_name || 'Accepted applicant',
+      email: hire.email || null,
+      phone: hire.phone || null,
+      city: hire.city || null,
+      role,
+      role_label: hire.role || hire.role_label || role,
+      status: 'approved',
+      source: 'hiring',
+      appointments: Array.isArray(hire.appointments) ? hire.appointments : [],
+    });
+  }
+
+  return out;
+}

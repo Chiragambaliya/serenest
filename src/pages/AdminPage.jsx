@@ -11,6 +11,7 @@ import {
   rankBookingStatus,
   isUnassignedActive,
   screeningHasSafetyFlag,
+  clinicianRoleFromLabel,
 } from '../lib/adminOps';
 
 // ── API helper ──────────────────────────────────────────────────────────────
@@ -401,13 +402,15 @@ export default function AdminPage() {
         setWaGroupConfigured(Boolean(r.configured || r.invite_url || WA_GROUP_FALLBACK));
       }),
       (which === 'all' || which === 'hr') && safe(async () => {
-        const [rApps, rPostings, rInterviews] = await Promise.all([
-          adminFetch('/api/jobs/applications', secret),
-          adminFetch('/api/jobs/all', secret),
-          adminFetch('/api/hiring/interviews', secret),
-        ]);
+        const rApps = await adminFetch('/api/jobs/applications', secret);
         setJobs(rApps.applications ?? []);
+      }),
+      (which === 'all' || which === 'hr') && safe(async () => {
+        const rPostings = await adminFetch('/api/jobs/all', secret);
         setJobPostings(rPostings.jobs ?? []);
+      }),
+      (which === 'all' || which === 'hr') && safe(async () => {
+        const rInterviews = await adminFetch('/api/hiring/interviews', secret);
         setInterviews(rInterviews.interviews ?? []);
       }),
       (which === 'all' || which === 'messages') && safe(async () => {
@@ -578,6 +581,7 @@ export default function AdminPage() {
         body: JSON.stringify({ status }),
       });
       setJobs((prev) => prev.map((j) => j.id === id ? { ...j, status } : j));
+      if (status === 'hired') load('professionals');
       load('stats');
     } catch (e) { setError(e.message); }
   }
@@ -2364,7 +2368,7 @@ export default function AdminPage() {
         {tab === 'professionals' && (() => {
           const filtered = proFilter === 'all'
             ? professionals
-            : professionals.filter((p) => p.role === proFilter);
+            : professionals.filter((p) => p.role === proFilter || clinicianRoleFromLabel(p.role_label) === proFilter);
 
           return (
             <div>
@@ -2499,7 +2503,10 @@ export default function AdminPage() {
                               padding: '2px 10px', borderRadius: 99, fontSize: '0.72rem', fontWeight: 700,
                               background: (ROLE_COLORS[p.role] ?? '#888') + '18',
                               color: ROLE_COLORS[p.role] ?? '#888',
-                            }}>{ROLE_LABELS[p.role] ?? p.role}</span>
+                            }}>{ROLE_LABELS[p.role] ?? p.role_label ?? p.role}</span>
+                            {p.source === 'hiring' && (
+                              <span style={{ display: 'inline-block', marginLeft: 6, padding: '2px 8px', borderRadius: 99, fontSize: '0.68rem', fontWeight: 800, background: '#d1e7dd', color: '#0a3622' }}>Accepted</span>
+                            )}
                           </div>
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
                             <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>{activeCount} active · {totalCount} total sessions</span>
@@ -2601,7 +2608,16 @@ export default function AdminPage() {
         {tab === 'applications' && (
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', gap: 12, flexWrap: 'wrap' }}>
-              <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>Professional Applications <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({apps.length})</span></h2>
+              <div>
+                <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>Professional Applications <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({apps.length})</span></h2>
+                <p style={{ margin: '0.35rem 0 0', fontSize: '0.84rem', color: 'var(--text-muted)' }}>
+                  Accepted: {apps.filter((a) => a.status === 'approved').length}
+                  {' · '}
+                  Waiting: {apps.filter((a) => a.status !== 'approved' && a.status !== 'rejected').length}
+                  {' · '}
+                  Rejected: {apps.filter((a) => a.status === 'rejected').length}
+                </p>
+              </div>
               <Link to="/professionals/apply" className="btn btn-primary btn-sm">+ Add application</Link>
             </div>
 
@@ -2638,7 +2654,7 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {apps.map((a) => (
+                    {[...apps].sort((a, b) => Number(b.status === 'approved') - Number(a.status === 'approved')).map((a) => (
                       <tr key={a.id} style={{ borderBottom: '1px solid var(--border)', background: a._fallback ? '#fffbeb' : undefined }}>
                         <td style={tdStyle}>
                           <strong>{a.full_name}</strong>
@@ -2749,13 +2765,13 @@ export default function AdminPage() {
                     {[
                       { s:'new', c:'#0d6efd' }, { s:'reviewing', c:'#6f42c1' },
                       { s:'shortlisted', c:'#e67e22' }, { s:'interviewing', c:'#fd7e14' },
-                      { s:'hired', c:'#198754' }, { s:'rejected', c:'#dc3545' },
-                    ].map(({ s, c }) => {
+                      { s:'hired', label:'accepted', c:'#198754' }, { s:'rejected', c:'#dc3545' },
+                    ].map(({ s, label, c }) => {
                       const count = jobs.filter((j) => j.status === s).length;
                       if (!count) return null;
                       return (
                         <span key={s} style={{ padding: '4px 14px', borderRadius: 99, fontSize: '0.78rem', fontWeight: 700, background: c + '18', color: c }}>
-                          {s}: {count}
+                          {label || s}: {count}
                         </span>
                       );
                     })}
@@ -2770,8 +2786,20 @@ export default function AdminPage() {
                 </div>
 
                 {jobs.length === 0 ? <EmptyState icon="🧑‍💼" text="No job applications yet" /> : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                    {jobs.map((j) => {
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                    {[
+                      { key: 'accepted', title: 'Accepted', rows: jobs.filter((j) => j.status === 'hired') },
+                      { key: 'open', title: 'Not accepted yet', rows: jobs.filter((j) => j.status !== 'hired') },
+                    ].map((group) => (
+                    <div key={group.key}>
+                      <h3 style={{ fontWeight: 800, fontSize: '1rem', margin: '0 0 0.6rem' }}>{group.title} ({group.rows.length})</h3>
+                      {group.rows.length === 0 ? (
+                        <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                          {group.key === 'accepted' ? 'No accepted applications yet.' : 'No applications waiting.'}
+                        </p>
+                      ) : (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                    {group.rows.map((j) => {
                       const appInterviews = interviews.filter((i) => i.application_id === j.id);
                       return (
                         <div key={j.id} style={{ background:'var(--surface)', border:'1px solid var(--border)', borderRadius:12, padding:'1.25rem 1.5rem' }}>
@@ -2854,6 +2882,10 @@ export default function AdminPage() {
                         </div>
                       );
                     })}
+                      </div>
+                      )}
+                    </div>
+                    ))}
                   </div>
                 )}
               </div>

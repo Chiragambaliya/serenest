@@ -14,6 +14,8 @@ import {
   rankBookingStatus,
   isUnassignedActive,
   screeningHasSafetyFlag,
+  clinicianRoleFromLabel,
+  mergeAcceptedRoster,
 } from '../src/lib/adminOps.js';
 
 assert.equal(digitsOnly('+91 98765-43210'), '919876543210');
@@ -72,5 +74,23 @@ const feeHits = searchAdminRecords({
   messages: [{ id: 'm1', name: 'Ravi', subject: 'Fees', message: 'cost?' }],
 });
 assert.equal(feeHits[0].kind, 'message');
+
+assert.equal(clinicianRoleFromLabel('Clinical Psychologist'), 'psychologist');
+assert.equal(clinicianRoleFromLabel('Mental Health Counsellor'), 'counsellor');
+assert.equal(clinicianRoleFromLabel('psychiatrist'), 'psychiatrist');
+
+const roster = mergeAcceptedRoster(
+  [{ id: 'p1', full_name: 'Dr Mehta', email: 'mehta@example.com', role: 'psychiatrist', status: 'approved' }],
+  [
+    { id: 'j1', full_name: 'Asha Rao', email: 'asha@example.com', phone: '9876543210', role: 'Clinical Psychologist', status: 'hired' },
+    { id: 'j2', full_name: 'Dr Mehta', email: 'Mehta@example.com', role: 'Psychiatrist', status: 'hired' },
+    { id: 'j3', full_name: 'Still waiting', email: 'new@example.com', status: 'new' },
+  ],
+);
+assert.equal(roster.length, 2);
+assert.equal(roster[1].full_name, 'Asha Rao');
+assert.equal(roster[1].role, 'psychologist');
+assert.equal(roster[1].source, 'hiring');
+assert.equal(roster[0].id, 'p1');
 
 console.log('admin-ops helpers: ok');
