@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import PrescriptionDocument from '../components/PrescriptionDocument';
+import { assistant } from '../lib/api';
 import {
   telHref,
   waMeUrl,
@@ -1530,7 +1531,7 @@ export default function AdminPage() {
                         </div>
                       </div>
                     </div>
-                    <LeadContactLinks phone={s.phone} email={s.email} waText={screeningCallbackMessage(s)} />
+                    <LeadContactLinks phone={s.phone} email={s.email} waText={screeningCallbackMessage(s)} lead={s} />
                   </article>
                 ))}
                 {messages.filter((m) => !readMsgIds.has(m.id)).slice(0, 3).map((m) => (
@@ -3260,7 +3261,7 @@ export default function AdminPage() {
                       </div>
 
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        <LeadContactLinks phone={s.phone} email={s.email} waText={screeningCallbackMessage(s)} />
+                        <LeadContactLinks phone={s.phone} email={s.email} waText={screeningCallbackMessage(s)} lead={s} />
                       </div>
 
                       {s.optional_screenings && typeof s.optional_screenings === 'object' && (
@@ -3655,16 +3656,138 @@ function HealthChip({ ok, label, okText, badText }) {
   );
 }
 
-function LeadContactLinks({ phone, email, waText }) {
+function AiLeadCopilot({ lead }) {
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [copilot, setCopilot] = useState(null);
+
+  async function toggle() {
+    if (open) {
+      setOpen(false);
+      return;
+    }
+    setOpen(true);
+    if (copilot || loading) return;
+    setLoading(true);
+    try {
+      const res = await assistant.leadCopilot(lead);
+      if (res?.copilot) setCopilot(res.copilot);
+    } catch {
+      // ignore
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div style={{ width: '100%' }}>
+      <button
+        type="button"
+        onClick={toggle}
+        style={{
+          padding: '4px 10px',
+          borderRadius: 99,
+          border: '1px solid rgba(60, 74, 44, 0.35)',
+          background: open ? '#27301f' : '#eef2df',
+          color: open ? '#f8f6ed' : '#27301f',
+          fontSize: '0.72rem',
+          fontWeight: 700,
+          cursor: 'pointer',
+        }}
+      >
+        {open ? 'Hide AI Co-Pilot' : '✦ AI Lead Co-Pilot'}
+      </button>
+
+      {open && (
+        <div
+          style={{
+            marginTop: 8,
+            padding: '10px 12px',
+            borderRadius: 10,
+            background: '#f8f6ed',
+            border: '1px solid rgba(60, 74, 44, 0.25)',
+            fontSize: '0.8rem',
+            lineHeight: 1.5,
+            display: 'grid',
+            gap: 8,
+          }}
+        >
+          {loading || !copilot ? (
+            <span>Analyzing lead &amp; drafting WhatsApp outreach…</span>
+          ) : (
+            <>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+                <span
+                  style={{
+                    padding: '2px 8px',
+                    borderRadius: 99,
+                    fontSize: '0.7rem',
+                    fontWeight: 800,
+                    background: copilot.priority === 'urgent_safety' ? '#dc3545' : '#27301f',
+                    color: '#fff',
+                  }}
+                >
+                  ✦ {copilot.priority_label}
+                </span>
+                <span
+                  style={{
+                    padding: '2px 8px',
+                    borderRadius: 99,
+                    fontSize: '0.7rem',
+                    fontWeight: 700,
+                    background: '#fff',
+                    border: '1px solid var(--border)',
+                  }}
+                >
+                  Matched: {copilot.recommended_specialist?.label} ({copilot.recommended_specialist?.mode})
+                </span>
+              </div>
+
+              <p style={{ margin: 0, color: 'var(--text)' }}>{copilot.ops_summary}</p>
+
+              <ul style={{ margin: 0, paddingLeft: '1.1rem', fontSize: '0.76rem', color: 'var(--text-muted)' }}>
+                {copilot.clinician_prep?.map((item, idx) => (
+                  <li key={idx}>{item}</li>
+                ))}
+              </ul>
+
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {copilot.whatsapp_scripts?.map((sc) =>
+                  sc.wa_url ? (
+                    <a
+                      key={sc.id}
+                      href={sc.wa_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="admin-ops-link admin-ops-link--wa"
+                      style={{ fontSize: '0.72rem' }}
+                    >
+                      💬 {sc.label}
+                    </a>
+                  ) : null,
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LeadContactLinks({ phone, email, waText, lead }) {
   const tel = telHref(phone);
   const wa = waMeUrl(phone, waText);
-  if (!tel && !wa && !email) return null;
+  if (!tel && !wa && !email && !lead) return null;
   return (
-    <span className="admin-ops-actions">
-      {tel && <a className="admin-ops-link admin-ops-link--call" href={tel}>Call</a>}
-      {wa && <a className="admin-ops-link admin-ops-link--wa" href={wa} target="_blank" rel="noreferrer">WhatsApp</a>}
-      {email && <a className="admin-ops-link admin-ops-link--mail" href={`mailto:${email}`}>Email</a>}
-    </span>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <span className="admin-ops-actions">
+        {tel && <a className="admin-ops-link admin-ops-link--call" href={tel}>Call</a>}
+        {wa && <a className="admin-ops-link admin-ops-link--wa" href={wa} target="_blank" rel="noreferrer">WhatsApp</a>}
+        {email && <a className="admin-ops-link admin-ops-link--mail" href={`mailto:${email}`}>Email</a>}
+      </span>
+      {lead && <AiLeadCopilot lead={lead} />}
+    </div>
   );
 }
 
@@ -3686,41 +3809,44 @@ function BookingOpsActions({
   const tel = telHref(b.patient_phone);
   const queue = variant === 'queue';
   return (
-    <div className="admin-ops-actions">
-      {tel && <a className="admin-ops-link admin-ops-link--call" href={tel}>Call</a>}
-      {wa && <a className="admin-ops-link admin-ops-link--wa" href={wa} target="_blank" rel="noreferrer">WhatsApp</a>}
-      {b.patient_email && (
-        <a className="admin-ops-link admin-ops-link--mail" href={`mailto:${b.patient_email}?subject=${encodeURIComponent('Your Serenest appointment request')}`}>
-          Email
-        </a>
-      )}
-      {b.status === 'pending' && (
-        <ActionBtn label={busy ? 'Updating…' : 'Confirm'} onClick={onConfirm} color="#198754" disabled={busy} />
-      )}
-      {(b.status === 'pending' || b.status === 'confirmed') && (
-        <ActionBtn label={clinician ? 'Reassign' : 'Assign'} onClick={onAssign} color="#0d6efd" disabled={busy} />
-      )}
-      {!queue && b.status !== 'completed' && b.status !== 'cancelled' && (
-        <ActionBtn label={busy ? 'Updating…' : 'Complete'} onClick={onComplete} color="#0d6efd" disabled={busy} />
-      )}
-      {!queue && b.status !== 'cancelled' && (
-        <ActionBtn label={busy ? 'Updating…' : 'Cancel'} onClick={onCancel} color="#dc3545" disabled={busy} />
-      )}
-      {b.status === 'confirmed' && (
-        <Link to={`/consultation/${b.id}?mode=${b.mode}`} target="_blank" className="btn btn-sm btn-ghost" style={{ fontSize: '0.75rem' }}>
-          Room
-        </Link>
-      )}
-      {!queue && (b.status === 'confirmed' || b.status === 'completed') && (
-        <ActionBtn
-          label={rx?.is_locked ? 'View Rx' : rx ? 'Edit Rx' : 'Issue Rx'}
-          onClick={onPrescribe}
-          color="#6f42c1"
-        />
-      )}
-      {!queue && (
-        <ActionBtn label="Delete" onClick={onDelete} color="#6c757d" disabled={busy} />
-      )}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6, width: '100%' }}>
+      <div className="admin-ops-actions">
+        {tel && <a className="admin-ops-link admin-ops-link--call" href={tel}>Call</a>}
+        {wa && <a className="admin-ops-link admin-ops-link--wa" href={wa} target="_blank" rel="noreferrer">WhatsApp</a>}
+        {b.patient_email && (
+          <a className="admin-ops-link admin-ops-link--mail" href={`mailto:${b.patient_email}?subject=${encodeURIComponent('Your Serenest appointment request')}`}>
+            Email
+          </a>
+        )}
+        {b.status === 'pending' && (
+          <ActionBtn label={busy ? 'Updating…' : 'Confirm'} onClick={onConfirm} color="#198754" disabled={busy} />
+        )}
+        {(b.status === 'pending' || b.status === 'confirmed') && (
+          <ActionBtn label={clinician ? 'Reassign' : 'Assign'} onClick={onAssign} color="#0d6efd" disabled={busy} />
+        )}
+        {!queue && b.status !== 'completed' && b.status !== 'cancelled' && (
+          <ActionBtn label={busy ? 'Updating…' : 'Complete'} onClick={onComplete} color="#0d6efd" disabled={busy} />
+        )}
+        {!queue && b.status !== 'cancelled' && (
+          <ActionBtn label={busy ? 'Updating…' : 'Cancel'} onClick={onCancel} color="#dc3545" disabled={busy} />
+        )}
+        {b.status === 'confirmed' && (
+          <Link to={`/consultation/${b.id}?mode=${b.mode}`} target="_blank" className="btn btn-sm btn-ghost" style={{ fontSize: '0.75rem' }}>
+            Room
+          </Link>
+        )}
+        {!queue && (b.status === 'confirmed' || b.status === 'completed') && (
+          <ActionBtn
+            label={rx?.is_locked ? 'View Rx' : rx ? 'Edit Rx' : 'Issue Rx'}
+            onClick={onPrescribe}
+            color="#6f42c1"
+          />
+        )}
+        {!queue && (
+          <ActionBtn label="Delete" onClick={onDelete} color="#6c757d" disabled={busy} />
+        )}
+      </div>
+      <AiLeadCopilot lead={b} />
     </div>
   );
 }

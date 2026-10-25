@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { professionals as professionalsApi } from '../lib/api';
+import AiCareIntakeWidget from '../components/AiCareIntakeWidget';
 import { buildBookPath, preferModeFromPro } from '../lib/bookingHandoff';
 import { careWaHref } from '../lib/patientReach';
 import { useSEO } from '../lib/useSEO';
@@ -206,6 +207,17 @@ export default function PatientFindProfessionalPage() {
       </section>
 
       <div className="container" style={{ paddingBottom: '4rem' }}>
+        {/* ── AI Clinician Matchmaker & Instant Lead Capture ── */}
+        <AiCareIntakeWidget
+          eyebrow="Serenest Care AI · Clinician Matchmaker"
+          title="Not sure which specialist to pick? Let AI analyze your concern & match your clinician."
+          subtext="Select or describe what you are experiencing. AI filters the directory to your matched specialist type and can register a callback in one step."
+          sourceTag="find-professional-ai-match"
+          onRoleMatched={(matchedRole) => {
+            if (VALID_ROLES.includes(matchedRole)) setRole(matchedRole);
+          }}
+        />
+
         {/* ── Search bar ──────────────────────────────────── */}
         <div style={{
           background: '#fff',

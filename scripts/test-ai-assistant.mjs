@@ -6,6 +6,7 @@ import assert from 'node:assert/strict';
 import {
   analyzeCareTriage,
   analyzeMentalHealth,
+  buildLeadCopilotBrief,
   buildConciergeReply,
   extractLeadFromMessages,
   nextDefaultSlot,
@@ -127,5 +128,22 @@ assert.equal(symptomAnalysis.severity_tier, 'elevated');
 assert.ok(symptomAnalysis.key_drivers.length >= 2);
 assert.equal(symptomAnalysis.action_plan.length, 3);
 assert.ok(symptomAnalysis.recommended_specialist.label);
+
+// 10. AI Lead Intelligence & Outreach Co-Pilot
+const copilot = buildLeadCopilotBrief({
+  patient_name: 'Vikram Shah',
+  patient_phone: '9876523456',
+  practitioner_type: 'psychologist',
+  mode: 'video',
+  preferred_date: '2026-10-26',
+  preferred_time: '11:30',
+  notes: '[AI Screening Analysis · GAD-7: 14/21 (Moderate)]',
+  gad7_score: 14,
+  gad7_severity: 'Moderate',
+});
+assert.equal(copilot.priority, 'high_intent');
+assert.equal(copilot.recommended_specialist.type, 'psychologist');
+assert.equal(copilot.whatsapp_scripts.length, 3);
+assert.match(copilot.whatsapp_scripts[0].wa_url, /wa\.me\/919876523456/);
 
 console.log('ai-assistant helpers: ok');

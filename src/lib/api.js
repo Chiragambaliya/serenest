@@ -133,6 +133,8 @@ export const assistant = {
   triage: (payload) => post('/api/assistant/triage', payload),
   /** AI mental health pattern & screening result analyzer. */
   analyze: (payload) => post('/api/assistant/analyze', payload),
+  /** AI Lead Intelligence & WhatsApp outreach script generator for ops. */
+  leadCopilot: (lead) => post('/api/assistant/lead-copilot', { lead }),
   /** One-step AI client acquisition: creates a matched booking request directly. */
   acquire: (payload) => post('/api/assistant/acquire', payload),
   /** Lets the team know Serenest Guide was opened (server dedupes per visitor/day). */

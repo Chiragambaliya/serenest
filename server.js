@@ -15,6 +15,7 @@ import {
   handleAssistantChat,
   handleCareTriage,
   handleMentalHealthAnalysis,
+  handleLeadCopilot,
   analyzeCareTriage,
   nextDefaultSlot,
   buildAiCareCatalog,
@@ -2804,6 +2805,11 @@ app.post('/api/assistant/triage', (req, res, next) => {
 /** POST /api/assistant/analyze — body: { toolId?, toolName?, score?, bandLabel?, symptoms?, concern?, ... } */
 app.post('/api/assistant/analyze', (req, res, next) => {
   handleMentalHealthAnalysis(req, res).catch(next);
+});
+
+/** POST /api/assistant/lead-copilot — body: { lead: { patient_name?, patient_phone?, notes?, phq9_score?, ... } } */
+app.post('/api/assistant/lead-copilot', (req, res, next) => {
+  handleLeadCopilot(req, res).catch(next);
 });
 
 /**

@@ -1273,3 +1273,151 @@ export async function handleMentalHealthAnalysis(req, res) {
     analysis: baseline,
   });
 }
+
+/**
+ * Pure deterministic AI Lead Intelligence & Outreach Co-Pilot for care operations.
+ * Analyzes a captured booking or screening lead and generates priority scoring,
+ * clinician prep bullets, and 3 ready-to-send WhatsApp scripts.
+ */
+export function buildLeadCopilotBrief(lead = {}) {
+  const rawName = (lead.patient_name || lead.name || 'there').trim();
+  const firstName = rawName.split(/\s+/)[0] || 'there';
+  const phone = String(lead.patient_phone || lead.phone || '').replace(/\D/g, '').slice(-10);
+  const notes = String(lead.notes || lead.reason || '').trim();
+  const phqScore = lead.phq9_score !== undefined && lead.phq9_score !== null ? Number(lead.phq9_score) : null;
+  const gadScore = lead.gad7_score !== undefined && lead.gad7_score !== null ? Number(lead.gad7_score) : null;
+  const phqSev = lead.phq9_severity || '';
+  const gadSev = lead.gad7_severity || '';
+  const conditions = Array.isArray(lead.conditions) ? lead.conditions : [];
+
+  const combinedText = [
+    notes,
+    phqSev,
+    gadSev,
+    ...conditions,
+    lead.practitioner_type || '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
+  const isCrisis =
+    detectCrisis(combinedText)
+    || (Array.isArray(lead.phq9_answers) && Number(lead.phq9_answers[8] ?? 0) >= 1);
+
+  const triage = analyzeCareTriage({
+    concern: combinedText,
+    preferredMode: lead.mode || lead.format || 'video',
+    screening:
+      phqScore !== null || gadScore !== null
+        ? `PHQ-9: ${phqScore ?? '—'} (${phqSev}) · GAD-7: ${gadScore ?? '—'} (${gadSev})`
+        : '',
+  });
+
+  const recRole = VALID_ROLES.includes(lead.practitioner_type)
+    ? lead.practitioner_type
+    : triage.practitioner_type;
+  const roleMeta = ROLE_META[recRole] || ROLE_META.psychiatrist;
+  const mode = lead.mode || lead.format || triage.mode || 'video';
+  const slotText =
+    lead.preferred_date && lead.preferred_time
+      ? `${lead.preferred_date} at ${lead.preferred_time}`
+      : triage.next_slot.label;
+
+  let priority = 'standard';
+  let priorityLabel = 'Standard Callback';
+  if (isCrisis || (phqScore !== null && phqScore >= 20) || /severe/i.test(`${phqSev} ${gadSev}`)) {
+    priority = 'urgent_safety';
+    priorityLabel = 'High Clinical Priority · Fast-track Outreach';
+  } else if (
+    (phqScore !== null && phqScore >= 10)
+    || (gadScore !== null && gadScore >= 10)
+    || notes.includes('[AI ')
+    || Boolean(lead.wants_callback)
+  ) {
+    priority = 'high_intent';
+    priorityLabel = 'High Intent · AI-Matched Lead';
+  }
+
+  const opsSummary = isCrisis
+    ? `${rawName} flagged elevated safety or severe symptom markers. Reach out promptly to verify safety, share emergency resources (112 / Tele-MANAS 14416) if needed, and prioritize a Psychiatrist (MD) slot.`
+    : `${rawName} requested a ${roleMeta.label} (${mode}) session${
+        triage.focus_tags?.length ? ` focused on ${triage.focus_tags.join(', ').toLowerCase()}` : ''
+      }. Confirm the ${slotText} slot on WhatsApp first, then share the ₹${roleMeta.starting_fee_inr} payment link.`;
+
+  const clinicianPrep = [
+    `Primary focus: ${triage.focus_tags.join(', ')} (${roleMeta.badge}).`,
+    phqScore !== null || gadScore !== null
+      ? `Validated screening scores: PHQ-9 ${phqScore ?? '—'}${phqSev ? ` (${phqSev})` : ''} · GAD-7 ${gadScore ?? '—'}${gadSev ? ` (${gadSev})` : ''}.`
+      : notes
+        ? `Patient intake note: ${notes.replace(/\s+/g, ' ').slice(0, 160)}`
+        : 'No pre-session screening attached — begin with a brief mood, sleep, and stressor check.',
+    `Session format: ${mode.toUpperCase()} · Language: ${lead.language || 'English'}.`,
+  ];
+
+  const makeWaLink = (msg) =>
+    phone.length === 10
+      ? `https://wa.me/91${phone}?text=${encodeURIComponent(msg)}`
+      : null;
+
+  const confirmMsg =
+    `Hi ${firstName}, this is the care team at Serenest. We received your request for a ${roleMeta.label} (${mode}) consultation (${slotText}).\n\n` +
+    `Your clinician has your intake brief ready. Reply YES to lock this slot and we will share the ₹${roleMeta.starting_fee_inr} confirmation link.`;
+
+  const intakeMsg =
+    `Hi ${firstName}, reaching out from Serenest Care regarding your mental health check-in. ` +
+    `Based on what you shared, we matched you with a verified ${roleMeta.label} (${mode} session, ₹${roleMeta.starting_fee_inr} after confirmation).\n\n` +
+    `Would ${slotText} work for your first session, or would you prefer another time?`;
+
+  const gentleMsg =
+    `Hi ${firstName}, checking in warmly from Serenest Care. Whenever you feel ready to schedule your ${roleMeta.label} consultation, just reply here with a preferred day and time — no upfront payment is needed to hold a slot.`;
+
+  return {
+    priority,
+    priority_label: priorityLabel,
+    crisis: isCrisis,
+    recommended_specialist: {
+      type: recRole,
+      label: roleMeta.label,
+      badge: roleMeta.badge,
+      mode,
+      starting_fee_inr: roleMeta.starting_fee_inr,
+    },
+    focus_tags: triage.focus_tags,
+    ops_summary: opsSummary,
+    clinician_prep: clinicianPrep,
+    whatsapp_scripts: [
+      {
+        id: 'slot_lock',
+        label: '1. Lock Slot & Confirm',
+        text: confirmMsg,
+        wa_url: makeWaLink(confirmMsg),
+      },
+      {
+        id: 'ai_match_followup',
+        label: '2. AI Analysis Follow-up',
+        text: intakeMsg,
+        wa_url: makeWaLink(intakeMsg),
+      },
+      {
+        id: 'gentle_checkin',
+        label: '3. Gentle Check-in',
+        text: gentleMsg,
+        wa_url: makeWaLink(gentleMsg),
+      },
+    ],
+  };
+}
+
+/**
+ * POST /api/assistant/lead-copilot
+ * Returns AI Lead Intelligence & WhatsApp outreach scripts for a booking or screening lead.
+ */
+export async function handleLeadCopilot(req, res) {
+  const lead = req.body?.lead || req.body || {};
+  const copilot = buildLeadCopilotBrief(lead);
+  return res.status(200).json({
+    ok: true,
+    engine: 'clinical-copilot',
+    copilot,
+  });
+}
