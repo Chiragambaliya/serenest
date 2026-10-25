@@ -13,6 +13,12 @@ import {
   buildAiCareCatalog,
   renderLlmsTxt,
 } from '../src/server/aiAssistant.js';
+import {
+  DPDP_NOTICE_VERSION,
+  DPDP_REQUEST_TYPES,
+  DPDP_ITEMIZED_NOTICE,
+  validateDpdpRequest,
+} from '../src/lib/dpdp.js';
 
 // 1. Sleep + medication inquiry -> Psychiatrist
 const sleepMed = analyzeCareTriage({
@@ -145,5 +151,38 @@ assert.equal(copilot.priority, 'high_intent');
 assert.equal(copilot.recommended_specialist.type, 'psychologist');
 assert.equal(copilot.whatsapp_scripts.length, 3);
 assert.match(copilot.whatsapp_scripts[0].wa_url, /wa\.me\/919876523456/);
+
+// 11. DPDP Act, 2023 compliance & Data Principal rights validator
+assert.equal(DPDP_NOTICE_VERSION, 'DPDP-2026.1');
+assert.equal(DPDP_REQUEST_TYPES.length, 6);
+assert.equal(DPDP_ITEMIZED_NOTICE.items.length, 4);
+
+const validWithdrawal = validateDpdpRequest({
+  request_type: 'withdraw_consent',
+  name: 'Riya Sharma',
+  phone: '+91 98765 43210',
+  details: 'Please withdraw my callback consent',
+});
+assert.equal(validWithdrawal.valid, true);
+assert.equal(validWithdrawal.sanitized.dpdp_section, 'Section 6(4)');
+assert.equal(validWithdrawal.sanitized.phone, '9876543210');
+
+const invalidNomination = validateDpdpRequest({
+  request_type: 'nomination',
+  name: 'Riya Sharma',
+  phone: '9876543210',
+  nominee_name: '',
+});
+assert.equal(invalidNomination.valid, false);
+
+const validNomination = validateDpdpRequest({
+  request_type: 'nomination',
+  name: 'Riya Sharma',
+  phone: '9876543210',
+  nominee_name: 'Amit Sharma',
+  nominee_relation: 'Spouse',
+});
+assert.equal(validNomination.valid, true);
+assert.equal(validNomination.sanitized.dpdp_section, 'Section 14');
 
 console.log('ai-assistant helpers: ok');

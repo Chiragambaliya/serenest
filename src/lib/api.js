@@ -141,4 +141,11 @@ export const assistant = {
   notifyGuideOpened: (payload) => post('/api/assistant/notify-open', payload),
 };
 
-export default { health, bookings, screening, professionals, rooms, contact, assistant, prescriptions, subscribers, payments };
+export const dpdp = {
+  /** Fetch the DPDP Act 2023 Section 5 itemized notice & Data Fiduciary metadata. */
+  notice: () => get('/api/dpdp/notice'),
+  /** Submit a DPDP Data Principal rights or consent-withdrawal request (Sections 6(4), 11, 12, 13, 14). */
+  submitRequest: (payload) => post('/api/dpdp/requests', payload),
+};
+
+export default { health, bookings, screening, professionals, rooms, contact, assistant, dpdp, prescriptions, subscribers, payments };

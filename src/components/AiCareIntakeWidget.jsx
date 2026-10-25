@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { assistant } from '../lib/api';
 import { careWaHref, isIndiaMobile } from '../lib/patientReach';
+import DpdpConsentNotice from './DpdpConsentNotice';
 
 const DEFAULT_PROMPTS = [
   {
@@ -266,6 +267,7 @@ export default function AiCareIntakeWidget({
                       : `Request ${analysis.recommended_specialist?.label} callback →`}
                   </button>
                 </div>
+                <DpdpConsentNotice compact />
                 {leadError && <p className="ai-triage-error" role="alert">{leadError}</p>}
               </form>
             )}

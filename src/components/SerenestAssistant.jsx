@@ -317,6 +317,10 @@ export default function SerenestAssistant() {
                       ? 'Registering request…'
                       : `Let AI book my ${latestRec.practitioner_label || 'care'} callback →`}
                   </button>
+                  <p style={{ margin: 0, fontSize: '10.5px', lineHeight: 1.4, color: 'var(--muted)' }}>
+                    DPDP Act 2023: 18+ / guardian consent to process contact &amp; intake for care callback.{' '}
+                    <Link to="/privacy#dpdp-rights-portal" onClick={() => setOpen(false)}>Rights &amp; withdrawal →</Link>
+                  </p>
                 </form>
               )}
 

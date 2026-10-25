@@ -4,6 +4,7 @@ import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { useSectionReveal } from '../hooks/useReveal';
 import ImagePlaceholder from '../components/ImagePlaceholder';
+import DpdpConsentNotice from '../components/DpdpConsentNotice';
 import { assistant } from '../lib/api';
 import {
   CARE_PHONE_DISPLAY,
@@ -350,6 +351,7 @@ export default function HomePage() {
                           {acquiring ? 'Registering…' : `Request ${aiResult.practitioner_label} callback →`}
                         </button>
                       </div>
+                      <DpdpConsentNotice compact />
                       {acquireError && <p className="ai-triage-error" role="alert">{acquireError}</p>}
                     </form>
                   )}

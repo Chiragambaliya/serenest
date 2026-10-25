@@ -7,6 +7,7 @@ import { ROUTE_SEO } from '../lib/seo';
 import { useAuth } from '../lib/useAuth';
 import { trackEvent } from '../lib/analytics';
 import { screeningNote, suggestRoleFromScreening } from '../lib/bookingHandoff';
+import DpdpConsentNotice from '../components/DpdpConsentNotice';
 import {
   BOOKING_STEPS,
   CARE_PHONE_DISPLAY,
@@ -771,9 +772,13 @@ export default function BookingPage() {
                   <label className="consent">
                     <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} />
                     <span>
-                      I consent to being contacted about this appointment and acknowledge this is not for emergencies.
+                      I confirm I am 18+ (or a lawful guardian under DPDP Act Sec 9), consent to Serenest processing my contact &amp; intake details to arrange this teleconsultation (<Link to="/consent">Teleconsultation Consent</Link>), and acknowledge this is not for emergencies.
                     </span>
                   </label>
+
+                  <div className="field-wide">
+                    <DpdpConsentNotice />
+                  </div>
                 </div>
 
                 <div className="booking-actions">

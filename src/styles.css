@@ -6058,6 +6058,69 @@ button.step-chip:disabled {
   margin-top: 5px;
 }
 
+/* ── DPDP Act, 2023 Inline Notice & Self-Service Rights Portal ── */
+.dpdp-inline-notice {
+  font-size: 11.5px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+
+.dpdp-inline-notice__summary a,
+.dpdp-inline-notice__box a {
+  color: #3c4a2c;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dpdp-inline-notice__details {
+  margin-top: 5px;
+}
+
+.dpdp-inline-notice__details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #3c4a2c;
+  user-select: none;
+}
+
+.dpdp-inline-notice__box {
+  margin-top: 6px;
+  padding: 10px 12px;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--ink-2);
+  display: grid;
+  gap: 5px;
+}
+
+.dpdp-inline-notice__box p {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+}
+
+.dpdp-notice-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 10px;
+}
+
+.dpdp-notice-item {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 13px;
+}
+
+.dpdp-rights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr));
+  gap: 10px;
+}
+
 /* ============================================================
    Editorial page namespace — `.ed-*`.
    Reuses the main shell and sage/cream palette.

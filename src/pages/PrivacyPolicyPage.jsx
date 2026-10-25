@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { openPrivacyChoices } from '../lib/privacyConsent';
+import DpdpRightsPortal from '../components/DpdpRightsPortal';
 
 const PRINCIPLES = [
   {
@@ -39,10 +40,10 @@ const DATA_USES = [
 ];
 
 const RIGHTS = [
-  { title: 'Access', body: 'Ask what personal data we hold about you.' },
-  { title: 'Correction', body: 'Ask us to correct incomplete or inaccurate details.' },
-  { title: 'Deletion', body: 'Request deletion, subject to medical and financial record duties.' },
-  { title: 'Grievance', body: 'Raise a privacy concern and receive a clear response.' },
+  { title: 'Access (Sec 11)', body: 'Obtain a summary of personal data processed and the Data Processors it was shared with.' },
+  { title: 'Correction & Erasure (Sec 12)', body: 'Correct inaccurate details or request erasure when retention is no longer required by medical law.' },
+  { title: 'Withdraw Consent (Sec 6(4))', body: 'Withdraw consent online as easily as it was given, and revoke optional analytics anytime.' },
+  { title: 'Grievance & Nomination (Sec 13–14)', body: 'Raise a privacy grievance or nominate an individual to exercise your rights in case of incapacity.' },
 ];
 
 const SERVICE_PROVIDERS = [
@@ -50,6 +51,11 @@ const SERVICE_PROVIDERS = [
     category: 'Cloud hosting, database and authentication',
     providers: 'Render and Supabase',
     purpose: 'Host the service, secure accounts, and store platform records.',
+  },
+  {
+    category: 'AI clinical intake & pattern analysis',
+    providers: 'Serenest On-Server Clinical Engine (and OpenAI API when configured)',
+    purpose: 'Non-diagnostic specialist matching, screening pattern analysis, and clinician brief structuring. Never used for ad profiling.',
   },
   {
     category: 'Video consultation',
@@ -166,15 +172,18 @@ export default function PrivacyPolicyPage() {
               </article>
             ))}
           </div>
-          <div className="privacy-page__actions">
+          <div className="privacy-page__actions" style={{ marginBottom: 32 }}>
             <button className="btn btn-primary" type="button" onClick={openPrivacyChoices}>
-              Manage privacy choices
+              Manage cookie &amp; analytics choices
             </button>
-            <a className="btn btn-ghost" href="mailto:support@serenest.in?subject=Privacy%20request">
-              Make a privacy request
+            <a className="btn btn-ghost" href="#dpdp-rights-portal">
+              Open DPDP Rights Portal ↓
             </a>
             <Link className="btn btn-ghost" to="/grievance-policy">Grievance process</Link>
           </div>
+
+          <DpdpRightsPortal />
+
           <div className="callout" style={{ marginTop: 40 }}>
             <div className="callout-title">Security and necessary disclosure</div>
             <p className="muted" style={{ margin: 0 }}>
@@ -217,7 +226,7 @@ export default function PrivacyPolicyPage() {
                   This Privacy Policy applies to serenest.in, Serenest accounts, appointment and
                   teleconsultation services, mental-health checks, professional services,
                   support channels, and related communications. It applies to website visitors, patients,
-                  guardians, professionals, learners, and people who contact us.
+                  guardians, professionals, and people who contact us.
                 </p>
                 <p>
                   Serenest Education Pvt Ltd (&quot;Serenest&quot;, &quot;we&quot;, &quot;us&quot;) is the

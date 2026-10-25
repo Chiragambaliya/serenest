@@ -9,6 +9,7 @@ import { buildBookPath, suggestRoleFromScreening } from '../lib/bookingHandoff';
 import { careWaHref } from '../lib/patientReach';
 import CrisisSafetyPanel from '../components/screening/CrisisSafetyPanel';
 import ScreeningResultPanel from '../components/screening/ScreeningResultPanel';
+import DpdpConsentNotice from '../components/DpdpConsentNotice';
 import '../styles/screening.css';
 
 /**
@@ -281,6 +282,7 @@ export default function MoodAnxietyPathwayPage() {
                             {submitting ? 'Saving…' : 'Save analysis & request callback →'}
                           </button>
                         </div>
+                        <DpdpConsentNotice compact />
                         {submitError ? <p className="ai-triage-error" role="alert">{submitError}</p> : null}
                       </form>
                     )}

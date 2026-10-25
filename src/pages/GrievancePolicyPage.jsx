@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import DpdpRightsPortal from '../components/DpdpRightsPortal';
 
 const UPDATED = '7 August 2026';
 
@@ -32,6 +33,8 @@ export default function GrievancePolicyPage() {
       <section className="section">
         <div className="container" style={{ maxWidth: 780 }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+
+            <DpdpRightsPortal defaultType="grievance" compact />
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 14 }}>How to raise a grievance</h2>

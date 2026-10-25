@@ -53,7 +53,7 @@ export default function CookieConsent() {
         <h2 id="privacy-banner-title">Analytics stay off unless you allow them.</h2>
         <p id="privacy-banner-description">
           Essential storage keeps sign-in working. No ad trackers, ever.{' '}
-          <Link to="/privacy">Privacy</Link> · <Link to="/cookie-policy">Cookies</Link>
+          <Link to="/privacy">Privacy</Link> · <Link to="/privacy#dpdp-rights-portal">DPDP Rights</Link> · <Link to="/cookie-policy">Cookies</Link>
         </p>
       </div>
       <div className="privacy-banner__actions">

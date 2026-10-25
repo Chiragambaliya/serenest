@@ -8,6 +8,7 @@ import { assistant } from '../lib/api';
 import { careWaHref, isIndiaMobile } from '../lib/patientReach';
 import CheckCard from '../components/screening/CheckCard';
 import MentalHealthSnapshot from '../components/screening/MentalHealthSnapshot';
+import DpdpConsentNotice from '../components/DpdpConsentNotice';
 import '../styles/screening.css';
 
 const SYMPTOM_CHIPS = [
@@ -362,6 +363,7 @@ export default function ScreeningPage() {
                             : `Save analysis & request ${analysis.recommended_specialist?.label} callback →`}
                         </button>
                       </div>
+                      <DpdpConsentNotice compact />
                       {leadError && <p className="ai-triage-error" role="alert">{leadError}</p>}
                     </form>
                   )}

@@ -21,6 +21,12 @@ import {
   buildAiCareCatalog,
   renderLlmsTxt,
 } from './src/server/aiAssistant.js';
+import {
+  DPDP_NOTICE_VERSION,
+  DPDP_FIDUCIARY,
+  DPDP_ITEMIZED_NOTICE,
+  validateDpdpRequest,
+} from './src/lib/dpdp.js';
 import cron from 'node-cron';
 
 // ── Setup ────────────────────────────────────────────────────
@@ -671,6 +677,17 @@ app.post('/api/bookings', async (req, res) => {
 });
 
 async function persistBookingRecord(record) {
+  const consentedAt = new Date().toISOString();
+  captureFallbackLead('dpdp_consent_audit', {
+    id: crypto.randomUUID(),
+    notice_version: DPDP_NOTICE_VERSION,
+    consented_at: consentedAt,
+    purpose: 'teleconsultation_booking_and_intake',
+    patient_name: record.patient_name,
+    patient_phone: record.patient_phone,
+    practitioner_type: record.practitioner_type,
+  });
+
   if (supabase) {
     const { data, error } = await supabase
       .from('appointments')
@@ -680,14 +697,23 @@ async function persistBookingRecord(record) {
 
     if (!error && data) {
       notify.booking(data);
-      return data;
+      return {
+        ...data,
+        dpdp_notice_version: DPDP_NOTICE_VERSION,
+        dpdp_consented_at: consentedAt,
+      };
     }
     console.error('[persistBookingRecord]', error);
   }
 
   // DB missing or insert failed — never turn away a patient. Alert the team
   // and persist the lead to the fallback file instead of erroring out.
-  const fallback = { id: crypto.randomUUID(), ...record };
+  const fallback = {
+    id: crypto.randomUUID(),
+    ...record,
+    dpdp_notice_version: DPDP_NOTICE_VERSION,
+    dpdp_consented_at: consentedAt,
+  };
   captureFallbackLead('booking', fallback);
   notify.booking(fallback);
   return fallback;
@@ -2929,6 +2955,87 @@ app.post('/api/assistant/chat', (req, res, next) => {
 /** GET /api/ai/catalog — machine-readable care catalog for AI agents */
 app.get('/api/ai/catalog', (_req, res) => {
   return ok(res, buildAiCareCatalog(SITE_ORIGIN));
+});
+
+// ══════════════════════════════════════════════════════════════
+//  DPDP ACT 2023 — DATA PRINCIPAL RIGHTS & CONSENT WITHDRAWAL
+// ══════════════════════════════════════════════════════════════
+
+/** GET /api/dpdp/notice — machine- & UI-readable Section 5 itemized notice */
+app.get('/api/dpdp/notice', (_req, res) => {
+  return ok(res, {
+    fiduciary: DPDP_FIDUCIARY,
+    notice: DPDP_ITEMIZED_NOTICE,
+  });
+});
+
+/**
+ * POST /api/dpdp/requests
+ * Submit a Data Principal rights request under Sections 6(4), 11, 12, 13, or 14
+ * of the Digital Personal Data Protection Act, 2023.
+ */
+app.post('/api/dpdp/requests', async (req, res) => {
+  const check = validateDpdpRequest(req.body || {});
+  if (!check.valid) {
+    return err(res, check.error, 400);
+  }
+
+  const s = check.sanitized;
+  const refId = `DPDP-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+  const createdAt = new Date().toISOString();
+
+  const record = {
+    id: refId,
+    ...s,
+    status: 'received',
+    created_at: createdAt,
+  };
+
+  // Persist to fallback audit log and also forward to contact_messages if DB is connected
+  captureFallbackLead('dpdp_request', record);
+
+  if (supabase) {
+    try {
+      await supabase.from('contact_messages').insert({
+        name: s.name,
+        email: s.email,
+        phone: s.phone,
+        subject: `[${refId}] DPDP ${s.dpdp_section} — ${s.request_label}`,
+        message: JSON.stringify(record),
+      });
+    } catch (e) {
+      console.warn('[POST /api/dpdp/requests] DB insert skipped:', e?.message);
+    }
+  }
+
+  notify.contact({
+    name: s.name,
+    email: s.email,
+    phone: s.phone,
+    subject: `[${refId}] DPDP ${s.dpdp_section} — ${s.request_label}`,
+    message:
+      `DPDP Act 2023 Request (${s.request_label} · ${s.dpdp_section})\n` +
+      `Reference: ${refId}\n` +
+      (s.nominee_name ? `Nominee: ${s.nominee_name} (${s.nominee_relation || 'Representative'})\n` : '') +
+      (s.details ? `Details: ${s.details}` : 'No additional details.'),
+  });
+
+  return ok(
+    res,
+    {
+      request: record,
+      fiduciary: DPDP_FIDUCIARY,
+    },
+    201,
+  );
+});
+
+/** GET /api/dpdp/requests — admin only — list all DPDP Data Principal requests */
+app.get('/api/dpdp/requests', (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  const requests = fallbackLeadRecords('dpdp_request');
+  const audits = fallbackLeadRecords('dpdp_consent_audit');
+  return ok(res, { requests, consent_audits_count: audits.length });
 });
 
 /** GET /llms.txt — LLM-friendly index of Serenest Care (no Academy) */

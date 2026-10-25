@@ -7,6 +7,7 @@ import { careWaHref, isIndiaMobile } from '../../lib/patientReach';
 import ScribaInsight from './ScribaInsight';
 import CheckPrivacyPanel from './CheckPrivacyPanel';
 import CheckEvidencePanel from './CheckEvidencePanel';
+import DpdpConsentNotice from '../DpdpConsentNotice';
 import { buildScribaInsight } from '../../lib/mentalHealthCenter';
 
 function BandScale({ tool, value, max, band }) {
@@ -319,6 +320,7 @@ export default function ScreeningResultPanel({
                         : `Send analysis & request ${aiAnalysis?.recommended_specialist?.label || 'clinician'} callback →`}
                     </button>
                   </div>
+                  <DpdpConsentNotice compact />
                   {leadError && <p className="ai-triage-error" role="alert">{leadError}</p>}
                 </form>
               )}
