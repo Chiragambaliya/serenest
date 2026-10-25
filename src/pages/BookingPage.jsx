@@ -8,17 +8,25 @@ import { useAuth } from '../lib/useAuth';
 import { trackEvent } from '../lib/analytics';
 import { screeningNote, suggestRoleFromScreening } from '../lib/bookingHandoff';
 import {
-  BOOKING_STEPS,
   CARE_PHONE_DISPLAY,
   CARE_TEL_HREF,
   canContinueContactStep,
   careWaHref,
+  formatSlotTime,
   indiaMobileDigits,
   isIndiaMobile,
   isPatientNameValid,
+  upcomingSlots,
 } from '../lib/patientReach';
 
 const DEFAULT_FEE_INR = 499;
+
+const PRACTITIONER_TYPES = [
+  { id: 'psychiatrist', label: 'Psychiatrist' },
+  { id: 'psychologist', label: 'Psychologist' },
+  { id: 'therapist', label: 'Therapist' },
+  { id: 'counsellor', label: 'Counsellor' },
+];
 
 function loadRazorpay() {
   return new Promise((resolve) => {
@@ -31,56 +39,36 @@ function loadRazorpay() {
   });
 }
 
-const PRACTITIONER_TYPES = [
-  { id: 'psychiatrist', label: 'Psychiatrist' },
-  { id: 'psychologist', label: 'Psychologist' },
-  { id: 'therapist', label: 'Therapist' },
-  { id: 'counsellor', label: 'Counsellor' },
-];
-
-function pad2(n) {
-  return String(n).padStart(2, '0');
-}
-
-function makeSlots() {
-  const now = new Date();
-  const day0 = new Date(now);
-  day0.setHours(0, 0, 0, 0);
-
-  const days = [];
-  for (let d = 0; d < 7; d += 1) {
-    const dt = new Date(day0);
-    dt.setDate(day0.getDate() + d);
-    const label = dt.toLocaleDateString(undefined, { weekday: 'short', day: '2-digit', month: 'short' });
-    days.push({ key: dt.toISOString().slice(0, 10), label, date: dt });
-  }
-
-  const times = ['10:00', '11:30', '13:00', '15:30', '17:00', '19:00'];
-  return { days, times };
+/** Keep a pasted +91 or leading 0 down to the 10 digits the patient is typing. */
+function phoneInputDigits(value) {
+  const d = String(value || '').replace(/\D/g, '');
+  if (d.length > 10 && d.startsWith('91')) return d.slice(2, 12);
+  if (d.startsWith('0')) return d.replace(/^0+/, '').slice(0, 10);
+  return d.slice(0, 10);
 }
 
 export default function BookingPage() {
   useSEO({ path: '/book', ...ROUTE_SEO['/book'] });
   const { user } = useAuth();
   const [searchParams] = useSearchParams();
-  const preProId    = searchParams.get('pid') ?? '';
-  const preProName  = searchParams.get('pname') ?? '';
-  const preProRole  = searchParams.get('prole') ?? '';
+  const preProId = searchParams.get('pid') ?? '';
+  const preProName = searchParams.get('pname') ?? '';
+  const preProRole = searchParams.get('prole') ?? '';
   const preProLabel = searchParams.get('prolabel') ?? '';
-  const preProFee   = searchParams.get('pfee') ?? '';
-  const preProDur   = searchParams.get('pduration') ?? '';
-  const preMode     = searchParams.get('mode') ?? '';
-  const preLang     = searchParams.get('lang') ?? '';
-  const preName     = searchParams.get('name') ?? '';
-  const prePhone    = searchParams.get('phone') ?? '';
-  const preEmail    = searchParams.get('email') ?? '';
-  const prePhq      = searchParams.get('phq') ?? '';
-  const preGad      = searchParams.get('gad') ?? '';
-  const prePhqSev   = searchParams.get('phqsev') ?? '';
-  const preGadSev   = searchParams.get('gadsev') ?? '';
-  const preTool     = searchParams.get('tool') ?? '';
-  const preScore    = searchParams.get('score') ?? '';
-  const preBand     = searchParams.get('band') ?? '';
+  const preProFee = searchParams.get('pfee') ?? '';
+  const preProDur = searchParams.get('pduration') ?? '';
+  const preMode = searchParams.get('mode') ?? '';
+  const preLang = searchParams.get('lang') ?? '';
+  const preName = searchParams.get('name') ?? '';
+  const prePhone = searchParams.get('phone') ?? '';
+  const preEmail = searchParams.get('email') ?? '';
+  const prePhq = searchParams.get('phq') ?? '';
+  const preGad = searchParams.get('gad') ?? '';
+  const prePhqSev = searchParams.get('phqsev') ?? '';
+  const preGadSev = searchParams.get('gadsev') ?? '';
+  const preTool = searchParams.get('tool') ?? '';
+  const preScore = searchParams.get('score') ?? '';
+  const preBand = searchParams.get('band') ?? '';
   const hasPro = Boolean(preProName);
 
   const suggestedRole = preProRole
@@ -95,27 +83,50 @@ export default function BookingPage() {
     [prePhq, preGad, prePhqSev, preGadSev, preTool, preScore, preBand],
   );
 
-  const { days, times } = useMemo(() => makeSlots(), []);
-  const [step, setStep] = useState(1);
-
-  const [practitionerType, setPractitionerType] = useState(suggestedRole || 'psychiatrist');
+  const slots = useMemo(() => upcomingSlots(new Date()), []);
+  const [practitionerType, setPractitionerType] = useState(
+    PRACTITIONER_TYPES.some((t) => t.id === suggestedRole) ? suggestedRole : 'psychiatrist',
+  );
   const [mode, setMode] = useState(
     ['video', 'audio', 'chat'].includes(preMode) ? preMode : 'video',
   );
+  const [dayKey, setDayKey] = useState(slots[0]?.key ?? '');
+  const [time, setTime] = useState(slots[0]?.times[0] ?? '10:00');
 
-  // ── Counsellor picker (only when no professional was preselected via deep link) ──
   const [directory, setDirectory] = useState([]);
-  const [directoryLoading, setDirectoryLoading] = useState(false);
   const [selectedProId, setSelectedProId] = useState('');
 
+  const [name, setName] = useState(preName);
+  const [phone, setPhone] = useState(phoneInputDigits(prePhone));
+  const [email, setEmail] = useState(preEmail);
+  const [language, setLanguage] = useState(preLang || 'English');
+  const [note, setNote] = useState(handoffNote);
+  const [consent, setConsent] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(Boolean(handoffNote || preEmail));
+
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
+  const [confirmation, setConfirmation] = useState(null);
+  const [contactHint, setContactHint] = useState('');
+  const [paymentsOn, setPaymentsOn] = useState(false);
+  const [patientEmailOn, setPatientEmailOn] = useState(false);
+
+  const nameRef = useRef(null);
+  const phoneRef = useRef(null);
+  const consentRef = useRef(null);
+
   useEffect(() => {
-    if (hasPro) return;
-    setDirectoryLoading(true);
+    if (hasPro) return undefined;
+    let cancelled = false;
     professionalsApi
       .directory()
-      .then((json) => setDirectory(json.professionals ?? []))
-      .catch(() => setDirectory([]))
-      .finally(() => setDirectoryLoading(false));
+      .then((json) => {
+        if (!cancelled) setDirectory(json.professionals ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setDirectory([]);
+      });
+    return () => { cancelled = true; };
   }, [hasPro]);
 
   const directoryForType = useMemo(
@@ -128,45 +139,20 @@ export default function BookingPage() {
     [directoryForType, selectedProId],
   );
 
-  // Reset the picked counsellor whenever the practitioner type changes —
-  // a previously selected id may not belong to the new type's list.
   useEffect(() => {
     setSelectedProId('');
   }, [practitionerType]);
-  const [dayKey, setDayKey] = useState(days[0]?.key ?? '');
-  const [time, setTime] = useState(times[0] ?? '');
 
-  const [name, setName] = useState(preName);
-  const [phone, setPhone] = useState(prePhone);
-  const [email, setEmail] = useState(preEmail);
-  const [language, setLanguage] = useState(preLang || 'English');
-  const [note, setNote] = useState(handoffNote);
-  const [consent, setConsent] = useState(false);
-
-  const [submitting, setSubmitting] = useState(false);
-  const [submitError, setSubmitError] = useState(null);
-  const [confirmation, setConfirmation] = useState(null);
-  const [contactHint, setContactHint] = useState('');
-  const shellRef = useRef(null);
-  const nameRef = useRef(null);
-  const phoneRef = useRef(null);
-  const consentRef = useRef(null);
-  const [paymentsOn, setPaymentsOn] = useState(false);
-  const [patientEmailOn, setPatientEmailOn] = useState(false);
-
-  // Prefill from signed-in patient when query params didn't already set fields.
   useEffect(() => {
     if (!user) return;
     const meta = user.user_metadata || {};
     const full = meta.full_name || meta.name || '';
     setName((prev) => prev || full);
     setEmail((prev) => prev || user.email || '');
-    const phoneMeta = meta.phone || user.phone || '';
-    const digits = String(phoneMeta).replace(/\D/g, '').slice(-10);
+    const digits = phoneInputDigits(meta.phone || user.phone || '');
     if (digits.length === 10) setPhone((prev) => prev || digits);
   }, [user]);
 
-  // Detect pay-at-booking vs request-first, and whether confirmations email.
   useEffect(() => {
     health()
       .then((h) => {
@@ -179,16 +165,56 @@ export default function BookingPage() {
       });
   }, []);
 
-  useEffect(() => {
-    if (step === 1) return;
-    shellRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, [step]);
+  const activeDay = slots.find((day) => day.key === dayKey) ?? slots[0];
+  const dayLabel = activeDay?.label ?? '';
+  const selectedTypeLabel = PRACTITIONER_TYPES.find((t) => t.id === practitionerType)?.label ?? 'Psychiatrist';
+  const selectedModeLabel = CONSULTATION_MODES.find((m) => m.id === mode)?.label ?? 'Video';
+  const phoneClean = indiaMobileDigits(phone);
+  const isPhoneValid = isIndiaMobile(phone);
+  const nameMissing = !isPatientNameValid(name);
+  const ready = canContinueContactStep({ name, phone, consent });
+  const showNameError = Boolean(contactHint) && nameMissing;
+  const showPhoneError = Boolean(contactHint) && !isPhoneValid;
+  const showConsentError = Boolean(contactHint) && !consent;
+  const timeLabel = formatSlotTime(time);
 
   const payAmount = hasPro
     ? (Number(preProFee) || DEFAULT_FEE_INR)
     : (Number(selectedPro?.fee_inr) || DEFAULT_FEE_INR);
 
-  async function handleSubmit() {
+  const clinicianName = hasPro ? preProName : (selectedPro?.full_name ?? '');
+
+  function chooseDay(key) {
+    const day = slots.find((item) => item.key === key);
+    setDayKey(key);
+    if (day && !day.times.includes(time)) setTime(day.times[0]);
+  }
+
+  function explainGap() {
+    if (nameMissing) {
+      setContactHint('Add your name so we know who to call.');
+      nameRef.current?.focus();
+      return false;
+    }
+    if (!isPhoneValid) {
+      setContactHint('Enter a 10-digit mobile number starting with 6–9.');
+      phoneRef.current?.focus();
+      return false;
+    }
+    if (!consent) {
+      setContactHint('Tick the box so we can contact you about this appointment.');
+      consentRef.current?.focus();
+      return false;
+    }
+    setContactHint('');
+    return true;
+  }
+
+  async function handleSubmit(event) {
+    event.preventDefault();
+    if (submitting) return;
+    if (!explainGap()) return;
+
     setSubmitError(null);
     setSubmitting(true);
 
@@ -207,7 +233,6 @@ export default function BookingPage() {
     };
 
     try {
-      // No payment required — create the booking directly.
       if (!paymentsOn) {
         const res = await bookings.create(bookingData);
         setConfirmation(res.booking);
@@ -215,9 +240,8 @@ export default function BookingPage() {
         return;
       }
 
-      // Payment required — pay first, then create the booking on success.
-      const ready = await loadRazorpay();
-      if (!ready) throw new Error('Could not load the payment gateway. Please try again.');
+      const razorpayReady = await loadRazorpay();
+      if (!razorpayReady) throw new Error('Could not load the payment gateway. Please try again.');
 
       const proId = hasPro ? preProId : (selectedProId || undefined);
       const order = await payments.order({ professional_id: proId });
@@ -247,8 +271,8 @@ export default function BookingPage() {
               setConfirmation(res.booking);
               trackEvent('book_request_submitted', { practitioner_type: practitionerType, mode, paid: true });
               resolve();
-            } catch (e) {
-              reject(e);
+            } catch (err) {
+              reject(err);
             }
           },
           modal: {
@@ -267,180 +291,168 @@ export default function BookingPage() {
     }
   }
 
-  const dayLabel = useMemo(() => days.find((d) => d.key === dayKey)?.label ?? '', [days, dayKey]);
-  const selectedTypeLabel = useMemo(
-    () => PRACTITIONER_TYPES.find((t) => t.id === practitionerType)?.label ?? 'Practitioner',
-    [practitionerType],
-  );
-  const selectedModeLabel = useMemo(
-    () => CONSULTATION_MODES.find((m) => m.id === mode)?.label ?? 'Video',
-    [mode],
-  );
-
-  const phoneClean = indiaMobileDigits(phone);
-  const isPhoneValid = isIndiaMobile(phone);
-  const canContinueYou = canContinueContactStep({ name, phone, consent });
-  const nameMissing = !isPatientNameValid(name);
-  const showNameError = Boolean(contactHint) && nameMissing;
-  const showPhoneError = Boolean(contactHint) && !isPhoneValid;
-  const showConsentError = Boolean(contactHint) && !consent;
-
-  function goToCare() {
-    if (nameMissing) {
-      setContactHint('Add your name so we know who to call.');
-      nameRef.current?.focus();
-      return;
-    }
-    if (!isPhoneValid) {
-      setContactHint('Enter a 10-digit Indian mobile number starting with 6–9.');
-      phoneRef.current?.focus();
-      return;
-    }
-    if (!consent) {
-      setContactHint('Tick consent so we can contact you about this appointment.');
-      consentRef.current?.focus();
-      return;
-    }
-    setContactHint('');
-    setStep(2);
-  }
+  const whenPhrase = dayLabel === 'Today' || dayLabel === 'Tomorrow' ? dayLabel.toLowerCase() : dayLabel;
+  const waText = clinicianName
+    ? `Hi, I'd like a session with ${clinicianName} ${whenPhrase} at ${timeLabel}.`
+    : `Hi, I'd like a ${selectedTypeLabel.toLowerCase()} session ${whenPhrase} at ${timeLabel}.`;
 
   return (
-    <div className="page">
-      <section className="section about-hero">
-        <div className="container">
-          <div className="section-head about-hero-head">
-            <p className="kicker">Booking</p>
-            <h1 className="page-title">
-              {hasPro ? `Request a session with ${preProName}` : 'Request an appointment in minutes.'}
-            </h1>
-            <p className="about-subtext">
+    <div className="book-easy">
+      <div className="book-easy__card">
+        {confirmation ? (
+          <div className="booking-success">
+            <div className="booking-success__mark" aria-hidden="true">✓</div>
+            <h1>Request received</h1>
+            <p className="booking-success__lead">
+              Thank you, <strong>{name.split(' ')[0]}</strong>. We have your request for a{' '}
+              <strong>{selectedTypeLabel.toLowerCase()}</strong> {selectedModeLabel.toLowerCase()} session
+              {clinicianName ? <> with <strong>{clinicianName}</strong></> : null}
+              {' '}on <strong>{dayLabel}</strong> at <strong>{timeLabel}</strong>.
+            </p>
+            <div className="booking-success__ref">
+              <span>Booking reference</span>
+              <strong>{confirmation.id?.slice(0, 8).toUpperCase()}</strong>
+            </div>
+            <p className="booking-success__lead">
+              {confirmation.status === 'confirmed'
+                ? 'Your session is confirmed. Join from your patient dashboard at the booked time.'
+                : <>We will call or WhatsApp <strong>+91 {phoneClean}</strong> to lock the time. You do not pay until then.</>}
+            </p>
+            <div className="booking-success__actions">
+              <a className="btn btn-primary" href={careWaHref(`Hi, I just requested a session (Ref: ${confirmation.id?.slice(0, 8).toUpperCase()})`)} target="_blank" rel="noreferrer">
+                Chat on WhatsApp
+              </a>
+              {confirmation.status === 'confirmed' && (
+                <Link className="btn btn-ghost" to={`/consultation/${confirmation.id}?mode=${mode}`}>
+                  Open consultation room
+                </Link>
+              )}
+              <Link className="btn btn-ghost" to="/">Back to home</Link>
+            </div>
+          </div>
+        ) : (
+          <>
+            <p className="book-easy__kicker">No payment on this form</p>
+            <h1>{hasPro ? `Request ${preProName}` : 'Request an appointment'}</h1>
+            <p className="book-easy__lead">
               {hasPro
-                ? `${preProLabel}${preProFee ? ` · ₹${preProFee}` : ''}${preProDur ? ` · ${preProDur} min` : ''}. Start with your name and number — we'll confirm the slot by phone or WhatsApp. You do not pay until then.`
-                : 'Start with your name and number, then pick a preferred time. We confirm by phone or WhatsApp — you do not pay until the slot is locked.'}
+                ? `${preProLabel || selectedTypeLabel}${preProFee ? ` · ₹${preProFee}` : ''}${preProDur ? ` · ${preProDur} min` : ''}. Add your name and number. We confirm by phone or WhatsApp.`
+                : 'Add your name and number. A time is already picked — change it only if you want to. We confirm by phone or WhatsApp.'}
             </p>
-            <p className="booking-reach">
-              <a href={CARE_TEL_HREF}>Call {CARE_PHONE_DISPLAY}</a>
-              <a href={careWaHref()} target="_blank" rel="noreferrer">WhatsApp us now</a>
-            </p>
-          </div>
-          {hasPro && (
-            <div className="pro-booking-banner">
-              <div className="pro-booking-avatar">{preProName.charAt(0).toUpperCase()}</div>
-              <div>
-                <div className="pro-booking-name">{preProName}</div>
-                <div className="pro-booking-meta">
-                  {preProLabel}
-                  {preProFee ? ` · ₹${preProFee}` : ''}
-                  {preProDur ? ` · ${preProDur} min session` : ''}
-                </div>
+
+            {handoffNote && (
+              <div className="callout book-easy__note">
+                <div className="callout-title">From your check-in</div>
+                <p>{handoffNote}</p>
               </div>
-              <Link to="/patient/find-professional" className="btn btn-ghost" style={{ marginLeft: 'auto' }}>
-                Change
-              </Link>
-            </div>
-          )}
-          {handoffNote && (
-            <div className="callout" style={{ marginTop: 16, maxWidth: 720 }}>
-              <div className="callout-title">Screening carried forward</div>
-              <p className="muted" style={{ margin: 0 }}>{handoffNote}</p>
-            </div>
-          )}
-        </div>
-      </section>
+            )}
 
-      {/* Optional account — never blocks the booking form */}
-      {!user && (
-        <div style={{ background: 'var(--brand-50, #f4f6f0)', borderBottom: '1px solid var(--border)' }}>
-          <div className="container" style={{ padding: '0.65rem 1.25rem', display: 'flex', alignItems: 'center', flexWrap: 'wrap', gap: '0.5rem 1rem' }}>
-            <p style={{ flex: 1, minWidth: 200, margin: 0, fontSize: '0.82rem', color: 'var(--text-muted)' }}>
-              Booking as guest. Optional:{' '}
-              <Link
-                to={`/patient/login?from=${encodeURIComponent(`${typeof window !== 'undefined' ? window.location.pathname + window.location.search : '/book'}`)}`}
-                state={{ mode: 'login', from: typeof window !== 'undefined' ? `${window.location.pathname}${window.location.search}` : '/book' }}
-                style={{ color: 'var(--brand-700)', fontWeight: 700 }}
-              >
-                Sign in
-              </Link>
-              {' '}to save appointments later.
-            </p>
-          </div>
-        </div>
-      )}
-
-      <section className="section">
-        <div className="container">
-          <div className="booking-shell tile" ref={shellRef}>
-            <div className="booking-top">
-              <div className="booking-steps" aria-label="Booking steps">
-                {BOOKING_STEPS.map((s) => (
-                  <button
-                    key={s.id}
-                    type="button"
-                    className={`step-chip ${step === s.id ? 'is-active' : ''} ${step > s.id ? 'is-done' : ''}`}
-                    aria-current={step === s.id ? 'step' : undefined}
-                    disabled={Boolean(confirmation) || s.id > step}
-                    onClick={() => {
-                      if (s.id < step) setStep(s.id);
-                    }}
-                  >
-                    <span className="step-dot" aria-hidden="true" />
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-
-              <div className="booking-summary" aria-label="Selection summary">
-                <div className="summary-pill">{selectedTypeLabel}</div>
-                <div className="summary-pill">{selectedModeLabel}</div>
-                <div className="summary-pill">
-                  {dayLabel} · {time}
-                </div>
-              </div>
-            </div>
-
-            {step === 1 && (
-              <div className="booking-body">
-                <div className="section-head" style={{ marginBottom: 10 }}>
-                  <p className="section-label">Step 1 of 3</p>
-                  <h2>How can we reach you?</h2>
-                  <p>We confirm by phone or WhatsApp. Share a number we can use — you do not pay on this form.</p>
-                </div>
-
-                <div className="form-grid">
-                  <label className={`field ${showNameError ? 'booking-field--invalid' : ''}`}>
-                    <span className="field-label">Full name</span>
+            <form className="book-easy__form" onSubmit={handleSubmit} noValidate>
+              <div className="book-easy__identity">
+                <label className={`field ${showNameError ? 'booking-field--invalid' : ''}`}>
+                  <span className="field-label">Your name</span>
+                  <input
+                    ref={nameRef}
+                    className="input"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    placeholder="Full name"
+                    autoComplete="name"
+                    autoFocus
+                    aria-invalid={showNameError}
+                  />
+                </label>
+                <label className={`field ${showPhoneError ? 'booking-field--invalid' : ''}`}>
+                  <span className="field-label">Mobile number</span>
+                  <div className="input-row">
+                    <span className="input-prefix">+91</span>
                     <input
-                      ref={nameRef}
+                      ref={phoneRef}
                       className="input"
-                      value={name}
-                      onChange={(e) => setName(e.target.value)}
-                      placeholder="Your name"
-                      autoComplete="name"
-                      aria-invalid={showNameError}
+                      value={phone}
+                      onChange={(e) => setPhone(phoneInputDigits(e.target.value))}
+                      placeholder="10-digit number"
+                      inputMode="numeric"
+                      autoComplete="tel"
+                      aria-invalid={showPhoneError}
                     />
-                  </label>
+                  </div>
+                </label>
+              </div>
 
-                  <label className={`field ${showPhoneError ? 'booking-field--invalid' : ''}`}>
-                    <span className="field-label">Phone (India)</span>
-                    <div className="input-row">
-                      <span className="input-prefix">+91</span>
-                      <input
-                        ref={phoneRef}
-                        className="input"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        placeholder="10-digit number"
-                        inputMode="numeric"
-                        autoComplete="tel"
-                        aria-invalid={showPhoneError || (phone.length > 0 && !isPhoneValid)}
-                      />
-                    </div>
-                    {phone.length > 0 && !isPhoneValid && (
-                      <span className="field-hint">Enter a valid 10-digit number starting with 6–9.</span>
-                    )}
-                  </label>
+              {!hasPro && (
+                <fieldset className="book-easy__set">
+                  <legend>Who</legend>
+                  <div className="book-easy__chips">
+                    {PRACTITIONER_TYPES.map((type) => (
+                      <button
+                        key={type.id}
+                        type="button"
+                        className={`book-chip ${practitionerType === type.id ? 'is-selected' : ''}`}
+                        aria-pressed={practitionerType === type.id}
+                        onClick={() => setPractitionerType(type.id)}
+                      >
+                        {type.label}
+                      </button>
+                    ))}
+                  </div>
+                </fieldset>
+              )}
 
+              <fieldset className="book-easy__set">
+                <legend>How</legend>
+                <div className="book-easy__chips">
+                  {CONSULTATION_MODES.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className={`book-chip ${mode === item.id ? 'is-selected' : ''}`}
+                      aria-pressed={mode === item.id}
+                      onClick={() => setMode(item.id)}
+                    >
+                      {item.label}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+
+              <fieldset className="book-easy__set">
+                <legend>When</legend>
+                <div className="book-easy__days" role="listbox" aria-label="Day">
+                  {slots.map((day) => (
+                    <button
+                      key={day.key}
+                      type="button"
+                      className={`book-chip book-chip--day ${dayKey === day.key ? 'is-selected' : ''}`}
+                      aria-pressed={dayKey === day.key}
+                      onClick={() => chooseDay(day.key)}
+                    >
+                      {day.label}
+                    </button>
+                  ))}
+                </div>
+                <div className="book-easy__chips" role="listbox" aria-label="Time">
+                  {(activeDay?.times ?? []).map((slot) => (
+                    <button
+                      key={slot}
+                      type="button"
+                      className={`book-chip ${time === slot ? 'is-selected' : ''}`}
+                      aria-pressed={time === slot}
+                      onClick={() => setTime(slot)}
+                    >
+                      {formatSlotTime(slot)}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+
+              <details
+                className="book-easy__more"
+                open={moreOpen}
+                onToggle={(event) => setMoreOpen(event.currentTarget.open)}
+              >
+                <summary>Email, language, or a note</summary>
+                <div className="book-easy__more-body">
                   <label className="field">
                     <span className="field-label">Email (optional)</span>
                     <input
@@ -449,354 +461,99 @@ export default function BookingPage() {
                       onChange={(e) => setEmail(e.target.value)}
                       placeholder="you@example.com"
                       autoComplete="email"
+                      inputMode="email"
                     />
                     <span className="field-hint">
                       {patientEmailOn
-                        ? "If provided, we'll send a short booking confirmation."
-                        : "Optional. We'll confirm this request on WhatsApp or phone."}
+                        ? 'If you add one, we can email a short confirmation.'
+                        : 'Optional. We confirm on WhatsApp or phone.'}
                     </span>
                   </label>
-
                   <label className="field">
-                    <span className="field-label">Preferred language</span>
+                    <span className="field-label">Language</span>
                     <select className="input" value={language} onChange={(e) => setLanguage(e.target.value)}>
                       <option>English</option>
                       <option>Hindi</option>
                       <option>Gujarati</option>
                     </select>
                   </label>
-
-                  <label className={`consent ${showConsentError ? 'booking-field--invalid' : ''}`}>
-                    <input
-                      ref={consentRef}
-                      type="checkbox"
-                      checked={consent}
-                      onChange={(e) => setConsent(e.target.checked)}
+                  {!hasPro && directoryForType.length > 0 && (
+                    <label className="field">
+                      <span className="field-label">A specific clinician (optional)</span>
+                      <select
+                        className="input"
+                        value={selectedProId}
+                        onChange={(e) => setSelectedProId(e.target.value)}
+                      >
+                        <option value="">Any available</option>
+                        {directoryForType.map((person) => (
+                          <option key={person.id} value={person.id}>
+                            {person.full_name}
+                            {person.fee_inr ? ` · ₹${person.fee_inr}` : ''}
+                            {person.city ? ` · ${person.city}` : ''}
+                          </option>
+                        ))}
+                      </select>
+                    </label>
+                  )}
+                  <label className="field">
+                    <span className="field-label">Note (optional)</span>
+                    <textarea
+                      className="input textarea"
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
+                      placeholder="What would you like help with?"
+                      rows={3}
                     />
-                    <span>
-                      I consent to being contacted about this appointment and acknowledge this is not for emergencies.
-                    </span>
                   </label>
                 </div>
+              </details>
 
-                {contactHint && !canContinueYou && (
-                  <p className="booking-gate" role="alert">{contactHint}</p>
-                )}
+              <label className={`book-easy__consent ${showConsentError ? 'booking-field--invalid' : ''}`}>
+                <input
+                  ref={consentRef}
+                  type="checkbox"
+                  checked={consent}
+                  onChange={(e) => setConsent(e.target.checked)}
+                />
+                <span>I agree to be contacted about this appointment. This is not for emergencies.</span>
+              </label>
 
-                <div className="booking-actions">
-                  <Link className="btn btn-ghost" to="/services">
-                    View services
-                  </Link>
-                  <button
-                    className="btn btn-primary"
-                    type="button"
-                    onClick={goToCare}
-                  >
-                    Continue to care →
-                  </button>
-                </div>
-              </div>
-            )}
+              {contactHint && !ready && (
+                <p className="booking-gate" role="alert">{contactHint}</p>
+              )}
+              {submitError && (
+                <p className="booking-gate" role="alert">{submitError}</p>
+              )}
 
-            {step === 2 && (
-              <div className="booking-body">
-                <div className="section-head" style={{ marginBottom: 10 }}>
-                  <p className="section-label">Step 2 of 3</p>
-                  <h2>{hasPro ? `Care with ${preProName}` : 'Choose care and a preferred time.'}</h2>
-                  {hasPro && <p className="muted">{preProLabel}{preProFee ? ` · ₹${preProFee}` : ''}{preProDur ? ` · ${preProDur} min` : ''}</p>}
-                  {!hasPro && <p>Pick who you want to see and a preferred slot. We will confirm or suggest the next available time when we reach out.</p>}
-                </div>
+              <button className="book-easy__submit" type="submit" disabled={submitting}>
+                {submitting
+                  ? (paymentsOn ? 'Opening payment…' : 'Sending…')
+                  : (paymentsOn ? `Pay ₹${payAmount} and confirm` : 'Request appointment')}
+              </button>
+              <p className="book-easy__recap">
+                {selectedTypeLabel}
+                {clinicianName ? ` · ${clinicianName}` : ''}
+                {` · ${selectedModeLabel} · ${dayLabel} · ${timeLabel}`}
+                {paymentsOn ? '' : '. You pay after we confirm.'}
+              </p>
+            </form>
 
-                <div className="form-grid">
-                  <div>
-                    <div className="field-label">Practitioner {hasPro && <span className="summary-pill" style={{ marginLeft: 6 }}>{preProLabel}</span>}</div>
-                    <div className="choice-grid">
-                      {PRACTITIONER_TYPES.map((t) => (
-                        <button
-                          key={t.id}
-                          type="button"
-                          disabled={hasPro}
-                          className={`choice-card ${practitionerType === t.id ? 'is-selected' : ''}`}
-                          onClick={() => setPractitionerType(t.id)}
-                        >
-                          {t.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {!hasPro && (
-                    <div className="field-wide">
-                      <div className="field-label">
-                        Choose a clinician <span className="muted" style={{ fontWeight: 400 }}>(optional)</span>
-                      </div>
-                      {directoryLoading ? (
-                        <p className="muted" style={{ marginTop: 8 }}>Loading available professionals…</p>
-                      ) : directoryForType.length === 0 ? (
-                        <p className="muted" style={{ marginTop: 8 }}>
-                          No verified {selectedTypeLabel.toLowerCase()}s listed yet — we'll match you with the next available one.
-                        </p>
-                      ) : (
-                        <div className="choice-grid choice-grid--modes">
-                          <button
-                            type="button"
-                            className={`choice-card choice-card--stacked ${selectedProId === '' ? 'is-selected' : ''}`}
-                            onClick={() => setSelectedProId('')}
-                          >
-                            <span className="choice-card-icon" aria-hidden="true">✨</span>
-                            <span className="choice-card-title">Any available</span>
-                            <span className="choice-card-hint">We'll match you with a verified professional</span>
-                          </button>
-                          {directoryForType.map((p) => (
-                            <button
-                              key={p.id}
-                              type="button"
-                              className={`choice-card choice-card--stacked ${selectedProId === p.id ? 'is-selected' : ''}`}
-                              onClick={() => setSelectedProId(p.id)}
-                            >
-                              <span className="choice-card-icon" aria-hidden="true">🧑‍⚕️</span>
-                              <span className="choice-card-title">{p.full_name}</span>
-                              <span className="choice-card-hint">
-                                {p.fee_inr ? `₹${p.fee_inr}` : ''}{p.duration_min ? ` · ${p.duration_min} min` : ''}{p.city ? ` · ${p.city}` : ''}
-                              </span>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-
-                  <div>
-                    <div className="field-label">Consultation mode</div>
-                    <div className="choice-grid choice-grid--modes">
-                      {CONSULTATION_MODES.map((m) => (
-                        <button
-                          key={m.id}
-                          type="button"
-                          className={`choice-card choice-card--stacked ${mode === m.id ? 'is-selected' : ''}`}
-                          onClick={() => setMode(m.id)}
-                        >
-                          <span className="choice-card-icon" aria-hidden="true">{m.icon}</span>
-                          <span className="choice-card-title">{m.label}</span>
-                          <span className="choice-card-hint">{m.hint}</span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-
-                <div className="slot-grid" style={{ marginTop: 18 }}>
-                  <div className="slot-days">
-                    {days.map((d) => (
-                      <button
-                        key={d.key}
-                        type="button"
-                        className={`slot-chip ${dayKey === d.key ? 'is-selected' : ''}`}
-                        onClick={() => setDayKey(d.key)}
-                      >
-                        {d.label}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="slot-times">
-                    {times.map((t) => (
-                      <button
-                        key={t}
-                        type="button"
-                        className={`slot-chip ${time === t ? 'is-selected' : ''}`}
-                        onClick={() => setTime(t)}
-                      >
-                        {t}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <label className="field field-wide" style={{ marginTop: 16 }}>
-                  <span className="field-label">Brief reason / notes (optional)</span>
-                  <textarea
-                    className="input textarea"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    placeholder="What would you like help with?"
-                    rows={3}
-                  />
-                </label>
-
-                <div className="booking-actions">
-                  <button className="btn btn-ghost" type="button" onClick={() => setStep(1)}>
-                    ← Back
-                  </button>
-                  <button className="btn btn-primary" type="button" onClick={() => setStep(3)}>
-                    Review request →
-                  </button>
-                </div>
-              </div>
-            )}
-
-            {step === 3 && !confirmation && (
-              <div className="booking-body">
-                <div className="section-head" style={{ marginBottom: 10 }}>
-                  <p className="section-label">Step 3 of 3</p>
-                  <h2>Confirm your request.</h2>
-                </div>
-
-                <div className="confirm-grid">
-                  <div className="confirm-card">
-                    <div className="confirm-row">
-                      <span className="confirm-k">Practitioner</span>
-                      <span className="confirm-v">{selectedTypeLabel}</span>
-                    </div>
-                    <div className="confirm-row">
-                      <span className="confirm-k">Clinician</span>
-                      <span className="confirm-v">
-                        {hasPro ? preProName : (selectedPro?.full_name ?? 'Any available')}
-                      </span>
-                    </div>
-                    <div className="confirm-row">
-                      <span className="confirm-k">Mode</span>
-                      <span className="confirm-v">{selectedModeLabel}</span>
-                    </div>
-                    <div className="confirm-row">
-                      <span className="confirm-k">Slot</span>
-                      <span className="confirm-v">
-                        {dayLabel} {time}
-                      </span>
-                    </div>
-                    {paymentsOn && (
-                      <div className="confirm-row">
-                        <span className="confirm-k">Amount</span>
-                        <span className="confirm-v"><strong>₹{payAmount}</strong></span>
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="confirm-card">
-                    <div className="confirm-row">
-                      <span className="confirm-k">Name</span>
-                      <span className="confirm-v">{name}</span>
-                    </div>
-                    <div className="confirm-row">
-                      <span className="confirm-k">Phone</span>
-                      <span className="confirm-v">+91 {phoneClean}</span>
-                    </div>
-                    <div className="confirm-row">
-                      <span className="confirm-k">Email</span>
-                      <span className="confirm-v">{email || '—'}</span>
-                    </div>
-                    <div className="confirm-row">
-                      <span className="confirm-k">Language</span>
-                      <span className="confirm-v">{language}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {note && (
-                  <div className="callout">
-                    <div className="callout-title">Your note</div>
-                    <p className="muted" style={{ margin: 0 }}>
-                      {note}
-                    </p>
-                  </div>
-                )}
-
-                {submitError && (
-                  <div style={{
-                    background: '#fdecea', border: '1px solid #f5c2c0',
-                    color: '#a02622', borderRadius: 10,
-                    padding: '12px 14px', margin: '12px 0',
-                    fontSize: '0.9rem', fontWeight: 500,
-                  }}>
-                    ⚠ {submitError}
-                  </div>
-                )}
-
-                <div className="booking-actions">
-                  <button
-                    className="btn btn-ghost"
-                    type="button"
-                    onClick={() => setStep(2)}
-                    disabled={submitting}
-                  >
-                    ← Back
-                  </button>
-                  <button
-                    className="btn btn-primary"
-                    type="button"
-                    onClick={handleSubmit}
-                    disabled={submitting}
-                  >
-                    {submitting
-                      ? (paymentsOn ? 'Opening payment…' : 'Submitting…')
-                      : (paymentsOn ? `Pay ₹${payAmount} & confirm →` : 'Request appointment →')}
-                  </button>
-                </div>
-
-                <p className="fineprint" style={{ marginTop: 12 }}>
-                  {paymentsOn
-                    ? 'Secure payment via Razorpay. You are only charged once you complete payment, and your slot is confirmed instantly after.'
-                    : "This is a request, not a charge. We'll reach out on WhatsApp or phone to confirm the clinician and slot, then share payment steps."}
-                  {' '}
-                  If urgent or in danger, contact emergency services.
-                </p>
-              </div>
-            )}
-
-            {/* ── Success screen ───────────────────────────── */}
-            {confirmation && (
-              <div className="booking-body booking-success">
-                <div className="booking-success__mark" aria-hidden="true">✓</div>
-                <h2>Request received</h2>
-                <p className="booking-success__lead">
-                  Thank you, <strong>{name.split(' ')[0]}</strong>. We have your request for a{' '}
-                  <strong>{selectedTypeLabel.toLowerCase()}</strong> {selectedModeLabel.toLowerCase()} session
-                  on <strong>{dayLabel}</strong> at <strong>{time}</strong>.
-                </p>
-
-                <div className="booking-success__ref">
-                  <span>Booking reference</span>
-                  <strong>{confirmation.id?.slice(0, 8).toUpperCase()}</strong>
-                </div>
-
-                <p className="booking-success__lead">
-                  {confirmation.status === 'confirmed'
-                    ? <>Your session is confirmed. Join from your patient dashboard or the consultation room at the booked time.</>
-                    : <>Status: <strong>awaiting confirmation</strong>. Our team will contact you on <strong>+91 {phoneClean}</strong> to lock the clinician and time.</>}
-                </p>
-
-                <div className="booking-success__actions">
-                  <a
-                    className="btn btn-primary"
-                    href={careWaHref(`Hi, I just requested a ${selectedTypeLabel} session (Ref: ${confirmation.id?.slice(0, 8).toUpperCase()})`)}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    Chat on WhatsApp
-                  </a>
-                  {confirmation.status === 'confirmed' && (
-                    <Link className="btn btn-ghost" to={`/consultation/${confirmation.id}?mode=${mode}`}>
-                      Open consultation room
-                    </Link>
-                  )}
-                  <Link className="btn btn-ghost" to="/patient/dashboard">
-                    My appointments
-                  </Link>
-                  <Link className="btn btn-ghost" to="/">
-                    Back to home
-                  </Link>
-                </div>
-                <p className="fineprint" style={{ marginTop: 12 }}>
-                  {confirmation.status === 'confirmed'
-                    ? 'Join a few minutes early to test your camera and mic.'
-                    : 'You will get the consultation room link once your booking is confirmed.'}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </section>
+            <p className="book-easy__alt">
+              Rather talk now?{' '}
+              <a href={CARE_TEL_HREF}>Call {CARE_PHONE_DISPLAY}</a>
+              {' · '}
+              <a href={careWaHref(waText)} target="_blank" rel="noreferrer">WhatsApp</a>
+              {!user && (
+                <>
+                  {' · '}
+                  <Link to="/patient/login?from=%2Fbook">Sign in</Link>
+                </>
+              )}
+            </p>
+          </>
+        )}
+      </div>
     </div>
   );
 }
-
