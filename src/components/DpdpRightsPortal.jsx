@@ -6,7 +6,6 @@ import {
   DPDP_NOTICE_VERSION,
   DPDP_REQUEST_TYPES,
 } from '../lib/dpdp';
-import { setPrivacyChoice } from '../lib/privacyConsent';
 
 /**
  * Interactive Self-Service DPDP Act, 2023 Data Principal Rights &
@@ -44,10 +43,8 @@ export default function DpdpRightsPortal({ defaultType = 'withdraw_consent', com
         nominee_contact: nomineeContact.trim(),
       });
 
-      // If withdrawing consent under Section 6(4), also immediately revoke
-      // browser analytics consent and clear local session check-in storage.
+      // If withdrawing consent under Section 6(4), clear local session check-in storage.
       if (requestType === 'withdraw_consent') {
-        setPrivacyChoice('essential');
         try {
           sessionStorage.removeItem('serenest_mh_snapshot_v1');
         } catch {
@@ -143,7 +140,7 @@ export default function DpdpRightsPortal({ defaultType = 'withdraw_consent', com
             <p className="srn-ai-capture__copy">
               Thank you, <strong>{receipt.name}</strong>. Your <strong>{receipt.request_label}</strong> request under <strong>{receipt.dpdp_section}</strong> of the Digital Personal Data Protection Act, 2023 has been logged ({new Date(receipt.created_at).toLocaleString('en-IN', { timeZone: 'Asia/Calcutta' })} IST).
               {receipt.request_type === 'withdraw_consent' && (
-                <> Optional browser analytics and local session check-in storage on this device have also been cleared immediately.</>
+                <> Local session check-in storage on this device has also been cleared immediately.</>
               )}
             </p>
             <p className="srn-ai-capture__copy" style={{ fontSize: '12px', opacity: 0.88 }}>

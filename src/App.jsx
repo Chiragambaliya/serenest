@@ -5,10 +5,7 @@ import { trackVisit } from './lib/visitTracker';
 import { captureUtm } from './lib/utm';
 import CookieConsent from './components/CookieConsent';
 import ExitIntentPopup from './components/ExitIntentPopup';
-import {
-  getPrivacyChoice,
-  PRIVACY_CHOICE_EVENT,
-} from './lib/privacyConsent';
+import { loadAnalytics } from './lib/privacyConsent';
 
 const HomePage = lazy(() => import('./pages/HomePage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
@@ -96,22 +93,18 @@ function ResourceRedirect() {
 
 function VisitTracker() {
   const location = useLocation();
-  const [privacyChoice, setPrivacyChoice] = React.useState(getPrivacyChoice);
 
   useEffect(() => {
-    const updateChoice = (event) => setPrivacyChoice(event.detail?.choice ?? getPrivacyChoice());
-    window.addEventListener(PRIVACY_CHOICE_EVENT, updateChoice);
-    return () => window.removeEventListener(PRIVACY_CHOICE_EVENT, updateChoice);
+    loadAnalytics();
   }, []);
 
   useEffect(() => {
-    if (privacyChoice !== 'analytics') return;
     // Don't track admin or consultation pages — those are internal/private routes.
     if (location.pathname.startsWith('/admin')) return;
     if (location.pathname.startsWith('/consultation')) return;
     captureUtm();
     trackVisit(location.pathname);
-  }, [location.pathname, privacyChoice]);
+  }, [location.pathname]);
   return null;
 }
 

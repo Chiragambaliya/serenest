@@ -19,6 +19,10 @@ import {
   DPDP_ITEMIZED_NOTICE,
   validateDpdpRequest,
 } from '../src/lib/dpdp.js';
+import {
+  getPrivacyChoice,
+  hasAnalyticsConsent,
+} from '../src/lib/privacyConsent.js';
 
 // 1. Sleep + medication inquiry -> Psychiatrist
 const sleepMed = analyzeCareTriage({
@@ -184,5 +188,9 @@ const validNomination = validateDpdpRequest({
 });
 assert.equal(validNomination.valid, true);
 assert.equal(validNomination.sanitized.dpdp_section, 'Section 14');
+
+// 12. Analytics is always turned on by default
+assert.equal(getPrivacyChoice(), 'analytics');
+assert.equal(hasAnalyticsConsent(), true);
 
 console.log('ai-assistant helpers: ok');

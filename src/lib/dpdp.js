@@ -24,8 +24,8 @@ export const DPDP_REQUEST_TYPES = [
     id: 'withdraw_consent',
     section: 'Section 6(4)',
     label: 'Withdraw Consent',
-    shortDesc: 'Stop pending appointment callbacks, marketing emails, or optional analytics processing.',
-    sla: 'Processed within 24 hours; browser analytics/session storage cleared immediately.',
+    shortDesc: 'Stop pending appointment callbacks, marketing emails, or voluntary intake processing.',
+    sla: 'Processed within 24 hours; local session check-in storage cleared immediately.',
   },
   {
     id: 'access_summary',
@@ -83,9 +83,9 @@ export const DPDP_ITEMIZED_NOTICE = {
       purpose: 'Delivering clinical care and complying with the 7-year record retention mandate under India’s Telemedicine Practice Guidelines, 2020.',
     },
     {
-      category: 'Device & Optional Analytics Data',
-      examples: 'Essential security logs; optional page-view analytics (off by default unless you click "Allow analytics").',
-      purpose: 'Platform security, rate-limiting, and — only with explicit opt-in consent — aggregate site improvement.',
+      category: 'Device & Site Analytics Data',
+      examples: 'Essential security logs and privacy-safe first-party page-view & conversion analytics (no ad trackers).',
+      purpose: 'Platform security, rate-limiting, and continuous care navigation improvement.',
     },
   ],
 };

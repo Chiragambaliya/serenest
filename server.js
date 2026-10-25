@@ -577,7 +577,8 @@ app.get('/api/health', (_req, res) => {
     team_whatsapp: notify.hasTeamWhatsApp() ? 'enabled' : 'disabled',
     serenest_wa_group: notify.getSerenestWaGroupInvite() ? 'configured' : 'missing',
     payments: paymentsEnabled() ? 'enabled' : 'disabled',
-    analytics: GA_ID ? 'enabled' : 'disabled',
+    analytics: 'enabled',
+    analytics_mode: GA_ID ? 'ga4+builtin' : 'builtin',
     ts: new Date().toISOString(),
   });
 });
@@ -2481,17 +2482,24 @@ app.post('/api/track/visit', (req, res) => {
   // (Cloudflare / Vercel). Render does not by default — stays null then.
   const country = (req.headers['cf-ipcountry'] || req.headers['x-vercel-ip-country'] || null);
 
+  const visitRow = {
+    visitor_id: vid || null,
+    path: String(path).slice(0, 300),
+    referrer: String(referrer).slice(0, 300) || null,
+    device,
+    country: country && country !== 'XX' ? country : null,
+  };
+
   // Persist every visit (best-effort — never block or fail the beacon).
   if (supabase) {
-    supabase.from('site_visits').insert({
-      visitor_id: vid || null,
-      path: String(path).slice(0, 300),
-      referrer: String(referrer).slice(0, 300) || null,
-      device,
-      country: country && country !== 'XX' ? country : null,
-    }).then(({ error }) => {
-      if (error) console.warn('[track/visit] insert:', error.message);
+    supabase.from('site_visits').insert(visitRow).then(({ error }) => {
+      if (error) {
+        console.warn('[track/visit] insert:', error.message);
+        captureFallbackLead('site_visit', { id: crypto.randomUUID(), ...visitRow });
+      }
     });
+  } else {
+    captureFallbackLead('site_visit', { id: crypto.randomUUID(), ...visitRow });
   }
 
   // Fingerprint = browser-supplied vid (cookie-less) + IP + UA hash
@@ -2532,25 +2540,33 @@ app.get('/api/track/today', (req, res) => {
 
 /** GET /api/track/stats — admin only — persisted traffic analytics. */
 app.get('/api/track/stats', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  if (!requireAdmin(req, res)) return;
 
   const now = new Date();
   const since = (days) => new Date(now.getTime() - days * 86400000).toISOString();
   const startOfToday = new Date(now); startOfToday.setHours(0, 0, 0, 0);
 
-  // Pull the last 30 days of visits once, then aggregate in memory.
-  const { data: rows, error } = await supabase
-    .from('site_visits')
-    .select('created_at, visitor_id, path, referrer, device, country')
-    .gte('created_at', since(30))
-    .order('created_at', { ascending: false });
+  let dbRows = [];
+  if (supabase) {
+    const { data: rows, error } = await supabase
+      .from('site_visits')
+      .select('created_at, visitor_id, path, referrer, device, country')
+      .gte('created_at', since(30))
+      .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error('[GET /api/track/stats]', error);
-    return err(res, 'Failed to load traffic', 500);
+    if (error) {
+      console.error('[GET /api/track/stats]', error);
+    } else if (rows) {
+      dbRows = rows;
+    }
   }
 
-  const all = rows ?? [];
+  const fallbackRows = fallbackLeadRecords('site_visit').filter(
+    (r) => (r.created_at || '') >= since(30),
+  );
+  const all = [...dbRows, ...fallbackRows].sort((a, b) =>
+    String(b.created_at || '').localeCompare(String(a.created_at || '')),
+  );
   const todayIso = startOfToday.toISOString();
   const weekIso = since(7);
 
@@ -3284,7 +3300,7 @@ app.listen(port, () => {
   console.log(`   Patient email: ${notify.isPatientEmailEnabled() ? '✅ Resend key set' : '⚠️  Add RESEND_API_KEY for confirmations'}`);
   console.log(`   Team WhatsApp: ${notify.hasTeamWhatsApp() ? '✅ CallMeBot configured' : '○ Optional: CALLMEBOT_WHATSAPP_APIKEY + CALLMEBOT_WHATSAPP_PHONE'}`);
   console.log(`   Payments: ${paymentsEnabled() ? '✅ Charge at booking (Razorpay)' : '○ Request-first (set PAYMENTS_ENABLED=true to charge at booking)'}`);
-  console.log(`   Analytics: ${GA_ID ? `✅ GA4 (${GA_ID})` : '○ Disabled (set GA_MEASUREMENT_ID)'}\n`);
+  console.log(`   Analytics: ✅ Always enabled (${GA_ID ? `GA4 ${GA_ID} + built-in` : 'built-in traffic analytics'})\n`);
 
   // Lead-pipeline warnings — these misconfigurations are the ones that
   // silently cost clients, so make them impossible to miss in the logs.

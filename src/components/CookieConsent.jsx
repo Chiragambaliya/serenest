@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  getPrivacyChoice,
   loadAnalytics,
   OPEN_PRIVACY_EVENT,
   setPrivacyChoice,
@@ -12,18 +11,13 @@ export default function CookieConsent() {
   const dialogRef = useRef(null);
 
   useEffect(() => {
-    const choice = getPrivacyChoice();
-    if (choice === 'analytics') loadAnalytics();
-
-    let timer;
-    if (!choice) {
-      timer = window.setTimeout(() => setVisible(true), 700);
-    }
+    // Analytics is always active on Serenest Care.
+    setPrivacyChoice('analytics');
+    loadAnalytics();
 
     const open = () => setVisible(true);
     window.addEventListener(OPEN_PRIVACY_EVENT, open);
     return () => {
-      window.clearTimeout(timer);
       window.removeEventListener(OPEN_PRIVACY_EVENT, open);
     };
   }, []);
@@ -32,8 +26,8 @@ export default function CookieConsent() {
     if (visible) dialogRef.current?.focus();
   }, [visible]);
 
-  function choose(choice) {
-    setPrivacyChoice(choice);
+  function acknowledge() {
+    setPrivacyChoice('analytics');
     setVisible(false);
   }
 
@@ -50,18 +44,15 @@ export default function CookieConsent() {
       tabIndex="-1"
     >
       <div className="privacy-banner__copy">
-        <h2 id="privacy-banner-title">Analytics stay off unless you allow them.</h2>
+        <h2 id="privacy-banner-title">Privacy-safe analytics &amp; essential storage are active.</h2>
         <p id="privacy-banner-description">
-          Essential storage keeps sign-in working. No ad trackers, ever.{' '}
+          We use essential storage and first-party analytics to keep sign-in working and improve care navigation. No ad trackers, ever.{' '}
           <Link to="/privacy">Privacy</Link> · <Link to="/privacy#dpdp-rights-portal">DPDP Rights</Link> · <Link to="/cookie-policy">Cookies</Link>
         </p>
       </div>
       <div className="privacy-banner__actions">
-        <button className="privacy-choice privacy-choice--essential" type="button" onClick={() => choose('essential')}>
-          Essential only
-        </button>
-        <button className="privacy-choice privacy-choice--allow" type="button" onClick={() => choose('analytics')}>
-          Allow analytics
+        <button className="privacy-choice privacy-choice--allow" type="button" onClick={acknowledge}>
+          Got it
         </button>
       </div>
     </div>
