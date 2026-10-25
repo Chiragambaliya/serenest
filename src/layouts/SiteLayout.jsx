@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import EmailCapture from '../components/EmailCapture';
+import SerenestAssistant from '../components/SerenestAssistant';
 import { useAuth } from '../lib/useAuth';
 import { useMainReveal } from '../hooks/useReveal';
 import { openPrivacyChoices } from '../lib/privacyConsent';
@@ -464,6 +465,8 @@ export default function SiteLayout() {
           </nav>
         </>
       )}
+
+      <SerenestAssistant />
     </div>
   );
 }

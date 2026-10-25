@@ -11,7 +11,7 @@ import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
 import { renderSeoHead, renderSitemapXml, shouldNoindex, ROUTE_SEO, SITE_ORIGIN, resolveSeoRedirect, isKnownDynamicSpaPath } from './src/lib/seo.js';
-import { handleAssistantChat } from './src/server/aiAssistant.js';
+import { handleAssistantChat, handleCareTriage } from './src/server/aiAssistant.js';
 import cron from 'node-cron';
 
 // ── Setup ────────────────────────────────────────────────────
@@ -553,7 +553,8 @@ function verifyRazorpaySignature({ order_id, payment_id, signature }) {
 app.get('/api/health', (_req, res) => {
   ok(res, {
     status: 'ok',
-    assistant: process.env.OPENAI_API_KEY ? 'configured' : 'disabled',
+    assistant: 'configured',
+    assistant_mode: process.env.OPENAI_API_KEY ? 'openai' : 'clinical-engine',
     db: supabase ? 'connected' : 'not configured',
     daily: process.env.DAILY_API_KEY ? 'configured' : 'not configured',
     notifications: notify.isConfigured() ? 'enabled' : 'disabled',
@@ -2780,10 +2781,15 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════
-//  AI ASSISTANT (site concierge — OpenAI, server-side key only)
+//  AI ASSISTANT (Care concierge + clinical intake triage)
 // ══════════════════════════════════════════════════════════════
 
-/** POST /api/assistant/chat — body: { messages: [{ role, content }] } */
+/** POST /api/assistant/triage — body: { concern, goal?, duration?, preferredMode?, screening? } */
+app.post('/api/assistant/triage', (req, res, next) => {
+  handleCareTriage(req, res).catch(next);
+});
+
+/** POST /api/assistant/chat — body: { messages: [{ role, content }], context? } */
 app.post('/api/assistant/chat', (req, res, next) => {
   handleAssistantChat(req, res).catch(next);
 });

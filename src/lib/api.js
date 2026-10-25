@@ -125,11 +125,12 @@ export const contact = {
 };
 
 /**
- * Site concierge (OpenAI via server). Not clinical advice.
- * @param {{ role: 'user' | 'assistant', content: string }[]} messages
+ * Serenest Care AI — clinical intake triage + conversational concierge.
+ * Non-diagnostic; helps match care and structure intake notes.
  */
 export const assistant = {
-  chat: (messages) => post('/api/assistant/chat', { messages }),
+  chat: (messages, context) => post('/api/assistant/chat', { messages, context }),
+  triage: (payload) => post('/api/assistant/triage', payload),
   /** Lets the team know Serenest Guide was opened (server dedupes per visitor/day). */
   notifyGuideOpened: (payload) => post('/api/assistant/notify-open', payload),
 };
