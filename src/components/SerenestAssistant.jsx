@@ -2,17 +2,17 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { assistant } from '../lib/api';
+import { careWaHref, isIndiaMobile } from '../lib/patientReach';
 import { getVisitorId } from '../lib/visitTracker';
 
 const STARTER_PROMPTS = [
-  'Help me choose: psychiatrist or therapist?',
   'I have trouble sleeping and constant overthinking',
   'I feel burned out and exhausted from work',
+  'Help me choose: psychiatrist or therapist?',
   'How do fees and pay-after-confirmation work?',
 ];
 
 function formatBubbleText(text = '') {
-  // Simple bold (**...**) formatter without dangerouslySetInnerHTML
   const parts = String(text).split(/(\*\*[^*]+\*\*)/g);
   return parts.map((part, idx) => {
     if (part.startsWith('**') && part.endsWith('**')) {
@@ -30,6 +30,14 @@ export default function SerenestAssistant() {
   const [errorBanner, setErrorBanner] = useState('');
   const [messages, setMessages] = useState([]);
   const [suggestions, setSuggestions] = useState(STARTER_PROMPTS);
+
+  // Inline client-acquisition form inside the AI concierge
+  const [leadName, setLeadName] = useState('');
+  const [leadPhone, setLeadPhone] = useState('');
+  const [leadSubmitting, setLeadSubmitting] = useState(false);
+  const [leadError, setLeadError] = useState('');
+  const [acquiredBooking, setAcquiredBooking] = useState(null);
+
   const threadEndRef = useRef(null);
   const inputRef = useRef(null);
   const guideOpenPingSent = useRef(false);
@@ -43,7 +51,7 @@ export default function SerenestAssistant() {
       scrollToBottom();
       window.setTimeout(() => inputRef.current?.focus(), 80);
     }
-  }, [open, messages, loading]);
+  }, [open, messages, loading, acquiredBooking]);
 
   useEffect(() => {
     if (!open) return;
@@ -76,12 +84,16 @@ export default function SerenestAssistant() {
         nextThread.map(({ role, content }) => ({ role, content })),
         { path: location.pathname || '/' },
       );
+      if (data.acquired_booking) {
+        setAcquiredBooking(data.acquired_booking);
+      }
       setMessages([
         ...nextThread,
         {
           role: 'assistant',
           content: data.reply,
           recommendation: data.recommendation || null,
+          acquired_booking: data.acquired_booking || null,
         },
       ]);
       if (Array.isArray(data.suggestions) && data.suggestions.length) {
@@ -97,7 +109,47 @@ export default function SerenestAssistant() {
     }
   }, [input, loading, messages, location.pathname]);
 
-  // Hide inside live consultation rooms or admin console
+  async function handleInlineAcquire(rec) {
+    setLeadError('');
+    if (!leadName.trim() || leadName.trim().length < 2) {
+      setLeadError('Enter your name.');
+      return;
+    }
+    if (!isIndiaMobile(leadPhone)) {
+      setLeadError('Enter a valid 10-digit Indian mobile number (starts with 6–9).');
+      return;
+    }
+    setLeadSubmitting(true);
+    try {
+      const lastUserConcern = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
+      const res = await assistant.acquire({
+        patient_name: leadName.trim(),
+        patient_phone: leadPhone,
+        concern: lastUserConcern,
+        practitioner_type: rec?.practitioner_type || 'psychiatrist',
+        mode: rec?.mode || 'video',
+        notes: rec?.structured_note || '',
+      });
+      if (res?.booking) {
+        setAcquiredBooking(res.booking);
+      }
+    } catch (err) {
+      setLeadError(err?.message || 'Could not submit request. Please try again.');
+    } finally {
+      setLeadSubmitting(false);
+    }
+  }
+
+  // Latest assistant recommendation for the inline capture card
+  const latestRec = [...messages].reverse().find((m) => m.role === 'assistant' && m.recommendation)?.recommendation || {
+    practitioner_type: 'psychiatrist',
+    practitioner_label: 'Psychiatrist',
+    mode: 'video',
+    path: '/book',
+    label: 'Customize on booking page',
+    allow_inline_capture: true,
+  };
+
   if (
     location.pathname.startsWith('/admin')
     || location.pathname.startsWith('/consultation')
@@ -143,7 +195,7 @@ export default function SerenestAssistant() {
                   Serenest Care AI
                 </div>
                 <p className="srn-ai-sub">
-                  Clinical intake match &amp; care navigation — non-diagnostic.
+                  Matches your care &amp; books your callback right here — non-diagnostic.
                 </p>
               </div>
               <button
@@ -160,7 +212,7 @@ export default function SerenestAssistant() {
               <div className="srn-ai-msg srn-ai-msg-assistant">
                 <div className="srn-ai-bubble">
                   <p style={{ margin: 0 }}>
-                    Hi — share what you&apos;re going through or ask a question. I can match you to the right specialist (<strong>Psychiatrist</strong>, <strong>Psychologist</strong>, <strong>Therapist</strong>, or <strong>Counsellor</strong>), pre-fill your booking note, or point you to a private check-in.
+                    Hi — tell me what you&apos;re going through. I will match you with the right specialist (<strong>Psychiatrist</strong>, <strong>Psychologist</strong>, <strong>Therapist</strong>, or <strong>Counsellor</strong>) and can <strong>register your appointment callback right here</strong> — you pay nothing until our team confirms your slot.
                   </p>
                   <p style={{ margin: '6px 0 0', fontSize: '12px', opacity: 0.78 }}>
                     Not for emergencies — in urgent danger, call 112 or Tele-MANAS 14416.
@@ -203,6 +255,71 @@ export default function SerenestAssistant() {
                 </div>
               ))}
 
+              {/* Instant AI Client Capture Card right inside the concierge */}
+              {acquiredBooking ? (
+                <div className="srn-ai-capture srn-ai-capture--done" role="status">
+                  <div className="srn-ai-capture__badge">
+                    ✓ Request registered · Ref {String(acquiredBooking.id || '').slice(0, 8).toUpperCase()}
+                  </div>
+                  <p className="srn-ai-capture__copy">
+                    Our care team will reach out on <strong>+91 {acquiredBooking.patient_phone}</strong> to confirm your <strong>{acquiredBooking.practitioner_type}</strong> ({acquiredBooking.mode}) slot. No payment until confirmed.
+                  </p>
+                  <a
+                    className="srn-ai-rec-btn srn-ai-rec-btn--primary"
+                    href={careWaHref(`Hi, I booked via Serenest Care AI (Ref: ${String(acquiredBooking.id || '').slice(0, 8).toUpperCase()})`)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Message care team on WhatsApp →
+                  </a>
+                </div>
+              ) : (
+                <form
+                  className="srn-ai-capture"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleInlineAcquire(latestRec);
+                  }}
+                >
+                  <div className="srn-ai-capture__head">
+                    <span>✦ Instant AI Callback Request</span>
+                    <span className="srn-ai-capture__tag">
+                      {latestRec.practitioner_label || 'Psychiatrist'} · ₹499 after confirmation
+                    </span>
+                  </div>
+                  <div className="srn-ai-capture__fields">
+                    <input
+                      type="text"
+                      className="srn-ai-capture__input"
+                      placeholder="Your name"
+                      value={leadName}
+                      onChange={(e) => setLeadName(e.target.value)}
+                      autoComplete="name"
+                    />
+                    <input
+                      type="tel"
+                      className="srn-ai-capture__input"
+                      placeholder="10-digit mobile (+91)"
+                      inputMode="numeric"
+                      maxLength={10}
+                      value={leadPhone}
+                      onChange={(e) => setLeadPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      autoComplete="tel-national"
+                    />
+                  </div>
+                  {leadError && <p className="srn-ai-capture__err" role="alert">{leadError}</p>}
+                  <button
+                    type="submit"
+                    className="srn-ai-capture__submit"
+                    disabled={leadSubmitting}
+                  >
+                    {leadSubmitting
+                      ? 'Registering request…'
+                      : `Let AI book my ${latestRec.practitioner_label || 'care'} callback →`}
+                  </button>
+                </form>
+              )}
+
               {loading ? (
                 <div className="srn-ai-msg srn-ai-msg-assistant" aria-busy="true">
                   <div className="srn-ai-bubble srn-ai-thinking">
@@ -241,7 +358,7 @@ export default function SerenestAssistant() {
                   className="srn-ai-input"
                   rows={2}
                   maxLength={2000}
-                  placeholder="Describe what you're experiencing or ask about booking, fees, prescriptions…"
+                  placeholder="Describe what you're going through, or reply with your name & 10-digit number…"
                   value={input}
                   disabled={loading}
                   onChange={(e) => setInput(e.target.value)}
@@ -262,7 +379,7 @@ export default function SerenestAssistant() {
                 </button>
               </div>
               <p className="fineprint srn-ai-disclaimer">
-                Private intake navigation · Not a medical diagnosis.
+                AI Care Intake · Pay only after our team confirms your slot.
               </p>
             </div>
           </div>

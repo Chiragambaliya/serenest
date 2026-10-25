@@ -1,18 +1,19 @@
 /**
- * Serenest AI Care Engine — Hybrid Clinical Triage & Concierge
+ * Serenest AI Care Engine — Hybrid Clinical Triage, Client Acquisition & Concierge
  *
- * Endpoints:
- *   POST /api/assistant/triage — AI-guided care matching & clinician intake note builder
- *   POST /api/assistant/chat   — Conversational care concierge with action deep-links
- *
- * Uses OpenAI (`OPENAI_API_KEY` + optional `OPENAI_MODEL`) when configured and
- * automatically falls back to the built-in Serenest Clinical Triage & Concierge
- * model so the AI experience works out-of-the-box in every environment.
+ * Responsibilities:
+ *   1. Match visitors to the right care specialist (Psychiatrist, Psychologist,
+ *      Therapist, Counsellor) and consultation mode (video, audio, chat).
+ *   2. Acquire & convert clients directly — either via one-step AI intake
+ *      (`POST /api/assistant/acquire`) or conversationally inside chat when a
+ *      visitor shares their name and 10-digit Indian mobile number.
+ *   3. Expose machine-readable care metadata (`/llms.txt` and `/api/ai/catalog`)
+ *      so external AI agents and search engines can route patients to Serenest Care.
  *
  * Strictly non-diagnostic: never diagnoses, prescribes, or replaces emergency care.
  */
 
-import { formatSiteGuideForPrompt } from './siteGuideRoutes.js';
+import { formatSiteGuideForPrompt, SITE_GUIDE_ROUTES } from './siteGuideRoutes.js';
 
 const MAX_MESSAGES = 24;
 const MAX_CONTENT_LEN = 3500;
@@ -20,6 +21,7 @@ const DEFAULT_MODEL = 'gpt-4o-mini';
 
 const VALID_ROLES = ['psychiatrist', 'psychologist', 'therapist', 'counsellor'];
 const VALID_MODES = ['video', 'audio', 'chat'];
+const SLOT_TIMES = ['10:00', '11:30', '13:00', '15:30', '17:00', '19:00'];
 
 const ROLE_META = {
   psychiatrist: {
@@ -27,24 +29,28 @@ const ROLE_META = {
     label: 'Psychiatrist',
     badge: 'Medical assessment · prescriptions',
     summary: 'MD medical doctor for diagnosis, biological symptoms, sleep/appetite shifts, and medication evaluation.',
+    starting_fee_inr: 499,
   },
   psychologist: {
     id: 'psychologist',
     label: 'Psychologist',
     badge: 'Structured clinical therapy · CBT/ACT',
     summary: 'Clinical specialist in structured assessment and evidence-based therapy (CBT, exposure, trauma-informed care).',
+    starting_fee_inr: 499,
   },
   therapist: {
     id: 'therapist',
     label: 'Therapist',
     badge: 'Ongoing talk therapy · patterns & relationships',
     summary: 'Dedicated space to work through anxiety, mood patterns, relationships, grief, or sustained emotional load.',
+    starting_fee_inr: 499,
   },
   counsellor: {
     id: 'counsellor',
     label: 'Counsellor',
     badge: 'Supportive check-in · stress & burnout',
     summary: 'Goal-focused, approachable first conversation for work stress, burnout, life transitions, or clarity.',
+    starting_fee_inr: 499,
   },
 };
 
@@ -67,7 +73,7 @@ const SYMPTOM_SIGNALS = [
     label: 'Sleep, appetite, or physical toll',
     role: 'psychiatrist',
     weight: 3,
-    regex: /\b(insomnia|can'?t\s+sleep|not\s+sleeping|waking\s+up|sleep\s+schedule|oversleep|appetite|weight\s+(loss|gain)|panic\s+attack|heart\s+racing|chest\s+tight|trembl|palpitat)\b/i,
+    regex: /\b(insomnia|can'?t\s+sleep|not\s+sleeping|waking\s+up|sleep\s+schedule|oversleep|appetite|weight\s+(loss|gain)|panic\s+attack|heart\s+racing|chest\s+tight|trembl|palpitat|sleeping)\b/i,
   },
   {
     id: 'adhd_or_ocd',
@@ -95,7 +101,7 @@ const SYMPTOM_SIGNALS = [
     label: 'Structured therapy (CBT / clinical patterns)',
     role: 'psychologist',
     weight: 3,
-    regex: /\b(cbt\b|cognitive|behavioural|behavioral|psychologist|phobia|social\s+anxiety|health\s+anxiety|ptsd|trauma|flashback|nightmare|testing| psychometric)\b/i,
+    regex: /\b(cbt\b|cognitive|behavioural|behavioral|psychologist|phobia|social\s+anxiety|health\s+anxiety|ptsd|trauma|flashback|nightmare|testing|psychometric)\b/i,
   },
   {
     id: 'anxiety_and_worry',
@@ -119,6 +125,99 @@ const SYMPTOM_SIGNALS = [
     regex: /\b(burnout|burned\s+out|burnt\s+out|work\s+stress|office|job|career|exam|study|academic|overwhelm(ed)?|exhaust(ed|ion)|drained|motivation|procrastinat|confused|first\s+time)\b/i,
   },
 ];
+
+function pad2(n) {
+  return String(n).padStart(2, '0');
+}
+
+function localDateKey(dt) {
+  return `${dt.getFullYear()}-${pad2(dt.getMonth() + 1)}-${pad2(dt.getDate())}`;
+}
+
+/**
+ * Compute the next bookable date + time slot so AI can register a client
+ * request immediately without forcing them to pick from a calendar grid.
+ */
+export function nextDefaultSlot(now = new Date()) {
+  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+  for (const t of SLOT_TIMES) {
+    const [h, m] = t.split(':').map(Number);
+    if (h * 60 + m > nowMinutes + 60) {
+      const label = now.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' });
+      return { date: localDateKey(now), time: t, label: `${label} · ${t}` };
+    }
+  }
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  const label = tomorrow.toLocaleDateString('en-IN', { weekday: 'short', day: '2-digit', month: 'short' });
+  return { date: localDateKey(tomorrow), time: SLOT_TIMES[0], label: `${label} · ${SLOT_TIMES[0]}` };
+}
+
+/**
+ * Extract a client's 10-digit Indian mobile number and name from a chat thread
+ * when they ask the AI to book or arrange a callback directly in chat.
+ */
+export function extractLeadFromMessages(messages = []) {
+  if (!Array.isArray(messages) || messages.length === 0) return null;
+  const lastUser = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
+  if (!lastUser) return null;
+
+  // Look for a 10-digit Indian mobile number in the latest user message
+  const cleanedDigits = lastUser.replace(/[\s\-().]/g, '');
+  const phoneMatch = cleanedDigits.match(/(?:\+?91|0)?([6-9]\d{9})\b/);
+  if (!phoneMatch) return null;
+  const phone = phoneMatch[1];
+
+  // Try to extract name from the latest user message or earlier user messages
+  let name = '';
+  const namePatterns = [
+    /(?:my\s+name\s+is|i\s+am|i'm|this\s+is|name\s*[:=-])\s*([A-Za-z][A-Za-z\s.]{1,40})/i,
+    /^([A-Za-z][A-Za-z\s.]{1,32}?)\s*[,|\-–:/]\s*(?:\+?91[\s-]?)?[6-9]\d{4}/i,
+    /(?:\+?91[\s-]?)?[6-9]\d[\d\s-]{8,11}\s*[,|\-–:/]\s*([A-Za-z][A-Za-z\s.]{1,32})$/i,
+  ];
+
+  for (const m of [...messages].reverse()) {
+    if (m.role !== 'user') continue;
+    for (const pat of namePatterns) {
+      const hit = m.content.match(pat);
+      if (hit && hit[1]) {
+        const candidate = hit[1]
+          .replace(/\b(and|phone|number|mobile|call|whatsapp|book|please|at|on)\b.*$/i, '')
+          .trim();
+        if (candidate.length >= 2 && !/^\d+$/.test(candidate)) {
+          name = candidate;
+          break;
+        }
+      }
+    }
+    if (name) break;
+  }
+
+  // Fallback: if message is just "Name 9876543210", strip the phone number and punctuation
+  if (!name) {
+    const stripped = lastUser
+      .replace(/(?:\+?91[\s-]?)?[6-9][\d\s-]{8,12}/g, '')
+      .replace(/\b(call\s+me|book|please|whatsapp|my\s+number|phone|mobile|is|at|on)\b/gi, '')
+      .replace(/[^A-Za-z\s.]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (stripped.length >= 2 && stripped.length <= 36) {
+      name = stripped;
+    }
+  }
+
+  // Gather clinical concern from earlier user messages in the conversation
+  const concernMessages = messages
+    .filter((m) => m.role === 'user')
+    .map((m) => m.content)
+    .join(' ');
+
+  return {
+    name: name || 'Care Visitor',
+    phone,
+    concern: concernMessages,
+  };
+}
 
 function detectCrisis(text) {
   if (!text) return false;
@@ -231,7 +330,6 @@ export function analyzeCareTriage({
   if (phqVal >= 15 || gadVal >= 15) scores.psychiatrist += 4;
   else if (phqVal >= 10 || gadVal >= 10) scores.psychologist += 3;
 
-  // Pick winning role; default to therapist if conversational, psychiatrist if medical, counsellor if first check-in
   let bestRole = 'therapist';
   let bestScore = -1;
   for (const role of VALID_ROLES) {
@@ -244,7 +342,6 @@ export function analyzeCareTriage({
     bestRole = combined.length > 0 ? 'therapist' : 'psychiatrist';
   }
 
-  // Secondary role alternative
   const sortedRoles = [...VALID_ROLES].sort((a, b) => scores[b] - scores[a]);
   const alternativeRole = sortedRoles.find((r) => r !== bestRole) || 'psychiatrist';
 
@@ -274,7 +371,6 @@ export function analyzeCareTriage({
       : 'A Therapist offers a private, collaborative space to talk through what you are experiencing and clarify what support helps most.';
   }
 
-  // Build a clean, clinician-ready intake note
   const cleanedConcern = concern.trim().replace(/\s+/g, ' ');
   const noteParts = [];
   if (cleanedConcern) {
@@ -301,6 +397,7 @@ export function analyzeCareTriage({
 
   const structuredNote = noteParts.join('\n');
   const suggestedScreening = inferSuggestedScreening(matchedIds, combined);
+  const nextSlot = nextDefaultSlot();
 
   const bookParams = new URLSearchParams({
     prole: bestRole,
@@ -316,10 +413,12 @@ export function analyzeCareTriage({
     practitioner_label: roleMeta.label,
     practitioner_badge: roleMeta.badge,
     practitioner_summary: roleMeta.summary,
+    starting_fee_inr: roleMeta.starting_fee_inr,
     alternative_type: alternativeRole,
     alternative_label: altMeta.label,
     mode,
     mode_reason: modeReason,
+    next_slot: nextSlot,
     focus_tags: matchedLabels.length ? matchedLabels : ['Initial clinical consultation'],
     rationale,
     structured_note: structuredNote,
@@ -330,8 +429,7 @@ export function analyzeCareTriage({
 }
 
 /**
- * Deterministic conversational concierge fallback so `/api/assistant/chat`
- * always responds helpfully even when OPENAI_API_KEY is not configured.
+ * Deterministic conversational concierge & client acquisition engine.
  */
 export function buildConciergeReply(messages = [], context = {}) {
   const lastUser = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
@@ -355,17 +453,23 @@ export function buildConciergeReply(messages = [], context = {}) {
 
   // Pricing / fees / payment questions
   if (/\b(price|pricing|fee|fees|cost|charge|pay|payment|razorpay|refund|how\s+much)\b/.test(lower)) {
+    const slot = nextDefaultSlot();
     return {
       reply:
         'Here is how fees and payment work on Serenest:\n\n' +
-        '• **Request first, pay after confirmation:** Submitting a booking request at **/book** is free. Our care team confirms your clinician and time slot by phone or WhatsApp first — you only pay once the slot is locked.\n' +
-        '• **Session fees:** Standard consultations start at **₹499** (and vary by clinician experience and session length, shown upfront on **/pricing** and **/patient/find-professional**).\n' +
-        '• **Self-screening:** All check-ins at **/screening** (PHQ-9, GAD-7, BAT-12 Burnout Check) are **100% free** and stay on your device.',
+        '• **Request first, pay after confirmation:** Submitting a booking request is free. Our care team confirms your clinician and time slot by phone or WhatsApp first — you only pay once the slot is locked.\n' +
+        '• **Session fees:** Standard consultations start at **₹499**.\n' +
+        '• **Book right here:** Share your **name and 10-digit number** in the card below and I will lock a callback for the next open slot (**' + slot.label + '**).',
       recommendation: {
-        label: 'Request a slot (pay after confirmation)',
+        label: 'Open full booking calendar',
         path: '/book',
+        practitioner_type: 'psychiatrist',
+        practitioner_label: 'Psychiatrist',
+        mode: 'video',
+        structured_note: 'Goal: Initial consultation — requested via Serenest Care AI.',
         secondary_label: 'See full fee guide',
         secondary_path: '/pricing',
+        allow_inline_capture: true,
       },
       suggestions: [
         'Help me choose between a psychiatrist and therapist',
@@ -381,13 +485,17 @@ export function buildConciergeReply(messages = [], context = {}) {
       reply:
         'Yes — **Psychiatrists (MD)** on Serenest can issue legally valid digital prescriptions after a live video consultation, in compliance with India’s **Telemedicine Practice Guidelines**.\n\n' +
         '• **When prescriptions are issued:** Only when clinically appropriate after a direct psychiatric evaluation.\n' +
-        '• **Regulated medicines:** Certain habit-forming or restricted (Schedule X / narcotic) medications cannot be prescribed online under Indian law.\n' +
-        '• **How to book:** Choose **Psychiatrist** and **Video** mode on **/book**.',
+        '• **Book right here:** Enter your name and 10-digit number below and I will register a **Psychiatrist (Video)** request for you immediately.',
       recommendation: {
         label: 'Book a Psychiatrist video consultation',
         path: '/book?prole=psychiatrist&mode=video',
+        practitioner_type: 'psychiatrist',
+        practitioner_label: 'Psychiatrist',
+        mode: 'video',
+        structured_note: 'Focus areas: Medication / prescription evaluation via live video consultation.',
         secondary_label: 'Read prescription rules',
         secondary_path: '/online-psychiatrist-prescription-india',
+        allow_inline_capture: true,
       },
       suggestions: [
         'I have sleep & anxiety issues — match my care',
@@ -404,12 +512,17 @@ export function buildConciergeReply(messages = [], context = {}) {
         'If you are not sure whether to book yet, start with a **private 2–3 minute check-in** at **/screening**:\n\n' +
         '• **Guided Mood & Anxiety Pathway (PHQ-9 + GAD-7):** Best general starting point for low mood, worry, or restlessness.\n' +
         '• **Burnout Check (BAT-12):** Built for sustained work exhaustion and mental distance.\n' +
-        '• **Privacy:** Answers are scored in your browser and never sold. At the end, you can carry your result straight into **/book** with one tap.',
+        '• Or drop your name & number below if you would like our care team to call and guide you.',
       recommendation: {
         label: 'Start a free private check-in',
         path: '/screening',
-        secondary_label: 'Skip to booking',
+        practitioner_type: 'counsellor',
+        practitioner_label: 'Counsellor',
+        mode: 'video',
+        structured_note: 'Goal: Exploratory first check-in — requested via Serenest Care AI.',
+        secondary_label: 'Open booking page',
         secondary_path: '/book',
+        allow_inline_capture: true,
       },
       suggestions: [
         'Help me choose: psychiatrist or therapist?',
@@ -419,26 +532,30 @@ export function buildConciergeReply(messages = [], context = {}) {
     };
   }
 
-  // Difference between clinician types OR symptom description -> run triage!
+  // Symptom description or specialist comparison -> run clinical triage!
   const triage = analyzeCareTriage({ concern: lastUser, preferredMode: context?.mode });
-  const hasSymptomSignal = triage.focus_tags[0] !== 'Initial clinical consultation' || /\b(who\s+should\s+i\s+see|psychiatrist\s+or\s+therapist|difference\s+between|help\s+me\s+choose|match\s+me|recommend)\b/.test(lower);
+  const hasSymptomSignal =
+    triage.focus_tags[0] !== 'Initial clinical consultation'
+    || /\b(who\s+should\s+i\s+see|psychiatrist\s+or\s+therapist|difference\s+between|help\s+me\s+choose|match\s+me|recommend|book|appointment|slot|talk\s+to\s+someone)\b/.test(lower);
 
   if (hasSymptomSignal) {
     return {
       reply:
-        `Based on what you shared, here is a calm starting point:\n\n` +
-        `• **Recommended clinician:** **${triage.practitioner_label}** (${triage.practitioner_badge})\n` +
+        `Based on what you shared, here is your matched care plan:\n\n` +
+        `• **Recommended specialist:** **${triage.practitioner_label}** (${triage.practitioner_badge})\n` +
         `• **Why this fits:** ${triage.rationale}\n` +
-        `• **Recommended format:** **${triage.mode.charAt(0).toUpperCase() + triage.mode.slice(1)}** — ${triage.mode_reason}\n\n` +
-        `You can apply this directly to your booking below, or start with the **${triage.suggested_screening.label}**.`,
+        `• **Format & fee:** **${triage.mode.charAt(0).toUpperCase() + triage.mode.slice(1)}** · starts at **₹${triage.starting_fee_inr}** (pay only after we confirm your slot)\n\n` +
+        `Enter your **name and 10-digit number** below and I will register this request with our care team right now — or reply with your name and number in chat.`,
       recommendation: {
-        label: `Book with a ${triage.practitioner_label} (${triage.mode})`,
+        label: `Customize slot on booking page`,
         path: triage.book_path,
         practitioner_type: triage.practitioner_type,
+        practitioner_label: triage.practitioner_label,
         mode: triage.mode,
         structured_note: triage.structured_note,
         secondary_label: triage.suggested_screening.label,
         secondary_path: triage.suggested_screening.path,
+        allow_inline_capture: true,
       },
       suggestions: [
         'How does pay-after-confirmation work?',
@@ -448,18 +565,22 @@ export function buildConciergeReply(messages = [], context = {}) {
     };
   }
 
-  // General navigation / default concierge reply
   return {
     reply:
-      'I can help you find the right care path on Serenest in a couple of steps:\n\n' +
-      '1. **Tell me what you are going through** (e.g. trouble sleeping, work burnout, persistent anxiety, or wondering about medication) and I will match you with the right clinician type (**Psychiatrist, Psychologist, Therapist, or Counsellor**) and draft your booking note.\n' +
-      '2. **Take a private check-in** at **/screening** (PHQ-9, GAD-7, or Burnout BAT-12) — free and stays on your device.\n' +
-      '3. **Request a slot** at **/book** — we confirm by phone or WhatsApp before you pay.',
+      'I am **Serenest Care AI** — I can match you with the right clinician and **book your appointment request right here in chat**:\n\n' +
+      '1. **Tell me what you are going through** (e.g. trouble sleeping, work burnout, persistent anxiety, or wondering about medication).\n' +
+      '2. I will match you with a **Psychiatrist, Psychologist, Therapist, or Counsellor** and prepare your clinician intake brief.\n' +
+      '3. Share your **name + 10-digit mobile number** right here (or use the instant request card below) and I will lock in your callback — you pay nothing until our team confirms your slot.',
     recommendation: {
-      label: 'Open AI-guided booking',
+      label: 'Open AI-guided booking page',
       path: '/book',
+      practitioner_type: 'psychiatrist',
+      practitioner_label: 'Psychiatrist',
+      mode: 'video',
+      structured_note: 'Goal: Initial care consultation — requested via Serenest Care AI.',
       secondary_label: 'Start a free check-in',
       secondary_path: '/screening',
+      allow_inline_capture: true,
     },
     suggestions: [
       'I have trouble sleeping and constant overthinking',
@@ -470,11 +591,103 @@ export function buildConciergeReply(messages = [], context = {}) {
   };
 }
 
-const SYSTEM_PROMPT = `You are **Serenest Care AI**, the clinical-care navigation and intake assistant for **Serenest** (doctor-led online psychiatry and therapy across India, serenest.in).
+/**
+ * Machine-readable AI Care Catalog (`GET /api/ai/catalog`) so external AI
+ * agents and on-site workflows can inspect services, fees, screening tools,
+ * and intake endpoints.
+ */
+export function buildAiCareCatalog(siteOrigin = 'https://www.serenest.in') {
+  return {
+    organization: {
+      name: 'Serenest',
+      legal_name: 'Serenest Education Pvt Ltd',
+      domain: siteOrigin,
+      focus: 'Clinical telepsychiatry, psychotherapy, counselling, and private mental health self-screening across India (Care only — no Academy).',
+      billing_model: 'Request-first: patients request a slot at no upfront cost; the care team confirms clinician and timing by phone/WhatsApp before payment.',
+      starting_fee_inr: 499,
+      languages: ['English', 'Hindi', 'Gujarati'],
+      contact: {
+        phone: '+91 77779 36367',
+        whatsapp: 'https://wa.me/917777936367',
+        email: 'support@serenest.in',
+      },
+      emergency_notice: 'Not an emergency service. In India, call 112 / 108 or Tele-MANAS 14416 for immediate crisis support.',
+    },
+    specialists: Object.values(ROLE_META).map((r) => ({
+      ...r,
+      booking_url: `${siteOrigin}/book?prole=${r.id}&mode=video`,
+    })),
+    consultation_modes: [
+      { id: 'video', label: 'Video consultation', note: 'Required for digital prescriptions under India Telemedicine Practice Guidelines.' },
+      { id: 'audio', label: 'Audio consultation', note: 'Voice-only session without camera.' },
+      { id: 'chat', label: 'Chat consultation', note: 'Live text session in a private thread.' },
+    ],
+    ai_endpoints: {
+      triage: {
+        method: 'POST',
+        path: '/api/assistant/triage',
+        description: 'Non-diagnostic clinical intake matcher: maps free-text concerns to specialist type, consultation mode, rationale, and a structured clinician intake brief.',
+      },
+      acquire: {
+        method: 'POST',
+        path: '/api/assistant/acquire',
+        description: 'One-step AI client acquisition: accepts patient name, 10-digit Indian mobile number, and concern; runs clinical triage and registers a pending appointment request.',
+      },
+      chat: {
+        method: 'POST',
+        path: '/api/assistant/chat',
+        description: 'Conversational care concierge with automatic lead capture when a visitor shares their name and 10-digit mobile number.',
+      },
+    },
+    routes: SITE_GUIDE_ROUTES.map((r) => ({
+      url: `${siteOrigin}${r.path}`,
+      path: r.path,
+      label: r.label,
+    })),
+  };
+}
 
-Your role:
-1. Help visitors understand which clinician fits their needs (**Psychiatrist** for medical assessment/sleep/appetite/prescriptions/ADHD/OCD; **Psychologist** for structured CBT/assessments; **Therapist** for ongoing talk therapy & relationships; **Counsellor** for stress, burnout, or a supportive first check-in).
-2. Explain Serenest's **request-first model** clearly: patients request a slot at **/book**, our team confirms by phone or WhatsApp, and payment happens **after** the slot is confirmed.
+/**
+ * Plain-text `/llms.txt` specification for AI search engines & LLM agents.
+ */
+export function renderLlmsTxt(siteOrigin = 'https://www.serenest.in') {
+  return [
+    '# Serenest — Online Psychiatry, Therapy & Mental Health Care in India',
+    '',
+    '> Doctor-led online psychiatry, clinical psychology, therapy, counselling, and private mental health screening across India. Request-first booking: patients request a slot and pay only after phone/WhatsApp confirmation.',
+    '',
+    '## Core Care Model (Care Only — No Academy)',
+    '- **Psychiatrist (MD):** Medical assessment, diagnosis, sleep/appetite/biological symptoms, adult ADHD, OCD, addiction care, and valid digital prescriptions on video under India Telemedicine Practice Guidelines.',
+    '- **Psychologist:** Structured clinical assessment and evidence-based psychotherapy (CBT, ACT, exposure, trauma-informed care).',
+    '- **Therapist:** Ongoing private talk therapy for anxiety, mood patterns, relationships, family stress, and grief.',
+    '- **Counsellor:** Supportive, goal-focused sessions for work burnout, academic/career stress, and life transitions.',
+    '- **Consultation Modes:** Video, Audio (camera-off), and Chat.',
+    '- **Fees & Payment:** Sessions start at ₹499. Request-first model — no charge when submitting a booking request; payment is collected after our care team confirms the clinician and slot on phone or WhatsApp.',
+    '- **Languages:** English, Hindi, Gujarati.',
+    '- **Contact:** Phone `+91 77779 36367` · WhatsApp `https://wa.me/917777936367` · Email `support@serenest.in`',
+    '- **Emergency Boundary:** Serenest is for scheduled outpatient care, not emergencies. In urgent danger in India, dial `112` / `108` or the 24×7 Tele-MANAS helpline at `14416`.',
+    '',
+    '## Key Patient Paths',
+    `- [AI-Guided Appointment Booking](${siteOrigin}/book): Match with the right specialist via Serenest Care AI and request a slot in under a minute.`,
+    `- [Find a Verified Clinician](${siteOrigin}/patient/find-professional): Filter psychiatrists, psychologists, therapists, and counsellors by language, city, and fee.`,
+    `- [Private Mental Health Check-ins](${siteOrigin}/screening): Free, on-device PHQ-9 (depression), GAD-7 (anxiety), and BAT-12 (burnout) self-screenings.`,
+    `- [Services Overview](${siteOrigin}/services): Psychiatry, therapy, addiction recovery, and digital consultations.`,
+    `- [Session Pricing](${siteOrigin}/pricing): Transparent fee structure and refund policy.`,
+    `- [Patient Guides](${siteOrigin}/guides): Evidence-informed guides on depression, anxiety, ADHD, OCD, and online prescriptions in India.`,
+    '',
+    '## AI & Agent Integration Endpoints',
+    `- \`GET ${siteOrigin}/api/ai/catalog\` — Structured JSON catalog of specialists, fees, modes, and routes.`,
+    `- \`POST ${siteOrigin}/api/assistant/triage\` — Non-diagnostic clinical intake matcher (\`{ concern, duration, preferredMode }\`).`,
+    `- \`POST ${siteOrigin}/api/assistant/acquire\` — Direct AI client acquisition endpoint (\`{ patient_name, patient_phone, concern }\`).`,
+    '',
+  ].join('\n');
+}
+
+const SYSTEM_PROMPT = `You are **Serenest Care AI**, the clinical-care navigation and client-acquisition assistant for **Serenest** (doctor-led online psychiatry and therapy across India, serenest.in).
+
+Your mission:
+1. Understand what the visitor is experiencing and match them to the right specialist (**Psychiatrist** for medical assessment/sleep/appetite/prescriptions/ADHD/OCD; **Psychologist** for structured CBT/assessments; **Therapist** for ongoing talk therapy & relationships; **Counsellor** for stress, burnout, or a supportive first check-in).
+2. Proactively convert visitors into cared-for clients: explain that Serenest uses a **request-first model** (sessions from **₹499**, **no payment until our team confirms the slot by phone or WhatsApp**), and invite them to share their **name and 10-digit Indian mobile number** right in the chat card (or on **/book**) so you can register their appointment request immediately.
 3. Point visitors to private, on-device self-checks at **/screening** (PHQ-9, GAD-7, BAT-12 Burnout Check) when they want to reflect first.
 4. Keep Serenest strictly focused on **patient care and clinical mental health** (there is no Academy).
 
@@ -520,14 +733,13 @@ export async function handleCareTriage(req, res) {
 
   const cleanConcern = typeof concern === 'string' ? concern.trim().slice(0, 2000) : '';
   const cleanGoal = typeof goal === 'string' ? goal.trim().slice(0, 600) : '';
-  const cleanDuration = typeof duration === 'string' ? duration.trim().slice(0, 200) : '';
+  const cleanDuration = typeof duration === 'string' ? duration.trim().trim().slice(0, 200) : '';
   const cleanScreening = typeof screening === 'string' ? screening.trim().slice(0, 500) : '';
 
   if (!cleanConcern && !cleanGoal && !cleanScreening) {
     return jsonErr(res, 'Share a few words about what you would like help with so we can match your care.', 400);
   }
 
-  // Always compute the deterministic clinical triage baseline first (also handles crisis detection)
   const baseline = analyzeCareTriage({
     concern: cleanConcern,
     goal: cleanGoal,
@@ -545,7 +757,6 @@ export async function handleCareTriage(req, res) {
     });
   }
 
-  // Enhance rationale & structured_note with OpenAI when configured
   const model = (process.env.OPENAI_MODEL || DEFAULT_MODEL).trim();
   try {
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -628,8 +839,10 @@ export async function handleCareTriage(req, res) {
 /**
  * POST /api/assistant/chat
  * Body: { messages: [{ role, content }], context?: { path?: string, mode?: string } }
+ * Optional `onAcquireLead(leadPayload)` callback lets the server persist a
+ * booking automatically when the visitor shares their name + 10-digit phone in chat.
  */
-export async function handleAssistantChat(req, res) {
+export async function handleAssistantChat(req, res, { onAcquireLead } = {}) {
   const messages = sanitizeMessages(req.body?.messages);
   if (messages.length === 0) {
     return jsonErr(res, 'Send at least one message.', 400);
@@ -641,6 +854,49 @@ export async function handleAssistantChat(req, res) {
   }
 
   const context = req.body?.context && typeof req.body.context === 'object' ? req.body.context : {};
+
+  // Check if the visitor shared a 10-digit Indian phone number to book directly in chat
+  if (!detectCrisis(lastUser.content) && typeof onAcquireLead === 'function') {
+    const extracted = extractLeadFromMessages(messages);
+    if (extracted) {
+      const triage = analyzeCareTriage({
+        concern: extracted.concern,
+        preferredMode: context?.mode,
+      });
+      const slot = nextDefaultSlot();
+      try {
+        const booking = await onAcquireLead({
+          patient_name: extracted.name,
+          patient_phone: extracted.phone,
+          practitioner_type: triage.practitioner_type,
+          mode: triage.mode,
+          preferred_date: slot.date,
+          preferred_time: slot.time,
+          language: 'English',
+          notes: `[AI Chat Intake · ${triage.practitioner_label}]\n${triage.structured_note}`,
+        });
+        const refCode = booking?.id ? String(booking.id).slice(0, 8).toUpperCase() : 'PENDING';
+        return res.status(200).json({
+          ok: true,
+          engine: 'clinical-concierge',
+          acquired_booking: booking,
+          reply:
+            `✓ **Appointment request registered (Ref: ${refCode})**\n\n` +
+            `Thank you, **${extracted.name}**. I have logged your request for a **${triage.practitioner_label}** (${triage.mode} session) for the next open slot (**${slot.label}**).\n\n` +
+            `• **What happens next:** Our care team will reach out on **+91 ${extracted.phone}** via WhatsApp or phone to confirm your clinician and exact timing.\n` +
+            `• **Payment:** You do not pay anything until your slot is confirmed.`,
+          recommendation: null,
+          suggestions: [
+            'Take a private 2-min check-in while I wait',
+            'What happens during a first consultation?',
+          ],
+        });
+      } catch (err) {
+        console.warn('[POST /api/assistant/chat] auto-lead capture failed:', err?.message);
+      }
+    }
+  }
+
   const fallback = buildConciergeReply(messages, context);
 
   const apiKey = process.env.OPENAI_API_KEY?.trim();

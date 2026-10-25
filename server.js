@@ -11,7 +11,14 @@ import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
 import { renderSeoHead, renderSitemapXml, shouldNoindex, ROUTE_SEO, SITE_ORIGIN, resolveSeoRedirect, isKnownDynamicSpaPath } from './src/lib/seo.js';
-import { handleAssistantChat, handleCareTriage } from './src/server/aiAssistant.js';
+import {
+  handleAssistantChat,
+  handleCareTriage,
+  analyzeCareTriage,
+  nextDefaultSlot,
+  buildAiCareCatalog,
+  renderLlmsTxt,
+} from './src/server/aiAssistant.js';
 import cron from 'node-cron';
 
 // ── Setup ────────────────────────────────────────────────────
@@ -658,6 +665,10 @@ app.post('/api/bookings', async (req, res) => {
     amount_paid: payment.amount,
   };
 
+  return ok(res, { booking: await persistBookingRecord(record) }, 201);
+});
+
+async function persistBookingRecord(record) {
   if (supabase) {
     const { data, error } = await supabase
       .from('appointments')
@@ -665,11 +676,11 @@ app.post('/api/bookings', async (req, res) => {
       .select()
       .single();
 
-    if (!error) {
+    if (!error && data) {
       notify.booking(data);
-      return ok(res, { booking: data }, 201);
+      return data;
     }
-    console.error('[POST /api/bookings]', error);
+    console.error('[persistBookingRecord]', error);
   }
 
   // DB missing or insert failed — never turn away a patient. Alert the team
@@ -677,8 +688,8 @@ app.post('/api/bookings', async (req, res) => {
   const fallback = { id: crypto.randomUUID(), ...record };
   captureFallbackLead('booking', fallback);
   notify.booking(fallback);
-  return ok(res, { booking: fallback }, 201);
-});
+  return fallback;
+}
 
 /**
  * GET /api/bookings/:id
@@ -2781,7 +2792,7 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════
-//  AI ASSISTANT (Care concierge + clinical intake triage)
+//  AI ASSISTANT (Care concierge + clinical intake triage + client acquisition)
 // ══════════════════════════════════════════════════════════════
 
 /** POST /api/assistant/triage — body: { concern, goal?, duration?, preferredMode?, screening? } */
@@ -2789,9 +2800,97 @@ app.post('/api/assistant/triage', (req, res, next) => {
   handleCareTriage(req, res).catch(next);
 });
 
+/**
+ * POST /api/assistant/acquire
+ * One-step AI client acquisition: matches the visitor's concern to the right
+ * clinician type & mode, prepares the clinician intake brief, picks the next
+ * open slot if none was given, and registers the appointment request.
+ */
+app.post('/api/assistant/acquire', async (req, res) => {
+  const {
+    patient_name,
+    patient_phone,
+    patient_email,
+    concern = '',
+    duration = '',
+    practitioner_type,
+    mode,
+    preferred_date,
+    preferred_time,
+    language = 'English',
+    notes = '',
+  } = req.body || {};
+
+  if (!patient_name?.trim()) return err(res, 'Please enter your name so our care team knows who to reach.');
+  if (!patient_phone?.trim()) return err(res, 'Please enter your 10-digit Indian mobile number.');
+
+  const phone = String(patient_phone).replace(/[^\d]/g, '').slice(-10);
+  if (phone.length !== 10 || !/^[6-9]/.test(phone)) {
+    return err(res, 'Enter a valid 10-digit Indian mobile number starting with 6–9.');
+  }
+
+  const triage = analyzeCareTriage({
+    concern: concern || notes,
+    duration,
+    preferredMode: mode,
+  });
+
+  const slot = nextDefaultSlot();
+  const resolvedRole = practitioner_type || triage.practitioner_type || 'psychiatrist';
+  const resolvedMode = mode || triage.mode || 'video';
+  const resolvedNote = (notes && notes.trim())
+    ? notes.trim()
+    : `[AI Care Match · ${triage.practitioner_label}]\n${triage.structured_note}`;
+
+  const record = {
+    patient_name: patient_name.trim(),
+    patient_phone: phone,
+    patient_email: patient_email?.trim() || null,
+    practitioner_type: resolvedRole,
+    mode: resolvedMode,
+    preferred_date: preferred_date || slot.date,
+    preferred_time: preferred_time || slot.time,
+    language: language || 'English',
+    notes: resolvedNote,
+    professional_id: null,
+    status: 'pending',
+    payment_status: 'unpaid',
+    payment_id: null,
+    payment_order_id: null,
+    amount_paid: null,
+  };
+
+  const booking = await persistBookingRecord(record);
+  return ok(res, { booking, triage, slot }, 201);
+});
+
 /** POST /api/assistant/chat — body: { messages: [{ role, content }], context? } */
 app.post('/api/assistant/chat', (req, res, next) => {
-  handleAssistantChat(req, res).catch(next);
+  handleAssistantChat(req, res, {
+    onAcquireLead: async (leadRecord) => persistBookingRecord({
+      ...leadRecord,
+      patient_email: null,
+      professional_id: null,
+      status: 'pending',
+      payment_status: 'unpaid',
+      payment_id: null,
+      payment_order_id: null,
+      amount_paid: null,
+    }),
+  }).catch(next);
+});
+
+/** GET /api/ai/catalog — machine-readable care catalog for AI agents */
+app.get('/api/ai/catalog', (_req, res) => {
+  return ok(res, buildAiCareCatalog(SITE_ORIGIN));
+});
+
+/** GET /llms.txt — LLM-friendly index of Serenest Care (no Academy) */
+app.get(['/llms.txt', '/llms-full.txt'], (_req, res) => {
+  res.status(200);
+  res.set('Content-Type', 'text/plain; charset=utf-8');
+  res.set('Cache-Control', 'public, max-age=3600');
+  return res.send(renderLlmsTxt(SITE_ORIGIN));
 });
 
 // Old crawlers still request /og-image.png from the previous share URL.
