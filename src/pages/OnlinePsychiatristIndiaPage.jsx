@@ -85,7 +85,7 @@ export default function OnlinePsychiatristIndiaPage() {
             <h2>Why patients choose Serenest for online psychiatry in India</h2>
             <p>
               Serenest is a psychiatrist-led telepsychiatry platform from{' '}
-              <Link to="/about">Serenest Education Pvt Ltd</Link>. Every clinician on the platform
+              <Link to="/about">Serenest Private Limited</Link>. Every clinician on the platform
               is independently verified, with credentials, council registration, and clinical role
               documented before they ever take a patient call.
             </p>

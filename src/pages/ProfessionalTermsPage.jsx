@@ -18,7 +18,7 @@ export default function ProfessionalTermsPage() {
               These terms apply to all mental health professionals — psychiatrists, psychologists, therapists, and counsellors —
               who join and practise on the Serenest platform.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>
@@ -29,7 +29,7 @@ export default function ProfessionalTermsPage() {
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>1. Relationship</h2>
-              <p className="muted">Professionals on Serenest are independent practitioners, not employees or agents of Serenest Education Pvt Ltd. Serenest provides a technology platform and operational infrastructure; you provide clinical services. Nothing in these Terms creates an employment, partnership, or joint venture relationship.</p>
+              <p className="muted">Professionals on Serenest are independent practitioners, not employees or agents of Serenest Private Limited. Serenest provides a technology platform and operational infrastructure; you provide clinical services. Nothing in these Terms creates an employment, partnership, or joint venture relationship.</p>
             </div>
 
             <div className="tile" style={{ padding: '1.5rem' }}>

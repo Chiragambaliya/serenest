@@ -18,7 +18,7 @@ export default function PaymentPolicyPage() {
               This policy explains how payments are collected, processed, and handled on the Serenest platform,
               including fees, taxes, and professional payouts.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>

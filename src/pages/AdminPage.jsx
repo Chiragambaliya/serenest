@@ -730,7 +730,7 @@ export default function AdminPage() {
       follow_up_date: '',
       emergency_advice: '',
       important_notes: '',
-      clinic_name: 'Serenest Education Pvt Ltd',
+      clinic_name: 'Serenest Private Limited',
       clinic_address: '',
       clinic_contact: '7777936367',
       clinic_website: 'https://serenest.in',
@@ -797,7 +797,7 @@ export default function AdminPage() {
           follow_up_date: existing.follow_up_date || '',
           emergency_advice: existing.emergency_advice || '',
           important_notes: existing.important_notes || '',
-          clinic_name: existing.clinic_name || 'Serenest Education Pvt Ltd',
+          clinic_name: existing.clinic_name || 'Serenest Private Limited',
           clinic_address: existing.clinic_address || '',
           clinic_contact: existing.clinic_contact || '7777936367',
           clinic_website: existing.clinic_website || 'https://serenest.in',
@@ -2102,7 +2102,7 @@ export default function AdminPage() {
 
                       <RxGroup title="Issued by (optional — defaults applied)" />
                       <div className="admin-rx-grid" style={rxGridStyle}>
-                        <RxField label="Clinic / organization" value={rxForm.clinic_name} onChange={(v) => setRx('clinic_name', v)} placeholder="Serenest Education Pvt Ltd" />
+                        <RxField label="Clinic / organization" value={rxForm.clinic_name} onChange={(v) => setRx('clinic_name', v)} placeholder="Serenest Private Limited" />
                         <RxField label="Address" value={rxForm.clinic_address} onChange={(v) => setRx('clinic_address', v)} />
                         <RxField label="Contact" value={rxForm.clinic_contact} onChange={(v) => setRx('clinic_contact', v)} placeholder="7777936367" />
                         <RxField label="Website / email" value={rxForm.clinic_website} onChange={(v) => setRx('clinic_website', v)} />

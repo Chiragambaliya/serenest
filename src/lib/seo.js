@@ -499,7 +499,7 @@ const ORG_SCHEMA = {
   '@type': 'Organization',
   '@id': `${SITE_ORIGIN}/#organization`,
   name: 'Serenest',
-  legalName: 'Serenest Education Pvt Ltd',
+  legalName: 'Serenest Private Limited',
   url: `${SITE_ORIGIN}/`,
   email: 'support@serenest.in',
   telephone: '+91-77779-36367',

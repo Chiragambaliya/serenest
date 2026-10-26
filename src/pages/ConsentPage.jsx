@@ -18,7 +18,7 @@ export default function ConsentPage() {
               This document explains what you are consenting to when you book and attend a teleconsultation on Serenest.
               Booking a session constitutes your informed consent to the terms below.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>

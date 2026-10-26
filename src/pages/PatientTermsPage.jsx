@@ -17,7 +17,7 @@ export default function PatientTermsPage() {
             <p className="about-subtext">
               These terms apply specifically to patients using Serenest to book and attend consultations with mental health professionals.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>

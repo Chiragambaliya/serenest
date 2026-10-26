@@ -101,7 +101,7 @@ export default function PrivacyPolicyPage() {
               collects, why we need it, who can see it, and the choices you control.
             </p>
             <p className="privacy-page__meta">
-              Effective 7 August 2026 · Data controller: Serenest Education Pvt Ltd, India
+              Effective 7 August 2026 · Data controller: Serenest Private Limited, India
             </p>
           </div>
           <aside className="privacy-promise" aria-label="Our privacy promise">
@@ -220,7 +220,7 @@ export default function PrivacyPolicyPage() {
                   guardians, professionals, learners, and people who contact us.
                 </p>
                 <p>
-                  Serenest Education Pvt Ltd (&quot;Serenest&quot;, &quot;we&quot;, &quot;us&quot;) is the
+                  Serenest Private Limited (&quot;Serenest&quot;, &quot;we&quot;, &quot;us&quot;) is the
                   Data Fiduciary responsible for deciding why and how personal data is processed. For
                   privacy questions or requests, email{' '}
                   <a href="mailto:support@serenest.in">support@serenest.in</a>. This policy should be read
@@ -433,7 +433,7 @@ export default function PrivacyPolicyPage() {
                   consent where required.
                 </p>
                 <div className="privacy-contact-card">
-                  <p><strong>Serenest Education Pvt Ltd</strong></p>
+                  <p><strong>Serenest Private Limited</strong></p>
                   <p>Data Fiduciary and platform operator · India</p>
                   <p><a href="mailto:support@serenest.in">support@serenest.in</a> · <a href="tel:+917777936367">+91 77779 36367</a></p>
                   <p>Privacy and grievance contact: Dr. Chirag Aambalia, Grievance Officer</p>

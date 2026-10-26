@@ -60,7 +60,7 @@ export default function LegalPage() {
               All of Serenest's legal documents, policies, and guidelines in one place.
               We've written them to be clear and readable — not just to satisfy legal requirements.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd · Rajkot, Gujarat, India</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited · Rajkot, Gujarat, India</p>
           </div>
         </div>
       </section>

@@ -17,7 +17,7 @@ export default function IntellectualPropertyPage() {
               This policy explains who owns the content on Serenest, what you may and may not do with it,
               and how to report an infringement.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>
@@ -28,7 +28,7 @@ export default function IntellectualPropertyPage() {
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>Ownership of Platform Content</h2>
-              <p className="muted">The Serenest name, logo, website design, software, source code, written content, educational materials, graphics, and all other platform elements are the intellectual property of Serenest Education Pvt Ltd, protected under the Copyright Act 1957, the Trade Marks Act 1999, and applicable Indian and international IP law.</p>
+              <p className="muted">The Serenest name, logo, website design, software, source code, written content, educational materials, graphics, and all other platform elements are the intellectual property of Serenest Private Limited, protected under the Copyright Act 1957, the Trade Marks Act 1999, and applicable Indian and international IP law.</p>
               <p className="muted" style={{ marginTop: 8 }}>All rights are reserved. You may not reproduce, distribute, modify, or create derivative works from any Serenest-owned content without prior written permission.</p>
             </div>
 
@@ -67,7 +67,7 @@ export default function IntellectualPropertyPage() {
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>Trademarks</h2>
-              <p className="muted">"Serenest" and the Serenest logo are trademarks of Serenest Education Pvt Ltd. Use of these marks in any form — including in domain names, app names, or marketing — requires written permission. Unauthorised use may constitute passing off or trade mark infringement under Indian law.</p>
+              <p className="muted">"Serenest" and the Serenest logo are trademarks of Serenest Private Limited. Use of these marks in any form — including in domain names, app names, or marketing — requires written permission. Unauthorised use may constitute passing off or trade mark infringement under Indian law.</p>
             </div>
 
             <div className="tile" style={{ padding: '1.5rem' }}>

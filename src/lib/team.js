@@ -14,7 +14,7 @@ export const TEAM_MEMBERS = [
     ],
     credentials: [
       'MBBS · MD Psychiatry',
-      'Founder, Serenest Education Pvt Ltd',
+      'Founder, Serenest Private Limited',
       'DPIIT Recognised Startup',
     ],
   },

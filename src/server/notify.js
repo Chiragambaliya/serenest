@@ -25,7 +25,7 @@ const NOTIFY_FROM = process.env.NOTIFY_FROM  || 'Serenest Alerts <onboarding@res
 const NOTIFY_TO   = process.env.NOTIFY_EMAIL;
 
 /** Shown in HTML email footers (legal entity). */
-const LEGAL_ENTITY = 'Serenest Education Pvt Ltd';
+const LEGAL_ENTITY = 'Serenest Private Limited';
 
 const CALLMEBOT_KEY   = process.env.CALLMEBOT_WHATSAPP_APIKEY;
 const CALLMEBOT_PHONE = process.env.CALLMEBOT_WHATSAPP_PHONE

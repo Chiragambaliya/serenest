@@ -24,7 +24,7 @@ export default function GrievancePolicyPage() {
               We take all complaints seriously. This policy explains how to raise a grievance, what to expect, and how we resolve complaints —
               in compliance with the IT (Intermediary Guidelines) Rules 2021.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>
@@ -83,7 +83,7 @@ export default function GrievancePolicyPage() {
               <p className="muted">As required by the Information Technology (Intermediary Guidelines and Digital Media Ethics Code) Rules 2021, we designate a Grievance Officer:</p>
               <div style={{ background: 'var(--bg-subtle)', borderRadius: 12, padding: '1rem 1.25rem', marginTop: 12 }}>
                 <div style={{ fontWeight: 700, fontSize: '1rem', marginBottom: 4 }}>Dr. Chirag Aambalia</div>
-                <div className="muted" style={{ fontSize: '0.88rem' }}>Founder, Serenest Education Pvt Ltd</div>
+                <div className="muted" style={{ fontSize: '0.88rem' }}>Founder, Serenest Private Limited</div>
                 <div style={{ marginTop: 8, fontSize: '0.88rem' }}>
                   <span className="muted">Email: </span>
                   <a href="mailto:support@serenest.in" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>support@serenest.in</a>

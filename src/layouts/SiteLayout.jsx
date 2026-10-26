@@ -429,7 +429,7 @@ export default function SiteLayout() {
           </div>
 
           <div className="ed-footer__bottom">
-            <p>© {new Date().getFullYear()} Serenest Education Pvt Ltd</p>
+            <p>© {new Date().getFullYear()} Serenest Private Limited</p>
             <nav className="ed-footer__legal" aria-label="Legal">
               {FOOTER_LEGAL.map((link) => (
                 <Link key={link.to} to={link.to}>{link.label}</Link>
