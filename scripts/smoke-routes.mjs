@@ -44,7 +44,6 @@ const ROUTES = [
   '/partner',
   '/patient/login',
   '/professionals/login',
-  '/professionals/learning',
   '/professionals/resources',
   '/professionals/guidelines',
   '/professionals/apply',

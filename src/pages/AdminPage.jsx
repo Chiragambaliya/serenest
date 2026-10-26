@@ -237,9 +237,6 @@ const SITE_PAGE_GROUPS = [
     title: 'Professionals hub',
     pages: [
       { label: 'For professionals', path: '/professionals', hint: 'Clinician landing' },
-      { label: 'Clinical learning hub', path: '/professionals/learning', hint: 'Pharmacology & psychology tracks' },
-      { label: 'Learning — pharmacology', path: '/professionals/learning#learning-pharmacology', hint: 'Deep link' },
-      { label: 'Learning — psychology', path: '/professionals/learning#learning-psychology', hint: 'Deep link' },
       { label: 'Pro resources', path: '/professionals/resources', hint: 'Downloads & links' },
       { label: 'Clinical guidelines', path: '/professionals/guidelines', hint: 'Practice expectations' },
       { label: 'Apply as professional', path: '/professionals/apply', hint: 'Onboarding wizard' },

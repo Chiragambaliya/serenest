@@ -10,7 +10,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
-import { renderSeoHead, renderSitemapXml, shouldNoindex, ROUTE_SEO, SITE_ORIGIN, resolveSeoRedirect, isKnownDynamicSpaPath } from './src/lib/seo.js';
+import { renderSeoHead, renderSeoBody, renderSitemapXml, shouldNoindex, ROUTE_SEO, SITE_ORIGIN, resolveSeoRedirect, isKnownDynamicSpaPath } from './src/lib/seo.js';
 import { handleAssistantChat } from './src/server/aiAssistant.js';
 import cron from 'node-cron';
 
@@ -2828,7 +2828,6 @@ const VALID_ROUTES = new Set([
   '/services/digital-consultations',
   '/contact',
   '/professionals',
-  '/professionals/learning',
   '/professionals/resources',
   '/professionals/guidelines',
   '/professionals/apply',
@@ -2956,6 +2955,11 @@ function buildHtmlForRequest(pathname, { status }) {
   const renderPath = routeKey || '/';
   const replacement = `<!--SEO_HEAD_START-->\n    ${renderSeoHead(renderPath, { noindex })}\n    <!--SEO_HEAD_END-->`;
   let html = tpl.replace(SEO_SENTINEL, replacement);
+  // Give crawlers real page text; React replaces it on mount.
+  if (status === 200 && !noindex) {
+    const body = renderSeoBody(renderPath);
+    if (body) html = html.replace('<div id="root"></div>', `<div id="root">${body}</div>`);
+  }
   if (GA_META) html = html.replace('</head>', `${GA_META}</head>`);
 
   // Admin is a separate installable PWA: on /admin routes we swap the web app

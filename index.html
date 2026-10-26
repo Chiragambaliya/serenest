@@ -45,6 +45,18 @@
     <!--SEO_HEAD_END-->
 
     <!-- Fonts: self-hosted Instrument Serif + Work Sans + IBM Plex Mono — @font-face in styles.css -->
+    <style>
+      /* Pre-render summary (server-injected inside #root); React replaces it on mount. */
+      .seo-shell{max-width:44rem;margin:0 auto;padding:2.5rem 1rem 4rem;font:16px/1.65 Georgia,'Times New Roman',serif;color:#2b3324;background:#f7f4ee}
+      .seo-shell h1{font-size:1.9rem;line-height:1.2;margin:.5rem 0 1rem;color:#3c4a2c}
+      .seo-shell h2{font-size:1.25rem;margin-top:2rem}
+      .seo-shell a{color:#3c4a2c}
+      .seo-shell dt{font-weight:700;margin-top:1rem}
+      .seo-shell dd{margin:0}
+      .seo-shell nav ul{list-style:none;padding:0;display:flex;flex-wrap:wrap;gap:.5rem 1.25rem;margin-top:2.5rem;font:14px/1.4 system-ui,sans-serif}
+      .seo-shell__brand{font:600 1.1rem/1 system-ui,sans-serif;letter-spacing:.02em}
+      .seo-shell__brand a{text-decoration:none}
+    </style>
   </head>
   <body>
     <div id="root"></div>

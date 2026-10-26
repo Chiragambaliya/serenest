@@ -126,14 +126,6 @@ export const ROUTE_SEO = {
     ogDescription:
       'Join Serenest as a verified clinician. Clinical resources and practice support for approved professionals.',
   },
-  '/professionals/learning': {
-    title: 'Clinical Learning Hub | Psychiatry & Psychology CPD | Serenest',
-    description:
-      'Continuing professional development for psychiatrists, psychologists, and counsellors. Pharmacology, psychology, and clinical practice modules from Serenest.',
-    ogTitle: 'Clinical Learning Hub | Serenest Professionals',
-    ogDescription:
-      'CPD-oriented learning modules in pharmacology, psychology, and clinical practice for mental health professionals.',
-  },
   '/professionals/resources': {
     title: 'Clinical Resources for Mental Health Professionals | Serenest',
     description:
@@ -464,6 +456,8 @@ export const ROUTE_ALIASES = {
   // Retired / renamed public URLs
   '/preview': '/',
   '/disclaimer': '/emergency-disclaimer',
+  // Clinician learning hub retired with the Academy (Sep 2026)
+  '/professionals/learning': '/professionals',
 
   // PHQ-9 keyword variants
   '/phq-9-test-online-india': '/phq-9-depression-screening',
@@ -1475,4 +1469,95 @@ export function renderSeoHead(pathname, { noindex = false } = {}) {
   );
 
   return parts.join('\n    ');
+}
+
+// ── Crawlable body fallback ───────────────────────────────────
+// The SPA ships an empty <div id="root">, so crawlers that don't run JS (and
+// link previewers, AI search tools) saw no page text. The server injects this
+// plain-HTML summary inside #root; React's createRoot().render() replaces it
+// as soon as the bundle runs, so visitors with JS see the normal page.
+
+const ROUTE_FAQS = {
+  '/online-psychiatrist-for-depression-india': DEPRESSION_FAQS,
+  '/anxiety-counselling-online-india': ANXIETY_FAQS,
+  '/adhd-assessment-online-india': ADHD_FAQS,
+  '/ocd-treatment-online-india': OCD_FAQS,
+  '/online-psychiatrist-gujarat': GUJARAT_FAQS,
+  '/phq-9-depression-screening': PHQ9_FAQS,
+  '/gad-7-anxiety-screening': GAD7_FAQS,
+  '/online-psychiatrist-prescription-india': PRESCRIPTION_FAQS,
+};
+
+const SHELL_NAV = [
+  ['/services', 'Services'],
+  ['/book', 'Request an appointment'],
+  ['/pricing', 'Pricing'],
+  ['/screening', 'Free mental health screening'],
+  ['/online-psychiatrist-for-depression-india', 'Depression'],
+  ['/anxiety-counselling-online-india', 'Anxiety'],
+  ['/adhd-assessment-online-india', 'ADHD'],
+  ['/ocd-treatment-online-india', 'OCD'],
+  ['/team', 'Our clinicians'],
+  ['/blog', 'Articles'],
+  ['/faq', 'FAQ'],
+  ['/about', 'About'],
+  ['/emergency-disclaimer', 'Emergency information'],
+];
+
+function escapeHtml(s) {
+  return String(s ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function headingFor(pathname, seo) {
+  if (seo.h1) return seo.h1;
+  if (pathname.startsWith('/blog/')) {
+    const post = BLOG_POSTS.find((p) => `/blog/${p.slug}` === pathname);
+    if (post) return post.title;
+  }
+  return String(seo.title || '').replace(/\s*[|—-]\s*Serenest.*$/i, '').trim() || 'Serenest';
+}
+
+/** Plain-HTML page summary for the initial response; null for non-indexable paths. */
+export function renderSeoBody(pathname) {
+  if (!isIndexableSeoPath(pathname)) return null;
+  const seo = ROUTE_SEO[pathname];
+  const parts = [
+    '<div class="seo-shell">',
+    '<p class="seo-shell__brand"><a href="/">Serenest</a></p>',
+    '<main>',
+    `<h1>${escapeHtml(headingFor(pathname, seo))}</h1>`,
+    `<p>${escapeHtml(seo.description)}</p>`,
+  ];
+
+  if (pathname.startsWith('/blog/')) {
+    const post = BLOG_POSTS.find((p) => `/blog/${p.slug}` === pathname);
+    if (post) for (const para of post.body || []) parts.push(`<p>${escapeHtml(para)}</p>`);
+  }
+
+  const faqs = ROUTE_FAQS[pathname];
+  if (faqs && faqs.length) {
+    parts.push('<h2>Frequently asked questions</h2>', '<dl>');
+    for (const f of faqs) parts.push(`<dt>${escapeHtml(f.q)}</dt><dd>${escapeHtml(f.a)}</dd>`);
+    parts.push('</dl>');
+  }
+
+  if (pathname === '/blog') {
+    parts.push('<ul>');
+    for (const p of BLOG_POSTS) {
+      parts.push(`<li><a href="/blog/${escapeHtml(p.slug)}">${escapeHtml(p.title)}</a> — ${escapeHtml(p.excerpt)}</li>`);
+    }
+    parts.push('</ul>');
+  }
+
+  parts.push('</main>', '<nav aria-label="Site"><ul>');
+  for (const [href, label] of SHELL_NAV) {
+    if (href === pathname) continue;
+    parts.push(`<li><a href="${href}">${escapeHtml(label)}</a></li>`);
+  }
+  parts.push('</ul></nav>', '</div>');
+  return parts.join('');
 }

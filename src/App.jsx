@@ -28,7 +28,6 @@ const FAQPage = lazy(() => import('./pages/FAQPage'));
 const BlogIndexPage = lazy(() => import('./pages/BlogIndexPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const ProfessionalOnboardingPage = lazy(() => import('./pages/ProfessionalOnboardingPage'));
-const ProfessionalLearningPage = lazy(() => import('./pages/ProfessionalLearningPage'));
 const ProfessionalResourcesPage = lazy(() => import('./pages/ProfessionalResourcesPage'));
 const ProfessionalGuidelinesPage = lazy(() => import('./pages/ProfessionalGuidelinesPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
@@ -165,7 +164,6 @@ export default function App() {
           <Route path="services/digital-consultations" element={<S><DigitalConsultationsPage /></S>} />
           <Route path="contact" element={<S><ContactPage /></S>} />
           <Route path="professionals" element={<S><ProfessionalsPage /></S>} />
-          <Route path="professionals/learning" element={<S><ProfessionalLearningPage /></S>} />
           <Route path="professionals/resources" element={<S><ProfessionalResourcesPage /></S>} />
           <Route path="professionals/guidelines" element={<S><ProfessionalGuidelinesPage /></S>} />
           <Route path="professionals/apply" element={<S><ProfessionalOnboardingPage /></S>} />
