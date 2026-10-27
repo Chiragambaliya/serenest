@@ -202,6 +202,37 @@
   }
 }
 
+.hp-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hp-specialties a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid rgba(28, 26, 23, 0.16);
+  border-radius: 999px;
+  background: #fffdf8;
+  color: inherit;
+  text-decoration: none;
+  font-size: 0.92rem;
+  line-height: 1.3;
+}
+
+.hp-specialties a:hover {
+  border-color: rgba(28, 26, 23, 0.45);
+}
+
+.hp-specialties__more {
+  margin: 1rem 0 0;
+}
+
 @media (max-width: 480px) {
   .hp-trust__list {
     grid-template-columns: 1fr;

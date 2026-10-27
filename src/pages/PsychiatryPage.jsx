@@ -6,15 +6,7 @@ import FaqAccordion from '../components/FaqAccordion';
 import EmergencyNotice from '../components/EmergencyNotice';
 import ImagePlaceholder from '../components/ImagePlaceholder';
 import '../styles/service-detail.css';
-
-const ASSESSED = [
-  { title: 'Depression', body: 'Low mood, loss of interest, fatigue, and related symptoms.' },
-  { title: 'Anxiety disorders', body: 'Generalised anxiety, panic, and social anxiety.' },
-  { title: 'OCD', body: 'Intrusive thoughts and compulsive behaviours.' },
-  { title: 'Bipolar disorder', body: 'Mood episodes requiring ongoing psychiatric management.' },
-  { title: 'ADHD (adults)', body: 'Attention, focus, and impulsivity assessment.' },
-  { title: 'Sleep disorders', body: 'Insomnia and disrupted sleep patterns.' },
-];
+import { CONDITION_SPECIALTIES } from '../lib/specialties';
 
 const FAQS = [
   { question: 'Is an online psychiatry consultation as effective as an in-person one?', answer: 'For assessment, follow-up, and medication management, telepsychiatry is a recognised model of care under Indian telemedicine guidelines. Some situations — for example, when a physical examination or urgent in-person evaluation is needed — require in-person care instead, and your psychiatrist will tell you if that applies.' },
@@ -61,19 +53,19 @@ export default function PsychiatryPage() {
           <p className="svd-sidelabel">Scope</p>
           <h2>Conditions commonly assessed</h2>
           <p className="svd-section-lead">
-            This is not a diagnostic tool — it's a guide to when psychiatric assessment is often
-            appropriate. Your psychiatrist will make the actual clinical assessment.
+            This is not a diagnostic tool. It lists the adult specialties a psychiatrist on
+            Serenest can assess. Your psychiatrist makes the actual clinical decision.
           </p>
           <div className="ed-index">
-            {ASSESSED.map((item, i) => (
-              <article key={item.title} className="ed-index__row">
+            {CONDITION_SPECIALTIES.map((item, i) => (
+              <Link key={item.id} className="ed-index__row" to={item.path}>
                 <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
                 <span>
-                  <h3 className="ed-index__title">{item.title}</h3>
+                  <h3 className="ed-index__title">{item.name}</h3>
                 </span>
-                <p className="ed-index__body">{item.body}</p>
-                <span />
-              </article>
+                <p className="ed-index__body">{item.summary}</p>
+                <span className="ed-index__go" aria-hidden="true">View →</span>
+              </Link>
             ))}
           </div>
         </div>
