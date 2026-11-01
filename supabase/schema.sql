@@ -25,8 +25,9 @@ create table if not exists public.appointments (
   patient_email    text,
 
   -- Session preferences
+  specialty        text not null default 'psychiatry',  -- slug from src/lib/specialties.js
   practitioner_type text not null
-                     check (practitioner_type in ('psychiatrist','psychologist','therapist','counsellor')),
+                     check (practitioner_type in ('psychiatrist','psychologist','therapist','counsellor','doctor')),
   mode             text not null default 'video'
                      check (mode in ('video','audio','chat')),
   preferred_date   date not null,
@@ -63,6 +64,7 @@ create table if not exists public.professional_applications (
                  check (status in ('pending','approved','rejected')),
   role         text not null,
   role_label   text,
+  specialty    text not null default 'psychiatry',  -- slug from src/lib/specialties.js
   full_name    text not null,
   phone        text not null,
   email        text,

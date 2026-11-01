@@ -56,5 +56,5 @@ export const TRUST_POINTS = [
   { id: 'pay', label: 'Pay after we confirm' },
   { id: 'private', label: 'Private sessions' },
   { id: 'india', label: 'Care from anywhere in India' },
-  { id: 'verified', label: 'Verified clinicians' },
+  { id: 'verified', label: 'Verified doctors' },
 ];

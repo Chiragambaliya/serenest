@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { bookings, professionals as professionalsApi, payments, health } from '../lib/api';
 import { CONSULTATION_MODES } from '../lib/consultationModes';
+import { SPECIALTIES, getSpecialty, practitionersFor } from '../lib/specialties.js';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { useAuth } from '../lib/useAuth';
@@ -30,12 +31,14 @@ function loadRazorpay() {
   });
 }
 
-const PRACTITIONER_TYPES = [
-  { id: 'psychiatrist', label: 'Psychiatrist' },
-  { id: 'psychologist', label: 'Psychologist' },
-  { id: 'therapist', label: 'Therapist' },
-  { id: 'counsellor', label: 'Counsellor' },
-];
+const MENTAL_HEALTH_ROLES = practitionersFor('psychiatry').map((p) => p.id);
+
+/** Specialty implied by the URL, a preselected professional, or screening; '' if unknown. */
+function initialSpecialty(param, role, fromScreening) {
+  if (getSpecialty(param)) return param;
+  if (MENTAL_HEALTH_ROLES.includes(role) || fromScreening) return 'psychiatry';
+  return '';
+}
 
 function pad2(n) {
   return String(n).padStart(2, '0');
@@ -97,7 +100,18 @@ export default function BookingPage() {
   const { days, times } = useMemo(() => makeSlots(), []);
   const [step, setStep] = useState(1);
 
-  const [practitionerType, setPractitionerType] = useState(suggestedRole || 'psychiatrist');
+  const [specialty, setSpecialty] = useState(() =>
+    initialSpecialty(searchParams.get('specialty') ?? '', preProRole, Boolean(prePhq || preGad || preTool)),
+  );
+  const practitionerTypes = useMemo(() => practitionersFor(specialty || 'psychiatry'), [specialty]);
+  const [practitionerType, setPractitionerType] = useState(
+    () => suggestedRole || practitionersFor(initialSpecialty(searchParams.get('specialty') ?? '', preProRole, false) || 'psychiatry')[0].id,
+  );
+
+  // Keep the practitioner valid for the chosen specialty.
+  useEffect(() => {
+    if (!practitionerTypes.some((t) => t.id === practitionerType)) setPractitionerType(practitionerTypes[0].id);
+  }, [practitionerTypes, practitionerType]);
   const [mode, setMode] = useState(
     ['video', 'audio', 'chat'].includes(preMode) ? preMode : 'video',
   );
@@ -118,8 +132,8 @@ export default function BookingPage() {
   }, [hasPro]);
 
   const directoryForType = useMemo(
-    () => directory.filter((p) => p.role === practitionerType),
-    [directory, practitionerType],
+    () => directory.filter((p) => p.role === practitionerType && (p.specialty || 'psychiatry') === (specialty || 'psychiatry')),
+    [directory, practitionerType, specialty],
   );
 
   const selectedPro = useMemo(
@@ -131,7 +145,7 @@ export default function BookingPage() {
   // a previously selected id may not belong to the new type's list.
   useEffect(() => {
     setSelectedProId('');
-  }, [practitionerType]);
+  }, [practitionerType, specialty]);
   const [dayKey, setDayKey] = useState(days[0]?.key ?? '');
   const [time, setTime] = useState(times[0] ?? '');
 
@@ -185,6 +199,7 @@ export default function BookingPage() {
       patient_name: name.trim(),
       patient_phone: phoneClean,
       patient_email: email.trim() || undefined,
+      specialty: specialty || 'psychiatry',
       practitioner_type: practitionerType,
       ...(hasPro && { professional_id: preProId, professional_name: preProName }),
       ...(!hasPro && selectedProId && { professional_id: selectedProId, professional_name: selectedPro?.full_name }),
@@ -200,7 +215,7 @@ export default function BookingPage() {
       if (!paymentsOn) {
         const res = await bookings.create(bookingData);
         setConfirmation(res.booking);
-        trackEvent('book_request_submitted', { practitioner_type: practitionerType, mode, paid: false });
+        trackEvent('book_request_submitted', { specialty, practitioner_type: practitionerType, mode, paid: false });
         return;
       }
 
@@ -234,7 +249,7 @@ export default function BookingPage() {
                 razorpay_signature: resp.razorpay_signature,
               });
               setConfirmation(res.booking);
-              trackEvent('book_request_submitted', { practitioner_type: practitionerType, mode, paid: true });
+              trackEvent('book_request_submitted', { specialty, practitioner_type: practitionerType, mode, paid: true });
               resolve();
             } catch (e) {
               reject(e);
@@ -257,10 +272,12 @@ export default function BookingPage() {
   }
 
   const dayLabel = useMemo(() => days.find((d) => d.key === dayKey)?.label ?? '', [days, dayKey]);
-  const selectedTypeLabel = useMemo(
-    () => PRACTITIONER_TYPES.find((t) => t.id === practitionerType)?.label ?? 'Practitioner',
-    [practitionerType],
-  );
+  const specialtyInfo = getSpecialty(specialty);
+  const selectedTypeLabel = useMemo(() => {
+    const label = practitionerTypes.find((t) => t.id === practitionerType)?.label ?? 'Practitioner';
+    if (!specialtyInfo || specialty === 'psychiatry') return label;
+    return `${specialtyInfo.name} specialist`;
+  }, [practitionerTypes, practitionerType, specialty, specialtyInfo]);
   const selectedModeLabel = useMemo(
     () => CONSULTATION_MODES.find((m) => m.id === mode)?.label ?? 'Video',
     [mode],
@@ -453,10 +470,31 @@ export default function BookingPage() {
                 </div>
 
                 <div className="form-grid">
+                  <label className="field field-wide">
+                    <span className="field-label">Specialty</span>
+                    <select
+                      className="input"
+                      value={specialty}
+                      disabled={hasPro && Boolean(specialty)}
+                      onChange={(e) => setSpecialty(e.target.value)}
+                    >
+                      <option value="" disabled>
+                        Choose a specialty
+                      </option>
+                      {SPECIALTIES.map((s) => (
+                        <option key={s.slug} value={s.slug}>
+                          {s.name}
+                        </option>
+                      ))}
+                    </select>
+                    {specialtyInfo ? <span className="muted" style={{ fontSize: 13, marginTop: 4 }}>{specialtyInfo.summary}</span> : null}
+                  </label>
+
+                  {practitionerTypes.length > 1 ? (
                   <div>
                     <div className="field-label">Practitioner {hasPro && <span className="summary-pill" style={{ marginLeft: 6 }}>{preProLabel}</span>}</div>
                     <div className="choice-grid">
-                      {PRACTITIONER_TYPES.map((t) => (
+                      {practitionerTypes.map((t) => (
                         <button
                           key={t.id}
                           type="button"
@@ -469,11 +507,12 @@ export default function BookingPage() {
                       ))}
                     </div>
                   </div>
+                  ) : null}
 
                   {!hasPro && (
                     <div className="field-wide">
                       <div className="field-label">
-                        Choose your counsellor <span className="muted" style={{ fontWeight: 400 }}>(optional)</span>
+                        Choose your professional <span className="muted" style={{ fontWeight: 400 }}>(optional)</span>
                       </div>
                       {directoryLoading ? (
                         <p className="muted" style={{ marginTop: 8 }}>Loading available professionals…</p>
@@ -573,7 +612,7 @@ export default function BookingPage() {
                   <button className="btn btn-ghost" type="button" onClick={() => setStep(1)}>
                     ← Back
                   </button>
-                  <button className="btn btn-primary" type="button" onClick={() => setStep(3)}>
+                  <button className="btn btn-primary" type="button" disabled={!specialty} onClick={() => setStep(3)}>
                     Review request →
                   </button>
                 </div>
@@ -590,11 +629,11 @@ export default function BookingPage() {
                 <div className="confirm-grid">
                   <div className="confirm-card">
                     <div className="confirm-row">
-                      <span className="confirm-k">Practitioner</span>
+                      <span className="confirm-k">Care</span>
                       <span className="confirm-v">{selectedTypeLabel}</span>
                     </div>
                     <div className="confirm-row">
-                      <span className="confirm-k">Counsellor</span>
+                      <span className="confirm-k">Professional</span>
                       <span className="confirm-v">
                         {hasPro ? preProName : (selectedPro?.full_name ?? 'Any available')}
                       </span>

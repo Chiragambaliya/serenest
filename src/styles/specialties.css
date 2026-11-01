@@ -1,0 +1,42 @@
+/* Specialties — /specialties and /specialties/:slug */
+
+.sp-grid {
+  list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 270px), 1fr));
+}
+.sp-card {
+  display: flex; flex-direction: column; gap: 8px; height: 100%;
+  padding: var(--sp-4); background: var(--surface);
+  border: 1px solid var(--border-soft); border-radius: var(--r-card);
+  color: inherit; text-decoration: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.sp-card:hover { border-color: var(--border-brand); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.sp-card__name { font-family: var(--font-heading); font-size: 1.5rem; line-height: 1.15; color: var(--ink); }
+.sp-card__summary { flex: 1; font-size: 0.93rem; line-height: 1.55; color: var(--ink-2); }
+.sp-card__conds { font-size: 0.82rem; color: var(--muted); }
+.sp-card__cta { margin-top: 4px; font-size: 0.88rem; font-weight: 500; color: var(--brand); }
+
+.sp-layout { display: grid; gap: var(--sp-5); }
+@media (min-width: 960px) { .sp-layout { grid-template-columns: minmax(0, 1fr) 320px; align-items: start; } }
+.sp-h2 { font-size: clamp(1.4rem, 2.8vw, 1.8rem); margin: var(--sp-5) 0 var(--sp-3); }
+.sp-layout > div > .sp-h2:first-child { margin-top: 0; }
+.sp-conds { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.sp-conds li { padding: 8px 14px; border-radius: var(--r-pill); background: var(--surface); border: 1px solid var(--border-soft); font-size: 0.92rem; }
+.sp-note { margin-top: var(--sp-3); max-width: 640px; line-height: 1.6; }
+.sp-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.sp-steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--sp-3); }
+.sp-steps li { display: flex; gap: 14px; align-items: flex-start; line-height: 1.5; }
+.sp-steps__n {
+  flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  background: var(--teal-50); color: var(--teal-600); font-weight: 600; font-size: 0.9rem; border: 1px solid var(--border-brand);
+}
+
+.sp-aside { display: grid; gap: var(--sp-3); }
+@media (min-width: 960px) { .sp-aside { position: sticky; top: 96px; } }
+.sp-panel { padding: var(--sp-4); background: var(--surface); border: 1px solid var(--border-soft); border-radius: var(--r-card); display: grid; gap: 10px; }
+.sp-panel h3 { font-size: 1.2rem; }
+.sp-panel ul { margin: 0; padding-left: 1.1rem; display: grid; gap: 4px; }
+.sp-panel p { margin: 0; font-size: 0.9rem; line-height: 1.5; }
+.sp-panel--warn { background: var(--accent-light); border-color: rgba(193, 87, 45, 0.25); }
+.sp-panel--warn h3 { color: var(--accent-dark); }

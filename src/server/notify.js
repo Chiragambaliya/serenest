@@ -1,3 +1,13 @@
+import { getSpecialty, practitionersFor } from '../lib/specialties.js';
+
+/** "Cardiology · Specialist doctor" — falls back to the raw values. */
+function careLabel(b) {
+  const sp = getSpecialty(b.specialty || 'psychiatry');
+  const pr = practitionersFor(b.specialty || 'psychiatry').find((p) => p.id === b.practitioner_type);
+  const prLabel = pr ? pr.label : b.practitioner_type;
+  return sp ? `${sp.name} · ${prLabel}` : prLabel;
+}
+
 /**
  * Notification helper — team alerts + optional patient confirmations.
  *
@@ -251,7 +261,7 @@ function patientBookingBody(b) {
   const ref = b.id ? esc(b.id.slice(0, 8).toUpperCase()) : '';
   return (
     `<p style="margin:0 0 12px">Hi ${first},</p>`
-    + `<p style="margin:0 0 12px">Thank you for choosing Serenest. We have received your booking request for a <strong>${esc(b.mode)}</strong> consultation (${esc(b.practitioner_type)}).</p>`
+    + `<p style="margin:0 0 12px">Thank you for choosing Serenest. We have received your booking request for a <strong>${esc(b.mode)}</strong> consultation (${esc(careLabel(b))}).</p>`
     + `<p style="margin:0 0 12px"><strong>Preferred slot:</strong> ${esc(b.preferred_date)} at ${esc(b.preferred_time)}</p>`
     + `<p style="margin:0 0 12px">Our team will contact you on <strong>${fmtPhone(b.patient_phone)}</strong> shortly to confirm and share payment details.</p>`
     + (ref ? `<p style="margin:0;color:#64748b;font-size:13px">Reference: <code style="font-family:monospace">${ref}</code></p>` : '')
@@ -298,7 +308,7 @@ export const notify = {
       ${table([
         row('Phone',          fmtPhone(b.patient_phone)),
         row('Email',          esc(b.patient_email)),
-        row('Practitioner',   esc(b.practitioner_type)),
+        row('Care',           esc(careLabel(b))),
         row('Mode',           esc(b.mode)),
         row('Preferred slot', `${esc(b.preferred_date)} at ${esc(b.preferred_time)}`),
         row('Language',       esc(b.language)),
@@ -309,11 +319,11 @@ export const notify = {
     `;
     fire(sendEmail({ subject: `New booking — ${b.patient_name} (${b.preferred_date})`, html }));
     fire(sendTelegram(
-      `<b>📅 New booking</b>\n<b>${esc(b.patient_name)}</b>\n📞 ${esc(fmtPhone(b.patient_phone))}\n${esc(b.practitioner_type)} • ${esc(b.preferred_date)} ${esc(b.preferred_time)}`,
+      `<b>📅 New booking</b>\n<b>${esc(b.patient_name)}</b>\n📞 ${esc(fmtPhone(b.patient_phone))}\n${esc(careLabel(b))} • ${esc(b.preferred_date)} ${esc(b.preferred_time)}`,
     ));
     const phoneDigits = String(b.patient_phone || '').replace(/\D/g, '');
     fire(sendTeamWhatsApp(
-      `Serenest — New booking\n${b.patient_name}\n+91 ${phoneDigits}\n${b.practitioner_type} · ${b.mode}\n${b.preferred_date} ${b.preferred_time}${b.id ? `\nRef: ${b.id.slice(0, 8).toUpperCase()}` : ''}`,
+      `Serenest — New booking\n${b.patient_name}\n+91 ${phoneDigits}\n${careLabel(b)} · ${b.mode}\n${b.preferred_date} ${b.preferred_time}${b.id ? `\nRef: ${b.id.slice(0, 8).toUpperCase()}` : ''}`,
     ));
 
     const bookingPatientEmail = b.patient_email?.trim();
@@ -706,7 +716,7 @@ export const notify = {
       subject: `Reminder: your Serenest session — ${b.preferred_date} at ${b.preferred_time}`,
       html:
         `<p style="margin:0 0 12px">Hi ${first},</p>`
-        + `<p style="margin:0 0 12px">A gentle reminder about your upcoming <strong>${esc(b.mode)}</strong> consultation (${esc(b.practitioner_type)}) on <strong>${esc(when)}</strong>.</p>`
+        + `<p style="margin:0 0 12px">A gentle reminder about your upcoming <strong>${esc(b.mode)}</strong> consultation (${esc(careLabel(b))}) on <strong>${esc(when)}</strong>.</p>`
         + `<p style="margin:0 0 12px"><a href="https://serenest.in${joinPath}" style="display:inline-block;background:#0f766e;color:#fff;text-decoration:none;padding:10px 18px;border-radius:8px;font-weight:600">Join your session</a></p>`
         + `<p style="margin:0 0 12px;font-size:13px;color:#64748b">Please be ready a few minutes early, in a quiet place with a stable connection.${ref ? ` Reference: <code style="font-family:monospace">${ref}</code>.` : ''}</p>`
         + `<p style="margin:0;font-size:13px;color:#64748b">Need to reschedule? WhatsApp <a href="https://wa.me/917777936367" style="color:#0f766e">+91 77779 36367</a>.</p>`,

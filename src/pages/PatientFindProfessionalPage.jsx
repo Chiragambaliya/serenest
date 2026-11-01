@@ -5,8 +5,9 @@ import { buildBookPath, preferModeFromPro } from '../lib/bookingHandoff';
 import { careWaHref } from '../lib/patientReach';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import { SPECIALTIES, getSpecialty } from '../lib/specialties.js';
 
-const VALID_ROLES = ['psychiatrist', 'psychologist', 'therapist', 'counsellor'];
+const VALID_ROLES = ['psychiatrist', 'psychologist', 'therapist', 'counsellor', 'doctor'];
 
 const ROLES = [
   { id: 'all',          label: 'All',          icon: '✨', color: '#4a5a30' },
@@ -14,6 +15,7 @@ const ROLES = [
   { id: 'psychologist', label: 'Psychologist', icon: '🧠', color: '#0d6efd' },
   { id: 'therapist',    label: 'Therapist',    icon: '💬', color: '#198754' },
   { id: 'counsellor',   label: 'Counsellor',   icon: '🌱', color: '#e67e22' },
+  { id: 'doctor',       label: 'Specialist doctor', icon: '⚕️', color: '#3d6b5e' },
 ];
 
 const SORT_OPTIONS = [
@@ -28,6 +30,7 @@ const ROLE_COLORS = {
   psychologist: '#0d6efd',
   therapist:    '#198754',
   counsellor:   '#e67e22',
+  doctor:       '#3d6b5e',
 };
 
 const ROLE_LABELS = {
@@ -35,6 +38,7 @@ const ROLE_LABELS = {
   psychologist: 'Psychologist',
   therapist:    'Therapist',
   counsellor:   'Counsellor',
+  doctor:       'Specialist doctor',
 };
 
 function normalizeList(value) {
@@ -68,7 +72,11 @@ function mapToProfessional(a) {
     created_at: a.created_at,
     name: a.full_name || 'Professional',
     role: a.role || 'counsellor',
-    roleLabel: ROLE_LABELS[a.role] || a.role_label || 'Professional',
+    specialty: a.specialty || 'psychiatry',
+    roleLabel:
+      a.role === 'doctor'
+        ? `${getSpecialty(a.specialty)?.name || 'Specialist'} · ${a.role_label && a.role_label !== 'doctor' ? a.role_label : 'Doctor'}`
+        : ROLE_LABELS[a.role] || a.role_label || 'Professional',
     city: a.city || '',
     clinic: a.clinic || '',
     fee: a.fee_inr ? Number(a.fee_inr) : null,
@@ -110,6 +118,7 @@ export default function PatientFindProfessionalPage() {
   const [searchParams] = useSearchParams();
   const initialRole = VALID_ROLES.includes(searchParams.get('role')) ? searchParams.get('role') : 'all';
   const [role, setRole]         = useState(initialRole);
+  const [specialty, setSpecialty] = useState(getSpecialty(searchParams.get('specialty')) ? searchParams.get('specialty') : 'all');
   const [language, setLanguage] = useState('Any');
   const [city, setCity]         = useState('');
   const [search, setSearch]     = useState('');
@@ -160,6 +169,7 @@ export default function PatientFindProfessionalPage() {
     const cityNeedle = city.trim().toLowerCase();
     const q = search.trim().toLowerCase();
     let list = professionals.filter((p) => {
+      if (specialty !== 'all' && p.specialty !== specialty) return false;
       if (role !== 'all' && p.role !== role) return false;
       if (language !== 'Any' && !p.languages.some((l) => l.toLowerCase() === language.toLowerCase())) return false;
       if (cityNeedle && !p.city.toLowerCase().includes(cityNeedle)) return false;
@@ -176,13 +186,14 @@ export default function PatientFindProfessionalPage() {
     if (sortBy === 'fee_desc') list.sort((a, b) => (b.fee ?? -Infinity) - (a.fee ?? -Infinity));
     if (sortBy === 'name_asc') list.sort((a, b) => a.name.localeCompare(b.name));
     return list;
-  }, [professionals, role, language, city, maxFee, search, sortBy]);
+  }, [professionals, specialty, role, language, city, maxFee, search, sortBy]);
 
   function clearFilters() {
-    setRole('all'); setLanguage('Any'); setCity(''); setSearch(''); setMaxFee(3000); setSortBy('newest');
+    setSpecialty('all'); setRole('all'); setLanguage('Any'); setCity(''); setSearch(''); setMaxFee(3000); setSortBy('newest');
   }
 
   const activeFilterCount =
+    (specialty !== 'all' ? 1 : 0) +
     (role !== 'all' ? 1 : 0) +
     (language !== 'Any' ? 1 : 0) +
     (city ? 1 : 0) +
@@ -199,8 +210,8 @@ export default function PatientFindProfessionalPage() {
             Choose who you talk to
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.02rem', lineHeight: 1.55 }}>
-            Verified psychiatrists, psychologists, therapists and counsellors.
-            Filter by language, city and fee. Request a slot — you pay after we confirm.
+            Verified doctors across specialties, plus psychologists, therapists and counsellors for mental health.
+            Filter by specialty, language, city and fee. Request a slot — you pay after we confirm.
           </p>
         </div>
       </section>
@@ -240,6 +251,24 @@ export default function PatientFindProfessionalPage() {
               ✕
             </button>
           )}
+        </div>
+
+        {/* ── Specialty ───────────────────────────────────── */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1rem' }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: '0.92rem' }}>
+            <span style={{ fontWeight: 600 }}>Specialty</span>
+            <select
+              className="input"
+              value={specialty}
+              onChange={(e) => setSpecialty(e.target.value)}
+              style={{ minWidth: 240 }}
+            >
+              <option value="all">All specialties</option>
+              {SPECIALTIES.map((s) => (
+                <option key={s.slug} value={s.slug}>{s.name}</option>
+              ))}
+            </select>
+          </label>
         </div>
 
         {/* ── Role tabs ───────────────────────────────────── */}
@@ -374,6 +403,13 @@ export default function PatientFindProfessionalPage() {
             body="We're onboarding carefully. In the meantime, you can request a session and we'll match you."
             cta={<Link className="btn btn-primary" to="/book">Request an appointment</Link>}
           />
+        ) : shown.length === 0 && specialty !== 'all' && !professionals.some((p) => p.specialty === specialty) ? (
+          <EmptyState
+            icon="🩺"
+            title={`${getSpecialty(specialty)?.name} doctors are being onboarded`}
+            body="You can still request a consultation — we'll match you with a verified doctor in this specialty and confirm by phone or WhatsApp."
+            cta={<Link className="btn btn-primary" to={`/book?specialty=${specialty}`}>Request a consultation</Link>}
+          />
         ) : shown.length === 0 ? (
           <EmptyState
             icon="🔍"
@@ -498,6 +534,7 @@ function ProfessionalCard({ p }) {
           to={buildBookPath({
             pid: p.id,
             pname: p.name,
+            specialty: p.specialty,
             prole: p.role,
             prolabel: p.roleLabel,
             pfee: p.fee ?? '',
