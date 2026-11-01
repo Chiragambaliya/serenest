@@ -30,6 +30,9 @@ const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const ProfessionalOnboardingPage = lazy(() => import('./pages/ProfessionalOnboardingPage'));
 const ProfessionalResourcesPage = lazy(() => import('./pages/ProfessionalResourcesPage'));
 const ProfessionalGuidelinesPage = lazy(() => import('./pages/ProfessionalGuidelinesPage'));
+const LearnPage = lazy(() => import('./pages/LearnPage'));
+const DrugGuidesIndexPage = lazy(() => import('./pages/DrugGuidesIndexPage'));
+const DrugGuidePage = lazy(() => import('./pages/DrugGuidePage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
 const PatientFindProfessionalPage = lazy(() => import('./pages/PatientFindProfessionalPage'));
 const ScreeningPage = lazy(() => import('./pages/ScreeningPage'));
@@ -166,6 +169,9 @@ export default function App() {
           <Route path="professionals" element={<S><ProfessionalsPage /></S>} />
           <Route path="professionals/resources" element={<S><ProfessionalResourcesPage /></S>} />
           <Route path="professionals/guidelines" element={<S><ProfessionalGuidelinesPage /></S>} />
+          <Route path="learn" element={<S><LearnPage /></S>} />
+          <Route path="professionals/drug-guides" element={<S><DrugGuidesIndexPage /></S>} />
+          <Route path="professionals/drug-guides/:slug" element={<S><DrugGuidePage /></S>} />
           <Route path="professionals/apply" element={<S><ProfessionalOnboardingPage /></S>} />
           <Route path="book" element={<S><BookingPage /></S>} />
           <Route path="pricing" element={<S><PricingPage /></S>} />

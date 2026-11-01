@@ -40,6 +40,8 @@ export const SITE_GUIDE_ROUTES = [
   { path: '/professionals/resources', label: 'Professional resources and downloads' },
 
   { path: '/professionals/guidelines', label: 'Clinical guidelines for professionals' },
+  { path: '/learn', label: 'Learn — learning hub for clinicians, students, patients and families' },
+  { path: '/professionals/drug-guides', label: 'Drug Guides — drug references for doctors, by specialty' },
 
   { path: '/professionals/apply', label: 'Apply to join as a professional' },
 

@@ -1,6 +1,8 @@
 import { TEAM_MEMBERS } from './team.js';
 import { SCREENING_TOOLS } from './screeningTools.js';
 import { BLOG_POSTS } from './blogPosts.js';
+import { DRUG_GUIDES, DRUG_GUIDES_BASE } from './drugGuides/index.js';
+import { LEARN_SECTIONS } from './learnHub.js';
 
 // Production canonical host. Matches the live www-redirect target.
 export const SITE_ORIGIN = 'https://www.serenest.in';
@@ -133,6 +135,21 @@ export const ROUTE_SEO = {
     ogTitle: 'Clinical Resources | Serenest Professionals',
     ogDescription:
       'Clinical reference materials, tools, and templates for verified mental health professionals.',
+  },
+  '/learn': {
+    title: 'Medical Learning for Doctors, Students & Patients | Serenest',
+    description:
+      'Doctor-led learning from Serenest across specialties: drug guides and clinical references for doctors and students, plus plain-language guides for patients and families.',
+    ogTitle: 'Learn with Serenest',
+    ogDescription: 'Clinical references for doctors and students, and clear mental health reading for patients and families.',
+  },
+  '/professionals/drug-guides': {
+    title: 'Drug Guides for Doctors by Specialty | Serenest',
+    description:
+      'Concise drug guides for doctors and postgraduate trainees, organised by specialty: mechanism, dosing, adverse effects, monitoring, special populations and Indian prescribing notes.',
+    ogTitle: 'Serenest Drug Guides | Clinical Drug Reference by Specialty',
+    ogDescription:
+      'Mechanism, dosing, adverse effects, monitoring and India practice notes, organised by specialty.',
   },
   '/professionals/guidelines': {
     title: 'Clinical Practice Guidelines | Serenest Professionals',
@@ -483,6 +500,19 @@ export const NOINDEX_ROUTES = new Set([
   '/professionals/login',
   '/professionals/portal',
 ]);
+
+for (const drug of DRUG_GUIDES) {
+  const path = `${DRUG_GUIDES_BASE}/${drug.slug}`;
+  ROUTE_SEO[path] = {
+    title: `${drug.name}: Dosing, Side Effects & Clinical Guide | Serenest`,
+    description: drug.nutshell.length > 158 ? `${drug.nutshell.slice(0, 155).replace(/\s+\S*$/, '')}…` : drug.nutshell,
+    ogTitle: `${drug.name} — Serenest Drug Guide`,
+    ogDescription: `${drug.drugClass}: mechanism, dosing, adverse effects, monitoring and India practice notes.`,
+    h1: `${drug.name} — clinician drug guide`,
+  };
+  // Guides stay out of search until a psychiatrist has signed them off.
+  if (!drug.reviewed) NOINDEX_ROUTES.add(path);
+}
 
 export function shouldNoindex(pathname) {
   if (!pathname) return false;
@@ -1536,6 +1566,33 @@ export function renderSeoBody(pathname) {
   if (pathname.startsWith('/blog/')) {
     const post = BLOG_POSTS.find((p) => `/blog/${p.slug}` === pathname);
     if (post) for (const para of post.body || []) parts.push(`<p>${escapeHtml(para)}</p>`);
+  }
+
+  if (pathname.startsWith(`${DRUG_GUIDES_BASE}/`)) {
+    const drug = DRUG_GUIDES.find((d) => `${DRUG_GUIDES_BASE}/${d.slug}` === pathname);
+    if (drug) {
+      parts.push(`<p>${escapeHtml(drug.nutshell)}</p>`, '<h2>Indications</h2>', '<ul>');
+      for (const ind of drug.indications) parts.push(`<li>${escapeHtml(ind.name)}</li>`);
+      parts.push('</ul>');
+    }
+  }
+
+  if (pathname === '/learn') {
+    for (const sec of LEARN_SECTIONS) {
+      parts.push(`<h2>${escapeHtml(sec.title)}</h2>`, '<ul>');
+      for (const it of sec.items.filter((x) => x.status === 'live' && x.to)) {
+        parts.push(`<li><a href="${escapeHtml(it.to)}">${escapeHtml(it.title)}</a> — ${escapeHtml(it.summary)}</li>`);
+      }
+      parts.push('</ul>');
+    }
+  }
+
+  if (pathname === DRUG_GUIDES_BASE) {
+    parts.push('<ul>');
+    for (const d of DRUG_GUIDES) {
+      parts.push(`<li><a href="${DRUG_GUIDES_BASE}/${escapeHtml(d.slug)}">${escapeHtml(d.name)}</a> — ${escapeHtml(d.drugClass)}</li>`);
+    }
+    parts.push('</ul>');
   }
 
   const faqs = ROUTE_FAQS[pathname];

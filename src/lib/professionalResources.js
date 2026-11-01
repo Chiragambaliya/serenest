@@ -23,6 +23,16 @@
 /** @type {ProfessionalResource[]} */
 export const PROFESSIONAL_RESOURCES = [
   {
+    id: 'drug-guides',
+    icon: '💊',
+    title: 'Serenest Drug Guides',
+    summary:
+      'Drug references organised by specialty — mechanism, dosing, monitoring and Indian prescribing notes. Psychiatry is live; more specialties are being added.',
+    pill: 'Clinical reference',
+    kind: 'link',
+    to: '/professionals/drug-guides',
+  },
+  {
     id: 'patient-handout-first-visit',
     icon: '📄',
     title: 'Patient handout: first online visit',

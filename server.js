@@ -2830,6 +2830,8 @@ const VALID_ROUTES = new Set([
   '/professionals',
   '/professionals/resources',
   '/professionals/guidelines',
+  '/professionals/drug-guides',
+  '/learn',
   '/professionals/apply',
   '/professionals/terms',
   '/professionals/code-of-conduct',

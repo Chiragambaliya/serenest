@@ -57,7 +57,7 @@ const NAV_LINKS = [
   { to: '/services', label: 'Services' },
   { to: '/screening', label: 'Screening' },
   { to: '/patient/find-professional', label: 'Clinicians' },
-  { to: '/pricing', label: 'Pricing' },
+  { to: '/learn', label: 'Learn' },
   { to: '/contact', label: 'Contact' },
 ];
 
@@ -74,6 +74,8 @@ const FOOTER_GROUPS = [
   {
     title: 'Learn',
     links: [
+      { to: '/learn', label: 'Learning hub' },
+      { to: '/professionals/drug-guides', label: 'Drug Guides' },
       { to: '/blog', label: 'Blog' },
       { to: '/guides', label: 'Guides' },
       { to: '/faq', label: 'FAQ' },
@@ -106,7 +108,7 @@ const FOOTER_LEGAL = [
   { to: '/legal', label: 'All policies' },
 ];
 
-/* Header is the patient path: services, screening, clinicians, fees, contact.
+/* Header: services, screening, clinicians, learn (hub), contact. Fees live in the footer.
    About, reading, and clinician-recruitment stay in the footer. */
 
 export default function SiteLayout() {
