@@ -54,9 +54,9 @@ function BrandMark({ size = 42 }) {
 
 /* Primary navigation — editorial masthead, not a SaaS link strip. */
 const NAV_LINKS = [
-  { to: '/services', label: 'Services' },
-  { to: '/screening', label: 'Screening' },
-  { to: '/patient/find-professional', label: 'Clinicians' },
+  { to: '/specialties', label: 'Specialties' },
+  { to: '/patient/find-professional', label: 'Doctors' },
+  { to: '/screening', label: 'Check-in' },
   { to: '/learn', label: 'Learn' },
   { to: '/contact', label: 'Contact' },
 ];
@@ -66,7 +66,9 @@ const FOOTER_GROUPS = [
     title: 'Care',
     links: [
       { to: '/book', label: 'Request an appointment' },
-      { to: '/patient/find-professional', label: 'Find a clinician' },
+      { to: '/specialties', label: 'Specialties' },
+      { to: '/services', label: 'Mental health services' },
+      { to: '/patient/find-professional', label: 'Find a doctor' },
       { to: '/screening', label: 'Private check-in' },
       { to: '/pricing', label: 'Fees' },
     ],
@@ -108,7 +110,7 @@ const FOOTER_LEGAL = [
   { to: '/legal', label: 'All policies' },
 ];
 
-/* Header: services, screening, clinicians, learn (hub), contact. Fees live in the footer.
+/* Header: specialties, doctors, check-in, learn (hub), contact. Fees and mental-health services live in the footer.
    About, reading, and clinician-recruitment stay in the footer. */
 
 export default function SiteLayout() {
@@ -384,7 +386,7 @@ export default function SiteLayout() {
                 <BrandMark size={28} />
                 <span>Serenest</span>
               </Link>
-              <p>Doctor-led mental healthcare across India.</p>
+              <p>Doctor-led online care across specialties, for all of India.</p>
               <div className="ed-footer__contact">
                 <a href="mailto:support@serenest.in">support@serenest.in</a>
                 <span aria-hidden="true" className="ed-footer__dot" />

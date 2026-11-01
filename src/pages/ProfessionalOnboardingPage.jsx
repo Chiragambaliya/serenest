@@ -2,13 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { professionals } from '../lib/api';
 import { CONSULTATION_MODES } from '../lib/consultationModes';
-
-const ROLES = [
-  { id: 'psychiatrist', label: 'Psychiatrist' },
-  { id: 'psychologist', label: 'Psychologist' },
-  { id: 'therapist', label: 'Therapist' },
-  { id: 'counsellor', label: 'Counsellor' },
-];
+import { SPECIALTIES, getSpecialty, practitionersFor } from '../lib/specialties.js';
 
 const DURATIONS = ['30', '45', '60'];
 
@@ -19,7 +13,11 @@ export default function ProfessionalOnboardingPage() {
   const [submitError, setSubmitError] = useState(null);
 
   // Step 1 — personal + credentials
+  const [specialty, setSpecialty] = useState('psychiatry');
+  const roles = useMemo(() => practitionersFor(specialty), [specialty]);
   const [role, setRole] = useState('psychiatrist');
+  // Keep the role valid for the chosen specialty.
+  const activeRole = roles.some((r) => r.id === role) ? role : roles[0].id;
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -94,11 +92,15 @@ export default function ProfessionalOnboardingPage() {
     handleSubmit();
   }
 
-  const roleLabel = useMemo(() => ROLES.find((r) => r.id === role)?.label ?? 'Professional', [role]);
+  const roleLabel = useMemo(() => {
+    const label = roles.find((r) => r.id === activeRole)?.label ?? 'Professional';
+    return specialty === 'psychiatry' ? label : `${getSpecialty(specialty)?.name} specialist`;
+  }, [roles, activeRole, specialty]);
   const progressPct = Math.round((step / 2) * 100);
 
   const record = {
-    role,
+    specialty,
+    role: activeRole,
     role_label: roleLabel,
     full_name: fullName.trim(),
     phone: phoneClean,
@@ -235,21 +237,34 @@ export default function ProfessionalOnboardingPage() {
                 </div>
 
                 <div className="form-grid">
-                  <div className="field field-wide">
-                    <span className="field-label">Role</span>
-                    <div className="choice-grid">
-                      {ROLES.map((r) => (
-                        <button
-                          key={r.id}
-                          type="button"
-                          className={`choice-card ${role === r.id ? 'is-selected' : ''}`}
-                          onClick={() => setRole(r.id)}
-                        >
-                          {r.label}
-                        </button>
+                  <label className="field field-wide">
+                    <span className="field-label">Specialty</span>
+                    <select className="input" value={specialty} onChange={(e) => setSpecialty(e.target.value)}>
+                      {SPECIALTIES.map((s) => (
+                        <option key={s.slug} value={s.slug}>
+                          {s.name}
+                        </option>
                       ))}
+                    </select>
+                  </label>
+
+                  {roles.length > 1 ? (
+                    <div className="field field-wide">
+                      <span className="field-label">Role</span>
+                      <div className="choice-grid">
+                        {roles.map((r) => (
+                          <button
+                            key={r.id}
+                            type="button"
+                            className={`choice-card ${activeRole === r.id ? 'is-selected' : ''}`}
+                            onClick={() => setRole(r.id)}
+                          >
+                            {r.label}
+                          </button>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  ) : null}
 
                   <label className="field">
                     <span className="field-label">Full name</span>
@@ -299,13 +314,9 @@ export default function ProfessionalOnboardingPage() {
                       className="input"
                       value={registration}
                       onChange={(e) => setRegistration(e.target.value)}
-                      placeholder="MCI / SMC / RCI / equivalent"
+                      placeholder="NMC / SMC / RCI / equivalent"
                     />
-                    <span className="field-hint">
-                      {role === 'psychiatrist' && 'MCI or State Medical Council number.'}
-                      {role === 'psychologist' && 'RCI registration or equivalent.'}
-                      {(role === 'therapist' || role === 'counsellor') && 'RCI or recognised counselling body registration.'}
-                    </span>
+                    <span className="field-hint">{roles.find((r) => r.id === activeRole)?.council}</span>
                   </label>
 
                   <label className="field">
@@ -314,7 +325,7 @@ export default function ProfessionalOnboardingPage() {
                       className="input"
                       value={degree}
                       onChange={(e) => setDegree(e.target.value)}
-                      placeholder="MBBS, MD, M.Phil, PsyD…"
+                      placeholder={specialty === 'psychiatry' ? 'MBBS, MD, M.Phil, PsyD…' : 'MBBS, MD, MS, DNB, DM, MCh…'}
                     />
                   </label>
                 </div>

@@ -12,6 +12,7 @@ import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
 import { renderSeoHead, renderSeoBody, renderSitemapXml, shouldNoindex, ROUTE_SEO, SITE_ORIGIN, resolveSeoRedirect, isKnownDynamicSpaPath } from './src/lib/seo.js';
 import { handleAssistantChat } from './src/server/aiAssistant.js';
+import { getSpecialty, practitionersFor } from './src/lib/specialties.js';
 import cron from 'node-cron';
 
 // ── Setup ────────────────────────────────────────────────────
@@ -608,12 +609,17 @@ app.post('/api/bookings', async (req, res) => {
     language = 'English', notes = '', professional_id,
     razorpay_order_id, razorpay_payment_id, razorpay_signature,
   } = req.body;
+  const specialty = req.body.specialty ? String(req.body.specialty).trim() : 'psychiatry';
 
   if (!patient_name?.trim())  return err(res, 'patient_name is required');
   if (!patient_phone?.trim()) return err(res, 'patient_phone is required');
   if (!practitioner_type)     return err(res, 'practitioner_type is required');
   if (!preferred_date)        return err(res, 'preferred_date is required');
   if (!preferred_time)        return err(res, 'preferred_time is required');
+  if (!getSpecialty(specialty)) return err(res, 'specialty is not recognised');
+  if (!practitionersFor(specialty).some((p) => p.id === practitioner_type)) {
+    return err(res, 'practitioner_type is not offered in this specialty');
+  }
 
   const phone = patient_phone.replace(/[^\d]/g, '');
   if (phone.length !== 10 || !/^[6-9]/.test(phone)) {
@@ -641,6 +647,7 @@ app.post('/api/bookings', async (req, res) => {
     patient_name: patient_name.trim(),
     patient_phone: phone,
     patient_email: patient_email?.trim() || null,
+    specialty,
     practitioner_type,
     mode: mode || 'video',
     preferred_date,
@@ -656,11 +663,20 @@ app.post('/api/bookings', async (req, res) => {
   };
 
   if (supabase) {
-    const { data, error } = await supabase
+    let { data, error } = await supabase
       .from('appointments')
       .insert(record)
       .select()
       .single();
+
+    // Before the 2026-11-01 multispecialty migration runs, `specialty` is not a
+    // column yet. Retry without it, keeping the specialty visible in notes.
+    if (error && /specialty/i.test(`${error.message || ''} ${error.details || ''}`)) {
+      const { specialty: sp, ...legacy } = record;
+      const label = getSpecialty(sp)?.name || sp;
+      legacy.notes = `[Specialty: ${label}] ${legacy.notes || ''}`.trim();
+      ({ data, error } = await supabase.from('appointments').insert(legacy).select().single());
+    }
 
     if (!error) {
       notify.booking(data);
@@ -1008,6 +1024,7 @@ async function insertProfessionalApplication(row) {
     // evidence is an application we cannot lawfully act on. If those columns
     // are missing the insert fails, and the row lands in application_inbox with
     // the full consent payload preserved in its `payload` jsonb.
+    'specialty', // added 2026-11-01; dropped only on pre-migration schemas
     'medical_council_number',
     'consultation_fee',
     'designation',
@@ -1070,8 +1087,10 @@ app.post('/api/professionals/apply', async (req, res) => {
     registration, degree, city, languages, specialities,
     fee_inr, duration_min, modes, availability, consent,
   } = req.body;
+  const specialty = req.body.specialty ? String(req.body.specialty).trim() : 'psychiatry';
 
   if (!role?.trim())      return err(res, 'role is required');
+  if (!getSpecialty(specialty)) return err(res, 'specialty is not recognised');
   if (!full_name?.trim()) return err(res, 'full_name is required');
   if (!phone?.trim())     return err(res, 'phone is required');
 
@@ -1085,6 +1104,7 @@ app.post('/api/professionals/apply', async (req, res) => {
   const row = {
     role: role.trim(),
     role_label: roleLabel,
+    specialty,
     designation: roleLabel, // legacy NOT NULL column on older DBs
     full_name: full_name.trim(),
     phone: phone.trim(),
@@ -1451,11 +1471,19 @@ app.get('/api/professionals/directory', async (req, res) => {
   const fields =
     'id,created_at,full_name,role,role_label,city,clinic,fee_inr,duration_min,languages,specialities,modes,availability,degree';
 
-  const { data, error } = await supabase
-    .from('professional_applications')
-    .select(fields)
-    .eq('status', 'approved')
-    .order('created_at', { ascending: false });
+  const load = (cols) =>
+    supabase
+      .from('professional_applications')
+      .select(cols)
+      .eq('status', 'approved')
+      .order('created_at', { ascending: false });
+
+  // `specialty` exists after the 2026-11-01 migration; fall back without it.
+  let { data, error } = await load(`${fields},specialty`);
+  if (error && /specialty/i.test(`${error.message || ''} ${error.details || ''}`)) {
+    ({ data, error } = await load(fields));
+  }
+  if (!error && data) data = data.map((p) => ({ ...p, specialty: p.specialty || 'psychiatry' }));
 
   if (error) {
     console.error('[GET /api/professionals/directory]', error);
@@ -2832,6 +2860,7 @@ const VALID_ROUTES = new Set([
   '/professionals/guidelines',
   '/professionals/drug-guides',
   '/learn',
+  '/specialties',
   '/professionals/apply',
   '/professionals/terms',
   '/professionals/code-of-conduct',

@@ -3,11 +3,12 @@ import { SCREENING_TOOLS } from './screeningTools.js';
 import { BLOG_POSTS } from './blogPosts.js';
 import { DRUG_GUIDES, DRUG_GUIDES_BASE } from './drugGuides/index.js';
 import { LEARN_SECTIONS } from './learnHub.js';
+import { SPECIALTIES } from './specialties.js';
 
 // Production canonical host. Matches the live www-redirect target.
 export const SITE_ORIGIN = 'https://www.serenest.in';
 export const OG_IMAGE = `${SITE_ORIGIN}/og-image.jpg`;
-export const OG_IMAGE_ALT = 'Serenest — online psychiatry and therapy in India';
+export const OG_IMAGE_ALT = 'Serenest — online doctor consultations across specialties in India';
 export const OG_IMAGE_WIDTH = '1200';
 export const OG_IMAGE_HEIGHT = '630';
 
@@ -19,10 +20,10 @@ export function canonicalUrl(path = '/') {
 // Per-route SEO metadata for indexable pages.
 export const ROUTE_SEO = {
   '/': {
-    title: 'Online Psychiatrist & Therapy in India | Serenest',
+    title: 'Online Doctor Consultation Across Specialties in India | Serenest',
     description:
-      'Talk to a verified online psychiatrist or therapist in India. Request a slot, pay after we confirm. Confidential video, audio, or chat, plus free PHQ-9 and GAD-7 screening.',
-    ogTitle: 'Serenest | Talk to a psychiatrist or therapist from home',
+      'Consult verified doctors online in India — general medicine, cardiology, diabetes, dermatology, gynaecology, paediatrics, psychiatry and more. Video, audio or chat; pay after we confirm.',
+    ogTitle: 'Serenest | Consult a verified doctor from home',
     ogDescription:
       'Request a confidential appointment. We confirm by phone or WhatsApp — you pay after the slot is locked.',
   },
@@ -43,20 +44,20 @@ export const ROUTE_SEO = {
       'Transparent per-session pricing for online psychiatry, therapy, and assessments.',
   },
   '/book': {
-    title: 'Book an Online Psychiatrist Appointment in India | Serenest',
+    title: 'Book an Online Doctor Consultation in India | Serenest',
     description:
-      'Request a confidential online psychiatry or counselling appointment in India. Start with your name and number — we confirm by phone or WhatsApp. You pay after the slot is confirmed.',
-    ogTitle: 'Book an Online Psychiatrist | Serenest',
+      'Request a confidential online consultation with a verified doctor in any specialty. Start with your name and number — we confirm by phone or WhatsApp. You pay after the slot is confirmed.',
+    ogTitle: 'Book an Online Doctor Consultation | Serenest',
     ogDescription:
       'Request an appointment in minutes. We confirm by phone or WhatsApp, then share payment steps.',
   },
   '/patient/find-professional': {
-    title: 'Find an Online Psychiatrist or Therapist in India | Serenest',
+    title: 'Find a Verified Doctor Online in India | Serenest',
     description:
-      'Browse verified psychiatrists and therapists on Serenest. Filter by language, city, and fee, then request an appointment — pay after we confirm.',
-    ogTitle: 'Find a Clinician | Serenest',
+      'Browse verified doctors across specialties, plus psychologists and therapists. Filter by specialty, language, city and fee, then request an appointment — pay after we confirm.',
+    ogTitle: 'Find a Doctor | Serenest',
     ogDescription:
-      'Verified psychiatrists and therapists across India. Request a slot; pay after confirmation.',
+      'Verified doctors across specialties in India. Request a slot; pay after confirmation.',
   },
   '/screening': {
     title: 'Mental Health Center — Mood, Anxiety & Stress Checks | Serenest',
@@ -135,6 +136,13 @@ export const ROUTE_SEO = {
     ogTitle: 'Clinical Resources | Serenest Professionals',
     ogDescription:
       'Clinical reference materials, tools, and templates for verified mental health professionals.',
+  },
+  '/specialties': {
+    title: 'Online Doctor Consultation Across Specialties | Serenest',
+    description:
+      'Consult verified specialist doctors online in India — general medicine, cardiology, diabetes, dermatology, gynaecology, paediatrics, psychiatry and more, by video, audio or chat.',
+    ogTitle: 'Consult a Specialist Online | Serenest',
+    ogDescription: 'Verified doctors across specialties by video, audio or chat. Pay only after your slot is confirmed.',
   },
   '/learn': {
     title: 'Medical Learning for Doctors, Students & Patients | Serenest',
@@ -501,6 +509,16 @@ export const NOINDEX_ROUTES = new Set([
   '/professionals/portal',
 ]);
 
+for (const sp of SPECIALTIES) {
+  ROUTE_SEO[`/specialties/${sp.slug}`] = {
+    title: `Online ${sp.name} Consultation in India | Serenest`,
+    description: `${sp.summary} Consult verified ${sp.name.toLowerCase()} doctors online by video, audio or chat.`.slice(0, 160),
+    ogTitle: `${sp.name} — Online Consultation | Serenest`,
+    ogDescription: sp.summary,
+    h1: `${sp.name} — online consultation`,
+  };
+}
+
 for (const drug of DRUG_GUIDES) {
   const path = `${DRUG_GUIDES_BASE}/${drug.slug}`;
   ROUTE_SEO[path] = {
@@ -572,7 +590,12 @@ const MEDICAL_BUSINESS_SCHEMA = {
   telephone: '+91-77779-36367',
   image: OG_IMAGE,
   priceRange: '₹800+',
-  medicalSpecialty: ['Psychiatry', 'Psychology', 'MentalHealth'],
+  medicalSpecialty: [
+    'PrimaryCare', 'Psychiatric', 'Cardiovascular', 'Endocrine', 'Neurologic', 'Pulmonary',
+    'Gastroenterologic', 'Renal', 'Infectious', 'Rheumatologic', 'Dermatology', 'Obstetric',
+    'Gynecologic', 'Pediatric', 'Oncologic', 'Hematologic', 'Urologic', 'Musculoskeletal',
+    'Otolaryngologic', 'Surgical', 'Anesthesia', 'Emergency',
+  ],
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Rajkot',
@@ -1301,6 +1324,9 @@ function crumbTrail(pathname) {
   if (pathname.startsWith('/services/')) {
     return [{ name: 'Services', item: `${SITE_ORIGIN}/services` }];
   }
+  if (pathname.startsWith('/specialties/')) {
+    return [{ name: 'Specialties', item: `${SITE_ORIGIN}/specialties` }];
+  }
   if (pathname.startsWith('/blog/')) {
     return [{ name: 'Blog', item: `${SITE_ORIGIN}/blog` }];
   }
@@ -1574,6 +1600,23 @@ export function renderSeoBody(pathname) {
       parts.push(`<p>${escapeHtml(drug.nutshell)}</p>`, '<h2>Indications</h2>', '<ul>');
       for (const ind of drug.indications) parts.push(`<li>${escapeHtml(ind.name)}</li>`);
       parts.push('</ul>');
+    }
+  }
+
+  if (pathname === '/specialties') {
+    parts.push('<ul>');
+    for (const sp of SPECIALTIES) {
+      parts.push(`<li><a href="/specialties/${escapeHtml(sp.slug)}">${escapeHtml(sp.name)}</a> — ${escapeHtml(sp.summary)}</li>`);
+    }
+    parts.push('</ul>');
+  }
+
+  if (pathname.startsWith('/specialties/')) {
+    const sp = SPECIALTIES.find((s) => `/specialties/${s.slug}` === pathname);
+    if (sp) {
+      parts.push('<h2>What we help with</h2>', '<ul>');
+      for (const c of sp.conditions) parts.push(`<li>${escapeHtml(c)}</li>`);
+      parts.push('</ul>', `<p><a href="/book?specialty=${escapeHtml(sp.slug)}">Request a consultation</a></p>`);
     }
   }
 

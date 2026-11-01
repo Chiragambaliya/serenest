@@ -48,6 +48,8 @@ const ROUTES = [
   '/professionals/guidelines',
   '/professionals/drug-guides',
   '/learn',
+  '/specialties',
+  '/specialties/cardiology',
   '/professionals/drug-guides/lithium',
   '/professionals/apply',
   '/online-psychiatrist-for-depression-india',

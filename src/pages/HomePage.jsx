@@ -4,6 +4,7 @@ import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { useSectionReveal } from '../hooks/useReveal';
 import ImagePlaceholder from '../components/ImagePlaceholder';
+import { SPECIALTIES, getSpecialty, specialtyPath } from '../lib/specialties.js';
 import {
   CARE_PHONE_DISPLAY,
   CARE_TEL_HREF,
@@ -11,54 +12,39 @@ import {
   careWaHref,
 } from '../lib/patientReach';
 
-const OUR_SERVICES = [
-  {
-    title: 'Psychiatry',
-    meta: 'Assessment · medication',
-    body: 'Assessment, diagnosis, and medication management from a licensed psychiatrist.',
-    href: '/services/psychiatry',
-  },
-  {
-    title: 'Therapy and Counselling',
-    meta: 'Talk therapy',
-    body: 'Structured talk therapy for individuals, couples, and families.',
-    href: '/services/therapy',
-  },
-  {
-    title: 'Addiction and Recovery',
-    meta: 'Substance use',
-    body: 'Assessment, counselling, and relapse-prevention support for substance use.',
-    href: '/services/addiction-care',
-  },
-  {
-    title: 'Digital Mental Health',
-    meta: 'Teleconsultation',
-    body: 'See a clinician on video, audio, or chat from anywhere in India — no clinic wait.',
-    href: '/services/digital-consultations',
-  },
+// Specialties featured on the homepage; the full list lives on /specialties.
+const FEATURED_SPECIALTIES = [
+  'general-medicine',
+  'psychiatry',
+  'endocrinology',
+  'cardiology',
+  'dermatology',
+  'obstetrics-gynaecology',
+  'paediatrics',
+  'orthopaedics',
 ];
 
 const ARRIVE_PATHS = [
   {
     num: '01',
-    title: 'I need to talk to someone',
-    body: 'Request a psychiatrist or therapist slot. We confirm by phone or WhatsApp — you pay after the time is locked.',
+    title: 'I need to see a doctor',
+    body: 'Tell us what is going on and pick a time. We match you with a verified doctor and confirm by phone or WhatsApp.',
     href: '/book',
     cta: 'Request an appointment',
   },
   {
     num: '02',
-    title: 'I want a private check-in first',
-    body: 'Free mood, anxiety, and stress checks. Results stay on your device and are not a diagnosis.',
-    href: '/screening',
-    cta: 'Start a free check',
+    title: 'I know which specialist I need',
+    body: `Choose from ${SPECIALTIES.length} specialties — from general medicine and diabetes to skin, women's health and mental health.`,
+    href: '/specialties',
+    cta: 'Browse specialties',
   },
   {
     num: '03',
     title: 'I want to choose who I see',
-    body: 'Browse verified clinicians by language, city, and fee, then request a slot.',
+    body: 'Browse verified doctors and clinicians by specialty, language, city and fee, then request a slot.',
     href: '/patient/find-professional',
-    cta: 'Browse clinicians',
+    cta: 'Browse doctors',
   },
 ];
 
@@ -91,15 +77,15 @@ export default function HomePage() {
         <div className="hp-hero__content">
           <p className="hp-hero__brand">Serenest</p>
           <h1 id="home-hero-title" className="hp-hero__title">
-            Talk to a psychiatrist or therapist — privately, from home.
+            See a verified doctor in any specialty — from home.
           </h1>
           <p className="hp-hero__body">
-            Request a slot in minutes. We confirm by phone or WhatsApp.
-            You pay after the appointment is locked, not when you ask.
+            General medicine to cardiology, skin to mental health. Request a slot in minutes — we confirm by
+            phone or WhatsApp, and you pay only after the appointment is locked.
           </p>
           <div className="hp-hero__actions">
             <HpBtn to="/book" variant="solid-light">Request an appointment</HpBtn>
-            <HpBtn to="/screening" variant="ghost-dark">Start a free check</HpBtn>
+            <HpBtn to="/specialties" variant="ghost-dark">Browse specialties</HpBtn>
           </div>
           <p className="hp-hero__reach">
             <a href={CARE_TEL_HREF}>Call {CARE_PHONE_DISPLAY}</a>
@@ -108,8 +94,8 @@ export default function HomePage() {
           </p>
         </div>
         <p className="hp-hero__note">
-          Not for emergencies. If you or someone else is at immediate risk, contact local
-          emergency services or a crisis helpline.
+          Not for emergencies. For chest pain, breathing difficulty, severe injury or immediate risk to
+          life, call 112 or go to the nearest hospital.
         </p>
       </section>
 
@@ -129,7 +115,7 @@ export default function HomePage() {
           <header className="ed-head hp-arrive__head">
             <span className="ed-head__label">Begin</span>
             <h2 id="home-arrive-title">How can we help today?</h2>
-            <p>Start with a conversation, a private check-in, or a clinician you choose.</p>
+            <p>Start with an appointment, a specialist you have in mind, or a doctor you choose.</p>
           </header>
           <div className="hp-arrive__paths" role="list">
             {ARRIVE_PATHS.map((path) => (
@@ -157,19 +143,22 @@ export default function HomePage() {
       <section className="ed-pace hp-care" aria-labelledby="home-services-title">
         <div className="ed-shell">
           <header className="ed-head">
-            <span className="ed-head__label">Care</span>
-            <h2 id="home-services-title">Start with what you are going through.</h2>
-            <p>Psychiatry, therapy, addiction support, or a digital consult — your clinician can redirect if another fit is better.</p>
+            <span className="ed-head__label">Specialties</span>
+            <h2 id="home-services-title">Care across specialties.</h2>
+            <p>
+              Not sure where to start? Choose General Medicine — a physician will advise you or refer you to the right
+              specialist.
+            </p>
           </header>
           <div className="ed-index hp-index">
-            {OUR_SERVICES.map((item, i) => (
-              <Link key={item.title} to={item.href} className="ed-index__row">
+            {FEATURED_SPECIALTIES.map(getSpecialty).filter(Boolean).map((sp, i) => (
+              <Link key={sp.slug} to={specialtyPath(sp.slug)} className="ed-index__row">
                 <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
                 <span>
-                  <h3 className="ed-index__title">{item.title}</h3>
-                  <span className="ed-index__meta">{item.meta}</span>
+                  <h3 className="ed-index__title">{sp.name}</h3>
+                  <span className="ed-index__meta">{sp.conditions.slice(0, 2).join(' · ')}</span>
                 </span>
-                <p className="ed-index__body">{item.body}</p>
+                <p className="ed-index__body">{sp.summary}</p>
                 <span className="ed-index__go">
                   <span>View</span>
                   <span className="hp-index__arrow" aria-hidden="true">→</span>
@@ -177,16 +166,22 @@ export default function HomePage() {
               </Link>
             ))}
           </div>
+          <p style={{ marginTop: 24 }}>
+            <Link className="hp-text-link" to="/specialties">
+              See all {SPECIALTIES.length} specialties
+              <span aria-hidden="true"> →</span>
+            </Link>
+          </p>
         </div>
       </section>
 
       <section className="ed-pace ed-band-soft hp-academy" aria-labelledby="home-check-title">
         <div className="ed-shell hp-academy__grid">
           <header className="ed-head" style={{ marginBottom: 0 }}>
-            <span className="ed-head__label">Check in</span>
-            <h2 id="home-check-title">Not sure if you need an appointment yet?</h2>
+            <span className="ed-head__label">Mental health check-in</span>
+            <h2 id="home-check-title">Not sure if you need to talk to someone?</h2>
             <p>
-              A short, private check-in for mood, anxiety, stress, or burnout.
+              A short, private check-in for mood, anxiety, stress or burnout.
               Results stay on this device and are not a diagnosis.
             </p>
             <div className="hp-academy__actions">
@@ -208,7 +203,7 @@ export default function HomePage() {
               />
             </figure>
             <blockquote className="ed-pull hp-pull">
-              <p>“A short check-in can make the next conversation with a clinician clearer.”</p>
+              <p>“A short check-in can make the next conversation with a doctor clearer.”</p>
               <cite>Serenest Care</cite>
             </blockquote>
           </aside>
@@ -229,7 +224,7 @@ export default function HomePage() {
           </p>
           <div className="hp-hero__actions hp-close__actions">
             <HpBtn to="/book" variant="solid-light">Request an appointment</HpBtn>
-            <HpBtn to="/screening" variant="ghost-dark">Start a free check</HpBtn>
+            <HpBtn to="/specialties" variant="ghost-dark">Browse specialties</HpBtn>
           </div>
         </div>
       </section>
