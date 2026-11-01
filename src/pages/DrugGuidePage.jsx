@@ -83,7 +83,7 @@ export default function DrugGuidePage() {
       <section className="section about-hero dg-hero">
         <div className="container">
           <nav className="dg-crumbs" aria-label="Breadcrumb">
-            <Link to="/professionals">Professionals</Link>
+            <Link to="/learn">Learn</Link>
             <span aria-hidden="true">/</span>
             <Link to={DRUG_GUIDES_BASE}>Drug Guides</Link>
           </nav>

@@ -40,6 +40,7 @@ export const SITE_GUIDE_ROUTES = [
   { path: '/professionals/resources', label: 'Professional resources and downloads' },
 
   { path: '/professionals/guidelines', label: 'Clinical guidelines for professionals' },
+  { path: '/learn', label: 'Learn — learning hub for clinicians, students, patients and families' },
   { path: '/professionals/drug-guides', label: 'Drug Guides — psychopharmacology references for clinicians' },
 
   { path: '/professionals/apply', label: 'Apply to join as a professional' },

@@ -2,6 +2,7 @@ import { TEAM_MEMBERS } from './team.js';
 import { SCREENING_TOOLS } from './screeningTools.js';
 import { BLOG_POSTS } from './blogPosts.js';
 import { DRUG_GUIDES, DRUG_GUIDES_BASE } from './drugGuides/index.js';
+import { LEARN_SECTIONS } from './learnHub.js';
 
 // Production canonical host. Matches the live www-redirect target.
 export const SITE_ORIGIN = 'https://www.serenest.in';
@@ -134,6 +135,13 @@ export const ROUTE_SEO = {
     ogTitle: 'Clinical Resources | Serenest Professionals',
     ogDescription:
       'Clinical reference materials, tools, and templates for verified mental health professionals.',
+  },
+  '/learn': {
+    title: 'Learn Psychiatry & Mental Health | Serenest',
+    description:
+      'Doctor-led learning from Serenest: psychiatric drug guides and clinical references for professionals, plus plain-language guides and check-ins for patients and families.',
+    ogTitle: 'Learn with Serenest',
+    ogDescription: 'Clinical references for doctors and students, and clear mental health reading for patients and families.',
   },
   '/professionals/drug-guides': {
     title: 'Psychiatric Drug Guides for Clinicians | Serenest',
@@ -1565,6 +1573,16 @@ export function renderSeoBody(pathname) {
     if (drug) {
       parts.push(`<p>${escapeHtml(drug.nutshell)}</p>`, '<h2>Indications</h2>', '<ul>');
       for (const ind of drug.indications) parts.push(`<li>${escapeHtml(ind.name)}</li>`);
+      parts.push('</ul>');
+    }
+  }
+
+  if (pathname === '/learn') {
+    for (const sec of LEARN_SECTIONS) {
+      parts.push(`<h2>${escapeHtml(sec.title)}</h2>`, '<ul>');
+      for (const it of sec.items.filter((x) => x.status === 'live' && x.to)) {
+        parts.push(`<li><a href="${escapeHtml(it.to)}">${escapeHtml(it.title)}</a> — ${escapeHtml(it.summary)}</li>`);
+      }
       parts.push('</ul>');
     }
   }
