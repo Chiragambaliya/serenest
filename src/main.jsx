@@ -14,6 +14,7 @@ import './styles/about.css';
 import './styles/team.css';
 import './styles/pricing.css';
 import './styles/professionals.css';
+import './styles/drug-guides.css';
 import './styles/admin.css';
 import './styles/prescription.css';
 // Loaded last so it corrects the older per-page stylesheets above.

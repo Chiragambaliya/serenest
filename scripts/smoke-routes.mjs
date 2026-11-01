@@ -46,6 +46,8 @@ const ROUTES = [
   '/professionals/login',
   '/professionals/resources',
   '/professionals/guidelines',
+  '/professionals/drug-guides',
+  '/professionals/drug-guides/lithium',
   '/professionals/apply',
   '/online-psychiatrist-for-depression-india',
   '/anxiety-counselling-online-india',

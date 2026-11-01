@@ -23,6 +23,16 @@
 /** @type {ProfessionalResource[]} */
 export const PROFESSIONAL_RESOURCES = [
   {
+    id: 'drug-guides',
+    icon: '💊',
+    title: 'Serenest Drug Guides',
+    summary:
+      'Psychopharmacology references for escitalopram, sertraline, fluoxetine, olanzapine, quetiapine, risperidone, aripiprazole, lithium, valproate and clonazepam — with Indian telepsychiatry prescribing notes.',
+    pill: 'Clinical reference',
+    kind: 'link',
+    to: '/professionals/drug-guides',
+  },
+  {
     id: 'patient-handout-first-visit',
     icon: '📄',
     title: 'Patient handout: first online visit',

@@ -84,6 +84,22 @@ export default function ProfessionalHubCard({
     );
   }
 
+  if (m.kind === 'link' && m.to) {
+    return (
+      <article className={articleClass} style={{ display: 'flex', flexDirection: 'column' }}>
+        <Link
+          to={m.to}
+          className="block-link"
+          style={{ color: 'inherit', display: 'flex', flexDirection: 'column', flex: 1 }}
+        >
+          {inner}
+          {auxLink}
+        </Link>
+        {progressBtn}
+      </article>
+    );
+  }
+
   if (m.kind === 'link' && m.href) {
     return (
       <article className={articleClass} style={{ display: 'flex', flexDirection: 'column' }}>

@@ -1,0 +1,227 @@
+/* Serenest Drug Guides — /professionals/drug-guides */
+
+.dg {
+  --dg-pro: #3d6b5e;
+  --dg-pro-bg: rgba(61, 107, 94, 0.07);
+  --dg-con: var(--accent-dark);
+  --dg-con-bg: rgba(193, 87, 45, 0.06);
+}
+
+/* ── Index ─────────────────────────────────────────── */
+.dg-library .container { display: grid; gap: var(--sp-5); }
+
+.dg-search { display: grid; gap: var(--sp-1); max-width: 560px; }
+.dg-search__label { font-size: 0.85rem; color: var(--muted); }
+.dg-search input {
+  font: inherit;
+  padding: 12px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-md);
+  background: var(--surface);
+  color: var(--ink);
+}
+.dg-search input:focus { outline: 2px solid var(--teal-400); outline-offset: 1px; }
+
+.dg-group__title {
+  font-size: clamp(1.35rem, 2.6vw, 1.7rem);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--sp-3);
+}
+
+.dg-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: var(--sp-3);
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr));
+}
+
+.dg-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  height: 100%;
+  padding: var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-card);
+  color: inherit;
+  text-decoration: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+}
+.dg-card:hover { border-color: var(--border-brand); box-shadow: var(--shadow-sm); transform: translateY(-1px); }
+.dg-card__class { font-size: 0.78rem; letter-spacing: 0.04em; text-transform: uppercase; color: var(--teal-500); }
+.dg-card__name { font-family: var(--font-heading); font-size: 1.6rem; line-height: 1.1; color: var(--ink); }
+.dg-card__summary { color: var(--ink-2); font-size: 0.93rem; line-height: 1.5; flex: 1; }
+.dg-card__foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--sp-2);
+  font-size: 0.82rem;
+  color: var(--muted);
+}
+.dg-badge {
+  padding: 2px 10px;
+  border-radius: var(--r-pill);
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  font-size: 0.75rem;
+}
+.dg-empty { margin: 0; }
+
+/* ── Guide page ───────────────────────────────────── */
+.dg-hero { padding-bottom: var(--sp-4); }
+.dg-crumbs { display: flex; gap: 8px; font-size: 0.85rem; color: var(--muted); margin-bottom: var(--sp-3); }
+.dg-crumbs a { color: var(--muted); }
+.dg-hero__class { margin: 8px 0 0; font-size: 1.05rem; color: var(--ink-2); }
+.dg-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-top: var(--sp-3);
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.dg-print {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 6px 12px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--r-btn);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+.dg-print:hover { background: var(--bg-2); }
+.dg-draft {
+  margin: var(--sp-3) 0 0;
+  padding: 10px 14px;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-light);
+  color: var(--accent-dark);
+  font-size: 0.9rem;
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
+  max-width: 760px;
+}
+
+.dg-layout {
+  display: grid;
+  gap: var(--sp-5);
+  padding-top: var(--sp-5);
+  padding-bottom: var(--sp-7);
+}
+
+.dg-toc {
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-card);
+  background: var(--surface-2);
+  padding: var(--sp-3);
+}
+.dg-toc__title { margin: 0 0 8px; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+.dg-toc ol { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.dg-toc a { font-size: 0.9rem; color: var(--ink-2); text-decoration: none; }
+.dg-toc a:hover { color: var(--brand); text-decoration: underline; }
+
+@media (min-width: 980px) {
+  .dg-layout { grid-template-columns: 220px minmax(0, 1fr); align-items: start; }
+  .dg-toc { position: sticky; top: 96px; }
+  .dg-toc ol { flex-direction: column; gap: 8px; }
+}
+
+.dg-body { min-width: 0; max-width: 820px; }
+.dg-section { padding: var(--sp-5) 0; border-top: 1px solid var(--border); scroll-margin-top: 96px; }
+.dg-section:first-child { border-top: 0; padding-top: 0; }
+.dg-section h2 { font-size: clamp(1.5rem, 3vw, 1.95rem); margin-bottom: var(--sp-3); }
+.dg-section h3 {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--teal-600);
+  margin: var(--sp-4) 0 var(--sp-2);
+}
+.dg-section p { color: var(--ink-2); line-height: 1.65; }
+.dg-lede { font-size: 1.08rem; color: var(--ink) !important; margin: 0 0 var(--sp-3); }
+
+.dg-list { margin: 0; padding-left: 1.15rem; display: grid; gap: 8px; color: var(--ink-2); line-height: 1.55; }
+.dg-list li::marker { color: var(--teal-400); }
+.dg-list--dose { padding-left: 0; list-style: none; }
+.dg-list--dose li { padding-left: 16px; position: relative; }
+.dg-list--dose li::before { content: ''; position: absolute; left: 0; top: 0.62em; width: 7px; height: 2px; background: var(--teal-500); }
+.dg-list--pearls { list-style: none; padding: 0; gap: var(--sp-2); }
+.dg-list--pearls li {
+  padding: 12px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-left: 3px solid var(--teal-accent);
+  border-radius: 0 var(--r-md) var(--r-md) 0;
+}
+
+.dg-split { display: grid; gap: var(--sp-3); margin-top: var(--sp-3); }
+@media (min-width: 720px) { .dg-split { grid-template-columns: 1fr 1fr; } }
+.dg-panel {
+  padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-card);
+}
+.dg-panel h3 { margin-top: 4px; }
+.dg-panel--pro { background: var(--dg-pro-bg); }
+.dg-panel--pro h3 { color: var(--dg-pro); }
+.dg-panel--con { background: var(--dg-con-bg); }
+.dg-panel--con h3 { color: var(--dg-con); }
+
+.dg-indications { display: grid; gap: var(--sp-3); }
+.dg-ind {
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border-soft);
+  border-radius: var(--r-card);
+}
+.dg-ind__head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 6px 12px; }
+.dg-ind__head h3 {
+  margin: 0;
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--ink);
+}
+.dg-ind__detail { margin: 6px 0 10px; font-size: 0.93rem; }
+.dg-status { font-size: 0.75rem; padding: 2px 10px; border-radius: var(--r-pill); white-space: nowrap; }
+.dg-status--approved { background: rgba(61, 107, 94, 0.12); color: var(--dg-pro); }
+.dg-status--regional { background: var(--teal-50); color: var(--teal-600); }
+.dg-status--offlabel { background: var(--bg-2); color: var(--ink-2); }
+.dg-status--notrecommended { background: var(--accent-light); color: var(--accent-dark); }
+
+.dg-rows { margin: 0; display: grid; border: 1px solid var(--border-soft); border-radius: var(--r-card); background: var(--surface); overflow: hidden; }
+.dg-rows__row { display: grid; gap: 4px; padding: 12px var(--sp-3); border-top: 1px solid var(--border-soft); }
+.dg-rows__row:first-child { border-top: 0; }
+.dg-rows dt { font-weight: 600; color: var(--ink); font-size: 0.92rem; }
+.dg-rows dd { margin: 0; color: var(--ink-2); line-height: 1.55; font-size: 0.95rem; }
+@media (min-width: 720px) { .dg-rows__row { grid-template-columns: 180px 1fr; gap: var(--sp-3); } }
+
+.dg-india .dg-rows { border-color: var(--border-brand); background: var(--teal-50); }
+.dg-india .dg-rows__row { border-color: var(--border-brand); }
+
+.dg-refs { margin: 0; padding-left: 1.3rem; display: grid; gap: 8px; font-size: 0.88rem; color: var(--ink-2); line-height: 1.5; }
+.dg-disclaimer { margin-top: var(--sp-4); font-size: 0.85rem; color: var(--muted) !important; }
+
+.dg-next { display: flex; flex-wrap: wrap; gap: var(--sp-2); justify-content: space-between; padding-top: var(--sp-4); }
+
+/* ── Print / save as PDF ───────────────────────────── */
+@media print {
+  .masthead, .ed-footer, .dg-toc, .dg-print, .dg-next, .dg-crumbs { display: none !important; }
+  .dg-layout { display: block; padding: 0; }
+  .dg-body { max-width: none; }
+  .dg-section { padding: 14px 0; break-inside: auto; }
+  .dg-panel, .dg-ind, .dg-rows__row, .dg-list--pearls li { break-inside: avoid; }
+  .dg-card:hover { transform: none; }
+  a { color: inherit; text-decoration: none; }
+}
