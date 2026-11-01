@@ -27,7 +27,7 @@ export const PROFESSIONAL_RESOURCES = [
     icon: '💊',
     title: 'Serenest Drug Guides',
     summary:
-      'Psychopharmacology references for escitalopram, sertraline, fluoxetine, olanzapine, quetiapine, risperidone, aripiprazole, lithium, valproate and clonazepam — with Indian telepsychiatry prescribing notes.',
+      'Drug references organised by specialty — mechanism, dosing, monitoring and Indian prescribing notes. Psychiatry is live; more specialties are being added.',
     pill: 'Clinical reference',
     kind: 'link',
     to: '/professionals/drug-guides',

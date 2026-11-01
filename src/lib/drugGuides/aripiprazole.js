@@ -3,6 +3,7 @@ export default {
   slug: 'aripiprazole',
   name: 'Aripiprazole',
   drugClass: 'Second-generation antipsychotic (D2 partial agonist)',
+  specialty: 'psychiatry',
   group: 'Antipsychotics',
   reviewed: false,
   updated: '2026-11-01',

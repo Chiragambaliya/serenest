@@ -3,6 +3,7 @@ export default {
   slug: 'olanzapine',
   name: 'Olanzapine',
   drugClass: 'Second-generation antipsychotic',
+  specialty: 'psychiatry',
   group: 'Antipsychotics',
   reviewed: false,
   updated: '2026-11-01',

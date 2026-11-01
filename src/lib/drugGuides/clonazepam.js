@@ -3,6 +3,7 @@ export default {
   slug: 'clonazepam',
   name: 'Clonazepam',
   drugClass: 'Benzodiazepine',
+  specialty: 'psychiatry',
   group: 'Anxiolytics & hypnotics',
   reviewed: false,
   updated: '2026-11-01',

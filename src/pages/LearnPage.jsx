@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import { DRUG_GUIDES_BASE, guideCountFor } from '../lib/drugGuides/index.js';
 import { LEARN_SECTIONS } from '../lib/learnHub';
+import { SPECIALTIES } from '../lib/specialties.js';
 import { ROUTE_SEO } from '../lib/seo';
 import { useSEO } from '../lib/useSEO';
 
@@ -56,10 +58,13 @@ export default function LearnPage() {
             <p className="kicker">Learn</p>
             <h1 className="page-title">Learn with Serenest</h1>
             <p className="about-subtext">
-              Doctor-led learning in two tracks: clinical references and teaching for professionals, and clear,
-              trustworthy reading for patients and families.
+              Doctor-led learning across medical specialties — clinical references and teaching for doctors and
+              students, and clear, trustworthy reading for patients and families.
             </p>
             <nav className="learn-jump" aria-label="Sections">
+              <a href="#specialties" className="btn btn-ghost">
+                By specialty
+              </a>
               {LEARN_SECTIONS.map((s) => (
                 <a key={s.id} href={`#${s.id}`} className="btn btn-ghost">
                   {s.kicker}
@@ -70,11 +75,48 @@ export default function LearnPage() {
         </div>
       </section>
 
+      <section id="specialties" className="section learn-section" aria-labelledby="specialties-title">
+        <div className="container">
+          <div className="section-head">
+            <p className="section-label">Browse</p>
+            <h2 id="specialties-title">By specialty</h2>
+            <p>
+              Serenest learning is growing specialty by specialty. Live specialties open their drug guides; the rest are
+              in preparation.
+            </p>
+          </div>
+          <ul className="learn-specialties">
+            {[...SPECIALTIES]
+              .sort((a, b) => (guideCountFor(b.slug) > 0) - (guideCountFor(a.slug) > 0))
+              .map((s) => {
+                const n = guideCountFor(s.slug);
+                return (
+                  <li key={s.slug}>
+                    {n > 0 ? (
+                      <Link className="learn-spec" to={`${DRUG_GUIDES_BASE}?specialty=${s.slug}`}>
+                        <span>{s.name}</span>
+                        <span className="learn-spec__n">
+                          {n} {n === 1 ? 'guide' : 'guides'} →
+                        </span>
+                      </Link>
+                    ) : (
+                      <span className="learn-spec is-soon">
+                        <span>{s.name}</span>
+                        <span className="learn-spec__n">Coming soon</span>
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+          </ul>
+        </div>
+      </section>
+
       {LEARN_SECTIONS.map((section, i) => (
         <section
           key={section.id}
           id={section.id}
-          className={`section learn-section${i % 2 ? ' alt' : ''}`}
+          className={`section learn-section${i % 2 ? '' : ' alt'}`}
           aria-labelledby={`${section.id}-title`}
         >
           <div className="container">

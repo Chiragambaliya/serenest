@@ -8,6 +8,7 @@ import {
   drugGuidePath,
   getDrugGuide,
 } from '../lib/drugGuides/index.js';
+import { getSpecialty } from '../lib/specialties.js';
 import { ROUTE_SEO } from '../lib/seo';
 import { useSEO } from '../lib/useSEO';
 import { formatDate } from './DrugGuidesIndexPage';
@@ -75,8 +76,9 @@ export default function DrugGuidePage() {
     );
   }
 
-  const idx = DRUG_GUIDES.findIndex((d) => d.slug === drug.slug);
-  const next = DRUG_GUIDES[(idx + 1) % DRUG_GUIDES.length];
+  const peers = DRUG_GUIDES.filter((d) => d.specialty === drug.specialty);
+  const idx = peers.findIndex((d) => d.slug === drug.slug);
+  const next = peers[(idx + 1) % peers.length];
 
   return (
     <div className="page dg">
@@ -86,8 +88,14 @@ export default function DrugGuidePage() {
             <Link to="/learn">Learn</Link>
             <span aria-hidden="true">/</span>
             <Link to={DRUG_GUIDES_BASE}>Drug Guides</Link>
+            {getSpecialty(drug.specialty) ? (
+              <>
+                <span aria-hidden="true">/</span>
+                <Link to={`${DRUG_GUIDES_BASE}?specialty=${drug.specialty}`}>{getSpecialty(drug.specialty).name}</Link>
+              </>
+            ) : null}
           </nav>
-          <p className="kicker">{drug.group}</p>
+          <p className="kicker">{getSpecialty(drug.specialty)?.name || 'Drug Guides'} · {drug.group}</p>
           <h1 className="page-title">{drug.name}</h1>
           <p className="dg-hero__class">{drug.drugClass}</p>
           <div className="dg-hero__meta">
@@ -208,7 +216,7 @@ export default function DrugGuidePage() {
             <h2>India practice notes</h2>
             <Rows
               rows={[
-                ['Telepsychiatry', drug.india.telepsychiatry],
+                [drug.specialty === 'psychiatry' ? 'Telepsychiatry' : 'Teleconsultation', drug.india.telepsychiatry],
                 ['Regulatory status', drug.india.regulatory],
                 ['Example brands', drug.india.brands.join(', ')],
                 ...(drug.india.notes ? [['Practice note', drug.india.notes]] : []),

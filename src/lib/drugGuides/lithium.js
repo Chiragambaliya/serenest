@@ -3,6 +3,7 @@ export default {
   slug: 'lithium',
   name: 'Lithium',
   drugClass: 'Mood stabiliser',
+  specialty: 'psychiatry',
   group: 'Mood stabilisers',
   reviewed: false,
   updated: '2026-11-01',

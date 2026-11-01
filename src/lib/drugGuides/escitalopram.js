@@ -3,6 +3,7 @@ export default {
   slug: 'escitalopram',
   name: 'Escitalopram',
   drugClass: 'SSRI antidepressant',
+  specialty: 'psychiatry',
   group: 'Antidepressants',
   reviewed: false,
   updated: '2026-11-01',

@@ -3,6 +3,7 @@ export default {
   slug: 'quetiapine',
   name: 'Quetiapine',
   drugClass: 'Second-generation antipsychotic',
+  specialty: 'psychiatry',
   group: 'Antipsychotics',
   reviewed: false,
   updated: '2026-11-01',

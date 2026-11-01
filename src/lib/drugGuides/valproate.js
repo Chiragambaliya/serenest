@@ -3,6 +3,7 @@ export default {
   slug: 'valproate',
   name: 'Valproate',
   drugClass: 'Mood stabiliser / anticonvulsant',
+  specialty: 'psychiatry',
   group: 'Mood stabilisers',
   reviewed: false,
   updated: '2026-11-01',

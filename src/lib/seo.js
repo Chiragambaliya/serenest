@@ -137,19 +137,19 @@ export const ROUTE_SEO = {
       'Clinical reference materials, tools, and templates for verified mental health professionals.',
   },
   '/learn': {
-    title: 'Learn Psychiatry & Mental Health | Serenest',
+    title: 'Medical Learning for Doctors, Students & Patients | Serenest',
     description:
-      'Doctor-led learning from Serenest: psychiatric drug guides and clinical references for professionals, plus plain-language guides and check-ins for patients and families.',
+      'Doctor-led learning from Serenest across specialties: drug guides and clinical references for doctors and students, plus plain-language guides for patients and families.',
     ogTitle: 'Learn with Serenest',
     ogDescription: 'Clinical references for doctors and students, and clear mental health reading for patients and families.',
   },
   '/professionals/drug-guides': {
-    title: 'Psychiatric Drug Guides for Clinicians | Serenest',
+    title: 'Drug Guides for Doctors by Specialty | Serenest',
     description:
-      'Concise psychopharmacology guides for psychiatrists and residents: mechanism, dosing, adverse effects, monitoring, special populations and Indian telepsychiatry prescribing notes.',
-    ogTitle: 'Serenest Drug Guides | Psychopharmacology for Clinicians',
+      'Concise drug guides for doctors and postgraduate trainees, organised by specialty: mechanism, dosing, adverse effects, monitoring, special populations and Indian prescribing notes.',
+    ogTitle: 'Serenest Drug Guides | Clinical Drug Reference by Specialty',
     ogDescription:
-      'Mechanism, dosing, adverse effects, monitoring and India practice notes for commonly prescribed psychiatric drugs.',
+      'Mechanism, dosing, adverse effects, monitoring and India practice notes, organised by specialty.',
   },
   '/professionals/guidelines': {
     title: 'Clinical Practice Guidelines | Serenest Professionals',
