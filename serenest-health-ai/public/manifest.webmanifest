@@ -1,0 +1,17 @@
+{
+  "name": "Serenest Health AI",
+  "short_name": "Health AI",
+  "description": "A teleconsultation desk with ten specialist AI agents. Not emergency care.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#14110e",
+  "theme_color": "#14110e",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
