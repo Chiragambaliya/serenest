@@ -17,7 +17,7 @@ export default function RefundPolicyPage() {
             <p className="about-subtext">
               We aim to be fair to both patients and professionals. This policy explains what happens when a session is cancelled, missed, or disrupted.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>

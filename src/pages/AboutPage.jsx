@@ -68,7 +68,7 @@ const TRUST = [
   },
   {
     title: 'DPIIT recognised startup',
-    body: 'Serenest Education Pvt Ltd is recognised under Startup India.',
+    body: 'Serenest Private Limited is recognised under Startup India.',
   },
   {
     title: 'Schedule H compliance',
@@ -199,7 +199,7 @@ export default function AboutPage() {
               <div className="abt-creds" aria-label="Credentials">
                 <span className="abt-cred">MBBS · MD Psychiatry</span>
                 <span className="abt-cred">Rudra Neuropsychiatry, Rajkot</span>
-                <span className="abt-cred">Founder, Serenest Education Pvt Ltd</span>
+                <span className="abt-cred">Founder, Serenest Private Limited</span>
                 <span className="abt-cred">DPIIT recognised</span>
               </div>
               <p className="abt-founder__link">

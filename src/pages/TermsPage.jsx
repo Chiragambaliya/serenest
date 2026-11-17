@@ -18,7 +18,7 @@ export default function TermsPage() {
               These terms govern your use of Serenest — the platform, its content, and all services offered through serenest.in.
               Please read them carefully before using the platform.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>
@@ -34,7 +34,7 @@ export default function TermsPage() {
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>2. About Serenest</h2>
-              <p className="muted">Serenest is a digital telepsychiatry and mental health platform operated by Serenest Education Pvt Ltd, a DPIIT-recognised startup registered in India. We facilitate online consultations between patients and verified mental health professionals — psychiatrists, psychologists, therapists, and counsellors.</p>
+              <p className="muted">Serenest is a digital telepsychiatry and mental health platform operated by Serenest Private Limited, a DPIIT-recognised startup registered in India. We facilitate online consultations between patients and verified mental health professionals — psychiatrists, psychologists, therapists, and counsellors.</p>
               <p className="muted" style={{ marginTop: 8 }}>Serenest is not a hospital, clinic, emergency service, or crisis helpline. We are a technology platform that connects patients with independent professionals who provide care in compliance with the MCI Telemedicine Practice Guidelines 2020.</p>
             </div>
 
@@ -82,7 +82,7 @@ export default function TermsPage() {
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>7. Intellectual Property</h2>
-              <p className="muted">All content on the platform — including text, design, logos, software, and clinical tools — is owned by or licensed to Serenest Education Pvt Ltd. You may not reproduce, distribute, or create derivative works without express written permission. See our <Link to="/intellectual-property" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>Copyright &amp; IP Policy</Link> for details.</p>
+              <p className="muted">All content on the platform — including text, design, logos, software, and clinical tools — is owned by or licensed to Serenest Private Limited. You may not reproduce, distribute, or create derivative works without express written permission. See our <Link to="/intellectual-property" style={{ color: 'var(--teal-700)', fontWeight: 600 }}>Copyright &amp; IP Policy</Link> for details.</p>
             </div>
 
             <div className="tile" style={{ padding: '1.5rem' }}>
@@ -97,7 +97,7 @@ export default function TermsPage() {
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>10. Limitation of Liability</h2>
-              <p className="muted">To the maximum extent permitted under applicable Indian law, Serenest Education Pvt Ltd shall not be liable for any indirect, incidental, special, or consequential damages. Our total liability to you for any claim shall not exceed the amount you paid for the session giving rise to the claim.</p>
+              <p className="muted">To the maximum extent permitted under applicable Indian law, Serenest Private Limited shall not be liable for any indirect, incidental, special, or consequential damages. Our total liability to you for any claim shall not exceed the amount you paid for the session giving rise to the claim.</p>
             </div>
 
             <div className="tile" style={{ padding: '1.5rem' }}>

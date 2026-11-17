@@ -26,7 +26,7 @@ export default function EmergencyDisclaimerPage() {
               Serenest is a scheduled teleconsultation platform — not a crisis or emergency service.
               If you or someone you know is in immediate danger, please use the resources below.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>

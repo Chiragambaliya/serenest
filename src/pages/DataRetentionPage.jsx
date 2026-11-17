@@ -28,7 +28,7 @@ export default function DataRetentionPage() {
               We keep your data only as long as necessary — and no longer. This policy explains what we retain,
               for how long, and how you can request deletion.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>

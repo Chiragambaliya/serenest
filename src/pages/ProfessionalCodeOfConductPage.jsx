@@ -18,7 +18,7 @@ export default function ProfessionalCodeOfConductPage() {
               All professionals on Serenest are expected to uphold the highest standards of clinical ethics,
               patient safety, and professional conduct. This Code supplements your regulatory body's own ethical requirements.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>

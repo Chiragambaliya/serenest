@@ -25,7 +25,7 @@ export default function CookiePolicyPage() {
             <p className="about-subtext">
               Serenest uses a minimal number of cookies. This page explains what they are, why we use them, and how you can control them.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>

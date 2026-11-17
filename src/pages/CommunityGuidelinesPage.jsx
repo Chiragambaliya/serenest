@@ -38,7 +38,7 @@ export default function CommunityGuidelinesPage() {
               Serenest is a space built on trust, safety, and care. These guidelines apply to everyone —
               patients, professionals, and anyone else who interacts with our platform.
             </p>
-            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Education Pvt Ltd</p>
+            <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
         </div>
       </section>

@@ -177,7 +177,7 @@ export default function PrescriptionDocument({ prescription: p }) {
       <div className="rx-two rx-foot">
         <section className="rx-block">
           <div className="rx-block-title rx-block-title--sm">▣ ISSUED BY</div>
-          <Field label="Clinic / Organization Name" value={p.clinic_name || 'Serenest Education Pvt Ltd'} />
+          <Field label="Clinic / Organization Name" value={p.clinic_name || 'Serenest Private Limited'} />
           <Field label="Address" value={p.clinic_address} />
           <Field label="Contact" value={p.clinic_contact || '7777936367'} />
           <Field label="Website / Email" value={p.clinic_website || 'serenest.in · support@serenest.in'} />

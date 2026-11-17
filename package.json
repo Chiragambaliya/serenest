@@ -1,7 +1,7 @@
 {
   "name": "serenest-website",
   "version": "1.0.0",
-  "description": "Serenest Education Pvt Ltd — clinical telepsychiatry (Serenest)",
+  "description": "Serenest Private Limited — clinical telepsychiatry (Serenest)",
   "private": true,
   "type": "module",
   "scripts": {

@@ -212,22 +212,6 @@ export default function ProfessionalPortalPage() {
                 </p>
               </div>
 
-              <div
-                className="tile"
-                style={{
-                  padding: '1.25rem 1.5rem',
-                  marginBottom: '1.5rem',
-                  background: 'linear-gradient(135deg, #f0f7ec, #e8f4e0)',
-                  border: '1px solid #c5ddb4',
-                }}
-              >
-                <p style={{ fontWeight: 800, marginBottom: 6 }}>Clinical learning hub</p>
-                <p className="muted" style={{ fontSize: '0.88rem', marginBottom: 14, lineHeight: 1.5 }}>
-                  Pharmacology and psychology tracks for approved clinicians — documentation, telemedicine, and practice tools.
-                </p>
-                <Link className="btn btn-primary" to="/professionals/learning">Open learning hub →</Link>
-              </div>
-
               {/* Editable profile */}
               <form onSubmit={save} className="tile" style={{ padding: '1.5rem', marginBottom: '2rem' }}>
                 <h2 style={{ fontWeight: 800, fontSize: '1.15rem', marginBottom: 4 }}>Your public profile</h2>
