@@ -24,7 +24,7 @@ export default function DpdpConsentNotice({ compact = false }) {
               <a href="mailto:support@serenest.in">support@serenest.in</a>)
             </p>
             <p>
-              <strong>Itemized personal data:</strong> Full name, 10-digit Indian mobile number, optional email, and voluntary symptom/screening notes.
+              <strong>Itemized personal data:</strong> Full name, mobile number (with country code if you are outside India), optional email, and voluntary symptom/screening notes.
             </p>
             <p>
               <strong>Specified purpose:</strong> Non-diagnostic specialist matching, preparing your clinician intake brief, and contacting you on phone/WhatsApp to confirm your teleconsultation slot. Never sold or used for advertising.

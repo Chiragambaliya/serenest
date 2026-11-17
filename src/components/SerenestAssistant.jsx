@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 import { assistant } from '../lib/api';
-import { careWaHref, isIndiaMobile } from '../lib/patientReach';
+import { careWaHref, formatLeadPhone, isLeadPhone, LEAD_PHONE_PLACEHOLDER, sanitizeLeadPhoneInput } from '../lib/patientReach';
 import { getVisitorId } from '../lib/visitTracker';
 
 const STARTER_PROMPTS = [
@@ -115,8 +115,8 @@ export default function SerenestAssistant() {
       setLeadError('Enter your name.');
       return;
     }
-    if (!isIndiaMobile(leadPhone)) {
-      setLeadError('Enter a valid 10-digit Indian mobile number (starts with 6–9).');
+    if (!isLeadPhone(leadPhone)) {
+      setLeadError('Enter a mobile we can call. In India, 10 digits is enough. Elsewhere, include the country code.');
       return;
     }
     setLeadSubmitting(true);
@@ -262,7 +262,7 @@ export default function SerenestAssistant() {
                     ✓ Request registered · Ref {String(acquiredBooking.id || '').slice(0, 8).toUpperCase()}
                   </div>
                   <p className="srn-ai-capture__copy">
-                    Our care team will reach out on <strong>+91 {acquiredBooking.patient_phone}</strong> to confirm your <strong>{acquiredBooking.practitioner_type}</strong> ({acquiredBooking.mode}) slot. No payment until confirmed.
+                    Our care team will reach out on <strong>{formatLeadPhone(acquiredBooking.patient_phone)}</strong> to confirm your <strong>{acquiredBooking.practitioner_type}</strong> ({acquiredBooking.mode}) slot. No payment until confirmed.
                   </p>
                   <a
                     className="srn-ai-rec-btn srn-ai-rec-btn--primary"
@@ -299,12 +299,11 @@ export default function SerenestAssistant() {
                     <input
                       type="tel"
                       className="srn-ai-capture__input"
-                      placeholder="10-digit mobile (+91)"
-                      inputMode="numeric"
-                      maxLength={10}
+                      placeholder={LEAD_PHONE_PLACEHOLDER}
+                      inputMode="tel"
                       value={leadPhone}
-                      onChange={(e) => setLeadPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                      autoComplete="tel-national"
+                      onChange={(e) => setLeadPhone(sanitizeLeadPhoneInput(e.target.value))}
+                      autoComplete="tel"
                     />
                   </div>
                   {leadError && <p className="srn-ai-capture__err" role="alert">{leadError}</p>}
@@ -362,7 +361,7 @@ export default function SerenestAssistant() {
                   className="srn-ai-input"
                   rows={2}
                   maxLength={2000}
-                  placeholder="Describe what you're going through, or reply with your name & 10-digit number…"
+                  placeholder="Describe what you're going through, or reply with your name and mobile number…"
                   value={input}
                   disabled={loading}
                   onChange={(e) => setInput(e.target.value)}

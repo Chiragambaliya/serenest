@@ -20,6 +20,8 @@
  * Failures are swallowed — notifications must never break user flow.
  */
 
+import { formatLeadPhone } from '../lib/patientReach.js';
+
 const RESEND_KEY  = process.env.RESEND_API_KEY;
 const NOTIFY_FROM = process.env.NOTIFY_FROM  || 'Serenest Alerts <onboarding@resend.dev>';
 const NOTIFY_TO   = process.env.NOTIFY_EMAIL;
@@ -149,9 +151,7 @@ function esc(v) {
 
 function fmtPhone(p) {
   if (!p) return '—';
-  const clean = String(p).replace(/[^\d]/g, '');
-  if (clean.length === 10) return `+91 ${clean.slice(0, 5)} ${clean.slice(5)}`;
-  return clean;
+  return formatLeadPhone(p) || '—';
 }
 
 function row(label, value) {
@@ -313,7 +313,7 @@ export const notify = {
     ));
     const phoneDigits = String(b.patient_phone || '').replace(/\D/g, '');
     fire(sendTeamWhatsApp(
-      `Serenest — New booking\n${b.patient_name}\n+91 ${phoneDigits}\n${b.practitioner_type} · ${b.mode}\n${b.preferred_date} ${b.preferred_time}${b.id ? `\nRef: ${b.id.slice(0, 8).toUpperCase()}` : ''}`,
+      `Serenest — New booking\n${b.patient_name}\n${formatLeadPhone(b.patient_phone) || phoneDigits}\n${b.practitioner_type} · ${b.mode}\n${b.preferred_date} ${b.preferred_time}${b.id ? `\nRef: ${b.id.slice(0, 8).toUpperCase()}` : ''}`,
     ));
 
     const bookingPatientEmail = b.patient_email?.trim();
@@ -356,7 +356,7 @@ export const notify = {
     ));
     const screeningDigits = String(s.phone || '').replace(/\D/g, '');
     fire(sendTeamWhatsApp(
-      `Serenest — ${safety ? 'SAFETY ' : ''}Screening\n${s.name || 'Anonymous'}\n+91 ${screeningDigits}\nPHQ-9: ${s.phq9_score} (${s.phq9_severity}) · GAD-7: ${s.gad7_score} (${s.gad7_severity})`,
+      `Serenest — ${safety ? 'SAFETY ' : ''}Screening\n${s.name || 'Anonymous'}\n${formatLeadPhone(s.phone) || screeningDigits}\nPHQ-9: ${s.phq9_score} (${s.phq9_severity}) · GAD-7: ${s.gad7_score} (${s.gad7_severity})`,
     ));
 
     const screeningPatientEmail = s.email?.trim();
@@ -383,7 +383,7 @@ export const notify = {
     `;
     fire(sendEmail({ subject: `New enquiry — ${c.name}${c.subject ? ' · ' + c.subject : ''}`, html }));
     fire(sendTeamWhatsApp(
-      `Serenest — Enquiry\n${c.name}\n+91 ${String(c.phone || '').replace(/\D/g, '')}\n${c.subject || '—'}\n${String(c.message || '').slice(0, 200)}`,
+      `Serenest — Enquiry\n${c.name}\n${formatLeadPhone(c.phone) || String(c.phone || '').replace(/\D/g, '')}\n${c.subject || '—'}\n${String(c.message || '').slice(0, 200)}`,
     ));
   },
 

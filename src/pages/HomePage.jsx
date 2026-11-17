@@ -11,7 +11,10 @@ import {
   CARE_TEL_HREF,
   TRUST_POINTS,
   careWaHref,
-  isIndiaMobile,
+  formatLeadPhone,
+  isLeadPhone,
+  LEAD_PHONE_PLACEHOLDER,
+  sanitizeLeadPhoneInput,
 } from '../lib/patientReach';
 
 const HOME_AI_PROMPTS = [
@@ -63,7 +66,7 @@ const OUR_SERVICES = [
   {
     title: 'Digital Mental Health',
     meta: 'Teleconsultation',
-    body: 'See a clinician on video, audio, or chat from anywhere in India — no clinic wait.',
+    body: 'See a clinician on video, audio, or chat from anywhere — no clinic wait.',
     href: '/services/digital-consultations',
   },
 ];
@@ -144,8 +147,8 @@ export default function HomePage() {
       setAcquireError('Please enter your name.');
       return;
     }
-    if (!isIndiaMobile(clientPhone)) {
-      setAcquireError('Please enter a valid 10-digit Indian mobile number (starts with 6–9).');
+    if (!isLeadPhone(clientPhone)) {
+      setAcquireError('Enter a mobile we can call. In India, 10 digits is enough. Elsewhere, include the country code.');
       return;
     }
     setAcquiring(true);
@@ -311,7 +314,7 @@ export default function HomePage() {
                         ✓ Appointment Request Registered · Ref {String(acquiredBooking.id || '').slice(0, 8).toUpperCase()}
                       </div>
                       <p className="srn-ai-capture__copy">
-                        Thank you, <strong>{acquiredBooking.patient_name}</strong>. Our care team will reach out on <strong>+91 {acquiredBooking.patient_phone}</strong> via WhatsApp or phone to confirm your <strong>{aiResult.practitioner_label}</strong> session. You do not pay until your slot is locked.
+                        Thank you, <strong>{acquiredBooking.patient_name}</strong>. Our care team will reach out on <strong>{formatLeadPhone(acquiredBooking.patient_phone)}</strong> via WhatsApp or phone to confirm your <strong>{aiResult.practitioner_label}</strong> session. You do not pay until your slot is locked.
                       </p>
                       <a
                         className="btn btn-primary"
@@ -340,12 +343,11 @@ export default function HomePage() {
                         <input
                           type="tel"
                           className="input"
-                          placeholder="10-digit mobile (+91)"
-                          inputMode="numeric"
-                          maxLength={10}
+                          placeholder={LEAD_PHONE_PLACEHOLDER}
+                          inputMode="tel"
                           value={clientPhone}
-                          onChange={(e) => setClientPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                          autoComplete="tel-national"
+                          onChange={(e) => setClientPhone(sanitizeLeadPhoneInput(e.target.value))}
+                          autoComplete="tel"
                         />
                         <button type="submit" className="btn btn-primary" disabled={acquiring}>
                           {acquiring ? 'Registering…' : `Request ${aiResult.practitioner_label} callback →`}

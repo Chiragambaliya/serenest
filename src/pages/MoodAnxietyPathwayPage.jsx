@@ -6,7 +6,7 @@ import { getTool, scoreTool } from '../lib/screeningTools';
 import { saveSnapshotDimension, CRISIS_RESOURCES } from '../lib/mentalHealthCenter';
 import { assistant } from '../lib/api';
 import { buildBookPath, suggestRoleFromScreening } from '../lib/bookingHandoff';
-import { careWaHref } from '../lib/patientReach';
+import { careWaHref, formatLeadPhone, isLeadPhone, LEAD_PHONE_PLACEHOLDER, normalizeLeadPhone, sanitizeLeadPhoneInput } from '../lib/patientReach';
 import CrisisSafetyPanel from '../components/screening/CrisisSafetyPanel';
 import ScreeningResultPanel from '../components/screening/ScreeningResultPanel';
 import DpdpConsentNotice from '../components/DpdpConsentNotice';
@@ -38,8 +38,8 @@ export default function MoodAnxietyPathwayPage() {
   const gadResult = useMemo(() => scoreTool(gad, gadAnswers), [gad, gadAnswers]);
   const crisisFlag = (phqAnswers[phq.crisisItem] ?? 0) >= 1;
 
-  const phoneClean = phone.replace(/[^\d]/g, '').slice(0, 10);
-  const phoneOk = phoneClean.length === 10 && /^[6-9]/.test(phoneClean);
+  const phoneClean = normalizeLeadPhone(phone) || '';
+  const phoneOk = isLeadPhone(phone);
   const matchedRole = suggestRoleFromScreening(phqResult.score, gadResult.score);
 
   function pick(toolKey, qi, value) {
@@ -86,7 +86,7 @@ export default function MoodAnxietyPathwayPage() {
   async function handleSavePathwayLead(e) {
     e.preventDefault();
     if (!name.trim() || !phoneOk) {
-      setSubmitError('Please enter your name and a valid 10-digit Indian mobile number.');
+      setSubmitError('Please enter your name and a mobile number. Outside India, include the country code.');
       return;
     }
     setSubmitting(true);
@@ -242,7 +242,7 @@ export default function MoodAnxietyPathwayPage() {
                           ✓ Combined Analysis Saved &amp; Callback Registered · Ref {String(savedBooking.id || '').slice(0, 8).toUpperCase()}
                         </div>
                         <p className="srn-ai-capture__copy">
-                          Thank you, <strong>{savedBooking.patient_name}</strong>. Our care team will reach out on <strong>+91 {savedBooking.patient_phone}</strong> to confirm your session. You do not pay until your slot is locked.
+                          Thank you, <strong>{savedBooking.patient_name}</strong>. Our care team will reach out on <strong>{formatLeadPhone(savedBooking.patient_phone)}</strong> to confirm your session. You do not pay until your slot is locked.
                         </p>
                         <a
                           className="btn btn-primary"
@@ -271,12 +271,11 @@ export default function MoodAnxietyPathwayPage() {
                           <input
                             type="tel"
                             className="input"
-                            placeholder="10-digit mobile (+91)"
-                            inputMode="numeric"
-                            maxLength={10}
+                            placeholder={LEAD_PHONE_PLACEHOLDER}
+                            inputMode="tel"
                             value={phone}
-                            onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                            autoComplete="tel-national"
+                            onChange={(e) => setPhone(sanitizeLeadPhoneInput(e.target.value))}
+                            autoComplete="tel"
                           />
                           <button type="submit" className="btn btn-primary" disabled={submitting}>
                             {submitting ? 'Saving…' : 'Save analysis & request callback →'}

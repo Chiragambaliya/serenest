@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { careTier, maxScore, getAllTools } from '../../lib/screeningTools';
 import { getCheckEvidence, getLandingPathForTool } from '../../lib/checkEvidence';
 import { assistant } from '../../lib/api';
-import { careWaHref, isIndiaMobile } from '../../lib/patientReach';
+import { careWaHref, formatLeadPhone, isLeadPhone, LEAD_PHONE_PLACEHOLDER, sanitizeLeadPhoneInput } from '../../lib/patientReach';
 import ScribaInsight from './ScribaInsight';
 import CheckPrivacyPanel from './CheckPrivacyPanel';
 import CheckEvidencePanel from './CheckEvidencePanel';
@@ -139,8 +139,8 @@ export default function ScreeningResultPanel({
       setLeadError('Please enter your name.');
       return;
     }
-    if (!isIndiaMobile(leadPhone)) {
-      setLeadError('Please enter a valid 10-digit Indian mobile number (starts with 6–9).');
+    if (!isLeadPhone(leadPhone)) {
+      setLeadError('Enter a mobile we can call. In India, 10 digits is enough. Elsewhere, include the country code.');
       return;
     }
     setLeadSubmitting(true);
@@ -278,7 +278,7 @@ export default function ScreeningResultPanel({
                     ✓ Analysis Saved &amp; Callback Registered · Ref {String(capturedBooking.id || '').slice(0, 8).toUpperCase()}
                   </div>
                   <p className="srn-ai-capture__copy">
-                    Thank you, <strong>{capturedBooking.patient_name}</strong>. Your {tool.name} analysis has been attached to your intake brief, and our care team will reach out on <strong>+91 {capturedBooking.patient_phone}</strong> to confirm your <strong>{aiAnalysis?.recommended_specialist?.label || 'clinician'}</strong> session.
+                    Thank you, <strong>{capturedBooking.patient_name}</strong>. Your {tool.name} analysis has been attached to your intake brief, and our care team will reach out on <strong>{formatLeadPhone(capturedBooking.patient_phone)}</strong> to confirm your <strong>{aiAnalysis?.recommended_specialist?.label || 'clinician'}</strong> session.
                   </p>
                   <a
                     className="btn btn-primary"
@@ -307,12 +307,11 @@ export default function ScreeningResultPanel({
                     <input
                       type="tel"
                       className="input"
-                      placeholder="10-digit mobile (+91)"
-                      inputMode="numeric"
-                      maxLength={10}
+                      placeholder={LEAD_PHONE_PLACEHOLDER}
+                      inputMode="tel"
                       value={leadPhone}
-                      onChange={(e) => setLeadPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                      autoComplete="tel-national"
+                      onChange={(e) => setLeadPhone(sanitizeLeadPhoneInput(e.target.value))}
+                      autoComplete="tel"
                     />
                     <button type="submit" className="btn btn-primary" disabled={leadSubmitting}>
                       {leadSubmitting

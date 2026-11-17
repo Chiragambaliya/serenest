@@ -5,7 +5,7 @@ import { ROUTE_SEO } from '../lib/seo';
 import { CHECK_CATEGORIES, GUIDED_PATHWAYS, CRISIS_RESOURCES } from '../lib/mentalHealthCenter';
 import { toolsForCategory } from '../lib/screeningTools';
 import { assistant } from '../lib/api';
-import { careWaHref, isIndiaMobile } from '../lib/patientReach';
+import { careWaHref, formatLeadPhone, isLeadPhone, LEAD_PHONE_PLACEHOLDER, sanitizeLeadPhoneInput } from '../lib/patientReach';
 import CheckCard from '../components/screening/CheckCard';
 import MentalHealthSnapshot from '../components/screening/MentalHealthSnapshot';
 import DpdpConsentNotice from '../components/DpdpConsentNotice';
@@ -93,8 +93,8 @@ export default function ScreeningPage() {
       setLeadError('Please enter your name.');
       return;
     }
-    if (!isIndiaMobile(leadPhone)) {
-      setLeadError('Please enter a valid 10-digit Indian mobile number (starts with 6–9).');
+    if (!isLeadPhone(leadPhone)) {
+      setLeadError('Enter a mobile we can call. In India, 10 digits is enough. Elsewhere, include the country code.');
       return;
     }
     setLeadSubmitting(true);
@@ -317,7 +317,7 @@ export default function ScreeningPage() {
                         ✓ AI Analysis Saved &amp; Callback Registered · Ref {String(capturedBooking.id || '').slice(0, 8).toUpperCase()}
                       </div>
                       <p className="srn-ai-capture__copy">
-                        Thank you, <strong>{capturedBooking.patient_name}</strong>. We have attached your AI analysis report and registered your callback request for a <strong>{analysis.recommended_specialist?.label}</strong> on <strong>+91 {capturedBooking.patient_phone}</strong>. You do not pay until your slot is confirmed.
+                        Thank you, <strong>{capturedBooking.patient_name}</strong>. We have attached your AI analysis report and registered your callback request for a <strong>{analysis.recommended_specialist?.label}</strong> on <strong>{formatLeadPhone(capturedBooking.patient_phone)}</strong>. You do not pay until your slot is confirmed.
                       </p>
                       <a
                         className="btn btn-primary"
@@ -350,12 +350,11 @@ export default function ScreeningPage() {
                         <input
                           type="tel"
                           className="input"
-                          placeholder="10-digit mobile (+91)"
-                          inputMode="numeric"
-                          maxLength={10}
+                          placeholder={LEAD_PHONE_PLACEHOLDER}
+                          inputMode="tel"
                           value={leadPhone}
-                          onChange={(e) => setLeadPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                          autoComplete="tel-national"
+                          onChange={(e) => setLeadPhone(sanitizeLeadPhoneInput(e.target.value))}
+                          autoComplete="tel"
                         />
                         <button type="submit" className="btn btn-primary" disabled={leadSubmitting}>
                           {leadSubmitting

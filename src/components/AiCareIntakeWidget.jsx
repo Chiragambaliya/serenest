@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { assistant } from '../lib/api';
-import { careWaHref, isIndiaMobile } from '../lib/patientReach';
+import { careWaHref, formatLeadPhone, isLeadPhone, LEAD_PHONE_PLACEHOLDER, sanitizeLeadPhoneInput } from '../lib/patientReach';
 import DpdpConsentNotice from './DpdpConsentNotice';
 
 const DEFAULT_PROMPTS = [
@@ -88,8 +88,8 @@ export default function AiCareIntakeWidget({
       setLeadError('Please enter your name.');
       return;
     }
-    if (!isIndiaMobile(leadPhone)) {
-      setLeadError('Please enter a valid 10-digit Indian mobile number (starts with 6–9).');
+    if (!isLeadPhone(leadPhone)) {
+      setLeadError('Enter a mobile we can call. In India, 10 digits is enough. Elsewhere, include the country code.');
       return;
     }
     setSubmitting(true);
@@ -221,7 +221,7 @@ export default function AiCareIntakeWidget({
                   ✓ AI Analysis Saved &amp; Callback Registered · Ref {String(capturedBooking.id || '').slice(0, 8).toUpperCase()}
                 </div>
                 <p className="srn-ai-capture__copy">
-                  Thank you, <strong>{capturedBooking.patient_name}</strong>. Our care team will reach out on <strong>+91 {capturedBooking.patient_phone}</strong> to confirm your <strong>{analysis.recommended_specialist?.label}</strong> session. You do not pay until your slot is locked.
+                  Thank you, <strong>{capturedBooking.patient_name}</strong>. Our care team will reach out on <strong>{formatLeadPhone(capturedBooking.patient_phone)}</strong> to confirm your <strong>{analysis.recommended_specialist?.label}</strong> session. You do not pay until your slot is locked.
                 </p>
                 <a
                   className="btn btn-primary"
@@ -254,12 +254,11 @@ export default function AiCareIntakeWidget({
                   <input
                     type="tel"
                     className="input"
-                    placeholder="10-digit mobile (+91)"
-                    inputMode="numeric"
-                    maxLength={10}
+                    placeholder={LEAD_PHONE_PLACEHOLDER}
+                    inputMode="tel"
                     value={leadPhone}
-                    onChange={(e) => setLeadPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                    autoComplete="tel-national"
+                    onChange={(e) => setLeadPhone(sanitizeLeadPhoneInput(e.target.value))}
+                    autoComplete="tel"
                   />
                   <button type="submit" className="btn btn-primary" disabled={submitting}>
                     {submitting

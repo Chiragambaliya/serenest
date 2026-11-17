@@ -14,8 +14,10 @@ import {
   CARE_TEL_HREF,
   canContinueContactStep,
   careWaHref,
-  indiaMobileDigits,
-  isIndiaMobile,
+  formatLeadPhone,
+  LEAD_PHONE_PLACEHOLDER,
+  normalizeLeadPhone,
+  sanitizeLeadPhoneInput,
 } from '../lib/patientReach';
 
 const DEFAULT_FEE_INR = 499;
@@ -247,8 +249,7 @@ export default function BookingPage() {
     setName((prev) => prev || full);
     setEmail((prev) => prev || user.email || '');
     const phoneMeta = meta.phone || user.phone || '';
-    const digits = String(phoneMeta).replace(/\D/g, '').slice(-10);
-    if (digits.length === 10) setPhone((prev) => prev || digits);
+    if (normalizeLeadPhone(phoneMeta)) setPhone((prev) => prev || String(phoneMeta));
   }, [user]);
 
   // Detect pay-at-booking vs request-first, and whether confirmations email.
@@ -440,8 +441,8 @@ export default function BookingPage() {
     [mode],
   );
 
-  const phoneClean = indiaMobileDigits(phone);
-  const isPhoneValid = isIndiaMobile(phone);
+  const phoneClean = normalizeLeadPhone(phone) || '';
+  const isPhoneValid = Boolean(phoneClean);
   const canContinueYou = canContinueContactStep({ name, phone, consent });
 
   return (
@@ -723,23 +724,19 @@ export default function BookingPage() {
                   </label>
 
                   <label className="field">
-                    <span className="field-label">Phone (India)</span>
-                    <div className="input-row">
-                      <span className="input-prefix">+91</span>
-                      <input
-                        className="input"
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
-                        placeholder="10-digit number"
-                        inputMode="numeric"
-                        maxLength={10}
-                        autoComplete="tel-national"
-                        aria-invalid={phone.length > 0 && !isPhoneValid}
-                      />
-                    </div>
+                    <span className="field-label">Mobile number</span>
+                    <input
+                      className="input"
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(sanitizeLeadPhoneInput(e.target.value))}
+                      placeholder={LEAD_PHONE_PLACEHOLDER}
+                      inputMode="tel"
+                      autoComplete="tel"
+                      aria-invalid={phone.length > 0 && !isPhoneValid}
+                    />
                     {phone.length > 0 && !isPhoneValid && (
-                      <span className="field-hint">Enter a valid 10-digit number starting with 6–9.</span>
+                      <span className="field-hint">India: 10 digits starting with 6–9. Other countries: include the country code, like +1 or +44.</span>
                     )}
                   </label>
 
@@ -1016,7 +1013,7 @@ export default function BookingPage() {
                     </div>
                     <div className="confirm-row">
                       <span className="confirm-k">Phone</span>
-                      <span className="confirm-v">+91 {phoneClean}</span>
+                      <span className="confirm-v">{formatLeadPhone(phoneClean)}</span>
                     </div>
                     <div className="confirm-row">
                       <span className="confirm-k">Email</span>
@@ -1119,7 +1116,7 @@ export default function BookingPage() {
                 <p style={{ fontSize: '0.92rem', marginBottom: '1.5rem' }}>
                   {confirmation.status === 'confirmed'
                     ? <>Your session is confirmed. Join from your patient dashboard or the consultation room at the booked time.</>
-                    : <>Status: <strong>awaiting confirmation</strong>. Our team will contact you on <strong>+91 {phoneClean}</strong> shortly to confirm your professional and timing.</>}
+                    : <>Status: <strong>awaiting confirmation</strong>. Our team will contact you on <strong>{formatLeadPhone(phoneClean)}</strong> shortly to confirm your professional and timing.</>}
                 </p>
 
                 <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>

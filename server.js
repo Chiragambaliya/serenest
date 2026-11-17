@@ -27,6 +27,7 @@ import {
   DPDP_ITEMIZED_NOTICE,
   validateDpdpRequest,
 } from './src/lib/dpdp.js';
+import { leadPhoneLookupKeys, normalizeLeadPhone } from './src/lib/patientReach.js';
 import cron from 'node-cron';
 
 // ── Setup ────────────────────────────────────────────────────
@@ -634,9 +635,9 @@ app.post('/api/bookings', async (req, res) => {
   if (!preferred_date)        return err(res, 'preferred_date is required');
   if (!preferred_time)        return err(res, 'preferred_time is required');
 
-  const phone = patient_phone.replace(/[^\d]/g, '');
-  if (phone.length !== 10 || !/^[6-9]/.test(phone)) {
-    return err(res, 'patient_phone must be a valid 10-digit Indian mobile number');
+  const phone = normalizeLeadPhone(patient_phone);
+  if (!phone) {
+    return err(res, 'Enter a mobile number we can call. In India a 10-digit number is enough. Elsewhere include the country code, for example +1 or +44.');
   }
 
   // Payment gate — only when Razorpay is configured.
@@ -782,12 +783,12 @@ app.get('/api/patient/bookings', async (req, res) => {
     .eq('auth_user_id', user.id)
     .single();
 
-  const phone = patient?.phone ? patient.phone.replace(/[^\d]/g, '') : null;
+  const phoneKeys = leadPhoneLookupKeys(patient?.phone);
 
   const [byEmail, byPhone] = await Promise.all([
     supabase.from('appointments').select('*').eq('patient_email', email).order('created_at', { ascending: false }),
-    phone
-      ? supabase.from('appointments').select('*').eq('patient_phone', phone).order('created_at', { ascending: false })
+    phoneKeys.length
+      ? supabase.from('appointments').select('*').in('patient_phone', phoneKeys).order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
   ]);
 
@@ -2877,11 +2878,11 @@ app.post('/api/assistant/acquire', async (req, res) => {
   } = req.body || {};
 
   if (!patient_name?.trim()) return err(res, 'Please enter your name so our care team knows who to reach.');
-  if (!patient_phone?.trim()) return err(res, 'Please enter your 10-digit Indian mobile number.');
+  if (!patient_phone?.trim()) return err(res, 'Please enter a mobile number our care team can reach.');
 
-  const phone = String(patient_phone).replace(/[^\d]/g, '').slice(-10);
-  if (phone.length !== 10 || !/^[6-9]/.test(phone)) {
-    return err(res, 'Enter a valid 10-digit Indian mobile number starting with 6–9.');
+  const phone = normalizeLeadPhone(patient_phone);
+  if (!phone) {
+    return err(res, 'Enter a mobile number we can call. In India a 10-digit number is enough. Elsewhere include the country code, for example +1 or +44.');
   }
 
   const triage = analyzeCareTriage({

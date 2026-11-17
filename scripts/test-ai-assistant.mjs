@@ -92,8 +92,16 @@ const extracted = extractLeadFromMessages([
 ]);
 assert.ok(extracted);
 assert.equal(extracted.name, 'Rohan Desai');
-assert.equal(extracted.phone, '9876543210');
+assert.equal(extracted.phone, '919876543210');
 assert.match(extracted.concern, /sleep issues/);
+
+const extractedIntl = extractLeadFromMessages([
+  { role: 'user', content: 'Jane Okonkwo, +1 415 555 2671' },
+]);
+assert.ok(extractedIntl);
+assert.equal(extractedIntl.name, 'Jane Okonkwo');
+assert.equal(extractedIntl.phone, '14155552671');
+assert.equal(extractLeadFromMessages([{ role: 'user', content: 'Call me at 4155552671' }]), null);
 
 // 8. Next default slot & AI catalog / llms.txt (Care only, no Academy)
 const slot = nextDefaultSlot(new Date('2026-10-25T05:00:00Z'));
