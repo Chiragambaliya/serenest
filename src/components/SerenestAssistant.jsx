@@ -1,18 +1,43 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
-import { assistant, health } from '../lib/api';
+import { assistant } from '../lib/api';
+import { careWaHref, formatLeadPhone, isLeadPhone, LEAD_PHONE_PLACEHOLDER, sanitizeLeadPhoneInput } from '../lib/patientReach';
 import { getVisitorId } from '../lib/visitTracker';
+
+const STARTER_PROMPTS = [
+  'I have trouble sleeping and constant overthinking',
+  'I feel burned out and exhausted from work',
+  'Help me choose: psychiatrist or therapist?',
+  'How do fees and pay-after-confirmation work?',
+];
+
+function formatBubbleText(text = '') {
+  const parts = String(text).split(/(\*\*[^*]+\*\*)/g);
+  return parts.map((part, idx) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={idx}>{part.slice(2, -2)}</strong>;
+    }
+    return <React.Fragment key={idx}>{part}</React.Fragment>;
+  });
+}
 
 export default function SerenestAssistant() {
   const location = useLocation();
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [guideOnline, setGuideOnline] = useState(null);
   const [errorBanner, setErrorBanner] = useState('');
-  /** @type {[{ role: 'user' | 'assistant', content: string }]} */
   const [messages, setMessages] = useState([]);
+  const [suggestions, setSuggestions] = useState(STARTER_PROMPTS);
+
+  // Inline client-acquisition form inside the AI concierge
+  const [leadName, setLeadName] = useState('');
+  const [leadPhone, setLeadPhone] = useState('');
+  const [leadSubmitting, setLeadSubmitting] = useState(false);
+  const [leadError, setLeadError] = useState('');
+  const [acquiredBooking, setAcquiredBooking] = useState(null);
+
   const threadEndRef = useRef(null);
   const inputRef = useRef(null);
   const guideOpenPingSent = useRef(false);
@@ -22,17 +47,11 @@ export default function SerenestAssistant() {
   };
 
   useEffect(() => {
-    health()
-      .then((d) => setGuideOnline(d.assistant === 'configured'))
-      .catch(() => setGuideOnline(false));
-  }, []);
-
-  useEffect(() => {
     if (open) {
       scrollToBottom();
       window.setTimeout(() => inputRef.current?.focus(), 80);
     }
-  }, [open, messages, loading]);
+  }, [open, messages, loading, acquiredBooking]);
 
   useEffect(() => {
     if (!open) return;
@@ -52,8 +71,8 @@ export default function SerenestAssistant() {
     }).catch(() => {});
   }, [open, location.pathname]);
 
-  const send = useCallback(async () => {
-    const text = input.trim();
+  const sendText = useCallback(async (rawText) => {
+    const text = (rawText ?? input).trim();
     if (!text || loading) return;
     setInput('');
     setErrorBanner('');
@@ -61,19 +80,82 @@ export default function SerenestAssistant() {
     setMessages(nextThread);
     setLoading(true);
     try {
-      const data = await assistant.chat(nextThread);
-      setMessages([...nextThread, { role: 'assistant', content: data.reply }]);
+      const data = await assistant.chat(
+        nextThread.map(({ role, content }) => ({ role, content })),
+        { path: location.pathname || '/' },
+      );
+      if (data.acquired_booking) {
+        setAcquiredBooking(data.acquired_booking);
+      }
+      setMessages([
+        ...nextThread,
+        {
+          role: 'assistant',
+          content: data.reply,
+          recommendation: data.recommendation || null,
+          acquired_booking: data.acquired_booking || null,
+        },
+      ]);
+      if (Array.isArray(data.suggestions) && data.suggestions.length) {
+        setSuggestions(data.suggestions);
+      }
     } catch (e) {
-      const msg =
-        e?.status === 503
-          ? 'The assistant is not available right now. Try WhatsApp (+91 7777936367), book online, or email support@serenest.in.'
-          : e?.message || 'Something went wrong. Please try again.';
-      setErrorBanner(msg);
+      setErrorBanner(
+        e?.message || 'Could not reach Serenest Care AI right now. You can book directly at /book or WhatsApp +91 77779 36367.',
+      );
       setMessages(nextThread);
     } finally {
       setLoading(false);
     }
-  }, [input, loading, messages]);
+  }, [input, loading, messages, location.pathname]);
+
+  async function handleInlineAcquire(rec) {
+    setLeadError('');
+    if (!leadName.trim() || leadName.trim().length < 2) {
+      setLeadError('Enter your name.');
+      return;
+    }
+    if (!isLeadPhone(leadPhone)) {
+      setLeadError('Enter a mobile we can call. In India, 10 digits is enough. Elsewhere, include the country code.');
+      return;
+    }
+    setLeadSubmitting(true);
+    try {
+      const lastUserConcern = [...messages].reverse().find((m) => m.role === 'user')?.content || '';
+      const res = await assistant.acquire({
+        patient_name: leadName.trim(),
+        patient_phone: leadPhone,
+        concern: lastUserConcern,
+        practitioner_type: rec?.practitioner_type || 'psychiatrist',
+        mode: rec?.mode || 'video',
+        notes: rec?.structured_note || '',
+      });
+      if (res?.booking) {
+        setAcquiredBooking(res.booking);
+      }
+    } catch (err) {
+      setLeadError(err?.message || 'Could not submit request. Please try again.');
+    } finally {
+      setLeadSubmitting(false);
+    }
+  }
+
+  // Latest assistant recommendation for the inline capture card
+  const latestRec = [...messages].reverse().find((m) => m.role === 'assistant' && m.recommendation)?.recommendation || {
+    practitioner_type: 'psychiatrist',
+    practitioner_label: 'Psychiatrist',
+    mode: 'video',
+    path: '/book',
+    label: 'Customize on booking page',
+    allow_inline_capture: true,
+  };
+
+  if (
+    location.pathname.startsWith('/admin')
+    || location.pathname.startsWith('/consultation')
+  ) {
+    return null;
+  }
 
   return (
     <>
@@ -82,13 +164,13 @@ export default function SerenestAssistant() {
         className="srn-ai-fab"
         aria-expanded={open}
         aria-controls="srn-ai-panel"
-        aria-label={open ? 'Close Serenest Guide' : 'Open Serenest Guide'}
+        aria-label={open ? 'Close Serenest Care AI' : 'Open Serenest Care AI'}
         onClick={() => setOpen((v) => !v)}
       >
         <span className="srn-ai-fab-icon" aria-hidden="true">
-          ✨
+          ✦
         </span>
-        <span className="srn-ai-fab-label">Guide</span>
+        <span className="srn-ai-fab-label">Care AI</span>
       </button>
 
       {open ? (
@@ -109,9 +191,12 @@ export default function SerenestAssistant() {
             <div className="srn-ai-head">
               <div>
                 <div id="srn-ai-title" className="srn-ai-title">
-                  Serenest Guide
+                  <span aria-hidden="true" style={{ marginRight: 6 }}>✦</span>
+                  Serenest Care AI
                 </div>
-                <p className="srn-ai-sub">Helps you use this website correctly — step by step. Not medical advice.</p>
+                <p className="srn-ai-sub">
+                  Matches your care &amp; books your callback right here — non-diagnostic.
+                </p>
               </div>
               <button
                 type="button"
@@ -125,32 +210,141 @@ export default function SerenestAssistant() {
 
             <div className="srn-ai-thread" role="log" aria-live="polite">
               <div className="srn-ai-msg srn-ai-msg-assistant">
-                <p className="srn-ai-bubble">
-                  Hi — tell me what you&apos;re trying to do or where you&apos;re stuck. I&apos;ll point you to the right page and clear steps (booking, screening, services, pricing, professionals). If something looks broken on your device, I&apos;ll suggest quick checks and how to reach our team.
-                  For emergencies, use local emergency services (e.g. 112 in India).
-                </p>
-              </div>
-              {guideOnline === false ? (
-                <div className="srn-ai-error" role="status">
-                  Live AI replies are off right now — you can still browse the site, book at /book, WhatsApp +91 7777936367, or email support@serenest.in.
+                <div className="srn-ai-bubble">
+                  <p style={{ margin: 0 }}>
+                    Hi — tell me what you&apos;re going through. I will match you with the right specialist (<strong>Psychiatrist</strong>, <strong>Psychologist</strong>, <strong>Therapist</strong>, or <strong>Counsellor</strong>) and can <strong>register your appointment callback right here</strong> — you pay nothing until our team confirms your slot.
+                  </p>
+                  <p style={{ margin: '6px 0 0', fontSize: '12px', opacity: 0.78 }}>
+                    Not for emergencies — in urgent danger, call 112 or Tele-MANAS 14416.
+                  </p>
                 </div>
-              ) : null}
+              </div>
+
               {messages.map((m, i) => (
                 <div
                   key={`${m.role}-${i}`}
                   className={`srn-ai-msg ${m.role === 'user' ? 'srn-ai-msg-user' : 'srn-ai-msg-assistant'}`}
                 >
-                  <p className="srn-ai-bubble">{m.content}</p>
+                  <div className="srn-ai-bubble">
+                    <div>{formatBubbleText(m.content)}</div>
+                    {m.recommendation && (
+                      <div className="srn-ai-rec-actions">
+                        <Link
+                          className="srn-ai-rec-btn srn-ai-rec-btn--primary"
+                          to={
+                            m.recommendation.structured_note
+                              ? `${m.recommendation.path}${m.recommendation.path.includes('?') ? '&' : '?'}note=${encodeURIComponent(m.recommendation.structured_note)}`
+                              : m.recommendation.path
+                          }
+                          onClick={() => setOpen(false)}
+                        >
+                          {m.recommendation.label} →
+                        </Link>
+                        {m.recommendation.secondary_path && (
+                          <Link
+                            className="srn-ai-rec-btn"
+                            to={m.recommendation.secondary_path}
+                            onClick={() => setOpen(false)}
+                          >
+                            {m.recommendation.secondary_label}
+                          </Link>
+                        )}
+                      </div>
+                    )}
+                  </div>
                 </div>
               ))}
+
+              {/* Instant AI Client Capture Card right inside the concierge */}
+              {acquiredBooking ? (
+                <div className="srn-ai-capture srn-ai-capture--done" role="status">
+                  <div className="srn-ai-capture__badge">
+                    ✓ Request registered · Ref {String(acquiredBooking.id || '').slice(0, 8).toUpperCase()}
+                  </div>
+                  <p className="srn-ai-capture__copy">
+                    Our care team will reach out on <strong>{formatLeadPhone(acquiredBooking.patient_phone)}</strong> to confirm your <strong>{acquiredBooking.practitioner_type}</strong> ({acquiredBooking.mode}) slot. No payment until confirmed.
+                  </p>
+                  <a
+                    className="srn-ai-rec-btn srn-ai-rec-btn--primary"
+                    href={careWaHref(`Hi, I booked via Serenest Care AI (Ref: ${String(acquiredBooking.id || '').slice(0, 8).toUpperCase()})`)}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    Message care team on WhatsApp →
+                  </a>
+                </div>
+              ) : (
+                <form
+                  className="srn-ai-capture"
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleInlineAcquire(latestRec);
+                  }}
+                >
+                  <div className="srn-ai-capture__head">
+                    <span>✦ Instant AI Callback Request</span>
+                    <span className="srn-ai-capture__tag">
+                      {latestRec.practitioner_label || 'Psychiatrist'} · ₹499 after confirmation
+                    </span>
+                  </div>
+                  <div className="srn-ai-capture__fields">
+                    <input
+                      type="text"
+                      className="srn-ai-capture__input"
+                      placeholder="Your name"
+                      value={leadName}
+                      onChange={(e) => setLeadName(e.target.value)}
+                      autoComplete="name"
+                    />
+                    <input
+                      type="tel"
+                      className="srn-ai-capture__input"
+                      placeholder={LEAD_PHONE_PLACEHOLDER}
+                      inputMode="tel"
+                      value={leadPhone}
+                      onChange={(e) => setLeadPhone(sanitizeLeadPhoneInput(e.target.value))}
+                      autoComplete="tel"
+                    />
+                  </div>
+                  {leadError && <p className="srn-ai-capture__err" role="alert">{leadError}</p>}
+                  <button
+                    type="submit"
+                    className="srn-ai-capture__submit"
+                    disabled={leadSubmitting}
+                  >
+                    {leadSubmitting
+                      ? 'Registering request…'
+                      : `Let AI book my ${latestRec.practitioner_label || 'care'} callback →`}
+                  </button>
+                  <p style={{ margin: 0, fontSize: '10.5px', lineHeight: 1.4, color: 'var(--muted)' }}>
+                    DPDP Act 2023: 18+ / guardian consent to process contact &amp; intake for care callback.{' '}
+                    <Link to="/privacy#dpdp-rights-portal" onClick={() => setOpen(false)}>Rights &amp; withdrawal →</Link>
+                  </p>
+                </form>
+              )}
+
               {loading ? (
                 <div className="srn-ai-msg srn-ai-msg-assistant" aria-busy="true">
                   <div className="srn-ai-bubble srn-ai-thinking">
                     <span className="spinner" aria-hidden="true" />
-                    Thinking…
+                    Matching care…
                   </div>
                 </div>
-              ) : null}
+              ) : (
+                <div className="srn-ai-chips" aria-label="Suggested questions">
+                  {suggestions.map((prompt) => (
+                    <button
+                      key={prompt}
+                      type="button"
+                      className="srn-ai-chip"
+                      onClick={() => sendText(prompt)}
+                    >
+                      {prompt}
+                    </button>
+                  ))}
+                </div>
+              )}
+
               <div ref={threadEndRef} />
             </div>
 
@@ -161,32 +355,34 @@ export default function SerenestAssistant() {
             ) : null}
 
             <div className="srn-ai-compose">
-              <textarea
-                ref={inputRef}
-                className="srn-ai-input"
-                rows={2}
-                maxLength={2000}
-                placeholder="e.g. How do I book? Screening won’t submit… Where’s pricing?"
-                value={input}
-                disabled={loading}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    send();
-                  }
-                }}
-              />
-              <button
-                type="button"
-                className="btn btn-primary srn-ai-send"
-                disabled={loading || !input.trim() || guideOnline === false}
-                onClick={send}
-              >
-                Send
-              </button>
+              <div className="srn-ai-compose-row">
+                <textarea
+                  ref={inputRef}
+                  className="srn-ai-input"
+                  rows={2}
+                  maxLength={2000}
+                  placeholder="Describe what you're going through, or reply with your name and mobile number…"
+                  value={input}
+                  disabled={loading}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      sendText();
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="btn btn-primary srn-ai-send"
+                  disabled={loading || !input.trim()}
+                  onClick={() => sendText()}
+                >
+                  Ask
+                </button>
+              </div>
               <p className="fineprint srn-ai-disclaimer">
-                Opening this chat may send your team a quick heads-up that someone is browsing (no message content).
+                AI Care Intake · Pay only after our team confirms your slot.
               </p>
             </div>
           </div>

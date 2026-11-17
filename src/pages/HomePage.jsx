@@ -1,15 +1,48 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { useSectionReveal } from '../hooks/useReveal';
 import ImagePlaceholder from '../components/ImagePlaceholder';
+import DpdpConsentNotice from '../components/DpdpConsentNotice';
+import { assistant } from '../lib/api';
 import {
   CARE_PHONE_DISPLAY,
   CARE_TEL_HREF,
   TRUST_POINTS,
   careWaHref,
+  formatLeadPhone,
+  isLeadPhone,
+  LEAD_PHONE_PLACEHOLDER,
+  sanitizeLeadPhoneInput,
 } from '../lib/patientReach';
+
+const HOME_AI_PROMPTS = [
+  {
+    label: 'Sleep trouble or medication check',
+    text: 'I have been having trouble sleeping for the past few weeks with racing thoughts, and I want to know if medication or therapy would help.',
+  },
+  {
+    label: 'Work burnout & exhaustion',
+    text: 'I feel completely drained, detached from my work, and overwhelmed by daily tasks. I need a structured space to recover and cope.',
+  },
+  {
+    label: 'Persistent anxiety or panic',
+    text: 'I experience constant worry, overthinking, and moments where my heart races. I want practical tools to manage anxiety.',
+  },
+  {
+    label: 'Low mood & loss of energy',
+    text: 'My mood has been persistently low for weeks, with very little energy or motivation to get through the day.',
+  },
+  {
+    label: 'ADHD / focus or OCD patterns',
+    text: 'I struggle with attention, restlessness, or repetitive intrusive thoughts and want a proper clinical evaluation.',
+  },
+  {
+    label: 'Relationships, family, or grief',
+    text: 'I am going through relationship and family stress and want a private space for ongoing talk therapy.',
+  },
+];
 
 const OUR_SERVICES = [
   {
@@ -33,7 +66,7 @@ const OUR_SERVICES = [
   {
     title: 'Digital Mental Health',
     meta: 'Teleconsultation',
-    body: 'See a clinician on video, audio, or chat from anywhere in India — no clinic wait.',
+    body: 'See a clinician on video, audio, or chat from anywhere — no clinic wait.',
     href: '/services/digital-consultations',
   },
 ];
@@ -75,6 +108,71 @@ export default function HomePage() {
   useSEO({ path: '/', ...ROUTE_SEO['/'] });
   const rootRef = useSectionReveal();
 
+  const [aiConcern, setAiConcern] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const [aiResult, setAiResult] = useState(null);
+  const [aiError, setAiError] = useState('');
+
+  const [clientName, setClientName] = useState('');
+  const [clientPhone, setClientPhone] = useState('');
+  const [acquiring, setAcquiring] = useState(false);
+  const [acquireError, setAcquireError] = useState('');
+  const [acquiredBooking, setAcquiredBooking] = useState(null);
+
+  async function runHomeAiTriage(customText) {
+    const text = (customText ?? aiConcern).trim();
+    if (!text) {
+      setAiError('Tap a concern above or describe what you are experiencing.');
+      return;
+    }
+    setAiError('');
+    setAcquireError('');
+    setAiLoading(true);
+    try {
+      const res = await assistant.triage({ concern: text });
+      if (res?.triage) {
+        setAiResult(res.triage);
+      }
+    } catch (err) {
+      setAiError(err?.message || 'Could not match right now. You can book directly at /book.');
+    } finally {
+      setAiLoading(false);
+    }
+  }
+
+  async function handleHomeAiAcquire(e) {
+    e.preventDefault();
+    setAcquireError('');
+    if (!clientName.trim() || clientName.trim().length < 2) {
+      setAcquireError('Please enter your name.');
+      return;
+    }
+    if (!isLeadPhone(clientPhone)) {
+      setAcquireError('Enter a mobile we can call. In India, 10 digits is enough. Elsewhere, include the country code.');
+      return;
+    }
+    setAcquiring(true);
+    try {
+      const res = await assistant.acquire({
+        patient_name: clientName.trim(),
+        patient_phone: clientPhone,
+        concern: aiConcern,
+        practitioner_type: aiResult?.practitioner_type,
+        mode: aiResult?.mode,
+        notes: aiResult?.structured_note
+          ? `[AI Home Intake · ${aiResult.practitioner_label}]\n${aiResult.structured_note}`
+          : '',
+      });
+      if (res?.booking) {
+        setAcquiredBooking(res.booking);
+      }
+    } catch (err) {
+      setAcquireError(err?.message || 'Could not register request. Please try again.');
+    } finally {
+      setAcquiring(false);
+    }
+  }
+
   return (
     <div className="home home--lean" ref={rootRef}>
       <section className="hp-hero hp-hero--bleed" aria-labelledby="home-hero-title">
@@ -94,8 +192,8 @@ export default function HomePage() {
             Talk to a psychiatrist or therapist — privately, from home.
           </h1>
           <p className="hp-hero__body">
-            Request a slot in minutes. We confirm by phone or WhatsApp.
-            You pay after the appointment is locked, not when you ask.
+            Describe what you are going through and let Serenest Care AI match your specialist and lock in a callback.
+            You pay after the appointment is confirmed, not when you ask.
           </p>
           <div className="hp-hero__actions">
             <HpBtn to="/book" variant="solid-light">Request an appointment</HpBtn>
@@ -122,6 +220,148 @@ export default function HomePage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* ── AI Care Intake & Instant Client Acquisition Band ───── */}
+      <section className="ed-pace hp-ai-intake" aria-labelledby="home-ai-title">
+        <div className="ed-shell">
+          <div className="ai-triage-card">
+            <div className="ai-triage-head">
+              <div className="ai-triage-head__copy">
+                <span className="ai-triage-eyebrow">
+                  <span className="ai-triage-spark" aria-hidden="true">✦</span>
+                  Serenest Care AI · Guided Client Intake
+                </span>
+                <h2 id="home-ai-title" className="ai-triage-title">
+                  Tell AI what you are going through — we will match your specialist and book your callback.
+                </h2>
+                <p className="ai-triage-sub">
+                  Pick a concern below or describe it in your own words. Our intake AI recommends the right clinician (Psychiatrist, Psychologist, Therapist, or Counsellor) and registers your request in one step.
+                </p>
+              </div>
+            </div>
+
+            <div className="ai-triage-body">
+              <div className="ai-triage-prompts" role="group" aria-label="Common care concerns">
+                {HOME_AI_PROMPTS.map((item) => (
+                  <button
+                    key={item.label}
+                    type="button"
+                    className={`ai-prompt-chip ${aiConcern === item.text ? 'is-active' : ''}`}
+                    onClick={() => {
+                      setAiConcern(item.text);
+                      setAcquiredBooking(null);
+                      runHomeAiTriage(item.text);
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="ai-triage-controls">
+                <div className="ai-triage-bar">
+                  <input
+                    type="text"
+                    className="input ai-home-input"
+                    value={aiConcern}
+                    onChange={(e) => setAiConcern(e.target.value)}
+                    placeholder="Or describe in your own words — e.g. trouble sleeping for 3 weeks, work stress, wondering about medication…"
+                  />
+                  <button
+                    type="button"
+                    className="btn btn-primary ai-match-btn"
+                    disabled={aiLoading || !aiConcern.trim()}
+                    onClick={() => runHomeAiTriage()}
+                  >
+                    {aiLoading ? 'Matching care…' : '✦ Match my care'}
+                  </button>
+                </div>
+              </div>
+
+              {aiError && <p className="ai-triage-error" role="alert">{aiError}</p>}
+
+              {aiResult && (
+                <div className="ai-triage-result" role="region" aria-label="AI care match result">
+                  {aiResult.crisis && aiResult.crisis_notice && (
+                    <div className="ai-crisis-banner" role="alert">
+                      <strong>Immediate support first:</strong> {aiResult.crisis_notice}
+                    </div>
+                  )}
+
+                  <div className="ai-triage-result__top">
+                    <div>
+                      <div className="ai-triage-badges">
+                        <span className="ai-badge ai-badge--primary">
+                          ✦ Matched Specialist: {aiResult.practitioner_label}
+                        </span>
+                        <span className="ai-badge">{aiResult.practitioner_badge}</span>
+                        <span className="ai-badge">Starts at ₹{aiResult.starting_fee_inr || 499} (pay after confirmation)</span>
+                      </div>
+                      <p className="ai-triage-rationale">{aiResult.rationale}</p>
+                    </div>
+                    <Link
+                      className="btn btn-ghost"
+                      to={`${aiResult.book_path}&note=${encodeURIComponent(aiResult.structured_note)}`}
+                    >
+                      Customize slot →
+                    </Link>
+                  </div>
+
+                  {acquiredBooking ? (
+                    <div className="srn-ai-capture srn-ai-capture--done" role="status">
+                      <div className="srn-ai-capture__badge">
+                        ✓ Appointment Request Registered · Ref {String(acquiredBooking.id || '').slice(0, 8).toUpperCase()}
+                      </div>
+                      <p className="srn-ai-capture__copy">
+                        Thank you, <strong>{acquiredBooking.patient_name}</strong>. Our care team will reach out on <strong>{formatLeadPhone(acquiredBooking.patient_phone)}</strong> via WhatsApp or phone to confirm your <strong>{aiResult.practitioner_label}</strong> session. You do not pay until your slot is locked.
+                      </p>
+                      <a
+                        className="btn btn-primary"
+                        href={careWaHref(`Hi, I just booked a ${aiResult.practitioner_label} session via Serenest Care AI (Ref: ${String(acquiredBooking.id || '').slice(0, 8).toUpperCase()})`)}
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Confirm on WhatsApp →
+                      </a>
+                    </div>
+                  ) : (
+                    <form className="ai-fast-acquire" onSubmit={handleHomeAiAcquire}>
+                      <div className="ai-fast-acquire__head">
+                        <strong>✦ Book this {aiResult.practitioner_label} recommendation in 1 step</strong>
+                        <span>Next open slot: {aiResult.next_slot?.label || 'Today / Tomorrow'} · Pay ₹{aiResult.starting_fee_inr || 499} only after confirmation</span>
+                      </div>
+                      <div className="ai-fast-acquire__row">
+                        <input
+                          type="text"
+                          className="input"
+                          placeholder="Your full name"
+                          value={clientName}
+                          onChange={(e) => setClientName(e.target.value)}
+                          autoComplete="name"
+                        />
+                        <input
+                          type="tel"
+                          className="input"
+                          placeholder={LEAD_PHONE_PLACEHOLDER}
+                          inputMode="tel"
+                          value={clientPhone}
+                          onChange={(e) => setClientPhone(sanitizeLeadPhoneInput(e.target.value))}
+                          autoComplete="tel"
+                        />
+                        <button type="submit" className="btn btn-primary" disabled={acquiring}>
+                          {acquiring ? 'Registering…' : `Request ${aiResult.practitioner_label} callback →`}
+                        </button>
+                      </div>
+                      <DpdpConsentNotice compact />
+                      {acquireError && <p className="ai-triage-error" role="alert">{acquireError}</p>}
+                    </form>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </section>
 
       <section className="ed-pace hp-arrive" aria-labelledby="home-arrive-title">
@@ -180,8 +420,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="ed-pace ed-band-soft hp-academy" aria-labelledby="home-check-title">
-        <div className="ed-shell hp-academy__grid">
+      <section className="ed-pace ed-band-soft hp-checkin" aria-labelledby="home-check-title">
+        <div className="ed-shell hp-checkin__grid">
           <header className="ed-head" style={{ marginBottom: 0 }}>
             <span className="ed-head__label">Check in</span>
             <h2 id="home-check-title">Not sure if you need an appointment yet?</h2>
@@ -189,7 +429,7 @@ export default function HomePage() {
               A short, private check-in for mood, anxiety, stress, or burnout.
               Results stay on this device and are not a diagnosis.
             </p>
-            <div className="hp-academy__actions">
+            <div className="hp-checkin__actions">
               <HpBtn to="/screening" variant="solid">Start a free check</HpBtn>
               <Link className="hp-text-link" to="/book">
                 Skip this — request a slot
@@ -197,8 +437,8 @@ export default function HomePage() {
               </Link>
             </div>
           </header>
-          <aside className="hp-academy__aside">
-            <figure className="hp-academy__visual">
+          <aside className="hp-checkin__aside">
+            <figure className="hp-checkin__visual">
               <ImagePlaceholder
                 asset="home-screening-desk.jpg"
                 direction="Quiet desk in warm daylight — notebook, window, empty chair. No people."

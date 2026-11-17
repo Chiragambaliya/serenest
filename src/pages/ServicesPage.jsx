@@ -5,6 +5,7 @@ import { ROUTE_SEO } from '../lib/seo';
 import FaqAccordion from '../components/FaqAccordion';
 import EmergencyNotice from '../components/EmergencyNotice';
 import ImagePlaceholder from '../components/ImagePlaceholder';
+import AiCareIntakeWidget from '../components/AiCareIntakeWidget';
 import '../styles/service-detail.css';
 
 const SPECIALTIES = [
@@ -125,6 +126,17 @@ export default function ServicesPage() {
               loading="eager"
             />
           </div>
+        </div>
+      </section>
+
+      <section className="svd-section" aria-label="AI Service Pathway Finder">
+        <div className="container">
+          <AiCareIntakeWidget
+            eyebrow="Serenest Care AI · Service Pathway Finder"
+            title="Tell AI what you are going through — we will match the right service and lock in a callback."
+            subtext="Whether you need psychiatry (medication & diagnosis), structured CBT psychology, ongoing talk therapy, or burnout counselling, our AI analyzes your pattern and registers your request in one step."
+            sourceTag="services-page-ai-finder"
+          />
         </div>
       </section>
 

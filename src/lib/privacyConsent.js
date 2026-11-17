@@ -2,45 +2,41 @@ export const PRIVACY_CHOICE_KEY = 'serenest_privacy_consent';
 export const PRIVACY_CHOICE_EVENT = 'serenest:privacy-choice';
 export const OPEN_PRIVACY_EVENT = 'serenest:open-privacy';
 
-const VALID_CHOICES = new Set(['essential', 'analytics']);
-
+/**
+ * Analytics is always enabled across Serenest Care (first-party visit tracking
+ * + privacy-safe GA4 when configured; ad storage and ad personalization remain
+ * permanently denied).
+ */
 export function getPrivacyChoice() {
-  try {
-    const choice = localStorage.getItem(PRIVACY_CHOICE_KEY);
-    return VALID_CHOICES.has(choice) ? choice : null;
-  } catch {
-    return null;
-  }
+  return 'analytics';
 }
 
 export function hasAnalyticsConsent() {
-  return getPrivacyChoice() === 'analytics';
+  return true;
 }
 
-export function setPrivacyChoice(choice) {
-  if (!VALID_CHOICES.has(choice)) return;
-
+export function setPrivacyChoice() {
   try {
-    localStorage.setItem(PRIVACY_CHOICE_KEY, choice);
+    localStorage.setItem(PRIVACY_CHOICE_KEY, 'analytics');
   } catch {
-    // The preference still applies for this page even when storage is blocked.
+    // Ignore storage restrictions
   }
 
-  window.dispatchEvent(new CustomEvent(PRIVACY_CHOICE_EVENT, { detail: { choice } }));
-
-  if (choice === 'analytics') {
-    loadAnalytics();
-  } else {
-    disableAnalytics();
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent(PRIVACY_CHOICE_EVENT, { detail: { choice: 'analytics' } }));
   }
+
+  loadAnalytics();
 }
 
 export function openPrivacyChoices() {
-  window.dispatchEvent(new Event(OPEN_PRIVACY_EVENT));
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new Event(OPEN_PRIVACY_EVENT));
+  }
 }
 
 export function loadAnalytics() {
-  if (typeof window === 'undefined' || !hasAnalyticsConsent()) return;
+  if (typeof window === 'undefined') return;
   if (document.getElementById('serenest-ga-script')) return;
 
   const measurementId = document
@@ -73,24 +69,7 @@ export function loadAnalytics() {
   document.head.appendChild(script);
 }
 
-function expireCookie(name) {
-  document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`;
-  document.cookie = `${name}=; Max-Age=0; path=/; domain=${window.location.hostname}; SameSite=Lax`;
-}
-
 export function disableAnalytics() {
-  if (typeof window === 'undefined') return;
-
-  if (typeof window.gtag === 'function') {
-    window.gtag('consent', 'update', { analytics_storage: 'denied' });
-  }
-
-  document.querySelector('#serenest-ga-script')?.remove();
-  Object.keys(document.cookie ? document.cookie.split(';').reduce((all, item) => {
-    const name = item.split('=')[0]?.trim();
-    if (name) all[name] = true;
-    return all;
-  }, {}) : {})
-    .filter((name) => name === '_ga' || name.startsWith('_ga_'))
-    .forEach(expireCookie);
+  // Analytics is always kept on per platform configuration.
+  loadAnalytics();
 }

@@ -125,13 +125,27 @@ export const contact = {
 };
 
 /**
- * Site concierge (OpenAI via server). Not clinical advice.
- * @param {{ role: 'user' | 'assistant', content: string }[]} messages
+ * Serenest Care AI — clinical intake triage + conversational concierge.
+ * Non-diagnostic; helps match care and structure intake notes.
  */
 export const assistant = {
-  chat: (messages) => post('/api/assistant/chat', { messages }),
+  chat: (messages, context) => post('/api/assistant/chat', { messages, context }),
+  triage: (payload) => post('/api/assistant/triage', payload),
+  /** AI mental health pattern & screening result analyzer. */
+  analyze: (payload) => post('/api/assistant/analyze', payload),
+  /** AI Lead Intelligence & WhatsApp outreach script generator for ops. */
+  leadCopilot: (lead) => post('/api/assistant/lead-copilot', { lead }),
+  /** One-step AI client acquisition: creates a matched booking request directly. */
+  acquire: (payload) => post('/api/assistant/acquire', payload),
   /** Lets the team know Serenest Guide was opened (server dedupes per visitor/day). */
   notifyGuideOpened: (payload) => post('/api/assistant/notify-open', payload),
 };
 
-export default { health, bookings, screening, professionals, rooms, contact, assistant, prescriptions, subscribers, payments };
+export const dpdp = {
+  /** Fetch the DPDP Act 2023 Section 5 itemized notice & Data Fiduciary metadata. */
+  notice: () => get('/api/dpdp/notice'),
+  /** Submit a DPDP Data Principal rights or consent-withdrawal request (Sections 6(4), 11, 12, 13, 14). */
+  submitRequest: (payload) => post('/api/dpdp/requests', payload),
+};
+
+export default { health, bookings, screening, professionals, rooms, contact, assistant, dpdp, prescriptions, subscribers, payments };

@@ -23,6 +23,8 @@ assert.equal(indiaWaNumber('+91 98765 43210'), '919876543210');
 assert.equal(indiaWaNumber(''), null);
 assert.equal(telHref('9876543210'), 'tel:+919876543210');
 assert.equal(telHref('919876543210'), 'tel:+919876543210');
+assert.equal(indiaWaNumber('+1 415 555 2671'), '14155552671');
+assert.equal(telHref('14155552671'), 'tel:+14155552671');
 
 const booking = {
   id: 'b1',

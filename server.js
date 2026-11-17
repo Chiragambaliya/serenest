@@ -11,7 +11,23 @@ import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
 import { renderSeoHead, renderSeoBody, renderSitemapXml, shouldNoindex, ROUTE_SEO, SITE_ORIGIN, resolveSeoRedirect, isKnownDynamicSpaPath } from './src/lib/seo.js';
-import { handleAssistantChat } from './src/server/aiAssistant.js';
+import {
+  handleAssistantChat,
+  handleCareTriage,
+  handleMentalHealthAnalysis,
+  handleLeadCopilot,
+  analyzeCareTriage,
+  nextDefaultSlot,
+  buildAiCareCatalog,
+  renderLlmsTxt,
+} from './src/server/aiAssistant.js';
+import {
+  DPDP_NOTICE_VERSION,
+  DPDP_FIDUCIARY,
+  DPDP_ITEMIZED_NOTICE,
+  validateDpdpRequest,
+} from './src/lib/dpdp.js';
+import { leadPhoneLookupKeys, normalizeLeadPhone } from './src/lib/patientReach.js';
 import cron from 'node-cron';
 
 // ── Setup ────────────────────────────────────────────────────
@@ -95,7 +111,9 @@ function err(res, message, status = 400) {
 
 function requireDb(res) {
   if (!supabase) {
-    err(res, 'Database not configured. Set SUPABASE_URL and SUPABASE_SERVICE_KEY.', 503);
+    // Patient-presentable message — config detail (SUPABASE_URL +
+    // SUPABASE_SERVICE_KEY) is reported in the startup log and /api/health.
+    err(res, 'This service is temporarily unavailable. Please try again in a few minutes.', 503);
     return false;
   }
   return true;
@@ -551,7 +569,8 @@ function verifyRazorpaySignature({ order_id, payment_id, signature }) {
 app.get('/api/health', (_req, res) => {
   ok(res, {
     status: 'ok',
-    assistant: process.env.OPENAI_API_KEY ? 'configured' : 'disabled',
+    assistant: 'configured',
+    assistant_mode: process.env.OPENAI_API_KEY ? 'openai' : 'clinical-engine',
     db: supabase ? 'connected' : 'not configured',
     daily: process.env.DAILY_API_KEY ? 'configured' : 'not configured',
     notifications: notify.isConfigured() ? 'enabled' : 'disabled',
@@ -559,7 +578,8 @@ app.get('/api/health', (_req, res) => {
     team_whatsapp: notify.hasTeamWhatsApp() ? 'enabled' : 'disabled',
     serenest_wa_group: notify.getSerenestWaGroupInvite() ? 'configured' : 'missing',
     payments: paymentsEnabled() ? 'enabled' : 'disabled',
-    analytics: GA_ID ? 'enabled' : 'disabled',
+    analytics: 'enabled',
+    analytics_mode: GA_ID ? 'ga4+builtin' : 'builtin',
     ts: new Date().toISOString(),
   });
 });
@@ -615,9 +635,9 @@ app.post('/api/bookings', async (req, res) => {
   if (!preferred_date)        return err(res, 'preferred_date is required');
   if (!preferred_time)        return err(res, 'preferred_time is required');
 
-  const phone = patient_phone.replace(/[^\d]/g, '');
-  if (phone.length !== 10 || !/^[6-9]/.test(phone)) {
-    return err(res, 'patient_phone must be a valid 10-digit Indian mobile number');
+  const phone = normalizeLeadPhone(patient_phone);
+  if (!phone) {
+    return err(res, 'Enter a mobile number we can call. In India a 10-digit number is enough. Elsewhere include the country code, for example +1 or +44.');
   }
 
   // Payment gate — only when Razorpay is configured.
@@ -655,6 +675,21 @@ app.post('/api/bookings', async (req, res) => {
     amount_paid: payment.amount,
   };
 
+  return ok(res, { booking: await persistBookingRecord(record) }, 201);
+});
+
+async function persistBookingRecord(record) {
+  const consentedAt = new Date().toISOString();
+  captureFallbackLead('dpdp_consent_audit', {
+    id: crypto.randomUUID(),
+    notice_version: DPDP_NOTICE_VERSION,
+    consented_at: consentedAt,
+    purpose: 'teleconsultation_booking_and_intake',
+    patient_name: record.patient_name,
+    patient_phone: record.patient_phone,
+    practitioner_type: record.practitioner_type,
+  });
+
   if (supabase) {
     const { data, error } = await supabase
       .from('appointments')
@@ -662,20 +697,29 @@ app.post('/api/bookings', async (req, res) => {
       .select()
       .single();
 
-    if (!error) {
+    if (!error && data) {
       notify.booking(data);
-      return ok(res, { booking: data }, 201);
+      return {
+        ...data,
+        dpdp_notice_version: DPDP_NOTICE_VERSION,
+        dpdp_consented_at: consentedAt,
+      };
     }
-    console.error('[POST /api/bookings]', error);
+    console.error('[persistBookingRecord]', error);
   }
 
   // DB missing or insert failed — never turn away a patient. Alert the team
   // and persist the lead to the fallback file instead of erroring out.
-  const fallback = { id: crypto.randomUUID(), ...record };
+  const fallback = {
+    id: crypto.randomUUID(),
+    ...record,
+    dpdp_notice_version: DPDP_NOTICE_VERSION,
+    dpdp_consented_at: consentedAt,
+  };
   captureFallbackLead('booking', fallback);
   notify.booking(fallback);
-  return ok(res, { booking: fallback }, 201);
-});
+  return fallback;
+}
 
 /**
  * GET /api/bookings/:id
@@ -739,12 +783,12 @@ app.get('/api/patient/bookings', async (req, res) => {
     .eq('auth_user_id', user.id)
     .single();
 
-  const phone = patient?.phone ? patient.phone.replace(/[^\d]/g, '') : null;
+  const phoneKeys = leadPhoneLookupKeys(patient?.phone);
 
   const [byEmail, byPhone] = await Promise.all([
     supabase.from('appointments').select('*').eq('patient_email', email).order('created_at', { ascending: false }),
-    phone
-      ? supabase.from('appointments').select('*').eq('patient_phone', phone).order('created_at', { ascending: false })
+    phoneKeys.length
+      ? supabase.from('appointments').select('*').in('patient_phone', phoneKeys).order('created_at', { ascending: false })
       : Promise.resolve({ data: [] }),
   ]);
 
@@ -2439,17 +2483,24 @@ app.post('/api/track/visit', (req, res) => {
   // (Cloudflare / Vercel). Render does not by default — stays null then.
   const country = (req.headers['cf-ipcountry'] || req.headers['x-vercel-ip-country'] || null);
 
+  const visitRow = {
+    visitor_id: vid || null,
+    path: String(path).slice(0, 300),
+    referrer: String(referrer).slice(0, 300) || null,
+    device,
+    country: country && country !== 'XX' ? country : null,
+  };
+
   // Persist every visit (best-effort — never block or fail the beacon).
   if (supabase) {
-    supabase.from('site_visits').insert({
-      visitor_id: vid || null,
-      path: String(path).slice(0, 300),
-      referrer: String(referrer).slice(0, 300) || null,
-      device,
-      country: country && country !== 'XX' ? country : null,
-    }).then(({ error }) => {
-      if (error) console.warn('[track/visit] insert:', error.message);
+    supabase.from('site_visits').insert(visitRow).then(({ error }) => {
+      if (error) {
+        console.warn('[track/visit] insert:', error.message);
+        captureFallbackLead('site_visit', { id: crypto.randomUUID(), ...visitRow });
+      }
     });
+  } else {
+    captureFallbackLead('site_visit', { id: crypto.randomUUID(), ...visitRow });
   }
 
   // Fingerprint = browser-supplied vid (cookie-less) + IP + UA hash
@@ -2490,25 +2541,33 @@ app.get('/api/track/today', (req, res) => {
 
 /** GET /api/track/stats — admin only — persisted traffic analytics. */
 app.get('/api/track/stats', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  if (!requireAdmin(req, res)) return;
 
   const now = new Date();
   const since = (days) => new Date(now.getTime() - days * 86400000).toISOString();
   const startOfToday = new Date(now); startOfToday.setHours(0, 0, 0, 0);
 
-  // Pull the last 30 days of visits once, then aggregate in memory.
-  const { data: rows, error } = await supabase
-    .from('site_visits')
-    .select('created_at, visitor_id, path, referrer, device, country')
-    .gte('created_at', since(30))
-    .order('created_at', { ascending: false });
+  let dbRows = [];
+  if (supabase) {
+    const { data: rows, error } = await supabase
+      .from('site_visits')
+      .select('created_at, visitor_id, path, referrer, device, country')
+      .gte('created_at', since(30))
+      .order('created_at', { ascending: false });
 
-  if (error) {
-    console.error('[GET /api/track/stats]', error);
-    return err(res, 'Failed to load traffic', 500);
+    if (error) {
+      console.error('[GET /api/track/stats]', error);
+    } else if (rows) {
+      dbRows = rows;
+    }
   }
 
-  const all = rows ?? [];
+  const fallbackRows = fallbackLeadRecords('site_visit').filter(
+    (r) => (r.created_at || '') >= since(30),
+  );
+  const all = [...dbRows, ...fallbackRows].sort((a, b) =>
+    String(b.created_at || '').localeCompare(String(a.created_at || '')),
+  );
   const todayIso = startOfToday.toISOString();
   const weekIso = since(7);
 
@@ -2778,12 +2837,230 @@ app.post('/api/contact', async (req, res) => {
 });
 
 // ══════════════════════════════════════════════════════════════
-//  AI ASSISTANT (site concierge — OpenAI, server-side key only)
+//  AI ASSISTANT (Care concierge + clinical intake triage + client acquisition)
 // ══════════════════════════════════════════════════════════════
 
-/** POST /api/assistant/chat — body: { messages: [{ role, content }] } */
+/** POST /api/assistant/triage — body: { concern, goal?, duration?, preferredMode?, screening? } */
+app.post('/api/assistant/triage', (req, res, next) => {
+  handleCareTriage(req, res).catch(next);
+});
+
+/** POST /api/assistant/analyze — body: { toolId?, toolName?, score?, bandLabel?, symptoms?, concern?, ... } */
+app.post('/api/assistant/analyze', (req, res, next) => {
+  handleMentalHealthAnalysis(req, res).catch(next);
+});
+
+/** POST /api/assistant/lead-copilot — body: { lead: { patient_name?, patient_phone?, notes?, phq9_score?, ... } } */
+app.post('/api/assistant/lead-copilot', (req, res, next) => {
+  handleLeadCopilot(req, res).catch(next);
+});
+
+/**
+ * POST /api/assistant/acquire
+ * One-step AI client acquisition: matches the visitor's concern to the right
+ * clinician type & mode, prepares the clinician intake brief, picks the next
+ * open slot if none was given, and registers the appointment request.
+ */
+app.post('/api/assistant/acquire', async (req, res) => {
+  const {
+    patient_name,
+    patient_phone,
+    patient_email,
+    concern = '',
+    duration = '',
+    practitioner_type,
+    mode,
+    preferred_date,
+    preferred_time,
+    language = 'English',
+    notes = '',
+    screening_meta = null,
+  } = req.body || {};
+
+  if (!patient_name?.trim()) return err(res, 'Please enter your name so our care team knows who to reach.');
+  if (!patient_phone?.trim()) return err(res, 'Please enter a mobile number our care team can reach.');
+
+  const phone = normalizeLeadPhone(patient_phone);
+  if (!phone) {
+    return err(res, 'Enter a mobile number we can call. In India a 10-digit number is enough. Elsewhere include the country code, for example +1 or +44.');
+  }
+
+  const triage = analyzeCareTriage({
+    concern: concern || notes,
+    duration,
+    preferredMode: mode,
+  });
+
+  const slot = nextDefaultSlot();
+  const resolvedRole = practitioner_type || triage.practitioner_type || 'psychiatrist';
+  const resolvedMode = mode || triage.mode || 'video';
+  const resolvedNote = (notes && notes.trim())
+    ? notes.trim()
+    : `[AI Care Match · ${triage.practitioner_label}]\n${triage.structured_note}`;
+
+  const record = {
+    patient_name: patient_name.trim(),
+    patient_phone: phone,
+    patient_email: patient_email?.trim() || null,
+    practitioner_type: resolvedRole,
+    mode: resolvedMode,
+    preferred_date: preferred_date || slot.date,
+    preferred_time: preferred_time || slot.time,
+    language: language || 'English',
+    notes: resolvedNote,
+    professional_id: null,
+    status: 'pending',
+    payment_status: 'unpaid',
+    payment_id: null,
+    payment_order_id: null,
+    amount_paid: null,
+  };
+
+  const booking = await persistBookingRecord(record);
+
+  // If this lead originated from an AI Screening / Mental Health Analysis,
+  // also record the screening response so it surfaces in the Admin Screenings inbox.
+  let screeningRecord = null;
+  if (screening_meta && typeof screening_meta === 'object') {
+    const scrRow = {
+      name: patient_name.trim(),
+      phone,
+      email: patient_email?.trim() || null,
+      reason: screening_meta.reason || 'ai-analysis-lead',
+      conditions: Array.isArray(screening_meta.conditions) ? screening_meta.conditions : [],
+      format: resolvedMode,
+      frequency: null,
+      phq9_answers: screening_meta.phq9_answers || null,
+      phq9_score: screening_meta.phq9_score ?? null,
+      phq9_severity: screening_meta.phq9_severity || screening_meta.band_label || null,
+      gad7_answers: screening_meta.gad7_answers || null,
+      gad7_score: screening_meta.gad7_score ?? null,
+      gad7_severity: screening_meta.gad7_severity || null,
+      wants_callback: true,
+      status: 'new',
+    };
+    if (supabase) {
+      const { data } = await supabase.from('screening_responses').insert(scrRow).select().single();
+      if (data) screeningRecord = data;
+    }
+    if (!screeningRecord) {
+      screeningRecord = { id: crypto.randomUUID(), ...scrRow };
+      captureFallbackLead('screening', screeningRecord);
+    }
+    notify.screening(screeningRecord);
+  }
+
+  return ok(res, { booking, screening: screeningRecord, triage, slot }, 201);
+});
+
+/** POST /api/assistant/chat — body: { messages: [{ role, content }], context? } */
 app.post('/api/assistant/chat', (req, res, next) => {
-  handleAssistantChat(req, res).catch(next);
+  handleAssistantChat(req, res, {
+    onAcquireLead: async (leadRecord) => persistBookingRecord({
+      ...leadRecord,
+      patient_email: null,
+      professional_id: null,
+      status: 'pending',
+      payment_status: 'unpaid',
+      payment_id: null,
+      payment_order_id: null,
+      amount_paid: null,
+    }),
+  }).catch(next);
+});
+
+/** GET /api/ai/catalog — machine-readable care catalog for AI agents */
+app.get('/api/ai/catalog', (_req, res) => {
+  return ok(res, buildAiCareCatalog(SITE_ORIGIN));
+});
+
+// ══════════════════════════════════════════════════════════════
+//  DPDP ACT 2023 — DATA PRINCIPAL RIGHTS & CONSENT WITHDRAWAL
+// ══════════════════════════════════════════════════════════════
+
+/** GET /api/dpdp/notice — machine- & UI-readable Section 5 itemized notice */
+app.get('/api/dpdp/notice', (_req, res) => {
+  return ok(res, {
+    fiduciary: DPDP_FIDUCIARY,
+    notice: DPDP_ITEMIZED_NOTICE,
+  });
+});
+
+/**
+ * POST /api/dpdp/requests
+ * Submit a Data Principal rights request under Sections 6(4), 11, 12, 13, or 14
+ * of the Digital Personal Data Protection Act, 2023.
+ */
+app.post('/api/dpdp/requests', async (req, res) => {
+  const check = validateDpdpRequest(req.body || {});
+  if (!check.valid) {
+    return err(res, check.error, 400);
+  }
+
+  const s = check.sanitized;
+  const refId = `DPDP-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+  const createdAt = new Date().toISOString();
+
+  const record = {
+    id: refId,
+    ...s,
+    status: 'received',
+    created_at: createdAt,
+  };
+
+  // Persist to fallback audit log and also forward to contact_messages if DB is connected
+  captureFallbackLead('dpdp_request', record);
+
+  if (supabase) {
+    try {
+      await supabase.from('contact_messages').insert({
+        name: s.name,
+        email: s.email,
+        phone: s.phone,
+        subject: `[${refId}] DPDP ${s.dpdp_section} — ${s.request_label}`,
+        message: JSON.stringify(record),
+      });
+    } catch (e) {
+      console.warn('[POST /api/dpdp/requests] DB insert skipped:', e?.message);
+    }
+  }
+
+  notify.contact({
+    name: s.name,
+    email: s.email,
+    phone: s.phone,
+    subject: `[${refId}] DPDP ${s.dpdp_section} — ${s.request_label}`,
+    message:
+      `DPDP Act 2023 Request (${s.request_label} · ${s.dpdp_section})\n` +
+      `Reference: ${refId}\n` +
+      (s.nominee_name ? `Nominee: ${s.nominee_name} (${s.nominee_relation || 'Representative'})\n` : '') +
+      (s.details ? `Details: ${s.details}` : 'No additional details.'),
+  });
+
+  return ok(
+    res,
+    {
+      request: record,
+      fiduciary: DPDP_FIDUCIARY,
+    },
+    201,
+  );
+});
+
+/** GET /api/dpdp/requests — admin only — list all DPDP Data Principal requests */
+app.get('/api/dpdp/requests', (req, res) => {
+  if (!requireAdmin(req, res)) return;
+  const requests = fallbackLeadRecords('dpdp_request');
+  const audits = fallbackLeadRecords('dpdp_consent_audit');
+  return ok(res, { requests, consent_audits_count: audits.length });
+});
+
+/** GET /llms.txt — LLM-friendly index of Serenest Care (no Academy) */
+app.get(['/llms.txt', '/llms-full.txt'], (_req, res) => {
+  res.status(200);
+  res.set('Content-Type', 'text/plain; charset=utf-8');
+  res.set('Cache-Control', 'public, max-age=3600');
+  return res.send(renderLlmsTxt(SITE_ORIGIN));
 });
 
 // Old crawlers still request /og-image.png from the previous share URL.
@@ -3028,7 +3305,7 @@ app.listen(port, () => {
   console.log(`   Patient email: ${notify.isPatientEmailEnabled() ? '✅ Resend key set' : '⚠️  Add RESEND_API_KEY for confirmations'}`);
   console.log(`   Team WhatsApp: ${notify.hasTeamWhatsApp() ? '✅ CallMeBot configured' : '○ Optional: CALLMEBOT_WHATSAPP_APIKEY + CALLMEBOT_WHATSAPP_PHONE'}`);
   console.log(`   Payments: ${paymentsEnabled() ? '✅ Charge at booking (Razorpay)' : '○ Request-first (set PAYMENTS_ENABLED=true to charge at booking)'}`);
-  console.log(`   Analytics: ${GA_ID ? `✅ GA4 (${GA_ID})` : '○ Disabled (set GA_MEASUREMENT_ID)'}\n`);
+  console.log(`   Analytics: ✅ Always enabled (${GA_ID ? `GA4 ${GA_ID} + built-in` : 'built-in traffic analytics'})\n`);
 
   // Lead-pipeline warnings — these misconfigurations are the ones that
   // silently cost clients, so make them impossible to miss in the logs.

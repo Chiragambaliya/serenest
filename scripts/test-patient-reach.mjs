@@ -11,6 +11,10 @@ import {
   careWaHref,
   indiaMobileDigits,
   isIndiaMobile,
+  isLeadPhone,
+  normalizeLeadPhone,
+  formatLeadPhone,
+  leadPhoneLookupKeys,
   isPatientNameValid,
   canContinueContactStep,
   hideReachDock,
@@ -29,13 +33,29 @@ assert.equal(isIndiaMobile('+91 88888 88888'), true);
 assert.equal(isPatientNameValid('A'), false);
 assert.equal(isPatientNameValid('  Jo'), true);
 
+assert.equal(normalizeLeadPhone('9876543210'), '919876543210');
+assert.equal(normalizeLeadPhone('+91 98765 43210'), '919876543210');
+assert.equal(normalizeLeadPhone('09876543210'), '919876543210');
+assert.equal(normalizeLeadPhone('+1 (415) 555-2671'), '14155552671');
+assert.equal(normalizeLeadPhone('+44 7911 123456'), '447911123456');
+assert.equal(normalizeLeadPhone('4155552671'), null);
+assert.equal(normalizeLeadPhone('12345'), null);
+assert.equal(isLeadPhone('+971 50 123 4567'), true);
+assert.equal(formatLeadPhone('9876543210'), '+91 98765 43210');
+assert.equal(formatLeadPhone('+14155552671'), '+14155552671');
+assert.ok(leadPhoneLookupKeys('+91 98765 43210').includes('9876543210'));
+assert.ok(leadPhoneLookupKeys('+91 98765 43210').includes('919876543210'));
+
 assert.equal(canContinueContactStep({ name: 'Asha', phone: '9876543210', consent: true }), true);
+assert.equal(canContinueContactStep({ name: 'Asha', phone: '+1 415 555 2671', consent: true }), true);
+assert.equal(canContinueContactStep({ name: 'Asha', phone: '4155552671', consent: true }), false);
 assert.equal(canContinueContactStep({ name: 'Asha', phone: '9876543210', consent: false }), false);
 assert.equal(canContinueContactStep({ name: 'A', phone: '9876543210', consent: true }), false);
 
 assert.deepEqual(BOOKING_STEPS.map((s) => s.label), ['You', 'Care', 'Confirm']);
 assert.equal(BOOKING_STEPS[0].id, 1);
 assert.ok(TRUST_POINTS.some((p) => /pay after/i.test(p.label)));
+assert.ok(TRUST_POINTS.some((p) => /anywhere/i.test(p.label) && !/india/i.test(p.label)));
 
 assert.equal(hideReachDock('/book'), true);
 assert.equal(hideReachDock('/book?pid=1'), true);

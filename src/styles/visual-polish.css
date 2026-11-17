@@ -169,14 +169,14 @@
   outline-offset: 2px;
 }
 
-/* Academy visual: rounded tactile frame */
-.home--lean .hp-academy__visual {
+/* Check-in visual: rounded tactile frame */
+.home--lean .hp-checkin__visual {
   border-radius: var(--r-card, 14px);
   background: var(--surface, #fffdf8);
   box-shadow: var(--shadow-sm);
 }
 
-.home--lean .hp-academy__visual .editorial-image {
+.home--lean .hp-checkin__visual .editorial-image {
   border-radius: inherit;
 }
 

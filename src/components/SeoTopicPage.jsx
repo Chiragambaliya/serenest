@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import AiCareIntakeWidget from './AiCareIntakeWidget';
 
 /**
  * Shared layout primitives for SEO topic pages. Keeps copy, structure, and
@@ -98,6 +99,12 @@ export function CTA({ heading, body, primaryHref = '/book', primaryLabel = 'Book
   return (
     <section className="section">
       <div className="container">
+        <AiCareIntakeWidget
+          eyebrow="Serenest Care AI · Personalized Care Analysis"
+          title={heading || 'Get an instant AI care analysis & request a specialist callback'}
+          subtext={body || 'Describe what you are experiencing. Our clinical intake AI maps your key drivers, recommends the right specialist, and registers your callback in one step.'}
+          sourceTag="seo-topic-ai-intake"
+        />
         <div className="cta-banner">
           <div className="cta-banner-body">
             <h2>{heading}</h2>
