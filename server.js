@@ -10,6 +10,7 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
+import { normalizeContactLead } from './src/lib/patientReach.js';
 import { renderSeoHead, renderSeoBody, renderSitemapXml, shouldNoindex, ROUTE_SEO, SITE_ORIGIN, resolveSeoRedirect, isKnownDynamicSpaPath } from './src/lib/seo.js';
 import { handleAssistantChat } from './src/server/aiAssistant.js';
 import cron from 'node-cron';
@@ -2301,6 +2302,7 @@ app.get('/api/admin/stats', async (req, res) => {
     emptyStats.confirmed_unassigned = fallbackBookings.filter((b) => b.status === 'confirmed' && !b.professional_id).length;
     const fallbackScreenings = fallbackLeadRecords('screening');
     emptyStats.screening_callbacks = fallbackScreenings.filter((s) => s.wants_callback).length;
+    emptyStats.messages = publicContactRecords().length;
     return ok(res, { stats: emptyStats });
   }
 
@@ -2346,7 +2348,7 @@ app.get('/api/admin/stats', async (req, res) => {
     stats: {
       bookings,
       applications: applications + fallbackPending,
-      messages,
+      messages: messages + publicContactRecords().length,
       signups,
       jobs,
       pending_bookings: pendingBookings.count ?? 0,
@@ -2360,18 +2362,31 @@ app.get('/api/admin/stats', async (req, res) => {
   });
 });
 
+function publicContactRecords() {
+  return fallbackLeadRecords('contact').filter((m) => !isInternalLeadSubject(m.subject));
+}
+
 /** GET /api/contacts — list contact messages (admin only) */
 app.get('/api/contacts', async (req, res) => {
-  if (!requireDb(res) || !requireAdmin(req, res)) return;
+  if (!requireAdmin(req, res)) return;
+
+  const fallback = publicContactRecords();
+  if (!supabase) return ok(res, { messages: fallback });
 
   const { data, error } = await supabase
     .from('contact_messages')
     .select('*')
     .order('created_at', { ascending: false });
 
-  if (error) return err(res, 'Failed to fetch messages', 500);
+  if (error) {
+    console.error('[GET /api/contacts]', error);
+    return ok(res, { messages: fallback });
+  }
   return ok(res, {
-    messages: (data || []).filter((m) => !isInternalLeadSubject(m.subject)),
+    messages: [
+      ...(data || []).filter((m) => !isInternalLeadSubject(m.subject)),
+      ...fallback,
+    ],
   });
 });
 
@@ -2742,38 +2757,29 @@ app.patch('/api/partner/inquiries/:id', async (req, res) => {
 
 /**
  * POST /api/contact
- * Save a contact/enquiry message.
+ * Save a contact/enquiry or callback request. Name + India mobile required.
+ * Message is optional — callbacks from the site often send only a number.
  */
 app.post('/api/contact', async (req, res) => {
-  const { name, email, phone, subject, message } = req.body;
-  if (!name?.trim())    return err(res, 'name is required');
-  if (!message?.trim()) return err(res, 'message is required');
+  const parsed = normalizeContactLead(req.body || {});
+  if (parsed.error) return err(res, parsed.error);
+  const record = parsed.record;
 
   if (supabase) {
     const { error } = await supabase
       .from('contact_messages')
-      .insert({
-        name: name.trim(),
-        email: email?.trim() || null,
-        phone: phone?.trim() || null,
-        subject: subject?.trim() || null,
-        message: message.trim(),
-      });
+      .insert(record);
 
-    if (error) {
-      console.error('[POST /api/contact]', error);
-      // Non-fatal — still return success so the user isn't blocked
+    if (!error) {
+      notify.contact(record);
+      return ok(res, { message: 'Message received. We will get back to you soon.' }, 201);
     }
+    console.error('[POST /api/contact]', error);
   }
 
-  notify.contact({
-    name:    name.trim(),
-    email:   email?.trim() || null,
-    phone:   phone?.trim() || null,
-    subject: subject?.trim() || null,
-    message: message.trim(),
-  });
-
+  const fallback = { id: crypto.randomUUID(), ...record };
+  captureFallbackLead('contact', fallback);
+  notify.contact(fallback);
   return ok(res, { message: 'Message received. We will get back to you soon.' }, 201);
 });
 

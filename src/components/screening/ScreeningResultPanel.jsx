@@ -6,6 +6,8 @@ import ScribaInsight from './ScribaInsight';
 import CheckPrivacyPanel from './CheckPrivacyPanel';
 import CheckEvidencePanel from './CheckEvidencePanel';
 import { buildScribaInsight } from '../../lib/mentalHealthCenter';
+import { buildBookPath } from '../../lib/bookingHandoff';
+import CallbackForm from '../CallbackForm';
 
 function BandScale({ tool, value, max, band }) {
   if (!tool.bands || tool.bands.length < 2) {
@@ -70,6 +72,11 @@ export default function ScreeningResultPanel({
   const careText = tool.careGuidance?.[tier] || band.desc;
   const insight = buildScribaInsight(tool, { ...result, crisisFlag });
   const showCare = includeCareOptions && (!hideCareUntilReady || !crisisFlag || crisisAcknowledged);
+  const bookPath = buildBookPath({
+    tool: tool.name || tool.id,
+    score: value,
+    band: band?.label,
+  });
   const showSelfCare = tier !== 'high' && !crisisFlag && tool.selfCare?.length;
   const evidence = getCheckEvidence(tool.id);
   const differential = evidence?.differentialDiagnosis || tool.differentialNote;
@@ -192,7 +199,7 @@ export default function ScreeningResultPanel({
             Talk with a clinician — when you are ready. Understanding yourself comes first.
           </p>
           <div className="mhc-care-actions">
-            <Link className="btn btn-primary" to="/book">
+            <Link className="btn btn-primary" to={bookPath}>
               Talk to a clinician
             </Link>
             <Link className="btn btn-ghost" to="/patient/find-professional">
@@ -202,6 +209,13 @@ export default function ScreeningResultPanel({
               Retake this check
             </button>
           </div>
+          <CallbackForm
+            source={`screening:${tool.id}`}
+            heading="Want someone to call you about this?"
+            sub="Leave your number. A request, not a charge. Results stay on this device unless you also save a screening summary."
+            cta="Call me back"
+            note={`Screening ${tool.name}: ${value} · ${band.label}`}
+          />
         </section>
       ) : null}
     </div>

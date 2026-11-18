@@ -371,8 +371,9 @@ export const notify = {
   },
 
   contact(c) {
+    const callback = String(c.subject || '').toLowerCase().startsWith('callback');
     const html = `
-      <p style="margin:0 0 8px;font-size:16px"><strong>${esc(c.name)}</strong> sent an enquiry.</p>
+      <p style="margin:0 0 8px;font-size:16px"><strong>${esc(c.name)}</strong> ${callback ? 'asked for a callback.' : 'sent an enquiry.'}</p>
       ${table([
         row('Phone',   fmtPhone(c.phone)),
         row('Email',   esc(c.email)),
@@ -381,9 +382,16 @@ export const notify = {
       <div style="background:#f8fafc;border-left:3px solid #0f766e;border-radius:6px;padding:12px 14px;margin:10px 0;font-style:italic;color:#334155;white-space:pre-wrap">${esc(c.message)}</div>
       ${callouts({ phone: c.phone, email: c.email })}
     `;
-    fire(sendEmail({ subject: `New enquiry — ${c.name}${c.subject ? ' · ' + c.subject : ''}`, html }));
+    fire(sendEmail({
+      subject: callback
+        ? `Call this patient — ${c.name}`
+        : `New enquiry — ${c.name}${c.subject ? ' · ' + c.subject : ''}`,
+      html,
+    }));
     fire(sendTeamWhatsApp(
-      `Serenest — Enquiry\n${c.name}\n+91 ${String(c.phone || '').replace(/\D/g, '')}\n${c.subject || '—'}\n${String(c.message || '').slice(0, 200)}`,
+      callback
+        ? `Serenest — CALL THIS PATIENT\n${c.name}\n+91 ${String(c.phone || '').replace(/\D/g, '')}\n${c.subject || 'Callback'}\n${String(c.message || '').slice(0, 200)}`
+        : `Serenest — Enquiry\n${c.name}\n+91 ${String(c.phone || '').replace(/\D/g, '')}\n${c.subject || '—'}\n${String(c.message || '').slice(0, 200)}`,
     ));
   },
 

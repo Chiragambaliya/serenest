@@ -24,11 +24,11 @@ export default function MoodAnxietyPathwayPage() {
   const [gadAnswers, setGadAnswers] = useState(() => Array(gad.questions.length).fill(undefined));
   const [crisisAck, setCrisisAck] = useState(false);
   const [liveCrisis, setLiveCrisis] = useState(false);
-  const [showContact, setShowContact] = useState(false);
+  const [showContact, setShowContact] = useState(true);
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
-  const [callback, setCallback] = useState(false);
+  const [callback, setCallback] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const [saved, setSaved] = useState(false);
@@ -213,7 +213,7 @@ export default function MoodAnxietyPathwayPage() {
                     setGadAnswers(Array(gad.questions.length).fill(undefined));
                     setCrisisAck(false);
                     setSaved(false);
-                    setShowContact(false);
+                    setShowContact(true);
                   }}
                 />
                 <h2 style={{ fontSize: '1.2rem', margin: '2rem 0 1rem' }}>Anxiety</h2>
@@ -244,14 +244,14 @@ export default function MoodAnxietyPathwayPage() {
 
                 {!saved ? (
                   <div className="mhc-edu" style={{ marginTop: '1.5rem' }}>
-                    <h2>Optional: save a summary for follow-up</h2>
+                    <h2>Want us to call you about these results?</h2>
                     <p style={{ fontSize: '0.9rem', color: 'var(--muted)', lineHeight: 1.5 }}>
-                      Only if you want Serenest to reach you. Scores and severity labels may be stored — not required
-                      to use your results above. Callback is opt-in.
+                      Leave a number if you want Serenest to reach you. Scores and severity labels may be stored —
+                      not required to use your results above. You pay after we confirm any appointment.
                     </p>
                     {!showContact ? (
                       <button type="button" className="btn btn-ghost" onClick={() => setShowContact(true)}>
-                        Share contact for follow-up
+                        Leave a number for a callback
                       </button>
                     ) : (
                       <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginTop: 12 }}>

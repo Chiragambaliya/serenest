@@ -3,6 +3,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { professionals as professionalsApi } from '../lib/api';
 import { buildBookPath, preferModeFromPro } from '../lib/bookingHandoff';
 import { careWaHref } from '../lib/patientReach';
+import CallbackForm from '../components/CallbackForm';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 
@@ -361,19 +362,37 @@ export default function PatientFindProfessionalPage() {
             <p style={{ color: 'var(--text-muted)' }}>Finding professionals…</p>
           </div>
         ) : error ? (
-          <EmptyState
-            icon="⚠"
-            title="Couldn't load professionals"
-            body={`${error} You can still request a slot and we'll match you.`}
-            cta={<Link className="btn btn-primary" to="/book">Request an appointment</Link>}
-          />
+          <>
+            <EmptyState
+              icon="⚠"
+              title="Couldn't load professionals"
+              body={`${error} You can still leave a number and we'll match you.`}
+              cta={<Link className="btn btn-primary" to="/book">Request an appointment</Link>}
+            />
+            <div style={{ maxWidth: 480, margin: '1.25rem auto 0' }}>
+              <CallbackForm
+                source="directory_error"
+                heading="Leave your number. We will call you."
+                sub="A request, not a charge. You pay after we confirm."
+              />
+            </div>
+          </>
         ) : professionals.length === 0 ? (
-          <EmptyState
-            icon="🩺"
-            title="No verified professionals yet"
-            body="We're onboarding carefully. In the meantime, you can request a session and we'll match you."
-            cta={<Link className="btn btn-primary" to="/book">Request an appointment</Link>}
-          />
+          <>
+            <EmptyState
+              icon="🩺"
+              title="No verified professionals yet"
+              body="We're onboarding carefully. Leave a number and we'll match you to a clinician."
+              cta={<Link className="btn btn-primary" to="/book">Request an appointment</Link>}
+            />
+            <div style={{ maxWidth: 480, margin: '1.25rem auto 0' }}>
+              <CallbackForm
+                source="directory_empty"
+                heading="Leave your number. We will call you."
+                sub="A request, not a charge. You pay after we confirm."
+              />
+            </div>
+          </>
         ) : shown.length === 0 ? (
           <EmptyState
             icon="🔍"

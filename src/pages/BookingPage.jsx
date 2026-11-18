@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { bookings, professionals as professionalsApi, payments, health } from '../lib/api';
+import { bookings, professionals as professionalsApi, payments, health, contact } from '../lib/api';
 import { CONSULTATION_MODES } from '../lib/consultationModes';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
@@ -11,6 +11,8 @@ import {
   BOOKING_STEPS,
   CARE_PHONE_DISPLAY,
   CARE_TEL_HREF,
+  bookingIntentStorageKey,
+  buildCallbackPayload,
   canContinueContactStep,
   careWaHref,
   indiaMobileDigits,
@@ -270,6 +272,26 @@ export default function BookingPage() {
   const isPhoneValid = isIndiaMobile(phone);
   const canContinueYou = canContinueContactStep({ name, phone, consent });
 
+  function captureBookingIntent() {
+    if (!canContinueYou) return;
+    const key = bookingIntentStorageKey(phoneClean);
+    try {
+      if (sessionStorage.getItem(key)) return;
+    } catch {
+      // sessionStorage may be blocked — still attempt the lead.
+    }
+    contact.send(buildCallbackPayload({
+      name,
+      phone: phoneClean,
+      email,
+      source: 'booking_started',
+      note: `Started booking. Type: ${practitionerType}. Language: ${language}.`,
+    })).then(() => {
+      try { sessionStorage.setItem(key, '1'); } catch { /* ignore */ }
+      trackEvent('booking_intent_saved', { step: 1 });
+    }).catch(() => {});
+  }
+
   return (
     <div className="page">
       <section className="section about-hero">
@@ -434,7 +456,10 @@ export default function BookingPage() {
                   <button
                     className="btn btn-primary"
                     type="button"
-                    onClick={() => setStep(2)}
+                    onClick={() => {
+                      captureBookingIntent();
+                      setStep(2);
+                    }}
                     disabled={!canContinueYou}
                   >
                     Continue to care →
