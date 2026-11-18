@@ -119,7 +119,7 @@ export const subscribers = {
 export const contact = {
   /**
    * Send a contact / enquiry message.
-   * @param {{ name, email?, phone?, subject?, message }} data
+   * @param {{ name, phone, email?, subject?, message? }} data
    */
   send: (data) => post('/api/contact', data),
 };

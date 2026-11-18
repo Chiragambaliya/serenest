@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { CARE_PHONE_DISPLAY, CARE_TEL_HREF, careWaHref } from '../lib/patientReach';
+import CallbackForm from '../components/CallbackForm';
 import '../styles/service-detail.css';
 
 const REASONS = [
@@ -81,6 +82,17 @@ export default function ContactPage() {
             <p className="ed-aside__label">Selected route</p>
             <h2>{reason.label}</h2>
             <p className="ed-lede">{reason.body}</p>
+            {reason.key !== 'professional' ? (
+              <CallbackForm
+                source={`contact:${reason.key}`}
+                heading={reason.key === 'appointment'
+                  ? 'Leave your number. We will book you in.'
+                  : 'Leave your number. We will call you.'}
+                sub="A request, not a charge. We confirm by phone or WhatsApp — you pay after the slot is locked."
+                cta="Call me back"
+                note={`Contact reason: ${reason.label}`}
+              />
+            ) : null}
             <div className="contact-reason-detail__actions">
               {reason.extra?.to === '/book' ? (
                 <>

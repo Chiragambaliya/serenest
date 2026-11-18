@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import FaqAccordion from '../components/FaqAccordion';
+import CallbackForm from '../components/CallbackForm';
 import EmergencyNotice from '../components/EmergencyNotice';
 import ImagePlaceholder from '../components/ImagePlaceholder';
 import '../styles/service-detail.css';
@@ -380,6 +381,12 @@ export default function ServicesPage() {
             <Link className="btn btn-primary btn-lg" to="/book">Request an appointment</Link>
             <Link className="btn btn-ghost btn-lg" to="/contact">Contact us</Link>
           </div>
+          <CallbackForm
+            source="services"
+            heading="Or leave your number. We will call you."
+            sub="A request, not a charge. We confirm by phone or WhatsApp — you pay after the slot is locked."
+            cta="Call me back"
+          />
         </div>
       </section>
     </div>

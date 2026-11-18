@@ -4,6 +4,7 @@ import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
 import { useSectionReveal } from '../hooks/useReveal';
 import ImagePlaceholder from '../components/ImagePlaceholder';
+import CallbackForm from '../components/CallbackForm';
 import {
   CARE_PHONE_DISPLAY,
   CARE_TEL_HREF,
@@ -62,11 +63,20 @@ const ARRIVE_PATHS = [
   },
 ];
 
-function HpBtn({ to, variant = 'solid', children, arrow = true }) {
-  return (
-    <Link className={`hp-btn hp-btn--${variant}`} to={to}>
+function HpBtn({ to, href, variant = 'solid', children, arrow = true }) {
+  const className = `hp-btn hp-btn--${variant}`;
+  const inner = (
+    <>
       <span className="hp-btn__label">{children}</span>
       {arrow ? <span className="hp-btn__arrow" aria-hidden="true">→</span> : null}
+    </>
+  );
+  if (href) {
+    return <a className={className} href={href}>{inner}</a>;
+  }
+  return (
+    <Link className={className} to={to}>
+      {inner}
     </Link>
   );
 }
@@ -99,12 +109,14 @@ export default function HomePage() {
           </p>
           <div className="hp-hero__actions">
             <HpBtn to="/book" variant="solid-light">Request an appointment</HpBtn>
-            <HpBtn to="/screening" variant="ghost-dark">Start a free check</HpBtn>
+            <HpBtn href="#callback" variant="ghost-dark">Leave your number</HpBtn>
           </div>
           <p className="hp-hero__reach">
             <a href={CARE_TEL_HREF}>Call {CARE_PHONE_DISPLAY}</a>
             <span aria-hidden="true">·</span>
             <a href={careWaHref()} target="_blank" rel="noreferrer">WhatsApp us</a>
+            <span aria-hidden="true">·</span>
+            <Link to="/screening">Start a free check</Link>
           </p>
         </div>
         <p className="hp-hero__note">
@@ -122,6 +134,18 @@ export default function HomePage() {
             </li>
           ))}
         </ul>
+      </section>
+
+      <section className="hp-callback" aria-label="Leave your number for a callback">
+        <div className="ed-shell">
+          <CallbackForm
+            id="callback"
+            source="homepage"
+            heading="Leave your number. We will call you."
+            sub="The fastest way to get a slot. A request, not a charge — you pay after we confirm."
+            cta="Call me back"
+          />
+        </div>
       </section>
 
       <section className="ed-pace hp-arrive" aria-labelledby="home-arrive-title">
@@ -229,8 +253,15 @@ export default function HomePage() {
           </p>
           <div className="hp-hero__actions hp-close__actions">
             <HpBtn to="/book" variant="solid-light">Request an appointment</HpBtn>
-            <HpBtn to="/screening" variant="ghost-dark">Start a free check</HpBtn>
+            <HpBtn href="#callback" variant="ghost-dark">Leave your number</HpBtn>
           </div>
+          <CallbackForm
+            source="homepage_close"
+            variant="dark"
+            heading="Or we can call you."
+            sub="Name and phone only. We confirm on WhatsApp — you pay after the slot is locked."
+            cta="Call me back"
+          />
         </div>
       </section>
     </div>

@@ -35,6 +35,56 @@ export function canContinueContactStep({ name, phone, consent }) {
   return isPatientNameValid(name) && isIndiaMobile(phone) && Boolean(consent);
 }
 
+export function canSubmitCallback({ name, phone, consent }) {
+  return canContinueContactStep({ name, phone, consent });
+}
+
+/**
+ * Payload for POST /api/contact — a callback request the ops inbox can call.
+ * @param {{ name: string, phone: string, email?: string, source?: string, note?: string }} input
+ */
+export function buildCallbackPayload({ name, phone, email, source, note } = {}) {
+  const src = String(source || 'callback').trim() || 'callback';
+  const extra = String(note || '').trim();
+  const digits = indiaMobileDigits(phone);
+  return {
+    name: String(name || '').trim(),
+    phone: digits,
+    email: String(email || '').trim() || undefined,
+    subject: `Callback · ${src}`,
+    message: extra
+      ? `Please call back. Source: ${src}. ${extra}`
+      : `Please call back. Source: ${src}. They asked Serenest to reach them on WhatsApp or phone. You pay after we confirm.`,
+  };
+}
+
+export function isCallbackSubject(subject) {
+  return String(subject || '').toLowerCase().startsWith('callback');
+}
+
+/**
+ * Server-side contact/callback validation. Client still uses canSubmitCallback.
+ * @returns {{ error: string } | { record: { name: string, email: string | null, phone: string, subject: string | null, message: string } }}
+ */
+export function normalizeContactLead({ name, email, phone, subject, message } = {}) {
+  if (!isPatientNameValid(name)) return { error: 'name is required' };
+  if (!isIndiaMobile(phone)) return { error: 'A valid 10-digit Indian mobile is required' };
+  return {
+    record: {
+      name: String(name).trim(),
+      email: String(email || '').trim() || null,
+      phone: indiaMobileDigits(phone),
+      subject: String(subject || '').trim() || null,
+      message: String(message || '').trim()
+        || 'Please call back. They asked Serenest to reach them on WhatsApp or phone.',
+    },
+  };
+}
+
+export function bookingIntentStorageKey(phone) {
+  return `serenest_booking_intent_${indiaMobileDigits(phone)}`;
+}
+
 /** Three-step request-first booking: contact, then care+slot, then confirm. */
 export const BOOKING_STEPS = [
   { id: 1, label: 'You' },

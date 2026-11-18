@@ -147,7 +147,7 @@ const TAB_GROUPS = [
   {
     label: 'Communications',
     items: [
-      { id: 'messages',    label: 'Messages',    icon: '◻' },
+      { id: 'messages',    label: 'Callbacks',   icon: '◻' },
       { id: 'subscribers', label: 'Subscribers', icon: '◻' },
     ],
   },
@@ -1465,9 +1465,9 @@ export default function AdminPage() {
                 <span className="admin-queue-card-sub">Confirmed, no clinician</span>
               </button>
               <button type="button" className={`admin-queue-card ${unreadMessageCount ? 'is-urgent' : ''}`} style={{ borderTopColor: '#6f42c1' }} onClick={() => setTab('messages')}>
-                <span className="admin-queue-card-label">Unread inbox</span>
+                <span className="admin-queue-card-label">Callbacks to call</span>
                 <span className="admin-queue-card-value" style={{ color: '#6f42c1' }}>{unreadMessageCount}</span>
-                <span className="admin-queue-card-sub">{messages.length} total messages</span>
+                <span className="admin-queue-card-sub">{messages.length} numbers waiting</span>
               </button>
               <button type="button" className={`admin-queue-card ${callbackScreeningsList.length ? 'is-urgent' : ''}`} style={{ borderTopColor: '#198754' }} onClick={() => setTab('screenings')}>
                 <span className="admin-queue-card-label">Callback check-ins</span>
@@ -1492,9 +1492,23 @@ export default function AdminPage() {
             </div>
 
             {pendingBookingsList.length === 0 && callbackScreeningsList.length === 0 && unreadMessageCount === 0 ? (
-              <EmptyState icon="✅" text="No pending patient requests. New bookings appear here automatically." />
+              <EmptyState icon="✅" text="No pending patient requests or callback numbers." />
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: '1.5rem' }}>
+                {messages.filter((m) => !readMsgIds.has(m.id)).slice(0, 8).map((m) => (
+                  <article key={m.id} className="admin-inbox-row">
+                    <div>
+                      <strong>{m.name}</strong>
+                      <span style={{ marginLeft: 8, fontSize: '0.8rem', color: 'var(--text-muted)' }}>{m.subject || 'Callback'}</span>
+                      {m._fallback ? <div style={{ fontSize: '0.72rem', color: '#856404', fontWeight: 700 }}>Saved to file inbox — database was unavailable</div> : null}
+                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 2 }}>{fmt(m.created_at)}</div>
+                    </div>
+                    <div className="admin-ops-actions">
+                      <LeadContactLinks phone={m.phone} email={m.email} waText={contactReplyMessage(m)} />
+                      <ActionBtn label="✓ Read" onClick={() => markMessageRead(m.id)} color="var(--brand-600)" />
+                    </div>
+                  </article>
+                ))}
                 {pendingBookingsList.slice(0, 8).map((b) => {
                   const clinician = b.professional_id ? professionalsById[b.professional_id] : null;
                   return (
@@ -1528,19 +1542,6 @@ export default function AdminPage() {
                       </div>
                     </div>
                     <LeadContactLinks phone={s.phone} email={s.email} waText={screeningCallbackMessage(s)} />
-                  </article>
-                ))}
-                {messages.filter((m) => !readMsgIds.has(m.id)).slice(0, 3).map((m) => (
-                  <article key={m.id} className="admin-inbox-row">
-                    <div>
-                      <strong>{m.name}</strong>
-                      <span style={{ marginLeft: 8, fontSize: '0.8rem', color: 'var(--text-muted)' }}>{m.subject || 'Message'}</span>
-                      <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 2 }}>{fmt(m.created_at)}</div>
-                    </div>
-                    <div className="admin-ops-actions">
-                      <LeadContactLinks phone={m.phone} email={m.email} waText={contactReplyMessage(m)} />
-                      <ActionBtn label="✓ Read" onClick={() => markMessageRead(m.id)} color="var(--brand-600)" />
-                    </div>
                   </article>
                 ))}
               </div>
@@ -3091,7 +3092,7 @@ export default function AdminPage() {
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem', flexWrap: 'wrap', gap: 8 }}>
               <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>
-                Contact Messages <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({messages.length})</span>
+                Callbacks &amp; messages <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({messages.length})</span>
                 {messages.filter((m) => !readMsgIds.has(m.id)).length > 0 && (
                   <Pill n={messages.filter((m) => !readMsgIds.has(m.id)).length} />
                 )}
@@ -3158,6 +3159,7 @@ export default function AdminPage() {
                         </div>
                       </div>
                       {m.subject && <div style={{ fontWeight: 600, marginBottom: 4, fontSize: '0.9rem' }}>{m.subject}</div>}
+                      {m._fallback ? <div style={{ fontSize: '0.72rem', color: '#856404', fontWeight: 700, marginBottom: 6 }}>Saved to file inbox — database was unavailable</div> : null}
                       <p style={{ margin: 0, color: 'var(--text)', fontSize: '0.9rem', lineHeight: 1.6 }}>{m.message}</p>
                     </div>
                   );
