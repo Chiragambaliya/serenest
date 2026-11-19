@@ -14,8 +14,8 @@ const PRINCIPLES = [
     body: 'Access is limited to you, your treating professional, and authorised staff who need it to operate the service.',
   },
   {
-    title: 'Choice before analytics',
-    body: 'Optional analytics remain off unless you allow them. You can change that choice at any time.',
+    title: 'Analytics you can switch off',
+    body: 'Page analytics are on unless you choose essential storage only. You can change that from Privacy choices at any time.',
   },
 ];
 
@@ -34,7 +34,7 @@ const DATA_USES = [
   },
   {
     title: 'Security and optional usage',
-    body: 'Basic device and access logs protect the service. Page and referral analytics are collected only if you opt in; they must not include clinical answers.',
+    body: 'Basic device and access logs protect the service. Page and referral analytics are on unless you choose essential storage only, and they must not include clinical answers.',
   },
 ];
 
@@ -68,7 +68,7 @@ const SERVICE_PROVIDERS = [
   },
   {
     category: 'Optional analytics',
-    providers: 'Google Analytics, when enabled and consented to',
+    providers: 'Google Analytics, unless you choose essential storage only',
     purpose: 'Measure page usage. Advertising storage and personalisation are disabled.',
   },
 ];
@@ -245,7 +245,7 @@ export default function PrivacyPolicyPage() {
                   </li>
                   <li>
                     <strong>Your device:</strong> IP address, browser and device type, security and access
-                    logs, error data, cookie choices, and—only with permission—page and referral analytics.
+                    logs, error data, cookie choices, and page and referral analytics unless you choose essential storage only.
                   </li>
                   <li>
                     <strong>Service providers:</strong> authentication status, payment confirmation,
@@ -271,8 +271,8 @@ export default function PrivacyPolicyPage() {
                   Depending on the context, processing is based on your consent, on data you voluntarily
                   provide for a specified service, on compliance with law or a court order, on responding
                   to a medical emergency or threat to life, or on another legitimate use permitted by the
-                  Digital Personal Data Protection Act, 2023 and applicable rules. Optional analytics and
-                  promotional communications depend on consent and can be withdrawn.
+                  Digital Personal Data Protection Act, 2023 and applicable rules. You can switch page
+                  analytics off, and you can withdraw consent for promotional communications.
                 </p>
                 <div className="privacy-note">
                   <strong>When data is required.</strong> Fields marked as required are needed to provide

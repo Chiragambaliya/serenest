@@ -1,6 +1,6 @@
 /**
  * Conversion event tracking — thin wrapper over GA4's gtag.
- * Analytics is loaded only after the visitor opts in.
+ * Analytics load unless the visitor has chosen essential storage only.
  * Never pass personal data (names, phones, emails) as event params.
  */
 import { hasAnalyticsConsent, loadAnalytics } from './privacyConsent';

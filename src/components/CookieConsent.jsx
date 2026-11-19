@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
+  analyticsAllowed,
   getPrivacyChoice,
   loadAnalytics,
   OPEN_PRIVACY_EVENT,
@@ -13,7 +14,7 @@ export default function CookieConsent() {
 
   useEffect(() => {
     const choice = getPrivacyChoice();
-    if (choice === 'analytics') loadAnalytics();
+    if (analyticsAllowed(choice)) loadAnalytics();
 
     let timer;
     if (!choice) {
@@ -57,11 +58,10 @@ export default function CookieConsent() {
       </div>
       <div className="privacy-banner__copy">
         <p className="privacy-banner__eyebrow">Your privacy, your choice</p>
-        <h2 id="privacy-banner-title">Optional analytics stay off unless you allow them.</h2>
+        <h2 id="privacy-banner-title">Analytics are on.</h2>
         <p id="privacy-banner-description">
-          Essential storage keeps sign-in and preferences working. With your permission, privacy-conscious
-          analytics help us understand which pages are useful. We never use advertising trackers or sell
-          health information.
+          We measure which pages help people find care. Advertising trackers stay off, and these
+          measurements do not include clinical answers. Choose essential storage only if you want analytics off.
         </p>
         <div className="privacy-banner__links">
           <Link to="/privacy">Privacy policy</Link>
@@ -73,7 +73,7 @@ export default function CookieConsent() {
           Essential only
         </button>
         <button className="privacy-choice privacy-choice--allow" type="button" onClick={() => choose('analytics')}>
-          Allow analytics
+          Keep analytics on
         </button>
       </div>
     </div>

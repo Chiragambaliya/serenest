@@ -6,6 +6,7 @@ import { captureUtm } from './lib/utm';
 import CookieConsent from './components/CookieConsent';
 import ExitIntentPopup from './components/ExitIntentPopup';
 import {
+  analyticsAllowed,
   getPrivacyChoice,
   PRIVACY_CHOICE_EVENT,
 } from './lib/privacyConsent';
@@ -108,7 +109,7 @@ function VisitTracker() {
   }, []);
 
   useEffect(() => {
-    if (privacyChoice !== 'analytics') return;
+    if (!analyticsAllowed(privacyChoice)) return;
     // Don't track admin or consultation pages — those are internal/private routes.
     if (location.pathname.startsWith('/admin')) return;
     if (location.pathname.startsWith('/consultation')) return;
