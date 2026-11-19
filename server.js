@@ -2934,7 +2934,7 @@ function seoRouteKey(pathname) {
 }
 
 // Expose an optional, validated GA4 measurement ID without loading Google.
-// The browser loads the analytics script only after explicit consent.
+// The browser loads analytics unless the visitor chose essential storage only.
 const GA_ID = /^[A-Za-z0-9-]{4,20}$/.test(process.env.GA_MEASUREMENT_ID || '')
   ? process.env.GA_MEASUREMENT_ID
   : '';

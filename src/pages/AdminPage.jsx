@@ -487,7 +487,7 @@ export default function AdminPage() {
         issues.push('Team email alerts are off (set RESEND_API_KEY + NOTIFY_EMAIL) — lead alerts currently arrive on WhatsApp only.');
       }
       if (health.analytics !== 'enabled') {
-        issues.push('Google Analytics is off (set GA_MEASUREMENT_ID) — you cannot see which pages convert. Optional analytics stay off until a visitor clicks Allow analytics.');
+        issues.push('Google Analytics is off (set GA_MEASUREMENT_ID) — you cannot see which pages convert. Visitors are measured unless they choose essential storage only.');
       }
       if (health.patient_email !== 'enabled') {
         issues.push('Patient confirmation emails are off (set RESEND_API_KEY) — requesters will not get an email after booking.');

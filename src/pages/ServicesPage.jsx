@@ -6,13 +6,7 @@ import FaqAccordion from '../components/FaqAccordion';
 import EmergencyNotice from '../components/EmergencyNotice';
 import ImagePlaceholder from '../components/ImagePlaceholder';
 import '../styles/service-detail.css';
-
-const SPECIALTIES = [
-  { title: 'Psychiatry', body: 'Assessment, diagnosis, and medication management from a licensed psychiatrist.', href: '/services/psychiatry' },
-  { title: 'Therapy and Counselling', body: 'Structured talk therapy for individuals, couples, and families.', href: '/services/therapy' },
-  { title: 'Addiction and Recovery', body: 'Assessment, counselling, and relapse-prevention support for substance use.', href: '/services/addiction-care' },
-  { title: 'Digital Consultations', body: 'How teleconsultation works, and what it can and can\'t do.', href: '/services/digital-consultations' },
-];
+import { CARE_SPECIALTIES, CONDITION_SPECIALTIES } from '../lib/specialties';
 
 const SERVICES_FAQ = [
   { question: 'Which service is right for me?', answer: 'If you\'re unsure, start with a private check-in or request a psychiatry appointment — your clinician can help direct you to therapy, addiction support, or both, based on what you actually need. You are not charged when you send the request.' },
@@ -86,16 +80,6 @@ const AUDIENCES = [
   ['Someone booking for family', 'Request a slot for a parent, partner, or adult child — they stay in control of the session.'],
 ];
 
-const CONDITIONS = [
-  { name: 'Depression', symptoms: 'Low mood, fatigue, loss of interest' },
-  { name: 'Anxiety', symptoms: 'Worry, panic, social anxiety' },
-  { name: 'OCD', symptoms: 'Intrusive thoughts, compulsions' },
-  { name: 'Bipolar disorder', symptoms: 'Mood swings, mania, depression' },
-  { name: 'PTSD', symptoms: 'Flashbacks, trauma-related distress' },
-  { name: 'ADHD (adults)', symptoms: 'Inattention, impulsivity' },
-  { name: 'Sleep disorders', symptoms: 'Insomnia, disrupted sleep' },
-  { name: 'Stress & burnout', symptoms: 'Exhaustion, work-related stress' },
-];
 
 export default function ServicesPage() {
   useSEO({ path: '/services', ...ROUTE_SEO['/services'] });
@@ -141,17 +125,20 @@ export default function ServicesPage() {
               <h2>Which service is right for you?</h2>
             </div>
             <div className="ed-index">
-              {SPECIALTIES.map((item, i) => (
-                <Link key={item.title} className="ed-index__row" to={item.href}>
+              {CARE_SPECIALTIES.map((item, i) => (
+                <Link key={item.id} className="ed-index__row" to={item.path}>
                   <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
                   <span>
-                    <h3 className="ed-index__title">{item.title}</h3>
+                    <h3 className="ed-index__title">{item.name}</h3>
                     <span className="ed-index__meta">Specialty</span>
                   </span>
-                  <p className="ed-index__body">{item.body}</p>
+                  <p className="ed-index__body">{item.summary}</p>
                   <span className="ed-index__go" aria-hidden="true">Learn more →</span>
                 </Link>
               ))}
+              <p style={{ marginTop: 16 }}>
+                <Link className="ed-link" to="/specialties">See every condition specialty →</Link>
+              </p>
             </div>
           </div>
         </div>
@@ -349,9 +336,9 @@ export default function ServicesPage() {
                 </tr>
               </thead>
               <tbody>
-                {CONDITIONS.map(({ name, symptoms }) => (
-                  <tr key={name}>
-                    <th scope="row">{name}</th>
+                {CONDITION_SPECIALTIES.map(({ id, name, path, symptoms }) => (
+                  <tr key={id}>
+                    <th scope="row"><Link to={path}>{name}</Link></th>
                     <td data-label="Common symptoms">{symptoms}</td>
                   </tr>
                 ))}

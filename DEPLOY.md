@@ -76,7 +76,7 @@ Team WhatsApp (already used in production) stays on via `CALLMEBOT_WHATSAPP_APIK
 2. Render → **Environment** → add:
    - **Key:** `GA_MEASUREMENT_ID` → **Value:** `G-XXXXXXXXXX`
 3. Save and wait for redeploy. `/api/health` should show `"analytics": "enabled"`.
-4. The site still asks visitors to **Allow analytics** (DPDP). Essential-only visitors are not tracked.
+4. Analytics load for visitors unless they choose **Essential only**. Those visitors are not tracked.
 5. In [Google Search Console](https://search.google.com/search-console) for `https://www.serenest.in/`:
    - URL inspection → `https://www.serenest.in/` → **Request indexing**
    - Repeat for `/book`, `/screening`, `/patient/find-professional`, `/sitemap.xml`

@@ -13,8 +13,13 @@ export function getPrivacyChoice() {
   }
 }
 
+/** Analytics run unless the visitor has chosen essential storage only. */
+export function analyticsAllowed(choice) {
+  return choice !== 'essential';
+}
+
 export function hasAnalyticsConsent() {
-  return getPrivacyChoice() === 'analytics';
+  return analyticsAllowed(getPrivacyChoice());
 }
 
 export function setPrivacyChoice(choice) {

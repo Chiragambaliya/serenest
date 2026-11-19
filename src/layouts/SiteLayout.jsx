@@ -66,6 +66,7 @@ const FOOTER_GROUPS = [
     title: 'Care',
     links: [
       { to: '/book', label: 'Request an appointment' },
+      { to: '/specialties', label: 'Specialties' },
       { to: '/patient/find-professional', label: 'Find a clinician' },
       { to: '/screening', label: 'Private check-in' },
       { to: '/pricing', label: 'Fees' },
