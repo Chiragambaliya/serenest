@@ -105,7 +105,8 @@ export default function ServicesPage() {
       <section className="svd-hero">
         <div className="container svd-split">
           <div>
-            <h1>Find the care that fits what you&apos;re going through.</h1>
+            <p className="ed-mono" style={{ marginBottom: '0.85rem' }}>Clinical care · Specialists</p>
+            <h1>Find the care that fits.</h1>
             <p className="svd-hero__lead">
               Psychiatry, therapy, addiction support, or a digital consult.
               If you are not sure where to start, request a slot or take a short check-in —

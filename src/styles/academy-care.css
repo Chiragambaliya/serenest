@@ -1,0 +1,105 @@
+/* Care pages use the Academy editorial composition:
+   cream canvas, serif display, forest buttons, two-column opener,
+   numbered index. Product stays care — no course catalogue. */
+
+.care-academy h1,
+.care-academy .ed-head h2,
+.care-academy .ed-band h2 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+}
+
+.care-academy h1 {
+  max-width: 14ch;
+  font-size: clamp(3.1rem, 6.4vw, 5.4rem);
+  margin: 0;
+}
+
+.care-academy .hp-brand-mark {
+  margin-bottom: 1.25rem;
+}
+
+.care-academy .hp-brand-mark__name {
+  color: var(--teal-700, #3c4a2c);
+  font-size: clamp(1.8rem, 2.4vw, 2.2rem);
+}
+
+.care-academy .hp-brand-mark__meta {
+  display: block;
+  margin-top: 0.55rem;
+  color: var(--brown, #5c5346);
+}
+
+.care-academy .ed-lede {
+  margin-top: 1.25rem;
+  max-width: 38ch;
+}
+
+.care-academy__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1.75rem;
+}
+
+.care-academy__note {
+  margin-top: 1.25rem;
+  max-width: 42ch;
+  color: var(--muted, #5c5346);
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.care-academy__pagenav {
+  border-bottom: 1px solid var(--border);
+}
+
+.care-academy__pagenav .ed-shell {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem 2rem;
+}
+
+.care-academy__pagenav a {
+  color: var(--muted, #5c5346);
+  text-decoration: none;
+}
+
+.care-academy__pagenav a:hover {
+  color: var(--ink, #1c1a17);
+}
+
+.care-academy .ed-band-soft h2 {
+  max-width: 18ch;
+}
+
+.care-academy__contact {
+  margin-top: 1.25rem;
+}
+
+.care-academy__contact a {
+  color: inherit;
+}
+
+/* Services opener shares the same two-column academy hero. */
+.services-page .svd-hero {
+  background: var(--bg, #f7f2ea);
+  padding-block: clamp(3.5rem, 8vw, 6rem);
+}
+
+.services-page .svd-hero h1 {
+  font-family: var(--font-heading);
+  font-weight: 400;
+  letter-spacing: -0.03em;
+  line-height: 1.05;
+  font-size: clamp(2.8rem, 5vw, 4.4rem);
+  max-width: 14ch;
+}
+
+.services-page .svd-hero__lead {
+  max-width: 38ch;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
