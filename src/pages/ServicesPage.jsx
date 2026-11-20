@@ -6,6 +6,7 @@ import FaqAccordion from '../components/FaqAccordion';
 import EmergencyNotice from '../components/EmergencyNotice';
 import ImagePlaceholder from '../components/ImagePlaceholder';
 import '../styles/service-detail.css';
+import { SPECIALTY_GROUPS } from '../lib/specialties';
 
 const SPECIALTIES = [
   { title: 'Psychiatry', body: 'Assessment, diagnosis, and medication management from a licensed psychiatrist.', href: '/services/psychiatry' },
@@ -15,7 +16,7 @@ const SPECIALTIES = [
 ];
 
 const SERVICES_FAQ = [
-  { question: 'Which service is right for me?', answer: 'If you\'re unsure, start with a private check-in or request a psychiatry appointment — your clinician can help direct you to therapy, addiction support, or both, based on what you actually need. You are not charged when you send the request.' },
+  { question: 'Which service is right for me?', answer: 'If you are unsure, request a general physician. They can assess you and point you to another specialist, including psychiatry or therapy, when that fits. You are not charged when you send the request.' },
   { question: 'Can I switch between services?', answer: 'Yes. Many people use more than one — for example, psychiatry for medication management alongside ongoing therapy. Your clinicians can coordinate care between them.' },
   { question: 'Do all consultations happen online?', answer: 'Most care on Serenest happens over secure video, audio, or chat. Some situations need in-person assessment — your clinician will tell you clearly if that applies to you.' },
 ];
@@ -25,7 +26,7 @@ const CORE_SERVICES = [
     tag: 'Consultation',
     badge: 'Most popular',
     title: 'Online consultation',
-    lead: 'Video, audio, or chat with a verified psychiatrist or psychologist.',
+    lead: 'Video, audio, or chat with a verified specialist — physician, surgeon, psychiatrist, or therapist.',
     detail: 'Encrypted sessions with assessment, treatment plan, and follow-up guidance.',
     included: [
       '45-minute encrypted session',
@@ -107,8 +108,8 @@ export default function ServicesPage() {
           <div>
             <h1>Find the care that fits what you&apos;re going through.</h1>
             <p className="svd-hero__lead">
-              Psychiatry, therapy, addiction support, or a digital consult.
-              If you are not sure where to start, request a slot or take a short check-in —
+              Any listed specialist, including psychiatry, therapy, and other medical care.
+              If you are not sure where to start, request a general physician or take a short check-in —
               you do not pay until we confirm the appointment.
             </p>
             <div className="svd-hero__actions">
@@ -154,6 +155,33 @@ export default function ServicesPage() {
               ))}
             </div>
           </div>
+        </div>
+      </section>
+
+      <section className="svc-section" id="specialists">
+        <div className="ed-shell">
+          <header className="ed-head ed-head--wide">
+            <span className="ed-head__label">Book a specialist</span>
+            <h2>Care is not limited to psychiatry</h2>
+            <p>Choose the specialty you need. We confirm the clinician and the time before you pay.</p>
+          </header>
+          {SPECIALTY_GROUPS.map((group) => (
+            <div key={group.id} style={{ marginBottom: 28 }}>
+              <p className="ed-mono">{group.label}</p>
+              <div className="ed-index">
+                {group.specialties.map((specialty, i) => (
+                  <Link key={specialty.id} className="ed-index__row" to={`/book?prole=${specialty.id}`}>
+                    <span className="ed-index__num">{String(i + 1).padStart(2, '0')}</span>
+                    <span>
+                      <h3 className="ed-index__title">{specialty.label}</h3>
+                    </span>
+                    <p className="ed-index__body">Request a {specialty.label.toLowerCase()} consultation.</p>
+                    <span className="ed-index__go" aria-hidden="true">Request →</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -231,7 +259,7 @@ export default function ServicesPage() {
               <h2>A short check-in, then a clear next step</h2>
               <p>
                 Start with a private check-in if you want language for how you have been feeling.
-                When you are ready, request a psychiatrist or therapist — payment comes after we confirm.
+                When you are ready, request the specialist you need — payment comes after we confirm.
               </p>
             </header>
             <div className="ed-index">

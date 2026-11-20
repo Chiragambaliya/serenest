@@ -15,7 +15,7 @@ export default function PatientTermsPage() {
             <p className="kicker">For Patients</p>
             <h1 className="page-title">Patient Terms of Use</h1>
             <p className="about-subtext">
-              These terms apply specifically to patients using Serenest to book and attend consultations with mental health professionals.
+              These terms apply specifically to patients using Serenest to book and attend consultations with verified specialists.
             </p>
             <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
@@ -32,7 +32,7 @@ export default function PatientTermsPage() {
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>1. Nature of the Service</h2>
-              <p className="muted">Serenest connects you with independent, verified mental health professionals for teleconsultations. Serenest is a technology intermediary — we do not diagnose, treat, or prescribe. All clinical decisions are made by your chosen professional.</p>
+              <p className="muted">Serenest connects you with independent, verified specialists for teleconsultations. Serenest is a technology intermediary — we do not diagnose, treat, or prescribe. All clinical decisions are made by your chosen professional.</p>
               <p className="muted" style={{ marginTop: 8 }}>Teleconsultation is not a substitute for in-person care in all situations. Your professional will advise you if in-person assessment or emergency care is required.</p>
             </div>
 

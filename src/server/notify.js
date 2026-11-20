@@ -195,7 +195,7 @@ function wrapPatientHtml(inner, urgent) {
   </td></tr>
   <tr><td style="padding:14px 24px 22px;border-top:1px solid #e2e8f0;color:#64748b;font-size:12px;line-height:1.5">
     <a href="https://serenest.in" style="color:${accent};text-decoration:none;font-weight:600">serenest.in</a>
-    <span style="display:block;margin-top:8px">Clinical telepsychiatry for India. Reply to this email only if it was sent from a staffed address.</span>
+    <span style="display:block;margin-top:8px">Online specialist care in India. Reply to this email only if it was sent from a staffed address.</span>
     <span style="display:block;margin-top:10px;font-size:11px;color:#94a3b8">${LEGAL_ENTITY}</span>
   </td></tr>
 </table>

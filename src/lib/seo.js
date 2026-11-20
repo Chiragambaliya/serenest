@@ -5,7 +5,7 @@ import { BLOG_POSTS } from './blogPosts.js';
 // Production canonical host. Matches the live www-redirect target.
 export const SITE_ORIGIN = 'https://www.serenest.in';
 export const OG_IMAGE = `${SITE_ORIGIN}/og-image.jpg`;
-export const OG_IMAGE_ALT = 'Serenest — online psychiatry and therapy in India';
+export const OG_IMAGE_ALT = 'Serenest — online care with verified specialists in India';
 export const OG_IMAGE_WIDTH = '1200';
 export const OG_IMAGE_HEIGHT = '630';
 
@@ -17,44 +17,44 @@ export function canonicalUrl(path = '/') {
 // Per-route SEO metadata for indexable pages.
 export const ROUTE_SEO = {
   '/': {
-    title: 'Online Psychiatrist & Therapy in India | Serenest',
+    title: 'Online Specialists in India | Serenest',
     description:
-      'Talk to a verified online psychiatrist or therapist in India. Request a slot, pay after we confirm. Confidential video, audio, or chat, plus free PHQ-9 and GAD-7 screening.',
-    ogTitle: 'Serenest | Talk to a psychiatrist or therapist from home',
+      'Talk to a verified specialist in India — physician, surgeon, psychiatrist, or therapist. Request a slot, pay after we confirm. Confidential video, audio, or chat.',
+    ogTitle: 'Serenest | Talk to a specialist from home',
     ogDescription:
       'Request a confidential appointment. We confirm by phone or WhatsApp — you pay after the slot is locked.',
   },
   '/services': {
-    title: 'Online Psychiatrist Consultation in India | Video, Audio & Chat',
+    title: 'Online Specialist Consultations in India | Video, Audio & Chat',
     description:
-      'Consult a verified psychiatrist or psychologist online from anywhere in India with encrypted video, audio, or chat sessions.',
-    ogTitle: 'Online Psychiatrist Consultation in India | Serenest',
+      'Consult a verified specialist online from anywhere in India — medicine, surgery, psychiatry, and therapy — with encrypted video, audio, or chat.',
+    ogTitle: 'Online Specialist Consultations in India | Serenest',
     ogDescription:
       'Secure video, audio, or chat consultations with verified clinicians across India.',
   },
   '/pricing': {
-    title: 'Online Psychiatrist Fees & Therapy Pricing in India | Serenest',
+    title: 'Online Consultation Fees in India | Serenest',
     description:
-      'Transparent pay-per-session pricing for psychiatry, therapy, psychological assessment, and institutional mental health plans.',
-    ogTitle: 'Serenest Pricing | Online Psychiatry & Therapy in India',
+      'Transparent pay-per-session pricing for specialist consultations, psychiatry, therapy, and assessments.',
+    ogTitle: 'Serenest Pricing | Specialist consultations in India',
     ogDescription:
-      'Transparent per-session pricing for online psychiatry, therapy, and assessments.',
+      'Transparent per-session pricing for specialist consultations, psychiatry, therapy, and assessments.',
   },
   '/book': {
-    title: 'Book an Online Psychiatrist Appointment in India | Serenest',
+    title: 'Book an Online Specialist in India | Serenest',
     description:
-      'Request a confidential online psychiatry or counselling appointment in India. Start with your name and number — we confirm by phone or WhatsApp. You pay after the slot is confirmed.',
-    ogTitle: 'Book an Online Psychiatrist | Serenest',
+      'Request a confidential online appointment with any listed specialist in India. Start with your name and number — we confirm by phone or WhatsApp. You pay after the slot is confirmed.',
+    ogTitle: 'Book a Specialist | Serenest',
     ogDescription:
       'Request an appointment in minutes. We confirm by phone or WhatsApp, then share payment steps.',
   },
   '/patient/find-professional': {
-    title: 'Find an Online Psychiatrist or Therapist in India | Serenest',
+    title: 'Find an Online Specialist in India | Serenest',
     description:
-      'Browse verified psychiatrists and therapists on Serenest. Filter by language, city, and fee, then request an appointment — pay after we confirm.',
+      'Browse verified clinicians on Serenest. Filter by specialty, language, city, and fee, then request an appointment — pay after we confirm.',
     ogTitle: 'Find a Clinician | Serenest',
     ogDescription:
-      'Verified psychiatrists and therapists across India. Request a slot; pay after confirmation.',
+      'Verified specialists across India. Request a slot; pay after confirmation.',
   },
   '/screening': {
     title: 'Mental Health Center — Mood, Anxiety & Stress Checks | Serenest',
@@ -87,28 +87,28 @@ export const ROUTE_SEO = {
     ogDescription: 'Official instrument, cut-offs, licensing, and clinical limitations.',
   },
   '/team': {
-    title: 'Verified Psychiatrists & Mental Health Professionals | Serenest',
+    title: 'Verified Clinicians | Serenest',
     description:
-      'Meet Serenest’s psychiatrist-led team and learn about clinical credentials, documentation, and continuity of care.',
-    ogTitle: 'Serenest Team | Verified Mental Health Professionals',
+      'Meet the Serenest team and learn about clinical credentials, documentation, and continuity of care.',
+    ogTitle: 'Serenest Team | Verified clinicians',
     ogDescription:
-      'Psychiatrist-led team focused on structured intake, documentation, and continuity of care.',
+      'A clinician-led team focused on structured intake, documentation, and continuity of care.',
   },
   '/about': {
-    title: 'About Serenest | Psychiatrist-Built Mental Health Platform',
+    title: 'About Serenest | Online Care with Verified Specialists',
     description:
-      'Learn why Serenest was built to make psychiatric care accessible, private, and clinically structured across India.',
-    ogTitle: 'About Serenest | Psychiatrist-Built Mental Health Platform',
+      'Serenest started in psychiatry and now books verified specialists across medicine, surgery, and mental health — private, structured care across India.',
+    ogTitle: 'About Serenest | Online care with verified specialists',
     ogDescription:
-      'A psychiatrist-built telepsychiatry platform focused on access, privacy, and structured care.',
+      'A clinician-built care platform for every listed specialty, focused on access, privacy, and structured care.',
   },
   '/faq': {
-    title: 'Online Psychiatry FAQ India | Prescriptions, Privacy & Payments',
+    title: 'Online Care FAQ India | Prescriptions, Privacy & Payments',
     description:
-      'Answers to common questions about online psychiatric consultations, prescriptions, privacy, payments, and technical support.',
-    ogTitle: 'Online Psychiatry FAQ | Serenest',
+      'Answers to common questions about online specialist consultations, prescriptions, privacy, payments, and technical support.',
+    ogTitle: 'Online Care FAQ | Serenest',
     ogDescription:
-      'Common questions on online psychiatry, prescriptions, privacy, and payments — answered.',
+      'Common questions on specialist consultations, prescriptions, privacy, and payments — answered.',
   },
   '/guides': {
     title: 'Mental Health Guides India | Depression, Anxiety, ADHD & More | Serenest',
@@ -119,10 +119,10 @@ export const ROUTE_SEO = {
       'Clear, clinical guides on common mental health topics and online care in India.',
   },
   '/professionals': {
-    title: 'For Mental Health Professionals | Join Serenest | India',
+    title: 'For Clinicians | Join Serenest | India',
     description:
-      'Join Serenest as a verified clinician. Practice tools, clinical resources, and support for approved professionals.',
-    ogTitle: 'For Mental Health Professionals | Serenest India',
+      'Join Serenest as a verified clinician in any listed specialty. Practice tools, clinical resources, and support for approved professionals.',
+    ogTitle: 'For Clinicians | Serenest India',
     ogDescription:
       'Join Serenest as a verified clinician. Clinical resources and practice support for approved professionals.',
   },
@@ -234,7 +234,7 @@ export const ROUTE_SEO = {
     description:
       'The general terms governing your use of the Serenest platform, including account rules, service scope, and liability.',
     ogTitle: 'Terms & Conditions | Serenest',
-    ogDescription: 'Terms governing use of the Serenest mental health platform.',
+    ogDescription: 'Terms governing use of the Serenest care platform.',
   },
   '/patient/terms': {
     title: 'Patient Terms of Use | Serenest',
@@ -364,7 +364,7 @@ export const ROUTE_SEO = {
   '/careers': {
     title: 'Careers at Serenest | Mental Health Professionals',
     description:
-      'Apply to join Serenest as a psychiatrist, psychologist, therapist, or counsellor. Flexible online sessions with patients across India.',
+      'Apply to join Serenest as a verified clinician in any listed specialty. Flexible online sessions with patients across India.',
     ogTitle: 'Careers at Serenest',
     ogDescription: 'Join Serenest’s clinical team — online practice with verified workflows.',
   },
@@ -521,7 +521,7 @@ const ORG_SCHEMA = {
   },
   areaServed: { '@type': 'Country', name: 'India' },
   description:
-    'Serenest is a clinical telepsychiatry platform for India offering secure video, audio, and chat consultations with structured intake, assessments, and continuity of care.',
+    'Serenest is an online care platform in India. Patients book verified specialists — physicians, surgeons, psychiatrists, and therapists — for secure video, audio, and chat consultations.',
 };
 
 const WEBSITE_SCHEMA = {
@@ -542,7 +542,12 @@ const MEDICAL_BUSINESS_SCHEMA = {
   telephone: '+91-77779-36367',
   image: OG_IMAGE,
   priceRange: '₹800+',
-  medicalSpecialty: ['Psychiatry', 'Psychology', 'MentalHealth'],
+  medicalSpecialty: [
+    'PrimaryCare', 'Psychiatric', 'Cardiovascular', 'Dermatology', 'Endocrine',
+    'Gastroenterologic', 'Neurologic', 'Pulmonary', 'Renal', 'Rheumatologic',
+    'Oncologic', 'Pediatric', 'Gynecologic', 'Otolaryngologic', 'Optometric',
+    'Musculoskeletal', 'Urologic', 'Surgical', 'Dentistry',
+  ],
   address: {
     '@type': 'PostalAddress',
     addressLocality: 'Rajkot',
@@ -553,9 +558,9 @@ const MEDICAL_BUSINESS_SCHEMA = {
   availableService: [
     {
       '@type': 'MedicalTherapy',
-      name: 'Online psychiatry consultation',
+      name: 'Online specialist consultation',
       description:
-        'Secure online consultation with a psychiatrist, including structured intake, clinical assessment, and follow-up care where appropriate.',
+        'Secure online consultation with a verified specialist, including physicians, surgeons, psychiatrists, and therapists.',
     },
     {
       '@type': 'MedicalTherapy',
@@ -575,7 +580,7 @@ const MEDICAL_BUSINESS_SCHEMA = {
 const FAQ_ENTRIES = [
   {
     q: 'What is Serenest?',
-    a: 'Serenest is a privacy-first mental health platform designed around clinical workflows: intake, assessments, consults, records, and continuity.',
+    a: 'Serenest is online care with verified specialists. You request a slot, we confirm by phone or WhatsApp, and you meet on video, audio, or chat.',
   },
   {
     q: 'Are prescriptions valid at pharmacies?',

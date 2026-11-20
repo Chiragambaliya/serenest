@@ -7,6 +7,7 @@ import { ROUTE_SEO } from '../lib/seo';
 import { useAuth } from '../lib/useAuth';
 import { trackEvent } from '../lib/analytics';
 import { screeningNote, suggestRoleFromScreening } from '../lib/bookingHandoff';
+import { isSpecialty, SPECIALTY_GROUPS, specialtyLabel } from '../lib/specialties';
 import {
   BOOKING_STEPS,
   CARE_PHONE_DISPLAY,
@@ -29,13 +30,6 @@ function loadRazorpay() {
     document.body.appendChild(s);
   });
 }
-
-const PRACTITIONER_TYPES = [
-  { id: 'psychiatrist', label: 'Psychiatrist' },
-  { id: 'psychologist', label: 'Psychologist' },
-  { id: 'therapist', label: 'Therapist' },
-  { id: 'counsellor', label: 'Counsellor' },
-];
 
 function pad2(n) {
   return String(n).padStart(2, '0');
@@ -97,7 +91,9 @@ export default function BookingPage() {
   const { days, times } = useMemo(() => makeSlots(), []);
   const [step, setStep] = useState(1);
 
-  const [practitionerType, setPractitionerType] = useState(suggestedRole || 'psychiatrist');
+  const [practitionerType, setPractitionerType] = useState(
+    isSpecialty(preProRole) ? preProRole : (isSpecialty(suggestedRole) ? suggestedRole : 'general-physician'),
+  );
   const [mode, setMode] = useState(
     ['video', 'audio', 'chat'].includes(preMode) ? preMode : 'video',
   );
@@ -258,7 +254,7 @@ export default function BookingPage() {
 
   const dayLabel = useMemo(() => days.find((d) => d.key === dayKey)?.label ?? '', [days, dayKey]);
   const selectedTypeLabel = useMemo(
-    () => PRACTITIONER_TYPES.find((t) => t.id === practitionerType)?.label ?? 'Practitioner',
+    () => specialtyLabel(practitionerType),
     [practitionerType],
   );
   const selectedModeLabel = useMemo(
@@ -454,32 +450,37 @@ export default function BookingPage() {
 
                 <div className="form-grid">
                   <div>
-                    <div className="field-label">Practitioner {hasPro && <span className="summary-pill" style={{ marginLeft: 6 }}>{preProLabel}</span>}</div>
-                    <div className="choice-grid">
-                      {PRACTITIONER_TYPES.map((t) => (
-                        <button
-                          key={t.id}
-                          type="button"
-                          disabled={hasPro}
-                          className={`choice-card ${practitionerType === t.id ? 'is-selected' : ''}`}
-                          onClick={() => setPractitionerType(t.id)}
-                        >
-                          {t.label}
-                        </button>
+                    <label className="field-label" htmlFor="specialty">
+                      Specialist {hasPro && <span className="summary-pill" style={{ marginLeft: 6 }}>{preProLabel}</span>}
+                    </label>
+                    <select
+                      id="specialty"
+                      className="input"
+                      value={practitionerType}
+                      disabled={hasPro}
+                      onChange={(e) => setPractitionerType(e.target.value)}
+                    >
+                      {SPECIALTY_GROUPS.map((group) => (
+                        <optgroup key={group.id} label={group.label}>
+                          {group.specialties.map((specialty) => (
+                            <option key={specialty.id} value={specialty.id}>{specialty.label}</option>
+                          ))}
+                        </optgroup>
                       ))}
-                    </div>
+                    </select>
+                    <span className="field-hint">Any medical specialty, including psychiatry and therapy.</span>
                   </div>
 
                   {!hasPro && (
                     <div className="field-wide">
                       <div className="field-label">
-                        Choose your counsellor <span className="muted" style={{ fontWeight: 400 }}>(optional)</span>
+                        Choose a clinician <span className="muted" style={{ fontWeight: 400 }}>(optional)</span>
                       </div>
                       {directoryLoading ? (
                         <p className="muted" style={{ marginTop: 8 }}>Loading available professionals…</p>
                       ) : directoryForType.length === 0 ? (
                         <p className="muted" style={{ marginTop: 8 }}>
-                          No verified {selectedTypeLabel.toLowerCase()}s listed yet — we'll match you with the next available one.
+                          No verified {selectedTypeLabel.toLowerCase()} listed yet — we'll match you with the next available one.
                         </p>
                       ) : (
                         <div className="choice-grid choice-grid--modes">

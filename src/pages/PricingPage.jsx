@@ -156,7 +156,7 @@ export default function PricingPage() {
       <section className="pr-hero">
         <div className="container pr-hero__inner">
           <p className="pr-eyebrow">Pricing · Pan-India</p>
-          <h1 className="pr-hero__title">Affordable mental health care. No surprises.</h1>
+          <h1 className="pr-hero__title">Specialist care, priced per session. No surprises.</h1>
           <p className="pr-hero__lead">
             Pay per session after we confirm your slot. Pick the clinician who fits —
             no subscriptions and no charge when you send the request.

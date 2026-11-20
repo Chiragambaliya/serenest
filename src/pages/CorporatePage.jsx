@@ -114,7 +114,7 @@ export default function CorporatePage() {
             Mental health benefits<br />your employees will actually use
           </h1>
           <p style={{ fontSize: '1.1rem', color: 'rgba(255,255,255,0.75)', lineHeight: 1.6, maxWidth: 560, margin: '0 auto 2.5rem' }}>
-            Doctor-led, fully confidential therapy and psychiatry for your entire team. Flat annual pricing. No surprise costs.
+            Doctor-led, confidential care for your team — therapy, psychiatry, and other medical specialties. Flat annual pricing. No surprise costs.
           </p>
           <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
             <a href="#contact" className="btn btn-primary" style={{ padding: '14px 32px', fontSize: '1rem' }}>Get a quote →</a>

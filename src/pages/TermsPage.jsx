@@ -34,7 +34,7 @@ export default function TermsPage() {
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>2. About Serenest</h2>
-              <p className="muted">Serenest is a digital telepsychiatry and mental health platform operated by Serenest Private Limited, a DPIIT-recognised startup registered in India. We facilitate online consultations between patients and verified mental health professionals — psychiatrists, psychologists, therapists, and counsellors.</p>
+              <p className="muted">Serenest is a digital care platform operated by Serenest Private Limited, a DPIIT-recognised startup registered in India. We facilitate online consultations between patients and verified clinicians across medical specialties, including psychiatry, psychology, therapy, and counselling.</p>
               <p className="muted" style={{ marginTop: 8 }}>Serenest is not a hospital, clinic, emergency service, or crisis helpline. We are a technology platform that connects patients with independent professionals who provide care in compliance with the MCI Telemedicine Practice Guidelines 2020.</p>
             </div>
 
