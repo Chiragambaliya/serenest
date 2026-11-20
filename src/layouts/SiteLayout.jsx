@@ -55,9 +55,9 @@ function BrandMark({ size = 42 }) {
 /* Primary navigation — editorial masthead, not a SaaS link strip. */
 const NAV_LINKS = [
   { to: '/services', label: 'Services' },
-  { to: '/screening', label: 'Screening' },
-  { to: '/patient/find-professional', label: 'Clinicians' },
-  { to: '/pricing', label: 'Pricing' },
+  { to: '/professionals', label: 'For professionals' },
+  { to: '/about', label: 'About' },
+  { to: '/guides', label: 'Resources' },
   { to: '/contact', label: 'Contact' },
 ];
 
@@ -193,7 +193,7 @@ export default function SiteLayout() {
             <BrandMark size={44} />
             <span className="brand-wordmark">
               <span className="brand-text">Serenest</span>
-              <span className="brand-tagline">Online care</span>
+              <span className="brand-tagline">Clinical care</span>
             </span>
           </Link>
 
@@ -210,17 +210,6 @@ export default function SiteLayout() {
             </div>
 
             <div className="masthead__actions">
-              <a className="masthead__reach" href={CARE_TEL_HREF}>
-                Call
-              </a>
-              <a
-                className="masthead__reach"
-                href={careWa}
-                target="_blank"
-                rel="noreferrer"
-              >
-                WhatsApp
-              </a>
               <NavLink
                 to={user ? '/patient/dashboard' : '/patient/login'}
                 className="masthead__account"
@@ -231,8 +220,7 @@ export default function SiteLayout() {
               </NavLink>
 
               <Link className="header-cta masthead__cta" to="/book">
-                <span className="masthead__cta-label">Request appointment</span>
-                <span className="masthead__cta-arrow" aria-hidden="true">→</span>
+                <span className="masthead__cta-label">Book an appointment</span>
               </Link>
             </div>
           </nav>
@@ -240,7 +228,7 @@ export default function SiteLayout() {
           <div className="masthead__mobile-actions">
             {location.pathname !== '/book' && (
               <Link className="header-cta masthead__cta masthead__cta--compact" to="/book">
-                <span className="masthead__cta-label">Request</span>
+                <span className="masthead__cta-label">Book</span>
               </Link>
             )}
             <button
@@ -277,7 +265,7 @@ export default function SiteLayout() {
                 <BrandMark size={32} />
                 <span className="brand-wordmark">
                   <span className="brand-text">Serenest</span>
-                  <span className="brand-tagline">Online care</span>
+                  <span className="brand-tagline">Clinical care</span>
                 </span>
               </Link>
               <button
@@ -303,8 +291,10 @@ export default function SiteLayout() {
 
               <div className="menu-section">
                 <p className="menu-section-label">Also</p>
+                <Link to="/screening" className="menu-link" onClick={() => setMenuOpen(false)}>Private check-in</Link>
+                <Link to="/patient/find-professional" className="menu-link" onClick={() => setMenuOpen(false)}>Find a clinician</Link>
+                <Link to="/pricing" className="menu-link" onClick={() => setMenuOpen(false)}>Fees</Link>
                 <Link to="/faq" className="menu-link" onClick={() => setMenuOpen(false)}>FAQ</Link>
-                <Link to="/about" className="menu-link" onClick={() => setMenuOpen(false)}>About</Link>
                 {user ? (
                   <Link to="/patient/dashboard" className="menu-link" onClick={() => setMenuOpen(false)}>
                     {patientFirstName ? `Hi, ${patientFirstName}` : 'My account'}
@@ -324,7 +314,7 @@ export default function SiteLayout() {
                 to="/book"
                 onClick={() => setMenuOpen(false)}
               >
-                <span className="masthead__cta-label">Request appointment</span>
+                <span className="masthead__cta-label">Book an appointment</span>
                 <span className="masthead__cta-arrow" aria-hidden="true">→</span>
               </Link>
               <p className="menu-drawer-note">
@@ -363,7 +353,7 @@ export default function SiteLayout() {
                   }
                 }}
               >
-                Request appointment
+                Book an appointment
               </Link>
               <a
                 className="btn btn-whatsapp"
@@ -382,7 +372,7 @@ export default function SiteLayout() {
                 <BrandMark size={28} />
                 <span>Serenest</span>
               </Link>
-              <p>Doctor-led mental healthcare across India.</p>
+              <p>Clinical care with verified specialists across India.</p>
               <div className="ed-footer__contact">
                 <a href="mailto:support@serenest.in">support@serenest.in</a>
                 <span aria-hidden="true" className="ed-footer__dot" />
@@ -459,7 +449,7 @@ export default function SiteLayout() {
           </a>
           <nav className="patient-dock" aria-label="Request care">
             <a className="patient-dock__call" href={CARE_TEL_HREF}>Call</a>
-            <Link className="patient-dock__book" to="/book">Request appointment</Link>
+            <Link className="patient-dock__book" to="/book">Book an appointment</Link>
             <a className="patient-dock__wa" href={careWa} target="_blank" rel="noreferrer">WhatsApp</a>
           </nav>
         </>

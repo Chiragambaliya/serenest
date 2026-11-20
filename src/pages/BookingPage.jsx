@@ -275,7 +275,7 @@ export default function BookingPage() {
       <section className="section about-hero">
         <div className="container">
           <div className="section-head about-hero-head">
-            <p className="kicker">Booking</p>
+            <p className="ed-mono">Clinical care</p>
             <h1 className="page-title">
               {hasPro ? `Request a session with ${preProName}` : 'Request an appointment in minutes.'}
             </h1>
