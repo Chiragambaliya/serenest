@@ -23,11 +23,12 @@ export default function CareShell() {
   }, [location.pathname]);
 
   const account = user ? '/patient/dashboard' : '/patient/login';
+  const home = location.pathname === '/';
 
   return (
-    <div className="care-site">
+    <div className={home ? 'care-site care-site--home' : 'care-site'}>
       <a className="care-skip" href="#main">Skip to content</a>
-      <header className="care-header">
+      {!home && <header className="care-header">
         <div className="care-header__inner">
           <Link to="/" className="care-brand" aria-label="Serenest home">
             <strong>Serenest</strong>
@@ -51,8 +52,8 @@ export default function CareShell() {
           <Link to={account}>{user ? 'Account' : 'Sign in'}</Link>
           <Link to="/book">Book an appointment</Link>
         </div>
-      </header>
-      <main id="main" className="care-main">
+      </header>}
+      <main id="main" className={home ? 'care-main care-main--home' : 'care-main'}>
         <Outlet />
       </main>
       <footer className="care-footer">
