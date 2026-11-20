@@ -1,6 +1,6 @@
 import React, { lazy, Suspense, useEffect } from 'react';
 import { Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom';
-import SiteLayout from './layouts/SiteLayout';
+import CareShell from './care/CareShell';
 import { trackVisit } from './lib/visitTracker';
 import { captureUtm } from './lib/utm';
 import CookieConsent from './components/CookieConsent';
@@ -10,10 +10,10 @@ import {
   PRIVACY_CHOICE_EVENT,
 } from './lib/privacyConsent';
 
-const HomePage = lazy(() => import('./pages/HomePage'));
+const HomePage = lazy(() => import('./care/HomePage'));
 const AboutPage = lazy(() => import('./pages/AboutPage'));
 const TeamPage = lazy(() => import('./pages/TeamPage'));
-const ServicesPage = lazy(() => import('./pages/ServicesPage'));
+const ServicesPage = lazy(() => import('./care/ServicesPage'));
 const PsychiatryPage = lazy(() => import('./pages/PsychiatryPage'));
 const TherapyPage = lazy(() => import('./pages/TherapyPage'));
 const AddictionCarePage = lazy(() => import('./pages/AddictionCarePage'));
@@ -21,9 +21,9 @@ const DigitalConsultationsPage = lazy(() => import('./pages/DigitalConsultations
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ProfessionalsPage = lazy(() => import('./pages/ProfessionalsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
-const BookingPage = lazy(() => import('./pages/BookingPage'));
+const BookingPage = lazy(() => import('./care/BookPage'));
 const PrivacyPolicyPage = lazy(() => import('./pages/PrivacyPolicyPage'));
-const PricingPage = lazy(() => import('./pages/PricingPage'));
+const PricingPage = lazy(() => import('./care/FeesPage'));
 const FAQPage = lazy(() => import('./pages/FAQPage'));
 const BlogIndexPage = lazy(() => import('./pages/BlogIndexPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
@@ -31,8 +31,8 @@ const ProfessionalOnboardingPage = lazy(() => import('./pages/ProfessionalOnboar
 const ProfessionalResourcesPage = lazy(() => import('./pages/ProfessionalResourcesPage'));
 const ProfessionalGuidelinesPage = lazy(() => import('./pages/ProfessionalGuidelinesPage'));
 const AdminPage = lazy(() => import('./pages/AdminPage'));
-const PatientFindProfessionalPage = lazy(() => import('./pages/PatientFindProfessionalPage'));
-const ScreeningPage = lazy(() => import('./pages/ScreeningPage'));
+const PatientFindProfessionalPage = lazy(() => import('./care/CliniciansPage'));
+const ScreeningPage = lazy(() => import('./care/ScreeningPage'));
 const ScreeningToolPage = lazy(() => import('./pages/ScreeningToolPage'));
 const MoodAnxietyPathwayPage = lazy(() => import('./pages/MoodAnxietyPathwayPage'));
 const BurnoutCheckLandingPage = lazy(() => import('./pages/BurnoutCheckLandingPage'));
@@ -152,7 +152,7 @@ export default function App() {
         can fail to match in React Router v7 in some setups (blank main content).
       */}
       <Routes>
-        <Route path="/" element={<SiteLayout />}>
+        <Route path="/" element={<CareShell />}>
           <Route index element={<S><HomePage /></S>} />
           <Route path="preview" element={<Navigate to="/" replace />} />
           <Route path="about" element={<S><AboutPage /></S>} />

@@ -12,6 +12,7 @@ import { createClient } from '@supabase/supabase-js';
 import { notify } from './src/server/notify.js';
 import { renderSeoHead, renderSeoBody, renderSitemapXml, shouldNoindex, ROUTE_SEO, SITE_ORIGIN, resolveSeoRedirect, isKnownDynamicSpaPath } from './src/lib/seo.js';
 import { handleAssistantChat } from './src/server/aiAssistant.js';
+import { isSpecialty } from './src/care/specialties.js';
 import cron from 'node-cron';
 
 // ── Setup ────────────────────────────────────────────────────
@@ -611,7 +612,7 @@ app.post('/api/bookings', async (req, res) => {
 
   if (!patient_name?.trim())  return err(res, 'patient_name is required');
   if (!patient_phone?.trim()) return err(res, 'patient_phone is required');
-  if (!practitioner_type)     return err(res, 'practitioner_type is required');
+  if (!isSpecialty(practitioner_type)) return err(res, 'Choose a specialist from the list');
   if (!preferred_date)        return err(res, 'preferred_date is required');
   if (!preferred_time)        return err(res, 'preferred_time is required');
 
@@ -1071,7 +1072,7 @@ app.post('/api/professionals/apply', async (req, res) => {
     fee_inr, duration_min, modes, availability, consent,
   } = req.body;
 
-  if (!role?.trim())      return err(res, 'role is required');
+  if (!isSpecialty(role)) return err(res, 'Choose a specialty from the list');
   if (!full_name?.trim()) return err(res, 'full_name is required');
   if (!phone?.trim())     return err(res, 'phone is required');
 
