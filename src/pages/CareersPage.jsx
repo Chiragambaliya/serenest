@@ -79,12 +79,12 @@ export default function CareersPage() {
           <h1 style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 800, lineHeight: 1.1, letterSpacing: '-0.02em', marginBottom: 16 }}>
             Join Serenest as a<br />
             <span style={{ background: 'linear-gradient(135deg, #7a9a5a, #46552f)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              mental health professional
+              clinician
             </span>
           </h1>
           <p style={{ fontSize: '1.05rem', color: 'var(--text-muted)', lineHeight: 1.6, maxWidth: 520, margin: '0 auto 2rem' }}>
-            We're building India's most trusted online mental health platform.
-            We need great psychologists, therapists, and psychiatrists to make it happen.
+            Serenest books verified specialists across medicine, surgery, psychiatry, and therapy.
+            Apply in the specialty you practise.
           </p>
           <a href="#apply" className="btn btn-primary" style={{ fontSize: '1rem', padding: '14px 32px' }}>
             Apply now →

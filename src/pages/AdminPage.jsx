@@ -12,6 +12,7 @@ import {
   isUnassignedActive,
   screeningHasSafetyFlag,
 } from '../lib/adminOps';
+import { SPECIALTIES, specialtyById } from '../lib/specialties';
 
 // ── API helper ──────────────────────────────────────────────────────────────
 const BASE = import.meta.env.VITE_API_URL ?? '';
@@ -191,19 +192,12 @@ const TAB_HELP = {
   signups: 'View and export waitlist signups.',
 };
 
-const ROLE_LABELS = {
-  psychiatrist: 'Psychiatrist',
-  psychologist: 'Psychologist',
-  therapist:    'Therapist',
-  counsellor:   'Counsellor',
-};
+const ROLE_LABELS = Object.fromEntries(SPECIALTIES.map((specialty) => [specialty.id, specialty.label]));
+const ROLE_COLORS = Object.fromEntries(SPECIALTIES.map((specialty) => [specialty.id, specialty.color]));
 
-const ROLE_COLORS = {
-  psychiatrist: '#6f42c1',
-  psychologist: '#0d6efd',
-  therapist:    '#198754',
-  counsellor:   '#e67e22',
-};
+function roleName(id) {
+  return specialtyById(id)?.label || id || '—';
+}
 
 /** Slug must exist in `src/lib/blogPosts.js` — used as a concrete example link. */
 const SAMPLE_BLOG_SLUG = 'documenting-risk-safety-telehealth';
@@ -1503,7 +1497,7 @@ export default function AdminPage() {
                         <div>
                           <strong>{b.patient_name}</strong>
                           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: 2 }}>
-                            {b.practitioner_type} · {b.mode} · {fmtDate(b.preferred_date)} {b.preferred_time}
+                            {roleName(b.practitioner_type)} · {b.mode} · {fmtDate(b.preferred_date)} {b.preferred_time}
                             {clinician ? ` · ${clinician.full_name}` : ' · unassigned'}
                           </div>
                           {b.notes ? <div className="admin-booking-notes" style={{ marginTop: 6 }}>{b.notes}</div> : null}
@@ -1927,7 +1921,7 @@ export default function AdminPage() {
                       </div>
                     </div>
                     <div className="admin-booking-card-meta">
-                      {b.practitioner_type} · {b.mode}<br />
+                      {roleName(b.practitioner_type)} · {b.mode}<br />
                       {fmtDate(b.preferred_date)} · {b.preferred_time}
                       {b.professional_id && professionalsById[b.professional_id]
                         ? <> · {professionalsById[b.professional_id].full_name}</>
@@ -1965,7 +1959,7 @@ export default function AdminPage() {
                           <small style={{ color: 'var(--text-muted)' }}>{fmt(b.created_at)}</small>
                           {b.notes ? <div className="admin-booking-notes" style={{ marginTop: 6 }}>{b.notes}</div> : null}
                         </td>
-                        <td style={tdStyle}>{b.practitioner_type}<br /><small>{b.mode}</small></td>
+                        <td style={tdStyle}>{roleName(b.practitioner_type)}<br /><small>{b.mode}</small></td>
                         <td style={tdStyle}>
                           {b.professional_id && professionalsById[b.professional_id]
                             ? professionalsById[b.professional_id].full_name
@@ -2020,7 +2014,7 @@ export default function AdminPage() {
                     </button>
                   </div>
                   <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
-                    For: <strong>{prescribeBooking.patient_name}</strong> — {prescribeBooking.practitioner_type} · {fmtDate(prescribeBooking.preferred_date)}
+                    For: <strong>{prescribeBooking.patient_name}</strong> — {roleName(prescribeBooking.practitioner_type)} · {fmtDate(prescribeBooking.preferred_date)}
                     {prescribeBooking.patient_email ? (
                       <> · <span style={{ color: 'var(--text)' }}>{prescribeBooking.patient_email}</span></>
                     ) : (
@@ -2370,20 +2364,20 @@ export default function AdminPage() {
                 <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>
                   Active Professionals <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({filtered.length})</span>
                 </h2>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  {['all', 'psychiatrist', 'psychologist', 'therapist', 'counsellor'].map((r) => (
-                    <button key={r} onClick={() => setProFilter(r)}
-                      style={{
-                        padding: '4px 12px', borderRadius: 99, fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', border: 'none',
-                        background: proFilter === r ? (ROLE_COLORS[r] ?? 'var(--brand-500)') : 'var(--surface)',
-                        color: proFilter === r ? '#fff' : 'var(--text)',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-                      }}
-                    >
-                      {r === 'all' ? 'All' : ROLE_LABELS[r]}
-                    </button>
-                  ))}
-                </div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.8rem', fontWeight: 600 }}>
+                  Specialty
+                  <select
+                    aria-label="Filter professionals by specialty"
+                    value={proFilter}
+                    onChange={(e) => setProFilter(e.target.value)}
+                    style={{ padding: '4px 10px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)' }}
+                  >
+                    <option value="all">All</option>
+                    {SPECIALTIES.map((specialty) => (
+                      <option key={specialty.id} value={specialty.id}>{specialty.label}</option>
+                    ))}
+                  </select>
+                </label>
               </div>
 
               {/* SERENEST WhatsApp group invites */}
@@ -3408,7 +3402,7 @@ export default function AdminPage() {
                 {bookings.filter((b) => b.status === 'pending' || (b.status === 'confirmed' && !b.professional_id)).map((b) => (
                   <button key={b.id} type="button" className="admin-assign-choice" onClick={() => assignProfessional(b.id, assignModal.professional.id)}>
                     <strong>{b.patient_name}</strong>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginLeft: 8 }}>{b.status} · {b.practitioner_type} · {b.mode} · {fmtDate(b.preferred_date)} {b.preferred_time}</span>
+                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginLeft: 8 }}>{b.status} · {roleName(b.practitioner_type)} · {b.mode} · {fmtDate(b.preferred_date)} {b.preferred_time}</span>
                   </button>
                 ))}
               </div>
@@ -3426,7 +3420,7 @@ export default function AdminPage() {
           <div className="admin-modal-panel" style={{ background: 'var(--surface)', borderRadius: 14, padding: '1.5rem', maxWidth: 480, width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
             <h3 style={{ fontWeight: 800, marginBottom: '0.5rem' }}>Assign a clinician</h3>
             <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1rem' }}>
-              For <strong>{assignModal.booking.patient_name}</strong> — {assignModal.booking.practitioner_type} · {assignModal.booking.mode} · {fmtDate(assignModal.booking.preferred_date)} {assignModal.booking.preferred_time}
+              For <strong>{assignModal.booking.patient_name}</strong> — {roleName(assignModal.booking.practitioner_type)} · {assignModal.booking.mode} · {fmtDate(assignModal.booking.preferred_date)} {assignModal.booking.preferred_time}
             </p>
             {professionals.length === 0 ? (
               <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>No approved clinicians yet.</p>

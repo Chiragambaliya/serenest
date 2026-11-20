@@ -127,7 +127,7 @@ export default function ScreeningPage() {
             </Link>
             <Link to="/book" className="mhc-card">
               <h3 className="mhc-card-title">Professional care</h3>
-              <p className="mhc-card-blurb">Verified psychiatrists and psychologists when you want guided help.</p>
+              <p className="mhc-card-blurb">Verified specialists, including psychiatrists and psychologists, when you want guided help.</p>
               <span className="mhc-card-cta">Request an appointment →</span>
             </Link>
             <div className="mhc-card mhc-card-muted">

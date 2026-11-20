@@ -29,13 +29,13 @@ export default function ConsentPage() {
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>1. What is Teleconsultation?</h2>
-              <p className="muted">Teleconsultation is the delivery of healthcare services — including psychiatric evaluation, psychological counselling, and therapy — through electronic means (video, audio, or text). It is conducted in compliance with the MCI Telemedicine Practice Guidelines 2020 issued by the Ministry of Health and Family Welfare, Government of India.</p>
+              <p className="muted">Teleconsultation is the delivery of healthcare services — including medical, surgical, psychiatric, and therapy consultations — through electronic means (video, audio, or text). It is conducted in compliance with the Telemedicine Practice Guidelines 2020 issued by the Ministry of Health and Family Welfare, Government of India.</p>
             </div>
 
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>2. Benefits of Teleconsultation</h2>
               <ul className="list">
-                <li>Access to verified mental health professionals without geographical barriers</li>
+                <li>Access to verified specialists without geographical barriers</li>
                 <li>Flexible scheduling including evenings and weekends</li>
                 <li>Continuity of care from the safety and privacy of your home</li>
                 <li>Structured documentation and digital records accessible to you</li>

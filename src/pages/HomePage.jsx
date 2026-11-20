@@ -13,6 +13,12 @@ import {
 
 const OUR_SERVICES = [
   {
+    title: 'Every specialist',
+    meta: 'Medicine · surgery · mental health',
+    body: 'Request a physician, surgeon, psychiatrist, therapist, or another listed specialist. We match you and confirm the time.',
+    href: '/book',
+  },
+  {
     title: 'Psychiatry',
     meta: 'Assessment · medication',
     body: 'Assessment, diagnosis, and medication management from a licensed psychiatrist.',
@@ -25,16 +31,10 @@ const OUR_SERVICES = [
     href: '/services/therapy',
   },
   {
-    title: 'Addiction and Recovery',
-    meta: 'Substance use',
-    body: 'Assessment, counselling, and relapse-prevention support for substance use.',
-    href: '/services/addiction-care',
-  },
-  {
-    title: 'Digital Mental Health',
-    meta: 'Teleconsultation',
-    body: 'See a clinician on video, audio, or chat from anywhere in India — no clinic wait.',
-    href: '/services/digital-consultations',
+    title: 'Other medical care',
+    meta: 'Video · audio · chat',
+    body: 'Cardiology, dermatology, paediatrics, gynaecology, ENT, and the rest of the specialist list — from home.',
+    href: '/services',
   },
 ];
 
@@ -42,7 +42,7 @@ const ARRIVE_PATHS = [
   {
     num: '01',
     title: 'I need to talk to someone',
-    body: 'Request a psychiatrist or therapist slot. We confirm by phone or WhatsApp — you pay after the time is locked.',
+    body: 'Request any specialist. We confirm by phone or WhatsApp — you pay after the time is locked.',
     href: '/book',
     cta: 'Request an appointment',
   },
@@ -91,7 +91,7 @@ export default function HomePage() {
         <div className="hp-hero__content">
           <p className="hp-hero__brand">Serenest</p>
           <h1 id="home-hero-title" className="hp-hero__title">
-            Talk to a psychiatrist or therapist — privately, from home.
+            Talk to a specialist — privately, from home.
           </h1>
           <p className="hp-hero__body">
             Request a slot in minutes. We confirm by phone or WhatsApp.
@@ -159,7 +159,7 @@ export default function HomePage() {
           <header className="ed-head">
             <span className="ed-head__label">Care</span>
             <h2 id="home-services-title">Start with what you are going through.</h2>
-            <p>Psychiatry, therapy, addiction support, or a digital consult — your clinician can redirect if another fit is better.</p>
+            <p>Any listed specialist — a physician, a surgeon, psychiatry, or therapy. Your clinician can redirect you if another fit is better.</p>
           </header>
           <div className="ed-index hp-index">
             {OUR_SERVICES.map((item, i) => (

@@ -13,7 +13,7 @@ const FAQS = [
   {
     category: 'General',
     q: 'What is Serenest?',
-    a: 'Serenest is online psychiatry and therapy for people in India. You request a slot, we confirm by phone or WhatsApp, and you meet a verified clinician on video, audio, or chat. You pay after the appointment is locked.',
+    a: 'Serenest is online care with verified specialists — physicians, surgeons, psychiatrists, psychologists, therapists, and counsellors. You request a slot, we confirm by phone or WhatsApp, and you meet on video, audio, or chat. You pay after the appointment is locked.',
   },
   {
     category: 'Prescriptions',

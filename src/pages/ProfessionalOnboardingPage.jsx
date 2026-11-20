@@ -2,13 +2,7 @@ import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { professionals } from '../lib/api';
 import { CONSULTATION_MODES } from '../lib/consultationModes';
-
-const ROLES = [
-  { id: 'psychiatrist', label: 'Psychiatrist' },
-  { id: 'psychologist', label: 'Psychologist' },
-  { id: 'therapist', label: 'Therapist' },
-  { id: 'counsellor', label: 'Counsellor' },
-];
+import { SPECIALTY_GROUPS, specialtyLabel, specialtyLicenseHint } from '../lib/specialties';
 
 const DURATIONS = ['30', '45', '60'];
 
@@ -19,7 +13,7 @@ export default function ProfessionalOnboardingPage() {
   const [submitError, setSubmitError] = useState(null);
 
   // Step 1 — personal + credentials
-  const [role, setRole] = useState('psychiatrist');
+  const [role, setRole] = useState('general-physician');
   const [fullName, setFullName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -94,7 +88,7 @@ export default function ProfessionalOnboardingPage() {
     handleSubmit();
   }
 
-  const roleLabel = useMemo(() => ROLES.find((r) => r.id === role)?.label ?? 'Professional', [role]);
+  const roleLabel = useMemo(() => specialtyLabel(role), [role]);
   const progressPct = Math.round((step / 2) * 100);
 
   const record = {
@@ -178,7 +172,7 @@ export default function ProfessionalOnboardingPage() {
         <div className="container">
           <div className="section-head about-hero-head">
             <p className="kicker">Professional onboarding</p>
-            <h1 className="page-title">Join Serenest as a mental health professional.</h1>
+            <h1 className="page-title">Join Serenest as a clinician.</h1>
             <p className="about-subtext">
               Quick 2-step application. Verification before you go live. Built for clinical workflows.
             </p>
@@ -235,21 +229,22 @@ export default function ProfessionalOnboardingPage() {
                 </div>
 
                 <div className="form-grid">
-                  <div className="field field-wide">
-                    <span className="field-label">Role</span>
-                    <div className="choice-grid">
-                      {ROLES.map((r) => (
-                        <button
-                          key={r.id}
-                          type="button"
-                          className={`choice-card ${role === r.id ? 'is-selected' : ''}`}
-                          onClick={() => setRole(r.id)}
-                        >
-                          {r.label}
-                        </button>
+                  <label className="field field-wide">
+                    <span className="field-label">Specialty</span>
+                    <select
+                      className="input"
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                    >
+                      {SPECIALTY_GROUPS.map((group) => (
+                        <optgroup key={group.id} label={group.label}>
+                          {group.specialties.map((specialty) => (
+                            <option key={specialty.id} value={specialty.id}>{specialty.label}</option>
+                          ))}
+                        </optgroup>
                       ))}
-                    </div>
-                  </div>
+                    </select>
+                  </label>
 
                   <label className="field">
                     <span className="field-label">Full name</span>
@@ -301,11 +296,7 @@ export default function ProfessionalOnboardingPage() {
                       onChange={(e) => setRegistration(e.target.value)}
                       placeholder="MCI / SMC / RCI / equivalent"
                     />
-                    <span className="field-hint">
-                      {role === 'psychiatrist' && 'MCI or State Medical Council number.'}
-                      {role === 'psychologist' && 'RCI registration or equivalent.'}
-                      {(role === 'therapist' || role === 'counsellor') && 'RCI or recognised counselling body registration.'}
-                    </span>
+                    <span className="field-hint">{specialtyLicenseHint(role)}</span>
                   </label>
 
                   <label className="field">

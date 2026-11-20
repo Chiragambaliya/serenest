@@ -88,14 +88,14 @@ export default function ProfessionalsPage() {
               <p className="pros-eyebrow pros-eyebrow--hero">
                 <span className="pros-brand">Serenest</span>
                 <span className="pros-eyebrow-dot" aria-hidden="true">·</span>
-                <span>For mental health professionals</span>
+                <span>For clinicians</span>
               </p>
               <h1 id="pros-hero-title" className="pros-hero__title">
                 Practice on your terms — structured, compliant, focused on care.
               </h1>
               <p className="pros-hero__lead">
-                A clinical telepsychiatry workflow for psychiatrists, psychologists, therapists,
-                and counsellors — so you spend time with patients, not admin.
+                A clinical workflow for physicians, surgeons, psychiatrists, therapists,
+                and other listed specialties — so you spend time with patients, not admin.
               </p>
               <div className="pros-hero__actions">
                 <Link className="btn btn-primary btn-lg" to="/professionals/apply">

@@ -15,8 +15,7 @@ export default function ProfessionalTermsPage() {
             <p className="kicker">For Professionals</p>
             <h1 className="page-title">Professional Terms &amp; Conditions</h1>
             <p className="about-subtext">
-              These terms apply to all mental health professionals — psychiatrists, psychologists, therapists, and counsellors —
-              who join and practise on the Serenest platform.
+              These terms apply to clinicians who join and practise on the Serenest platform, across medical specialties including psychiatry, psychology, therapy, and counselling.
             </p>
             <p className="fineprint" style={{ marginTop: 10 }}>Last updated: {UPDATED} · Serenest Private Limited</p>
           </div>
@@ -35,6 +34,7 @@ export default function ProfessionalTermsPage() {
             <div className="tile" style={{ padding: '1.5rem' }}>
               <h2 style={{ fontSize: '1.1rem', fontWeight: 800, marginBottom: 10 }}>2. Eligibility &amp; Verification</h2>
               <ul className="list">
+                <li><strong>Physicians, surgeons, and other medical specialists:</strong> A current NMC or state medical council registration, or a dental council registration for dentists, in the specialty you list.</li>
                 <li><strong>Psychiatrists:</strong> Valid MCI / State Medical Council registration; MBBS + MD Psychiatry or equivalent.</li>
                 <li><strong>Psychologists:</strong> RCI registration; minimum M.Phil (Clinical Psychology) or equivalent Ph.D.</li>
                 <li><strong>Therapists &amp; Counsellors:</strong> Recognised Masters degree (MA Psychology, MSW, or equivalent) and professional registration where applicable.</li>

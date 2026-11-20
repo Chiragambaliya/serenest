@@ -26,7 +26,13 @@ create table if not exists public.appointments (
 
   -- Session preferences
   practitioner_type text not null
-                     check (practitioner_type in ('psychiatrist','psychologist','therapist','counsellor')),
+                     check (practitioner_type in (
+                       'psychiatrist','psychologist','therapist','counsellor',
+                       'general-physician','cardiologist','dermatologist','endocrinologist',
+                       'gastroenterologist','neurologist','pulmonologist','nephrologist',
+                       'rheumatologist','oncologist','paediatrician','gynaecologist',
+                       'ent','ophthalmologist','orthopaedic','urologist','general-surgeon','dentist'
+                     )),
   mode             text not null default 'video'
                      check (mode in ('video','audio','chat')),
   preferred_date   date not null,

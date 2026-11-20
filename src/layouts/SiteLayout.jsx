@@ -382,7 +382,7 @@ export default function SiteLayout() {
                 <BrandMark size={28} />
                 <span>Serenest</span>
               </Link>
-              <p>Doctor-led mental healthcare across India.</p>
+              <p>Doctor-led specialist care across India.</p>
               <div className="ed-footer__contact">
                 <a href="mailto:support@serenest.in">support@serenest.in</a>
                 <span aria-hidden="true" className="ed-footer__dot" />

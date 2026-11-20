@@ -33,7 +33,7 @@ const PLATFORM = [
   {
     tag: 'Scheduling',
     title: 'Smart scheduling',
-    body: 'Book verified psychiatrists across India with real-time slot availability.',
+    body: 'Book a verified specialist — physician, surgeon, psychiatrist, or therapist — and we confirm the time.',
   },
   {
     tag: 'Sessions',
@@ -243,12 +243,11 @@ export default function AboutPage() {
       <section className="ed-band">
         <div className="container">
           <p className="ed-band__quote">
-            Make psychiatric care as accessible as a phone call.
+            Make specialist care as accessible as a phone call.
           </p>
           <p style={{ maxWidth: '42ch', marginTop: '1.5rem', lineHeight: 1.7 }}>
-            Mental health is health — not a luxury, and not something to travel hours for.
-            Serenest connects every Indian with a qualified psychiatrist, in English, Hindi, or
-            Gujarati, from anywhere.
+            Serenest started in psychiatry and now books every listed medical specialty.
+            Patients meet a verified clinician in English, Hindi, or Gujarati, from anywhere in India.
           </p>
         </div>
       </section>
@@ -331,7 +330,7 @@ export default function AboutPage() {
         <div className="container abt-cta__inner">
           <div>
             <h2>Ready to take the first step?</h2>
-            <p>Book a confidential consultation with a verified psychiatrist — anywhere in India.</p>
+            <p>Book a confidential consultation with a verified specialist — anywhere in India.</p>
             <p className="abt-cta__fine">No referral needed · From ₹800 · Fully confidential</p>
           </div>
           <div className="abt-cta__actions">

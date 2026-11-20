@@ -1,7 +1,7 @@
 {
-  "name": "Serenest — Mental Health Care",
+  "name": "Serenest — Specialist Care",
   "short_name": "Serenest",
-  "description": "Online psychiatry, therapy, counselling and mental health screening across India.",
+  "description": "Online consultations with verified specialists across India, including medicine, surgery, psychiatry, and therapy.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#f8f6f0",
@@ -21,7 +21,7 @@
     {
       "name": "Book a session",
       "url": "/book",
-      "description": "Book a consultation with a psychiatrist or therapist"
+      "description": "Book a consultation with a verified specialist"
     },
     {
       "name": "Self-screening",
