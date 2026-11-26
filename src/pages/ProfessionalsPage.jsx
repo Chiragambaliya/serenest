@@ -94,8 +94,8 @@ export default function ProfessionalsPage() {
                 Practice on your terms — structured, compliant, focused on care.
               </h1>
               <p className="pros-hero__lead">
-                A clinical telepsychiatry workflow for psychiatrists, psychologists, therapists,
-                and counsellors — so you spend time with patients, not admin.
+                A teleconsultation workflow for psychiatrists, physicians, surgeons, and
+                counsellors — so you spend time with patients, not admin.
               </p>
               <div className="pros-hero__actions">
                 <Link className="btn btn-primary btn-lg" to="/professionals/apply">
@@ -249,7 +249,7 @@ export default function ProfessionalsPage() {
             <p className="pros-cta__brand">Serenest</p>
             <h2>Ready to join?</h2>
             <p>Apply in five minutes. Verified onboarding · Clinical-first · Privacy-first</p>
-            <p className="pros-cta__fine">Psychiatrists · Psychologists · Therapists · Counsellors</p>
+            <p className="pros-cta__fine">Every clinical branch · verified registration required</p>
           </div>
           <div className="pros-cta__actions">
             <Link className="btn btn-primary btn-lg" to="/professionals/apply">

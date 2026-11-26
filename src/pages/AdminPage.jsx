@@ -12,6 +12,7 @@ import {
   isUnassignedActive,
   screeningHasSafetyFlag,
 } from '../lib/adminOps';
+import { SPECIALTIES, SPECIALTY_GROUPS } from '../lib/specialties';
 
 // ── API helper ──────────────────────────────────────────────────────────────
 const BASE = import.meta.env.VITE_API_URL ?? '';
@@ -191,19 +192,8 @@ const TAB_HELP = {
   signups: 'View and export waitlist signups.',
 };
 
-const ROLE_LABELS = {
-  psychiatrist: 'Psychiatrist',
-  psychologist: 'Psychologist',
-  therapist:    'Therapist',
-  counsellor:   'Counsellor',
-};
-
-const ROLE_COLORS = {
-  psychiatrist: '#6f42c1',
-  psychologist: '#0d6efd',
-  therapist:    '#198754',
-  counsellor:   '#e67e22',
-};
+const ROLE_LABELS = Object.fromEntries(SPECIALTIES.map((specialty) => [specialty.id, specialty.label]));
+const ROLE_COLORS = Object.fromEntries(SPECIALTIES.map((specialty) => [specialty.id, specialty.color]));
 
 /** Slug must exist in `src/lib/blogPosts.js` — used as a concrete example link. */
 const SAMPLE_BLOG_SLUG = 'documenting-risk-safety-telehealth';
@@ -216,6 +206,7 @@ const SITE_PAGE_GROUPS = [
       { label: 'About', path: '/about', hint: 'Mission & organisation' },
       { label: 'Team', path: '/team', hint: 'Clinical team' },
       { label: 'Services', path: '/services', hint: 'Conditions & care types' },
+      { label: 'All specialties', path: '/specialties', hint: 'Teleconsultation by clinical branch' },
       { label: 'Pricing', path: '/pricing', hint: 'Fees & on-page FAQ' },
       { label: 'FAQ', path: '/faq', hint: 'Policies & common questions' },
     ],
@@ -2370,20 +2361,24 @@ export default function AdminPage() {
                 <h2 style={{ fontWeight: 800, fontSize: '1.4rem' }}>
                   Active Professionals <span style={{ color: 'var(--text-muted)', fontSize: '1rem', fontWeight: 400 }}>({filtered.length})</span>
                 </h2>
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                  {['all', 'psychiatrist', 'psychologist', 'therapist', 'counsellor'].map((r) => (
-                    <button key={r} onClick={() => setProFilter(r)}
-                      style={{
-                        padding: '4px 12px', borderRadius: 99, fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer', border: 'none',
-                        background: proFilter === r ? (ROLE_COLORS[r] ?? 'var(--brand-500)') : 'var(--surface)',
-                        color: proFilter === r ? '#fff' : 'var(--text)',
-                        boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
-                      }}
-                    >
-                      {r === 'all' ? 'All' : ROLE_LABELS[r]}
-                    </button>
-                  ))}
-                </div>
+                <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: '0.8rem' }}>
+                  Specialty
+                  <select
+                    value={proFilter}
+                    onChange={(event) => setProFilter(event.target.value)}
+                    aria-label="Filter professionals by specialty"
+                    style={{ padding: '4px 10px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--surface)', color: 'var(--text)' }}
+                  >
+                    <option value="all">All</option>
+                    {SPECIALTY_GROUPS.map((group) => (
+                      <optgroup key={group.id} label={group.label}>
+                        {group.specialties.map((specialty) => (
+                          <option key={specialty.id} value={specialty.id}>{specialty.label}</option>
+                        ))}
+                      </optgroup>
+                    ))}
+                  </select>
+                </label>
               </div>
 
               {/* SERENEST WhatsApp group invites */}

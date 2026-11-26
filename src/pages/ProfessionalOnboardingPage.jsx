@@ -2,13 +2,8 @@ import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { professionals } from '../lib/api';
 import { CONSULTATION_MODES } from '../lib/consultationModes';
-
-const ROLES = [
-  { id: 'psychiatrist', label: 'Psychiatrist' },
-  { id: 'psychologist', label: 'Psychologist' },
-  { id: 'therapist', label: 'Therapist' },
-  { id: 'counsellor', label: 'Counsellor' },
-];
+import { specialtyLabel, specialtyLicenseHint } from '../lib/specialties';
+import SpecialtySelect from '../components/SpecialtySelect';
 
 const DURATIONS = ['30', '45', '60'];
 
@@ -94,7 +89,7 @@ export default function ProfessionalOnboardingPage() {
     handleSubmit();
   }
 
-  const roleLabel = useMemo(() => ROLES.find((r) => r.id === role)?.label ?? 'Professional', [role]);
+  const roleLabel = useMemo(() => specialtyLabel(role), [role]);
   const progressPct = Math.round((step / 2) * 100);
 
   const record = {
@@ -178,7 +173,7 @@ export default function ProfessionalOnboardingPage() {
         <div className="container">
           <div className="section-head about-hero-head">
             <p className="kicker">Professional onboarding</p>
-            <h1 className="page-title">Join Serenest as a mental health professional.</h1>
+            <h1 className="page-title">Join Serenest as a verified clinician.</h1>
             <p className="about-subtext">
               Quick 2-step application. Verification before you go live. Built for clinical workflows.
             </p>
@@ -235,21 +230,10 @@ export default function ProfessionalOnboardingPage() {
                 </div>
 
                 <div className="form-grid">
-                  <div className="field field-wide">
-                    <span className="field-label">Role</span>
-                    <div className="choice-grid">
-                      {ROLES.map((r) => (
-                        <button
-                          key={r.id}
-                          type="button"
-                          className={`choice-card ${role === r.id ? 'is-selected' : ''}`}
-                          onClick={() => setRole(r.id)}
-                        >
-                          {r.label}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
+                  <label className="field field-wide">
+                    <span className="field-label">Clinical branch</span>
+                    <SpecialtySelect id="apply-specialty" value={role} onChange={setRole} />
+                  </label>
 
                   <label className="field">
                     <span className="field-label">Full name</span>
@@ -301,11 +285,7 @@ export default function ProfessionalOnboardingPage() {
                       onChange={(e) => setRegistration(e.target.value)}
                       placeholder="MCI / SMC / RCI / equivalent"
                     />
-                    <span className="field-hint">
-                      {role === 'psychiatrist' && 'MCI or State Medical Council number.'}
-                      {role === 'psychologist' && 'RCI registration or equivalent.'}
-                      {(role === 'therapist' || role === 'counsellor') && 'RCI or recognised counselling body registration.'}
-                    </span>
+                    <span className="field-hint">{specialtyLicenseHint(role)}</span>
                   </label>
 
                   <label className="field">

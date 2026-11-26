@@ -55,6 +55,7 @@ function BrandMark({ size = 42 }) {
 /* Primary navigation — editorial masthead, not a SaaS link strip. */
 const NAV_LINKS = [
   { to: '/services', label: 'Services' },
+  { to: '/specialties', label: 'Specialties' },
   { to: '/screening', label: 'Screening' },
   { to: '/patient/find-professional', label: 'Clinicians' },
   { to: '/pricing', label: 'Pricing' },
@@ -66,6 +67,7 @@ const FOOTER_GROUPS = [
     title: 'Care',
     links: [
       { to: '/book', label: 'Request an appointment' },
+      { to: '/specialties', label: 'All specialties' },
       { to: '/patient/find-professional', label: 'Find a clinician' },
       { to: '/screening', label: 'Private check-in' },
       { to: '/pricing', label: 'Fees' },
@@ -180,7 +182,7 @@ export default function SiteLayout() {
   const careWa = careWaHref();
 
   return (
-    <div className={`theme-editorial${hideDock ? ' theme-editorial--no-dock' : ''}`}>
+    <div className={`theme-editorial${hideDock ? ' theme-editorial--no-dock' : ''}${menuOpen ? ' menu-is-open' : ''}`}>
       <a className="skip-link" href="#main">Skip to content</a>
 
       <header className={`header masthead ${scrolled ? 'is-scrolled' : 'is-top'}`}>
