@@ -10,6 +10,7 @@ import {
   TRUST_POINTS,
   careWaHref,
 } from '../lib/patientReach';
+import { SPECIALTY_GROUPS } from '../lib/specialties';
 
 const OUR_SERVICES = [
   {
@@ -33,7 +34,7 @@ const OUR_SERVICES = [
   {
     title: 'Digital Mental Health',
     meta: 'Teleconsultation',
-    body: 'See a clinician on video, audio, or chat from anywhere in India — no clinic wait.',
+    body: 'Video, audio, or chat with a psychiatrist, physician, or another clinical branch.',
     href: '/services/digital-consultations',
   },
 ];
@@ -91,11 +92,11 @@ export default function HomePage() {
         <div className="hp-hero__content">
           <p className="hp-hero__brand">Serenest</p>
           <h1 id="home-hero-title" className="hp-hero__title">
-            Talk to a psychiatrist or therapist — privately, from home.
+            Talk to a specialist — privately, from home.
           </h1>
           <p className="hp-hero__body">
-            Request a slot in minutes. We confirm by phone or WhatsApp.
-            You pay after the appointment is locked, not when you ask.
+            Psychiatry, medicine, and surgical follow-up on video, audio, or chat.
+            Request a slot. We confirm by phone or WhatsApp. You pay after the time is locked.
           </p>
           <div className="hp-hero__actions">
             <HpBtn to="/book" variant="solid-light">Request an appointment</HpBtn>
@@ -154,12 +155,49 @@ export default function HomePage() {
         </div>
       </section>
 
+      <section className="ed-pace" aria-labelledby="home-branches-title">
+        <div className="ed-shell">
+          <header className="ed-head">
+            <span className="ed-head__label">Branches</span>
+            <h2 id="home-branches-title">Teleconsultation for every clinical branch</h2>
+            <p>
+              Choose a specialty, see what can happen online, and request a slot.
+              Examination, procedures, and emergencies stay in a clinic.
+            </p>
+          </header>
+          <div className="branch-grid">
+            {SPECIALTY_GROUPS.map((group) => (
+              <article className="branch-card" key={group.id}>
+                <h3>
+                  <Link to={`/specialties#${group.id}`}>{group.label}</Link>
+                </h3>
+                <p>{group.blurb}</p>
+                <ul>
+                  {group.specialties.slice(0, 4).map((specialty) => (
+                    <li key={specialty.id}>
+                      <Link to={`/specialties/${specialty.id}`}>{specialty.label}</Link>
+                    </li>
+                  ))}
+                </ul>
+                <Link className="branch-card__more" to={`/specialties#${group.id}`}>
+                  All {group.specialties.length} in {group.label.toLowerCase()}
+                  <span aria-hidden="true"> →</span>
+                </Link>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
       <section className="ed-pace hp-care" aria-labelledby="home-services-title">
         <div className="ed-shell">
           <header className="ed-head">
             <span className="ed-head__label">Care</span>
             <h2 id="home-services-title">Start with what you are going through.</h2>
-            <p>Psychiatry, therapy, addiction support, or a digital consult — your clinician can redirect if another fit is better.</p>
+            <p>
+              Psychiatry, therapy, and addiction support — or another branch from the list above.
+              Your clinician can redirect if a different fit is better.
+            </p>
           </header>
           <div className="ed-index hp-index">
             {OUR_SERVICES.map((item, i) => (

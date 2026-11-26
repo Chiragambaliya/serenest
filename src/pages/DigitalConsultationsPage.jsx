@@ -134,7 +134,7 @@ export default function DigitalConsultationsPage() {
           <p>Choose video, audio, or chat — whatever works best for you.</p>
           <div className="svd-cta__actions">
             <Link className="btn btn-primary btn-lg" to="/book">Book an Appointment</Link>
-            <Link className="btn btn-ghost btn-lg" to="/services">Compare services</Link>
+            <Link className="btn btn-ghost btn-lg" to="/specialties">Choose a specialty</Link>
           </div>
         </div>
       </section>

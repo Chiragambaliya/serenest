@@ -22,6 +22,7 @@ export const SITE_GUIDE_ROUTES = [
   { path: '/patient/find-professional', label: 'Find a verified professional' },
 
   { path: '/services', label: 'Services and conditions we support' },
+  { path: '/specialties', label: 'Teleconsultation for every clinical branch — psychiatry, medicine, and surgical follow-up' },
 
   { path: '/pricing', label: 'Fees and session pricing' },
 

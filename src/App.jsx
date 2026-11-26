@@ -18,6 +18,8 @@ const PsychiatryPage = lazy(() => import('./pages/PsychiatryPage'));
 const TherapyPage = lazy(() => import('./pages/TherapyPage'));
 const AddictionCarePage = lazy(() => import('./pages/AddictionCarePage'));
 const DigitalConsultationsPage = lazy(() => import('./pages/DigitalConsultationsPage'));
+const SpecialtiesPage = lazy(() => import('./pages/SpecialtiesPage'));
+const SpecialtyDetailPage = lazy(() => import('./pages/SpecialtyDetailPage'));
 const ContactPage = lazy(() => import('./pages/ContactPage'));
 const ProfessionalsPage = lazy(() => import('./pages/ProfessionalsPage'));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
@@ -162,6 +164,8 @@ export default function App() {
           <Route path="services/therapy" element={<S><TherapyPage /></S>} />
           <Route path="services/addiction-care" element={<S><AddictionCarePage /></S>} />
           <Route path="services/digital-consultations" element={<S><DigitalConsultationsPage /></S>} />
+          <Route path="specialties" element={<S><SpecialtiesPage /></S>} />
+          <Route path="specialties/:slug" element={<S><SpecialtyDetailPage /></S>} />
           <Route path="contact" element={<S><ContactPage /></S>} />
           <Route path="professionals" element={<S><ProfessionalsPage /></S>} />
           <Route path="professionals/resources" element={<S><ProfessionalResourcesPage /></S>} />

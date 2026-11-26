@@ -1,6 +1,7 @@
 import { TEAM_MEMBERS } from './team.js';
 import { SCREENING_TOOLS } from './screeningTools.js';
 import { BLOG_POSTS } from './blogPosts.js';
+import { SPECIALTIES, specialtyById } from './specialties.js';
 
 // Production canonical host. Matches the live www-redirect target.
 export const SITE_ORIGIN = 'https://www.serenest.in';
@@ -405,6 +406,27 @@ for (const post of BLOG_POSTS) {
     ogTitle: post.title,
     ogDescription: post.excerpt,
     ogType: 'article',
+  };
+}
+
+ROUTE_SEO['/specialties'] = {
+  title: 'Online Specialist Consultation in India | All Clinical Branches',
+  description:
+    'Request a teleconsultation across every clinical branch — psychiatry, medicine, and surgical follow-up. Video, audio, or chat. Pay after Serenest confirms the slot.',
+  h1: 'Every clinical branch, from home',
+  ogTitle: 'Teleconsultation for every clinical branch | Serenest',
+  ogDescription:
+    'Book a verified specialist online. History and follow-up on video, audio, or chat. Examination and emergencies stay in person.',
+};
+
+for (const specialty of SPECIALTIES) {
+  const title = `Online ${specialty.label} Consultation in India | Serenest`;
+  ROUTE_SEO[`/specialties/${specialty.id}`] = {
+    title,
+    description: specialty.summary,
+    h1: `Online ${specialty.label.toLowerCase()} consultation`,
+    ogTitle: title,
+    ogDescription: specialty.summary,
   };
 }
 
@@ -1359,6 +1381,7 @@ const SITEMAP_HINTS = {
   '/phq-9-depression-screening': { changefreq: 'monthly', priority: '0.85' },
   '/gad-7-anxiety-screening': { changefreq: 'monthly', priority: '0.85' },
   '/guides': { changefreq: 'weekly', priority: '0.85' },
+  '/specialties': { changefreq: 'weekly', priority: '0.9' },
   '/blog': { changefreq: 'weekly', priority: '0.8' },
 };
 
@@ -1490,6 +1513,7 @@ const ROUTE_FAQS = {
 
 const SHELL_NAV = [
   ['/services', 'Services'],
+  ['/specialties', 'All specialties'],
   ['/book', 'Request an appointment'],
   ['/pricing', 'Pricing'],
   ['/screening', 'Free mental health screening'],
@@ -1551,6 +1575,25 @@ export function renderSeoBody(pathname) {
       parts.push(`<li><a href="/blog/${escapeHtml(p.slug)}">${escapeHtml(p.title)}</a> — ${escapeHtml(p.excerpt)}</li>`);
     }
     parts.push('</ul>');
+  }
+
+  if (pathname === '/specialties') {
+    parts.push('<ul>');
+    for (const specialty of SPECIALTIES) {
+      parts.push(`<li><a href="/specialties/${escapeHtml(specialty.id)}">${escapeHtml(specialty.label)}</a> — ${escapeHtml(specialty.summary)}</li>`);
+    }
+    parts.push('</ul>');
+  }
+
+  const specialtyMatch = /^\/specialties\/([^/]+)$/.exec(pathname);
+  const specialty = specialtyMatch ? specialtyById(specialtyMatch[1]) : null;
+  if (specialty) {
+    parts.push('<h2>Reasonable online</h2>', '<ul>');
+    for (const item of specialty.online) parts.push(`<li>${escapeHtml(item)}</li>`);
+    parts.push('</ul>', '<h2>Still needs in-person care</h2>', '<ul>');
+    for (const item of specialty.inPerson) parts.push(`<li>${escapeHtml(item)}</li>`);
+    parts.push('</ul>');
+    parts.push(`<p><a href="/book?specialty=${escapeHtml(specialty.id)}">Request a ${escapeHtml(specialty.label.toLowerCase())} appointment</a></p>`);
   }
 
   parts.push('</main>', '<nav aria-label="Site"><ul>');

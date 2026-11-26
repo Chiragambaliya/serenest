@@ -5,16 +5,10 @@ import { buildBookPath, preferModeFromPro } from '../lib/bookingHandoff';
 import { careWaHref } from '../lib/patientReach';
 import { useSEO } from '../lib/useSEO';
 import { ROUTE_SEO } from '../lib/seo';
+import { SPECIALTY_IDS, isSpecialty, specialtyColor, specialtyLabel } from '../lib/specialties';
+import SpecialtySelect from '../components/SpecialtySelect';
 
-const VALID_ROLES = ['psychiatrist', 'psychologist', 'therapist', 'counsellor'];
-
-const ROLES = [
-  { id: 'all',          label: 'All',          icon: '✨', color: '#4a5a30' },
-  { id: 'psychiatrist', label: 'Psychiatrist', icon: '🩺', color: '#6f42c1' },
-  { id: 'psychologist', label: 'Psychologist', icon: '🧠', color: '#0d6efd' },
-  { id: 'therapist',    label: 'Therapist',    icon: '💬', color: '#198754' },
-  { id: 'counsellor',   label: 'Counsellor',   icon: '🌱', color: '#e67e22' },
-];
+const VALID_ROLES = SPECIALTY_IDS;
 
 const SORT_OPTIONS = [
   { id: 'newest',     label: 'Newest first' },
@@ -22,20 +16,6 @@ const SORT_OPTIONS = [
   { id: 'fee_desc',   label: 'Fee: high → low' },
   { id: 'name_asc',   label: 'Name A → Z' },
 ];
-
-const ROLE_COLORS = {
-  psychiatrist: '#6f42c1',
-  psychologist: '#0d6efd',
-  therapist:    '#198754',
-  counsellor:   '#e67e22',
-};
-
-const ROLE_LABELS = {
-  psychiatrist: 'Psychiatrist',
-  psychologist: 'Psychologist',
-  therapist:    'Therapist',
-  counsellor:   'Counsellor',
-};
 
 function normalizeList(value) {
   if (!value) return [];
@@ -68,7 +48,7 @@ function mapToProfessional(a) {
     created_at: a.created_at,
     name: a.full_name || 'Professional',
     role: a.role || 'counsellor',
-    roleLabel: ROLE_LABELS[a.role] || a.role_label || 'Professional',
+    roleLabel: isSpecialty(a.role) ? specialtyLabel(a.role) : (a.role_label || 'Professional'),
     city: a.city || '',
     clinic: a.clinic || '',
     fee: a.fee_inr ? Number(a.fee_inr) : null,
@@ -84,7 +64,7 @@ function mapToProfessional(a) {
 // ── Avatar component ───────────────────────────────────────────
 function Avatar({ name, role, size = 56 }) {
   const initials = getInitials(name);
-  const color = ROLE_COLORS[role] || '#4a5a30';
+  const color = specialtyColor(role);
   return (
     <div style={{
       width: size, height: size,
@@ -149,12 +129,6 @@ export default function PatientFindProfessionalPage() {
     return Array.from(set).sort();
   }, [professionals]);
 
-  const counts = useMemo(() => {
-    const c = { all: professionals.length };
-    for (const p of professionals) c[p.role] = (c[p.role] ?? 0) + 1;
-    return c;
-  }, [professionals]);
-
   // ── Filtering + sorting ────────────────────────────────────
   const shown = useMemo(() => {
     const cityNeedle = city.trim().toLowerCase();
@@ -199,8 +173,8 @@ export default function PatientFindProfessionalPage() {
             Choose who you talk to
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '1.02rem', lineHeight: 1.55 }}>
-            Verified psychiatrists, psychologists, therapists and counsellors.
-            Filter by language, city and fee. Request a slot — you pay after we confirm.
+            Verified clinicians across every clinical branch.
+            Filter by specialty, language, city, and fee. Request a slot — you pay after we confirm.
           </p>
         </div>
       </section>
@@ -242,45 +216,6 @@ export default function PatientFindProfessionalPage() {
           )}
         </div>
 
-        {/* ── Role tabs ───────────────────────────────────── */}
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center', marginBottom: '1.5rem' }}>
-          {ROLES.map((r) => {
-            const active = role === r.id;
-            const count = counts[r.id] ?? 0;
-            return (
-              <button
-                type="button"
-                key={r.id}
-                onClick={() => setRole(r.id)}
-                style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 8,
-                  padding: '10px 18px',
-                  borderRadius: 99,
-                  border: active ? `2px solid ${r.color}` : '2px solid transparent',
-                  background: active ? `${r.color}12` : '#fff',
-                  color: active ? r.color : 'var(--text)',
-                  fontSize: '0.9rem',
-                  fontWeight: active ? 700 : 600,
-                  cursor: 'pointer',
-                  transition: 'all 0.15s',
-                  boxShadow: active ? `0 4px 12px ${r.color}33` : '0 1px 4px rgba(0,0,0,0.05)',
-                }}
-              >
-                <span style={{ fontSize: '1rem' }}>{r.icon}</span>
-                {r.label}
-                {count > 0 && <span style={{
-                  background: active ? r.color : 'var(--bg-subtle, #f4eee4)',
-                  color: active ? '#fff' : 'var(--text-muted)',
-                  borderRadius: 99,
-                  padding: '1px 8px',
-                  fontSize: '0.72rem',
-                  fontWeight: 700,
-                }}>{count}</span>}
-              </button>
-            );
-          })}
-        </div>
-
         {/* ── Filters row ─────────────────────────────────── */}
         <div style={{
           background: '#fff',
@@ -293,6 +228,19 @@ export default function PatientFindProfessionalPage() {
           gap: 14,
           alignItems: 'end',
         }}>
+          <div>
+            <label htmlFor="directory-specialty" style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Specialty</label>
+            <SpecialtySelect
+              id="directory-specialty"
+              value={role}
+              onChange={setRole}
+              includeAll
+              className=""
+              style={selectStyle}
+              ariaLabel="Filter by specialty"
+            />
+          </div>
+
           <div>
             <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Language</label>
             <select aria-label="Filter by language" value={language} onChange={(e) => setLanguage(e.target.value)} style={selectStyle}>
@@ -397,7 +345,7 @@ export default function PatientFindProfessionalPage() {
 
 // ── Professional Card ────────────────────────────────────────────
 function ProfessionalCard({ p }) {
-  const roleColor = ROLE_COLORS[p.role] || '#4a5a30';
+  const roleColor = specialtyColor(p.role);
   return (
     <article style={{
       background: '#fff',

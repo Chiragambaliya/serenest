@@ -12,6 +12,7 @@ const SPECIALTIES = [
   { title: 'Therapy and Counselling', body: 'Structured talk therapy for individuals, couples, and families.', href: '/services/therapy' },
   { title: 'Addiction and Recovery', body: 'Assessment, counselling, and relapse-prevention support for substance use.', href: '/services/addiction-care' },
   { title: 'Digital Consultations', body: 'How teleconsultation works, and what it can and can\'t do.', href: '/services/digital-consultations' },
+  { title: 'All clinical branches', body: 'Psychiatry, medicine, and surgical follow-up — each with a clear online limit.', href: '/specialties' },
 ];
 
 const SERVICES_FAQ = [

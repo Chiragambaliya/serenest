@@ -16,6 +16,8 @@ import {
   indiaMobileDigits,
   isIndiaMobile,
 } from '../lib/patientReach';
+import { isSpecialty, specialtyLabel } from '../lib/specialties';
+import SpecialtySelect from '../components/SpecialtySelect';
 
 const DEFAULT_FEE_INR = 499;
 
@@ -29,13 +31,6 @@ function loadRazorpay() {
     document.body.appendChild(s);
   });
 }
-
-const PRACTITIONER_TYPES = [
-  { id: 'psychiatrist', label: 'Psychiatrist' },
-  { id: 'psychologist', label: 'Psychologist' },
-  { id: 'therapist', label: 'Therapist' },
-  { id: 'counsellor', label: 'Counsellor' },
-];
 
 function pad2(n) {
   return String(n).padStart(2, '0');
@@ -80,9 +75,11 @@ export default function BookingPage() {
   const preTool     = searchParams.get('tool') ?? '';
   const preScore    = searchParams.get('score') ?? '';
   const preBand     = searchParams.get('band') ?? '';
+  const preSpecialty = searchParams.get('specialty') ?? '';
   const hasPro = Boolean(preProName);
 
-  const suggestedRole = preProRole
+  const suggestedRole = (isSpecialty(preProRole) ? preProRole : '')
+    || (isSpecialty(preSpecialty) ? preSpecialty : '')
     || (prePhq || preGad ? suggestRoleFromScreening(prePhq, preGad) : '')
     || '';
 
@@ -258,8 +255,8 @@ export default function BookingPage() {
 
   const dayLabel = useMemo(() => days.find((d) => d.key === dayKey)?.label ?? '', [days, dayKey]);
   const selectedTypeLabel = useMemo(
-    () => PRACTITIONER_TYPES.find((t) => t.id === practitionerType)?.label ?? 'Practitioner',
-    [practitionerType],
+    () => (hasPro && preProLabel) || specialtyLabel(practitionerType),
+    [hasPro, preProLabel, practitionerType],
   );
   const selectedModeLabel = useMemo(
     () => CONSULTATION_MODES.find((m) => m.id === mode)?.label ?? 'Video',
@@ -453,27 +450,28 @@ export default function BookingPage() {
                 </div>
 
                 <div className="form-grid">
-                  <div>
-                    <div className="field-label">Practitioner {hasPro && <span className="summary-pill" style={{ marginLeft: 6 }}>{preProLabel}</span>}</div>
-                    <div className="choice-grid">
-                      {PRACTITIONER_TYPES.map((t) => (
-                        <button
-                          key={t.id}
-                          type="button"
-                          disabled={hasPro}
-                          className={`choice-card ${practitionerType === t.id ? 'is-selected' : ''}`}
-                          onClick={() => setPractitionerType(t.id)}
-                        >
-                          {t.label}
-                        </button>
-                      ))}
-                    </div>
+                  <div className="field field-wide">
+                    <label className="field-label" htmlFor="booking-specialty">Clinical branch</label>
+                    {hasPro ? (
+                      <p style={{ margin: '8px 0 0' }}>{preProLabel || specialtyLabel(practitionerType)}</p>
+                    ) : (
+                      <SpecialtySelect
+                        id="booking-specialty"
+                        value={practitionerType}
+                        onChange={setPractitionerType}
+                      />
+                    )}
+                    {isSpecialty(practitionerType) && (
+                      <p className="field-hint" style={{ marginTop: 8 }}>
+                        <Link to={`/specialties/${practitionerType}`}>What this consult can and cannot cover</Link>
+                      </p>
+                    )}
                   </div>
 
                   {!hasPro && (
                     <div className="field-wide">
                       <div className="field-label">
-                        Choose your counsellor <span className="muted" style={{ fontWeight: 400 }}>(optional)</span>
+                        Choose a clinician <span className="muted" style={{ fontWeight: 400 }}>(optional)</span>
                       </div>
                       {directoryLoading ? (
                         <p className="muted" style={{ marginTop: 8 }}>Loading available professionals…</p>

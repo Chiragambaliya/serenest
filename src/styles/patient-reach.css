@@ -1,6 +1,7 @@
 /* Patient conversion: header reach, sticky mobile dock, homepage trust. */
 
 .masthead__reach {
+  display: none;
   font-family: var(--font-mono, ui-monospace, monospace);
   font-size: 0.68rem;
   font-weight: 500;
@@ -116,10 +117,8 @@
   box-shadow: 0 6px 24px rgba(37, 211, 102, 0.6);
 }
 
-@media (max-width: 1200px) {
-  .masthead__reach {
-    display: none;
-  }
+.menu-is-open .patient-dock {
+  display: none;
 }
 
 @media (max-width: 960px) {
